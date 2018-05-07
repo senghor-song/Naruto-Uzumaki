@@ -5,6 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * 时间工具类
+ * @author Senghor<br>
+ * @date 2018年5月7日 下午2:33:38
+ */
 public class DateUtil {
     
     /**
