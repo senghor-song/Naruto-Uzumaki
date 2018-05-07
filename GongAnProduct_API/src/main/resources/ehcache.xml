@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+
+	<diskStore path="${java.io.tmpdir}shop_cache" />
+
+	<cacheManagerPeerProviderFactory
+		class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+		properties="peerDiscovery=automatic, multicastGroupAddress=230.0.0.10, multicastGroupPort=4449, timeToLive=1" />
+	<cacheManagerPeerListenerFactory class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory" />
+	<!-- 图片验证码 -->
+	<cache name="captcha" maxElementsInMemory="100" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false">
+    	<cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+         properties="replicateAsynchronously=true,
+         replicatePuts=true,
+         replicatePutsViaCopy=true,
+         replicateUpdates=true,
+         replicateUpdatesViaCopy=true,
+         replicateRemovals=true,
+         asynchronousReplicationIntervalMillis=1000,
+         asynchronousReplicationMaximumBatchSize=1000"
+         propertySeparator="," />
+	</cache>
+	<!-- 权限会话 -->
+	<cache name="shiro-activeSessionCache" maxElementsInMemory="10000" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false">
+    	<cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+         properties="replicateAsynchronously=true,
+         replicatePuts=true,
+         replicatePutsViaCopy=true,
+         replicateUpdates=true,
+         replicateUpdatesViaCopy=true,
+         replicateRemovals=true,
+         asynchronousReplicationIntervalMillis=1000,
+         asynchronousReplicationMaximumBatchSize=1000"
+         propertySeparator="," />
+	</cache>
+	<!-- 权限 -->
+	<cache name="authorization" maxElementsInMemory="100" timeToLiveSeconds="3600" eternal="false" overflowToDisk="false" />
+	<!-- 系统配置 -->
+	<cache name="setting" maxElementsInMemory="500" timeToIdleSeconds="3600" timeToLiveSeconds="86400" eternal="false" overflowToDisk="false" />
+	<cache name="token" maxElementsInMemory="500" timeToIdleSeconds="3600" timeToLiveSeconds="86400" eternal="false" overflowToDisk="false" />
+	
+	<cache name="descKeyCacheName" maxElementsInMemory="10" eternal="true" />
+	<cache name="userLoginCacheName"  maxElementsInMemory="100000" eternal="true" />
+	<!--到期时间缓存  -->
+	<!-- <cache name="goodsTimeBuffer" maxElementsInMemory="500" eternal="false" overflowToDisk="false" /> -->
+	<!--商品缓存  -->
+	<!-- <cache name="goodsBuffer" maxElementsInMemory="500" eternal="false" overflowToDisk="false" /> -->
+	
+</ehcache>

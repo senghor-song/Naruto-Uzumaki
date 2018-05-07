@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menus>
+
+<!-- 顶级功能菜单 -->  
+	<menu id="1"  name="用户管理" link="/admin/common/left.shtml" sort="1" parentId="" className="li2" />
+	<menu id="2"  name="业务管理" link="/admin/common/left.shtml" sort="2" parentId="" className="li3" />
+	<menu id="3"  name="订单管理" link="/admin/common/left.shtml" sort="3" parentId="" className="li4" />
+	<menu id="4"  name="统计管理" link="/admin/common/left.shtml" sort="4" parentId="" className="li7" />
+	<menu id="5"  name="宣传管理" link="/admin/common/left.shtml" sort="5" parentId="" className="li5" />
+	<menu id="6"  name="系统管理" link="/admin/common/left.shtml" sort="6" parentId="" className="li1" />
+
+<!-- ********************************* -->	
+<!-- id 1的二级功能菜单 --> 
+	<menu id="121"  name="用户管理" link="" parentId="1" className="icon_s icon_s4" sort="1"/>
+	<menu id="122"  name="用户组管理" link="" parentId="1" className="icon_s icon_s4" sort="2"/>
+	<!-- <menu id="123"  name="用户安全问题管理" link="" parentId="1" className="icon_s icon_s4" sort="3"/> -->
+	
+<!-- id 1_121的三级功能菜单  -->
+	<menu id="12131"  name="综合会员列表" link="/admin/user/list.shtml?listType=comprehensiveMember" parentId="121" className="" sort="1"/>
+	<menu id="12132"  name="代理列表" link="/admin/user/list.shtml?listType=agent" parentId="121" className="" sort="2"/>
+	<menu id="12133"  name="会员列表" link="/admin/user/list.shtml?listType=member" parentId="121" className="" sort="3"/>
+	<menu id="12134"  name="添加用户" link="/admin/user/add.shtml" parentId="121" className="" sort="4"/>
+	
+<!-- id 1_122的三级功能菜单  -->
+	<menu id="12231"  name="用户组列表" link="/admin/userGroup/list.shtml" parentId="122" className="" sort="1"/>
+	<menu id="12232"  name="添加用户组" link="/admin/userGroup/add.shtml" parentId="122" className="" sort="2"/>
+	
+<!-- id 1_123的三级功能菜单  -->
+	<!-- <menu id="12331"  name="用户安全问题列表" link="/admin/userSafetyQuestion/list.shtml" parentId="123" className="icon_s icon_s4" sort="1"/>
+	<menu id="12332"  name="添加用户安全问题" link="/admin/userSafetyQuestion/add.shtml" parentId="123" className="icon_s icon_s4" sort="2"/>	 -->
+<!-- ******************************** -->
+
+<!-- ******************************** -->
+<!-- id 2的二级功能菜单 --> 
+	<menu id="221"  name="玩法管理" link="" parentId="2" className="icon_s icon_s4" sort="1"/>
+	<menu id="222"  name="产品管理" link="" parentId="2" className="icon_s icon_s4" sort="2"/>
+	<menu id="223"  name="产品行情接口管理" link="" parentId="2" className="icon_s icon_s4" sort="3"/>
+	<menu id="224"  name="止盈止损点管理" link="" parentId="2" className="icon_s icon_s4" sort="4"/>
+	<menu id="225"  name="到期时间管理" link="" parentId="2" className="icon_s icon_s4" sort="5"/>
+	<!-- <menu id="225"  name="币种管理" link="" parentId="2" className="icon_s icon_s4" sort="5"/> -->
+	<!-- <menu id="226"  name="钱包管理" link="" parentId="2" className="icon_s icon_s4" sort="6"/>
+	<menu id="227"  name="开户行管理" link="" parentId="2" className="icon_s icon_s4" sort="7"/> -->
+	<!-- <menu id="228"  name="平台收款账户管理" link="" parentId="2" className="icon_s icon_s4" sort="8"/> -->
+	<menu id="229"  name="支付插件管理" link="" parentId="2" className="icon_s icon_s4" sort="9"/>
+	<!-- <menu id="230"  name="提现审核" link="" parentId="2" className="icon_s icon_s4" sort="10"/> -->
+	<!-- <menu id="231"  name="提币审核" link="" parentId="2" className="icon_s icon_s4" sort="11"/> -->
+	<!-- <menu id="232"  name="代理分红" link="" parentId="2" className="icon_s icon_s4" sort="12"/> -->
+	
+<!-- id 2_221的三级功能菜单 --> 
+	<menu id="22131"  name="玩法管理列表" link="/admin/optionType/list.shtml" parentId="221" className="icon_s icon_s4" sort="1"/>
+	<menu id="22132"  name="添加玩法管理" link="/admin/optionType/add.shtml" parentId="221" className="icon_s icon_s4" sort="2"/>
+	
+<!-- id 2_222的三级功能菜单 --> 
+	<menu id="22231"  name="产品列表" link="/admin/goods/list.shtml" parentId="222" className="icon_s icon_s4" sort="1"/>
+	<menu id="22232"  name="添加产品" link="/admin/goods/add.shtml" parentId="222" className="icon_s icon_s4" sort="2"/>
+	
+<!-- id 2_223的三级功能菜单 --> 
+	<menu id="22331"  name="产品行情接口列表" link="/admin/goodsPriceAPI/list.shtml" parentId="223" className="icon_s icon_s4" sort="1"/>
+	<menu id="22332"  name="添加产品行情接口" link="/admin/goodsPriceAPI/add.shtml" parentId="223" className="icon_s icon_s4" sort="2"/>
+	
+<!-- id 2_224的三级功能菜单 -->
+	<menu id="22431"  name="止盈止损点列表" link="/admin/goodsStopProfitLoss/list.shtml" parentId="224" className="icon_s icon_s4" sort="1"/>
+	<menu id="22432"  name="添加止盈止损点" link="/admin/goodsStopProfitLoss/add.shtml" parentId="224" className="icon_s icon_s4" sort="2"/>
+	
+<!-- id 2_225的三级功能菜单 --> 
+	<menu id="22531"  name="到期时间列表" link="/admin/goodsTime/list.shtml" parentId="225" className="icon_s icon_s4" sort="1"/>
+	<menu id="22532"  name="添加到期时间" link="/admin/goodsTime/add.shtml" parentId="225" className="icon_s icon_s4" sort="2"/>
+	
+<!-- id 2_226的三级功能菜单 --> 
+	<!-- <menu id="22631"  name="钱包列表" link="/admin/wallet/list.shtml" parentId="226" className="icon_s icon_s4" sort="1"/> -->
+	
+<!-- id 2_227的三级功能菜单 --> 
+	<!-- <menu id="22731"  name="开户行列表" link="/admin/bankDeposit/list.shtml" parentId="227" className="icon_s icon_s4" sort="1"/>
+	<menu id="22732"  name="添加开户行" link="/admin/bankDeposit/add.shtml" parentId="227" className="icon_s icon_s4" sort="2"/> -->
+	
+<!-- id 2_228的三级功能菜单 --> 
+	<!-- <menu id="22831"  name="平台收款账户列表" link="/admin/platformReceivableAccount/list.shtml" parentId="228" className="icon_s icon_s4" sort="1"/>
+	<menu id="22832"  name="添加平台收款账户" link="/admin/platformReceivableAccount/add.shtml" parentId="228" className="icon_s icon_s4" sort="2"/>	 -->
+	
+<!-- id 2_229的三级功能菜单 --> 
+	<menu id="22931"  name="支付插件列表" link="/admin/paymentPlugin/list.shtml" parentId="229" className="icon_s icon_s4" sort="1"/>
+
+<!-- id 2_230的三级功能菜单 --> 
+	<!-- <menu id="23031"  name="提现审核" link="/admin/withdrawRecord/audit.shtml" parentId="230" className="icon_s icon_s4" sort="1"/> -->
+	
+<!-- id 2_231的三级功能菜单 --> 
+	<!-- <menu id="23131"  name="提币审核" link="/admin/withdrawVirtualCoinRecord/audit.shtml" parentId="231" className="icon_s icon_s4" sort="1"/> -->	
+	
+<!-- id 2_232的三级功能菜单 --> 
+	<!-- <menu id="23231"  name="总代分红" link="/admin/bonusRecord/list.shtml" parentId="232" className="icon_s icon_s4" sort="1"/> -->
+<!-- ******************************** -->
+
+<!-- ******************************** -->
+<!-- id 3的二级功能菜单 --> 
+	<menu id="321"  name="订单管理" link="" parentId="3" className="icon_s icon_s4" sort="1"/>
+	<!-- <menu id="322"  name="平台资金管理" link="" parentId="3" className="icon_s icon_s4" sort="2"/> -->
+	
+<!-- id 3_321的三级功能菜单 -->
+	<menu id="32131"  name="交易明细列表" link="/admin/transactionRecord/list.shtml" parentId="321" className="icon_s icon_s4" sort="1"/>
+	<menu id="32132"  name="持仓订单列表" link="/admin/userPositionInfo/list.shtml" parentId="321" className="icon_s icon_s4" sort="2"/> 
+	<menu id="32133"  name="充值订单列表" link="/admin/chargeRecord/list.shtml" parentId="321" className="icon_s icon_s4" sort="3"/>
+	<menu id="32134"  name="提现订单列表" link="/admin/withdrawRecord/list.shtml" parentId="321" className="icon_s icon_s4" sort="4"/>
+	<!-- <menu id="32135"  name="提币订单列表" link="/admin/withdrawVirtualCoinRecord/list.shtml" parentId="321" className="icon_s icon_s4" sort="5"/> -->
+	<!-- <menu id="32136"  name="转账订单列表" link="/admin/transferRecord/list.shtml" parentId="321" className="icon_s icon_s4" sort="6"/>
+	<menu id="32137"  name="资金互转订单列表" link="/admin/mutualTransferRecord/list.shtml" parentId="321" className="icon_s icon_s4" sort="7"/> -->
+	
+<!-- id 3_322的三级功能菜单 -->	
+	<!-- <menu id="32231"  name="平台资金管理" link="/admin/notice/add.shtml" parentId="322" className="icon_s icon_s4" sort="1"/>
+	<menu id="32232"  name="平台收支管理" link="/admin/notice/add.shtml" parentId="322" className="icon_s icon_s4" sort="2"/> -->
+<!-- ******************************** -->	
+
+<!-- ******************************** -->
+<!-- id 4的二级功能菜单 --> 
+	<menu id="421"  name="统计管理" link="" parentId="4" className="icon_s icon_s4" sort="1"/>
+	
+<!-- id 4_421的三级功能菜单 --> 
+	<menu id="42131"  name="概要统计" link="/admin/summaryStatistics/list.shtml" parentId="421" className="icon_s icon_s4" sort="1"/>
+	<menu id="42132"  name="交易统计" link="/admin/tradeStatistics/list.shtml" parentId="421" className="icon_s icon_s4" sort="2"/>
+	<!-- <menu id="42133"  name="代理统计" link="/admin/agencyStatistics/list.shtml" parentId="421" className="icon_s icon_s4" sort="3"/> -->
+	<menu id="42134"  name="充值统计" link="/admin/rechargeStatistics/list.shtml" parentId="421" className="icon_s icon_s4" sort="4"/>
+	<menu id="42135"  name="提现统计" link="/admin/withdrawCashStatistics/list.shtml" parentId="421" className="icon_s icon_s4" sort="5"/>
+<!-- ******************************** -->
+
+<!-- ******************************** -->
+<!-- id 5的二级功能菜单 --> 
+	<menu id="521"  name="广告管理" link="" parentId="5" className="icon_s icon_s4" sort="1"/>
+	<menu id="522"  name="网站公告" link="" parentId="5" className="icon_s icon_s4" sort="2"/>
+	<menu id="523"  name="消息管理" link="" parentId="5" className="icon_s icon_s4" sort="3"/>
+	<menu id="524"  name="合作管理" link="" parentId="5" className="icon_s icon_s4" sort="4"/>
+	<menu id="525"  name="客服中心" link="" parentId="5" className="icon_s icon_s4" sort="5"/>
+	<menu id="526"  name="帮助中心" link="" parentId="5" className="icon_s icon_s4" sort="6"/>
+	<!-- <menu id="527"  name="底部数据" link="" parentId="5" className="icon_s icon_s4" sort="7"/> -->
+	<menu id="528"  name="协议管理" link="" parentId="5" className="icon_s icon_s4" sort="8"/>
+<!-- id 5_521的三级功能菜单 --> 
+	<menu id="52131"  name="广告列表" link="/admin/ad/list.shtml" parentId="521" className="icon_s icon_s4" sort="1"/>
+	<menu id="52132"  name="广告位列表" link="/admin/adPosition/list.shtml" parentId="521" className="icon_s icon_s4" sort="2"/>
+	
+<!-- id 5_522的三级功能菜单 --> 
+	<menu id="52231"  name="公告列表" link="/admin/notice/list.shtml" parentId="522" className="icon_s icon_s4" sort="1"/>
+	<menu id="52232"  name="行业要闻" link="/admin/mediaReport/list.shtml" parentId="522" className="icon_s icon_s4" sort="1"/>
+	<menu id="52233"  name="关于我们" link="/admin/aboutUs/list.shtml" parentId="522" className="icon_s icon_s4" sort="1"/>
+	
+<!-- id 5_523的三级功能菜单 --> 
+	<menu id="52331"  name="发送消息" link="/admin/message/add.shtml" parentId="523" className="icon_s icon_s4" sort="1"/>
+	<menu id="52332"  name="消息列表" link="/admin/message/list.shtml" parentId="523" className="icon_s icon_s4" sort="2"/>
+	
+<!-- id 5_523的三级功能菜单 --> 
+	<menu id="52431"  name="友情链接列表" link="/admin/friendLink/list.shtml" parentId="524" className="icon_s icon_s4" sort="1"/>
+	<menu id="52432"  name="合作伙伴列表" link="/admin/companion/list.shtml" parentId="524" className="icon_s icon_s4" sort="2"/>
+	
+<!-- id 5_524的三级功能菜单 --> 
+	<menu id="52531"  name="QQ客服" link="/admin/qqCustomer/list.shtml" parentId="525" className="icon_s icon_s4" sort="1"/>
+	<menu id="52532"  name="电话客服" link="/admin/phoneCustomer/list.shtml" parentId="525" className="icon_s icon_s4" sort="2"/>
+	
+<!-- id 5_525的三级功能菜单 --> 
+	<menu id="52631"  name="帮助类型列表" link="/admin/helpType/list.shtml" parentId="526" className="icon_s icon_s4" sort="1"/>
+	<menu id="52632"  name="子帮助类型列表" link="/admin/subHelpType/list.shtml" parentId="526" className="icon_s icon_s4" sort="2"/>
+	<menu id="52633"  name="帮助选项列表" link="/admin/helpOption/list.shtml" parentId="526" className="icon_s icon_s4" sort="3"/>
+
+<!-- id 5_526的三级功能菜单 --> 
+	<!-- <menu id="52731"  name="底部数据类型列表" link="/admin/footerDataType/list.shtml" parentId="527" className="icon_s icon_s4" sort="1"/>
+	<menu id="52732"  name="子底部数据类型列表" link="/admin/subFooterDataType/list.shtml" parentId="527" className="icon_s icon_s4" sort="2"/>
+	<menu id="52733"  name="底部数据选项列表" link="/admin/footerDataOption/list.shtml" parentId="527" className="icon_s icon_s4" sort="3"/> -->
+	
+<!-- id 5_527的三级功能菜单 --> 
+	<menu id="52831"  name="协议列表" link="/admin/protocol/list.shtml" parentId="528" className="icon_s icon_s4" sort="1"/>
+	<menu id="52832"  name="添加协议" link="/admin/protocol/add.shtml" parentId="528" className="icon_s icon_s4" sort="2"/>	
+<!-- ******************************** -->
+	
+<!-- ******************************** -->
+<!-- id 6的二级功能菜单 --> 
+	<menu id="621"  name="管理员管理" link="" parentId="6" className="icon_s icon_s4" sort="1"/>
+	<menu id="622"  name="日志管理" link="" parentId="6" className="icon_s icon_s4" sort="2"/>
+	<menu id="623"  name="系统设置" link="" parentId="6" className="icon_s icon_s4" sort="3"/>
+	
+<!-- id 6_621的三级功能菜单 --> 
+	<menu id="62131"  name="管理员列表" link="/admin/list.shtml" parentId="621" className="icon_s icon_s4" sort="1"/>
+	<menu id="62132"  name="角色列表" link="/admin/role/list.shtml" parentId="621" className="icon_s icon_s4" sort="2"/>
+	
+<!-- id 6_622的三级功能菜单 --> 
+	<menu id="62231"  name="前台登录日志" link="/admin/loginLog/list.shtml?loginType=proscenium" parentId="622" className="icon_s icon_s4" sort="1"/>
+	<menu id="62232"  name="后台登录日志" link="/admin/loginLog/list.shtml?loginType=backstage" parentId="622" className="icon_s icon_s4" sort="2"/>
+	<menu id="62233"  name="后台操作日志" link="/admin/operationLog/list.shtml" parentId="622" className="icon_s icon_s4" sort="3"/>
+	
+<!-- id 6_623的三级功能菜单 --> 
+	<menu id="62332"  name="常量设置" link="/admin/sysConfig/view.shtml" parentId="623" className="icon_s icon_s4" sort="2"/>
+<!-- ******************************** -->
+</menus>

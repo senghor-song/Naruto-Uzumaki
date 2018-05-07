@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd"
+	default-lazy-init="true">
+	
+	<context:property-placeholder location="classpath*:/ruiec.properties" ignore-resource-not-found="true" ignore-unresolvable="true" />
+	
+	<bean id="exceptionHandler" class="com.ruiec.web.exceptionResolver.ExceptionHandler" />
+	
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+	    <!-- 国际化信息所在的文件名 -->                     
+	    <property name="basename" value="messages" /> 
+	</bean>
+
+	<mvc:interceptors>  
+	    <!-- 国际化操作拦截器 如果采用基于（请求/Session/Cookie）则必需配置 --> 
+	    <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />  
+	</mvc:interceptors>  
+	
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />
+	
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/plain;charset=UTF-8</value>
+						<value>text/html;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>	
+	
+	<context:component-scan base-package="com.ruiec" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	
+	<mvc:annotation-driven validator="validator" />
+	
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="validationMessageSource" ref="reloadableMessageSource" />
+	</bean>
+	
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/api/admin/**" />
+			<mvc:exclude-mapping path="/api/admin/login.shtml" />
+			<mvc:exclude-mapping path="/api/admin/view.shtml" />
+			<mvc:exclude-mapping path="/api/admin/banner/defaultPic.*" />
+            <mvc:exclude-mapping path="/api/admin/banner.shtml" />
+			<bean id="loginInterceptor" class="com.ruiec.web.interceptor.ApiLoginInterceptor" />
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/api/admin/user/**" />
+			<mvc:mapping path="/api/admin/manager/**" />
+			<mvc:mapping path="/api/admin/unit/**" />
+			<mvc:mapping path="/api/admin/dictionaryType/**" />
+			<mvc:mapping path="/api/admin/dictionary/**" />
+			<mvc:mapping path="/api/admin/loginLog/**" />
+			<mvc:mapping path="/api/admin/operationLog/**" />
+			<mvc:mapping path="/api/admin/banner/**" />
+			<mvc:mapping path="/api/admin/db/**" />
+			<mvc:exclude-mapping path="/api/admin/login.shtml" />
+			<mvc:exclude-mapping path="/api/admin/view.shtml" />
+			<mvc:exclude-mapping path="/api/admin/unit/getNextUnit.*" />
+			<mvc:exclude-mapping path="/api/admin/unit/getUnitPerson.*" />
+			<mvc:exclude-mapping path="/api/admin/unit/getPoliceUnit.*" />
+			<mvc:exclude-mapping path="/api/admin/dictionary/check.*" />
+			<mvc:exclude-mapping path="/api/admin/dictionary/findByDataItemId.*" />
+			<mvc:exclude-mapping path="/api/admin/notice/noticelist.*" />
+			<mvc:exclude-mapping path="/api/admin/notice/nlist.*" />
+			<mvc:exclude-mapping path="/api/admin/notice/list.*" />
+			<mvc:exclude-mapping path="/api/admin/notice/detail.*" />
+			<mvc:exclude-mapping path="/api/admin/manager/checkById.*" />
+			<mvc:exclude-mapping path="/api/admin/banner/defaultPic.*" />
+			<mvc:exclude-mapping path="/api/admin/dictionary/subSet.*" />
+			<bean id="sysInterceptor" class="com.ruiec.web.interceptor.SysInterceptor" />
+		</mvc:interceptor>
+	    <mvc:interceptor>
+		    <mvc:mapping path="/api/admin/controlPersonAlarm/stableControlList.* "/>
+		    <bean id="permissionsInterceptor" class="com.ruiec.web.interceptor.PermissionsInterceptor" />
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<!-- <mvc:exclude-mapping path="" /> -->
+			<bean id="tokenInterceptor" class="com.ruiec.web.interceptor.TokenInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<!-- 配置JSP视图 -->
+	<bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/template" />
+		<property name="suffix" value=".jsp" />
+		<property name="contentType" value="text/html;charset=UTF-8" />
+		<property name="attributes">
+			<props>
+				<prop key="base">#{servletContext.contextPath}</prop>
+				<prop key="global">#{global}</prop>
+			</props>
+		</property>
+		<property name="order" value="0" />
+	</bean>
+		
+	<!-- 配置FreeMark视图 -->
+    <bean id="freeMarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="contentType" value="text/html;charset=UTF-8"/>      
+        <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView"/>
+        <property name="suffix" value=".ftl"/>
+        <property name="cache" value="true"/>
+        <property name="exposeSessionAttributes" value="true"/>
+        <property name="exposeRequestAttributes" value="true"/>     
+        <property name="exposeSpringMacroHelpers" value="true"/>
+        <property name="attributes">
+		    <props>
+		      <prop key="base">#{servletContext.contextPath}</prop>
+		      <prop key="global">#{global}</prop>
+		    </props>
+		</property>
+        <property name="order" value="1"/>
+    </bean>
+    
+    <bean id="reloadableMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="cacheSeconds" value="${message.cache_seconds}" />
+		<property name="useCodeAsDefaultMessage" value="false" />
+		<property name="basenames">
+			<list>
+				<value>${message.common_path}</value>
+				<value>${message.home_path}</value>
+				<value>${message.admin_path}</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8" />
+	</bean>
+	
+	<bean id="fixedLocaleResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver">
+		<property name="defaultLocale" value="${locale}" />
+	</bean>
+	
+	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPaths" value="${template.loader_path}" />
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="defaultEncoding">${template.encoding}</prop>
+				<prop key="url_escaping_charset">${url_escaping_charset}</prop>
+				<prop key="locale">${locale}</prop>
+				<prop key="template_update_delay">${template.update_delay}</prop>
+				<prop key="tag_syntax">auto_detect</prop>
+				<prop key="whitespace_stripping">true</prop>
+				<prop key="classic_compatible">true</prop>
+				<prop key="number_format">${template.number_format}</prop>
+				<prop key="boolean_format">${template.boolean_format}</prop>
+				<prop key="datetime_format">${template.datetime_format}</prop>
+				<prop key="date_format">${template.date_format}</prop>
+				<prop key="time_format">${template.time_format}</prop>
+				<prop key="object_wrapper">freemarker.ext.beans.BeansWrapper</prop>
+			</props>
+		</property>
+		<property name="freemarkerVariables">
+			<map>
+				<entry key="systemName" value="${system.name}" />
+			</map>
+		</property>
+	</bean>
+	
+	<!-- <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="defaultErrorView" value="admin/common/error" />
+	</bean> -->
+     
+</beans>

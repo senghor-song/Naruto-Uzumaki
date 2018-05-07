@@ -1,0 +1,4 @@
+<!--  --># robots.txt for jzw
+
+User-agent: *
+Sitemap: /sitemap/sitemapindex.xml

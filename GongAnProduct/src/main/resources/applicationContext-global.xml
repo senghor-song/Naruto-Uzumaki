@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<!-- 全局参数bean -->
+	<bean id="global" class="com.ruiec.web.common.Global">
+		<property name="authorityCenterUrl" value="http://www.caipiao198.com/cas" />
+	</bean>
+</beans>    

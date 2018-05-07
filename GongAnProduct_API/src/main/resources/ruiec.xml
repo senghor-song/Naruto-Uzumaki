@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruiec>
+	<!-- 基本设置Start -->
+	<sysConfig name="isOpenWebsite" value="true" desc="是否启用网站"/>
+	<sysConfig name="maintenanceInfo" value="服务器正在努力维护中......请稍后访问！" desc="维护信息"/>
+	<sysConfig name="siteUrl" value="http://www.test.com:8081/WFW" desc="网站域名"/>
+	<sysConfig name="fileServerUrl" value="http://115.29.106.174:8081" desc="文件服务器访问路径"/>
+	<sysConfig name="email" value="yz@126.com" desc="联系邮箱"/>
+	<sysConfig name="qq" value="1523152" desc="联系qq"/>
+	<sysConfig name="phone" value="15865232256" desc="联系电话"/>
+	<sysConfig name="hotline" value="400-000-0000" desc="客服热线"/>
+	<sysConfig name="serviceTime" value="09:00-21:00" desc="服务时间"/>
+	<sysConfig name="peopleName" value="源中瑞" desc="联系人姓名"/>
+	<sysConfig name="address" value="源中瑞" desc="联系地址"/>
+	<sysConfig name="siteName" value="彩票导航" desc="网站名称"/>
+	<sysConfig name="copyRightInfo" value="©2010 源中瑞网络传媒 All Right Reserved" desc="版权信息"/>
+	<sysConfig name="companyInfo" value="" desc="公司简介"/>
+	<!-- 基本设置End -->
+	
+	<!-- 高级设置Start -->
+	<sysConfig name="isOpenResource" value="true" desc="是否开启上传功能"/>
+	<sysConfig name="resourceType" value="doc,docx,xls,xlsx,ppt,pptx,pdf" desc="允许上传的文件类型"/>
+	<sysConfig name="maxSize" value="5120" desc="允许上传的文件大小"/>
+	<sysConfig name="imgType" value="bmp,jpg,png,tiff,gif,pcx,tga,exif,fpx,svg,psd,cdr,pcd,dxf,ufo,eps,ai,raw" desc="允许上传的图片类型"/>
+	<sysConfig name="imgMaxSize" value="4096" desc="允许上传的图片大小"/>
+	<!-- 高级设置End -->
+	
+	<!-- 验证设置Start -->
+	<sysConfig name="systemEmail" value="jzw@jinzhuannet.com" desc="系统邮箱"/>
+	<sysConfig name="emailPwd" value="jzw2014" desc="系统邮箱密码"/>
+	<sysConfig name="smtp" value="smtp.ym.163.com" desc="smtp服务器地址"/>
+	<sysConfig name="smtpPort" value="25" desc="smtp服务器端口"/>
+	<!-- 短信配置 -->
+	<sysConfig name="smsSign" value="【二元期权】" desc="短信标识"/>
+	<sysConfig name="smsUrl" value="http://web.duanxinwang.cc/asmx/smsservice.aspx" desc="短信接口地址"/>
+	<sysConfig name="smsUid" value="test2016"  desc="短信平台用户名"/>
+	<sysConfig name="smsKey" value="77C464BF51C964F7BBE9F5600286"  desc="短信接口安全密码"/>
+	<!-- 验证设置End -->
+	
+	<!-- 首页SEO设置Start -->
+	<sysConfig name="indexTitle" value="- 源中瑞二元期权 - 专业二元期权交易平台" desc="SEO标题"/>
+	<sysConfig name="indexKeywords" value="源中瑞二元期权" desc="SEO关键词"/>
+	<sysConfig name="indexDescription" value="源中瑞二元期权。" desc="SEO描述"/>
+	<!-- 首页SEO设置End -->
+	
+	<!-- 业务设置Start -->
+	<sysConfig name="bonusCycle" value="7" desc="分红周期"></sysConfig>
+	<sysConfig name="highestBackRate" value="0.13" desc="最高返点等级"/>
+	<sysConfig name="lowestBackRate" value="0.05" desc="最低返点等级"/>
+	<sysConfig name="maxBackRateDifference" value="0.05" desc="最大返点等级差"/>
+	<sysConfig name="normalPalyerBackrate" value="0.01" desc="普通注册玩家返点数"/>
+	<sysConfig name="withdrawHandlingFeeRate" value="0.04" desc="提现手续费率"/>
+	<sysConfig name="withdrawVirtualCoinHandlingFeeRate" value="0.04" desc="提币手续费率"/>
+	<sysConfig name="rmbConverToUSDRate" value="0.1499" desc="人民币转换成美元的汇率(入金)"/>
+	<sysConfig name="usdConverToRMBRate" value="6.6702" desc="美元转换成人民币的汇率(出金)"/>
+	<!-- 业务设置End -->
+</ruiec>
