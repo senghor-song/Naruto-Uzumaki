@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/animate.css" />
+		<link rel="stylesheet" href="css/site.css" />
+		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/void.css" />
+		<link rel="stylesheet" href="css/layui.css" />
+	</head>
+
+	<body>
+		<div class="header">
+			<div class="w960">
+				<a class="logo" href="http://www.yiyiye.com" title="最新电影与电视剧在线播放及高速下载"></a>
+				<ul class="layui-nav" lay-filter="">
+					<li class="layui-nav-item ">
+						<a href="http://www.yiyiye.com">网站首页</a>
+					</li>
+					<li class="layui-nav-item layui-this">
+						<a href="/cate/dy.html">电影</a>
+					</li>
+					<li class="layui-nav-item ">
+						<a href="/cate/dsj.html">电视剧</a>
+					</li>
+					<li class="layui-nav-item ">
+						<a href="/cate/zy.html">综艺</a>
+					</li>
+					<li class="layui-nav-item">
+						<a href="/zhibo.html">电视直播</a>
+					</li>
+					<li class="layui-nav-item">
+						<a href="/zhushou.html">播放助手</a>
+					</li>
+					<span class="layui-nav-bar" style="width: 0px; left: 0px; opacity: 0;"></span></ul>
+
+			</div>
+		</div>
+
+		<div class="w960 bcolor">
+			<div class="mar10" style="margin-top: 60px;"></div>
+			<div class="mar10"></div>
+			<div class="vod-xuan">
+				<ul>
+					<li class="vod-option">
+						<b class="left">类型：</b>
+						<div class="vod-cls" id="type">
+							<a href="?id="><span class="vodon">全部</span></a>
+							<a href="?id=5"><span class="">动作片</span></a>
+							<a href="?id=6"><span class="">喜剧片</span></a>
+							<a href="?id=7"><span class="">爱情片</span></a>
+							<a href="?id=8"><span class="">剧情片</span></a>
+							<a href="?id=9"><span class="">犯罪片</span></a>
+							<a href="?id=10"><span class="">冒险片</span></a>
+							<a href="?id=11"><span class="">战争片</span></a>
+							<a href="?id=12"><span class="">惊悚片</span></a>
+							<a href="?id=13"><span class="">悬疑片</span></a>
+							<a href="?id=14"><span class="">恐怖片</span></a>
+							<a href="?id=15"><span class="">科幻片</span></a>
+							<a href="?id=16"><span class="">奇幻片</span></a>
+							<a href="?id=17"><span class="">家庭片</span></a>
+							<a href="?id=18"><span class="">动画片</span></a>
+							<a href="?id=19"><span class="">历史片</span></a>
+							<a href="?id=20"><span class="">武侠片</span></a>
+							<a href="?id=21"><span class="">伦理片</span></a>
+
+						</div>
+					</li>
+					<li class="vod-option">
+						<b class="left">地区：</b>
+						<div class="vod-cls">
+							<a href="?gj=&amp;id=1"><span class="vodon">全部</span></a>
+							<a href="?gj=1&amp;id=1"><span class="">内地</span></a>
+							<a href="?gj=2&amp;id=1"><span class="">香港</span></a>
+							<a href="?gj=3&amp;id=1"><span class="">台湾</span></a>
+							<a href="?gj=4&amp;id=1"><span class="">美国</span></a>
+							<a href="?gj=5&amp;id=1"><span class="">欧洲</span></a>
+							<a href="?gj=6&amp;id=1"><span class="">韩国</span></a>
+							<a href="?gj=7&amp;id=1"><span class="">日本</span></a>
+							<a href="?gj=8&amp;id=1"><span class="">泰国</span></a>
+							<a href="?gj=9&amp;id=1"><span class="">印度</span></a>
+							<a href="?gj=10&amp;id=1"><span class="">其他</span></a>
+						</div>
+					</li>
+					<li class="vod-option">
+						<b class="left">年代：</b>
+						<div class="vod-cls">
+							<a href="?nf=&amp;id=1"><span class="vodon">全部</span></a>
+							<a href="?nf=10&amp;id=1"><span class="">2017</span></a>
+							<a href="?nf=9&amp;id=1"><span class="">2016</span></a>
+							<a href="?nf=8&amp;id=1"><span class="">2015</span></a>
+							<a href="?nf=7&amp;id=1"><span class="">2014</span></a>
+							<a href="?nf=6&amp;id=1"><span class="">2011-2013</span></a>
+							<a href="?nf=5&amp;id=1"><span class="">2006-2010</span></a>
+							<a href="?nf=4&amp;id=1"><span class="">2000-2005</span></a>
+							<a href="?nf=3&amp;id=1"><span class="">90年代</span></a>
+							<a href="?nf=2&amp;id=1"><span class="">80年代</span></a>
+							<a href="?nf=1&amp;id=1"><span class="">其他</span></a>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="layui-tab layui-tab-brief">
+				<ul class="layui-tab-title">
+					<li class="layui-this">最新电影</li>
+					<span class="right vcount">共有&nbsp;<em style="color: red">182</em>&nbsp;个视频</span>
+				</ul>
+				<div class="layui-tab-content" style="padding-top: 0px">
+					<div class="layui-tab-item layui-show fadeInUp animated" style="overflow: hidden;zoom: 1;">
+						<div class="vod-two">
+							<a title="功守道" href="/yp/255.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/5wryj2oo24kuc261510440658/260" alt="功守道"></a>
+							<a title="功守道" href="/yp/255.html" target="_blank">
+								<p>功守道</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="刀剑笑新传之花魁" href="/yp/254.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/s4o48i25x6kg8s71510046636/260" alt="刀剑笑新传之花魁"></a>
+							<a title="刀剑笑新传之花魁" href="/yp/254.html" target="_blank">
+								<p>刀剑笑新传之花魁</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="豆福传" href="/yp/253.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/i1wy6h1octewf681509523538/260" alt="豆福传"></a>
+							<a title="豆福传" href="/yp/253.html" target="_blank">
+								<p>豆福传</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="造梦师" href="/yp/251.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/uyev4jv34obpyxl1509851420/260" alt="造梦师"></a>
+							<a title="造梦师" href="/yp/251.html" target="_blank">
+								<p>造梦师</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="情遇曼哈顿" href="/yp/250.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/tdtxsjq1js4twyi1501806695/260" alt="情遇曼哈顿"></a>
+							<a title="情遇曼哈顿" href="/yp/250.html" target="_blank">
+								<p>情遇曼哈顿</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="刀剑笑新传之宝鉴" href="/yp/241.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/g5sww8w3cvdnchv1509504452/260" alt="刀剑笑新传之宝鉴"></a>
+							<a title="刀剑笑新传之宝鉴" href="/yp/241.html" target="_blank">
+								<p>刀剑笑新传之宝鉴</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="战狼2" href="/yp/240.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/wi8e2p5kirdaf3j1501228536/260" alt="战狼2"></a>
+							<a title="战狼2" href="/yp/240.html" target="_blank">
+								<p>战狼2</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="三生三世十里桃花电影版" href="/yp/239.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/7hg5nr3x10ingpj1503995656/260" alt="三生三世十里桃花电影版"></a>
+							<a title="三生三世十里桃花电影版" href="/yp/239.html" target="_blank">
+								<p>三生三世十里桃花电影版</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="星际特工：千星之城" href="/yp/238.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/wn8zjoi9e41qoyf1501637087/260" alt="星际特工：千星之城"></a>
+							<a title="星际特工：千星之城" href="/yp/238.html" target="_blank">
+								<p>星际特工：千星之城</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="此情此刻" href="/yp/237.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/qtchcccn6l5xuji1495616938/260" alt="此情此刻"></a>
+							<a title="此情此刻" href="/yp/237.html" target="_blank">
+								<p>此情此刻</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="赛车总动员3" href="/yp/236.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/4zjqix14x3nyntt1507690464/260" alt="赛车总动员3"></a>
+							<a title="赛车总动员3" href="/yp/236.html" target="_blank">
+								<p>赛车总动员3</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="会痛的十七岁" href="/yp/235.html" target="_blank"><img width="175" height="245" src="http://puui.qpic.cn/vcover_vt_pic/0/tn0gckgvo7p2qlo1502843391/260" alt="会痛的十七岁"></a>
+							<a title="会痛的十七岁" href="/yp/235.html" target="_blank">
+								<p>会痛的十七岁</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="诡井" href="/yp/234.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/rbul4y7fjflw08r1500948027/260" alt="诡井"></a>
+							<a title="诡井" href="/yp/234.html" target="_blank">
+								<p>诡井</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="杀破狼·贪狼" href="/yp/233.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/ldl8jqkvepk3t6a1507801698/260" alt="杀破狼·贪狼"></a>
+							<a title="杀破狼·贪狼" href="/yp/233.html" target="_blank">
+								<p>杀破狼·贪狼</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="大追捕" href="/yp/232.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/7lum5z27hl14jl6t1444753591.jpg/260" alt="大追捕"></a>
+							<a title="大追捕" href="/yp/232.html" target="_blank">
+								<p>大追捕</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="极寒之城" href="/yp/231.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/lcomt2dtd1leyfq1491964337/260" alt="极寒之城"></a>
+							<a title="极寒之城" href="/yp/231.html" target="_blank">
+								<p>极寒之城</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="侠盗联盟" href="/yp/230.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/bt9pl9zvec3cnre1504164399/260" alt="侠盗联盟"></a>
+							<a title="侠盗联盟" href="/yp/230.html" target="_blank">
+								<p>侠盗联盟</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="野蛮囧妃2:迷雾重重" href="/yp/229.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/5ttxwmq791c3pa11505897455/260" alt="野蛮囧妃2:迷雾重重"></a>
+							<a title="野蛮囧妃2:迷雾重重" href="/yp/229.html" target="_blank">
+								<p>野蛮囧妃2:迷雾重重</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="有言在仙" href="/yp/224.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/0zi4x4n86xhabki1506764910/260" alt="有言在仙"></a>
+							<a title="有言在仙" href="/yp/224.html" target="_blank">
+								<p>有言在仙</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="心理罪" href="/yp/223.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/a8shst9guwwilpf1505809504/260" alt="心理罪"></a>
+							<a title="心理罪" href="/yp/223.html" target="_blank">
+								<p>心理罪</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="黑白迷宫" href="/yp/222.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/v6mbz2pijfnim4c1503560122/260" alt="黑白迷宫"></a>
+							<a title="黑白迷宫" href="/yp/222.html" target="_blank">
+								<p>黑白迷宫</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="破局" href="/yp/221.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/6l0ns16c6rwjyei1501726192/260" alt="破局"></a>
+							<a title="破局" href="/yp/221.html" target="_blank">
+								<p>破局</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="怪兽卡车" href="/yp/219.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/ba80anndrqeis2y1506408736/260" alt="怪兽卡车"></a>
+							<a title="怪兽卡车" href="/yp/219.html" target="_blank">
+								<p>怪兽卡车</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="猩球崛起3：终极之战" href="/yp/218.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/tak1mklb9kl7de21506307445/260" alt="猩球崛起3：终极之战"></a>
+							<a title="猩球崛起3：终极之战" href="/yp/218.html" target="_blank">
+								<p>猩球崛起3：终极之战</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="毒诫" href="/yp/217.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/s8hjaqnm0eeur1t1493350011/260" alt="毒诫"></a>
+							<a title="毒诫" href="/yp/217.html" target="_blank">
+								<p>毒诫</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="租婚男女" href="/yp/216.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/lortoky29b0dvyj1502092520/260" alt="租婚男女"></a>
+							<a title="租婚男女" href="/yp/216.html" target="_blank">
+								<p>租婚男女</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="茶盗" href="/yp/215.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/kbjbhyi200p58kb1502264732/260" alt="茶盗"></a>
+							<a title="茶盗" href="/yp/215.html" target="_blank">
+								<p>茶盗</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="异生探" href="/yp/213.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/c3crdf4pt7hsz2p1506564881/260" alt="异生探"></a>
+							<a title="异生探" href="/yp/213.html" target="_blank">
+								<p>异生探</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="二次初恋" href="/yp/212.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/n81ymjd0pwazwon1502934200/260" alt="二次初恋"></a>
+							<a title="二次初恋" href="/yp/212.html" target="_blank">
+								<p>二次初恋</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="建军大业" href="/yp/211.html" target="_blank"><img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/4xf4ni3vwii9kl11501121700/260" alt="建军大业"></a>
+							<a title="建军大业" href="/yp/211.html" target="_blank">
+								<p>建军大业</p>
+							</a>
+						</div>
+
+					</div>
+					<div class="mar10"></div>
+					<div class="page" style="text-align: center; ">
+						<div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-0">
+							<a class="layui-btn-disabled">上一页</a>
+							<a class="on">1</a>
+							<a href="/cate/dy.html?p=2&amp;id=1">2</a>
+							<a href="/cate/dy.html?p=3&amp;id=1">3</a>
+							<a href="/cate/dy.html?p=4&amp;id=1">4</a>
+							<a href="/cate/dy.html?p=5&amp;id=1">5</a>
+							<a href="/cate/dy.html?p=6&amp;id=1">6</a>
+							<a href="/cate/dy.html?p=2&amp;id=1" class="layui-laypage-next">下一页</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="mar10"></div>
+		<div id="footer">
+			<li class="list">
+				<a href="#" target="diy">关于我们</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+				<a href="/mzsm.html" target="diy">免责申明</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+				<a href="#" target="diy">商务合作</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+				<a href="#" target="diy">诚聘英才</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+				<a href="#" target="diy">联系我们</a>
+			</li>
+			<div class="w960 pb10">
+				<p>本站所有音视频均来自互联网，版权归原创者所有，如果侵犯了你的权益，请联系邮箱:hyfanli@qq.com</p>
+				<p>Copyright @2014 - 2017 www.yiyiye.com.All Rights Reserved.电影与电视剧搜索 &nbsp;&nbsp; 网络备案号：
+					<a href="http://www.miibeian.gov.cn" target="_blank">浙ICP备15046827号-2</a>
+				</p>
+			</div>
+		</div>
+
+		<script>
+			layui.use('element', function() {
+				var element = layui.element();
+
+			});
+		</script>
+		<script>
+			(function() {
+				var bp = document.createElement('script');
+				var curProtocol = window.location.protocol.split(':')[0];
+				if(curProtocol === 'https') {
+					bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+				} else {
+					bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+				}
+				var s = document.getElementsByTagName("script")[0];
+				s.parentNode.insertBefore(bp, s);
+			})();
+
+			var _hmt = _hmt || [];
+			(function() {
+				var hm = document.createElement("script");
+				hm.src = "https://hm.baidu.com/hm.js?42dee80aa2b8748c46a657955f9193bc";
+				var s = document.getElementsByTagName("script")[0];
+				s.parentNode.insertBefore(hm, s);
+			})();
+		</script>
+
+	</body>
+
+</html>

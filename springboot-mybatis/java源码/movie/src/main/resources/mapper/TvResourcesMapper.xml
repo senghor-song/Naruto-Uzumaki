@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruiec.springboot.dao.TvResourcesMapper">
+	<sql id="TableName">
+		tv_resources tr
+	</sql>
+	<sql id="Base_Column_List">
+		tr.id, tr.tvId, tr.episodes, tr.clarity, tr.size, tr.downlodMode, tr.downlodLink, tr.createOn
+	</sql>
+	<sql id="Tv_Column_List">
+		t.name
+	</sql>
+	<insert id="insert" parameterType="java.util.Map">
+		INSERT INTO
+		<include refid="TableName" />
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="tvId != null">
+				tvId,
+			</if>
+			<if test="episodes != null">
+				episodes,
+			</if>
+			<if test="clarity != null">
+				clarity,
+			</if>
+			<if test="size != null">
+				size,
+			</if>
+			<if test="downlodMode != null">
+				downlodMode,
+			</if>
+			<if test="downlodLink != null">
+				downlodLink,
+			</if>
+			<if test="createOn != null">
+				createOn,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="tvId != null">
+				#{tvId,jdbcType=BIGINT},
+			</if>
+			<if test="episodes != null">
+				#{episodes,jdbcType=INTEGER},
+			</if>
+			<if test="clarity != null">
+				#{clarity,jdbcType=VARCHAR},
+			</if>
+			<if test="size != null">
+				#{size,jdbcType=DOUBLE},
+			</if>
+			<if test="downlodMode != null">
+				#{downlodMode,jdbcType=BIT},
+			</if>
+			<if test="downlodLink != null">
+				#{downlodLink,jdbcType=VARCHAR},
+			</if>
+			<if test="createOn != null">
+				#{createOn,jdbcType=BIGINT},
+			</if>
+		</trim>
+	</insert>
+	<delete id="delete">
+		DELETE FROM
+		<include refid="TableName" />
+		WHERE id IN
+		<foreach item="item" index="index" collection="array" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	<update id="update" parameterType="java.util.Map">
+		UPDATE
+		<include refid="TableName" />
+		<set>
+			<if test="tvId != null">
+				tvId = #{tvId,jdbcType=BIGINT},
+			</if>
+			<if test="episodes != null">
+				episodes = #{episodes,jdbcType=INTEGER},
+			</if>
+			<if test="clarity != null">
+				clarity = #{clarity,jdbcType=VARCHAR},
+			</if>
+			<if test="size != null">
+				size = #{size,jdbcType=DOUBLE},
+			</if>
+			<if test="downlodMode != null">
+				downlodMode = #{downlodmode,jdbcType=BIT},
+			</if>
+			<if test="downlodLink != null">
+				downlodLink = #{downlodLink,jdbcType=VARCHAR},
+			</if>
+			<if test="createOn != null">
+				createOn = #{createOn,jdbcType=BIGINT},
+			</if>
+		</set>
+		WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="selectById" parameterType="java.lang.Long"
+		resultType="java.util.Map">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		<include refid="TableName" />
+		WHERE id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectPaged" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT
+		<include refid="Base_Column_List" />,
+		<include refid="Tv_Column_List" />
+		FROM
+		<include refid="TableName" />
+		LEFT JOIN tv t ON tr.tvId = t.id
+	</select>
+	<select id="selectAll" resultType="java.util.Map">
+		SELECT
+		<include refid="Base_Column_List" />,
+		<include refid="Tv_Column_List" />
+		FROM
+		<include refid="TableName" />
+		LEFT JOIN tv t ON tr.tvId = t.id
+	</select>
+	<!-- ↓↓↓↓↓↓↓↓↓↓ 扩展方法 ↓↓↓↓↓↓↓↓↓↓ -->
+
+	<!-- ↑↑↑↑↑↑↑↑↑↑ 扩展方法 ↑↑↑↑↑↑↑↑↑↑ -->
+</mapper>

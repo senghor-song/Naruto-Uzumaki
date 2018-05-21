@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruiec.springboot.dao.VarietyMapper">
+	<sql id="Base_Column_List">
+		id, name, asName, isHot, recent, updateCycle, actors, typeId, areaId,
+		director, year, coverImg,
+		releaseDate, updateDate, timeSize, watercressScore, synopsis, videoCapture,
+		createOn
+	</sql>
+	<insert id="insert" parameterType="java.util.Map">
+		INSERT INTO variety
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="asName != null">
+				asName,
+			</if>
+			<if test="isHot != null">
+				isHot,
+			</if>
+			<if test="recent != null">
+				recent,
+			</if>
+			<if test="updateCycle != null">
+				updateCycle,
+			</if>
+			<if test="actors != null">
+				actors,
+			</if>
+			<if test="typeId != null">
+				typeId,
+			</if>
+			<if test="areaId != null">
+				areaId,
+			</if>
+			<if test="director != null">
+				director,
+			</if>
+			<if test="year != null">
+				year,
+			</if>
+			<if test="releaseDate != null">
+				releaseDate,
+			</if>
+			<if test="updateDate != null">
+				updateDate,
+			</if>
+			<if test="timeSize != null">
+				timeSize,
+			</if>
+			<if test="watercressScore != null">
+				watercressScore,
+			</if>
+			<if test="synopsis != null">
+				synopsis,
+			</if>
+			<if test="videoCapture != null">
+				videoCapture,
+			</if>
+			<if test="coverImg != null">
+				coverImg,
+			</if>
+			<if test="createOn != null">
+				createOn,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="asName != null">
+				#{asName,jdbcType=VARCHAR},
+			</if>
+			<if test="isHot != null">
+				#{isHot,jdbcType=BIT},
+			</if>
+			<if test="recent != null">
+				#{recent,jdbcType=VARCHAR},
+			</if>
+			<if test="updateCycle != null">
+				#{updateCycle,jdbcType=VARCHAR},
+			</if>
+			<if test="actors != null">
+				#{actors,jdbcType=VARCHAR},
+			</if>
+			<if test="typeId != null">
+				#{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="areaId != null">
+				#{areaId,jdbcType=INTEGER},
+			</if>
+			<if test="director != null">
+				#{director,jdbcType=VARCHAR},
+			</if>
+			<if test="year != null">
+				#{year,jdbcType=INTEGER},
+			</if>
+			<if test="releaseDate != null">
+				#{releaseDate,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=VARCHAR},
+			</if>
+			<if test="timeSize != null">
+				#{timeSize,jdbcType=INTEGER},
+			</if>
+			<if test="watercressScore != null">
+				#{watercressScore,jdbcType=DOUBLE},
+			</if>
+			<if test="synopsis != null">
+				#{synopsis,jdbcType=VARCHAR},
+			</if>
+			<if test="videoCapture != null">
+				#{videoCapture,jdbcType=VARCHAR},
+			</if>
+			<if test="coverImg != null">
+				#{coverImg,jdbcType=VARCHAR},
+			</if>
+			<if test="createOn != null">
+				#{createOn,jdbcType=BIGINT},
+			</if>
+		</trim>
+	</insert>
+	<delete id="delete">
+		DELETE FROM variety WHERE id IN
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+		 	#{item}
+		</foreach> 
+	</delete>
+	<update id="update" parameterType="java.util.Map">
+		UPDATE variety
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="asName != null">
+				asName = #{asName,jdbcType=VARCHAR},
+			</if>
+			<if test="isHot != null">
+				isHot = #{isHot,jdbcType=BIT},
+			</if>
+			<if test="recent != null">
+				recent = #{recent,jdbcType=VARCHAR},
+			</if>
+			<if test="updateCycle != null">
+				updateCycle = #{updateCycle,jdbcType=VARCHAR},
+			</if>
+			<if test="actors != null">
+				actors = #{actors,jdbcType=VARCHAR},
+			</if>
+			<if test="typeId != null">
+				typeId = #{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="areaId != null">
+				areaId = #{areaId,jdbcType=INTEGER},
+			</if>
+			<if test="director != null">
+				director = #{director,jdbcType=VARCHAR},
+			</if>
+			<if test="year != null">
+				year = #{year,jdbcType=INTEGER},
+			</if>
+			<if test="releaseDate != null">
+				releaseDate = #{releaseDate,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				updateDate = #{updateDate,jdbcType=VARCHAR},
+			</if>
+			<if test="timeSize != null">
+				timeSize = #{timeSize,jdbcType=INTEGER},
+			</if>
+			<if test="watercressScore != null">
+				watercressScore = #{watercressScore,jdbcType=DOUBLE},
+			</if>
+			<if test="synopsis != null">
+				synopsis = #{synopsis,jdbcType=VARCHAR},
+			</if>
+			<if test="videoCapture != null">
+				videoCapture = #{videoCapture,jdbcType=VARCHAR},
+			</if>
+			<if test="coverImg != null">
+				coverImg = #{coverImg,jdbcType=VARCHAR},
+			</if>
+			<if test="createOn != null">
+				createOn = #{createOn,jdbcType=BIGINT},
+			</if>
+		</set>
+		WHERE id = #{id,jdbcType=BIGINT}
+	</update>
+	<select id="selectById" parameterType="java.lang.Long" resultType="java.util.Map">
+		SELECT 'false' as QUERYID,
+		<include refid="Base_Column_List" />
+		FROM variety
+		WHERE id = #{id,jdbcType=BIGINT}
+	</select>
+  <select id="selectByPage" parameterType="java.util.Map" resultType="java.util.Map">
+    SELECT v.* ,va.areaName areaName,vt.typeName FROM variety_area va,variety v,variety_type vt WHERE v.areaId=va.id AND v.typeId=vt.id
+  </select>
+  <select id="selectAll" resultType="java.util.Map">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		variety
+	</select>
+</mapper>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruiec.springboot.dao.VarietyResourcesMapper">
+	<sql id="Base_Column_List">
+		id, varietyId, programName, clarity, size, downlodMode, downlodLink,
+		createOn
+	</sql>
+	<insert id="insert" parameterType="java.util.Map">
+		INSERT INTO variety_resources
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="varietyId != null">
+				varietyId,
+			</if>
+			<if test="programName != null">
+				programName,
+			</if>
+			<if test="clarity != null">
+				clarity,
+			</if>
+			<if test="size != null">
+				size,
+			</if>
+			<if test="downlodMode != null">
+				downlodMode,
+			</if>
+			<if test="downlodLink != null">
+				downlodLink,
+			</if>
+			<if test="createOn != null">
+				createOn,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="varietyId != null">
+				#{varietyId,jdbcType=BIGINT},
+			</if>
+			<if test="programName != null">
+				#{programName,jdbcType=VARCHAR},
+			</if>
+			<if test="clarity != null">
+				#{clarity,jdbcType=VARCHAR},
+			</if>
+			<if test="size != null">
+				#{size,jdbcType=DOUBLE},
+			</if>
+			<if test="downlodMode != null">
+				#{downlodMode,jdbcType=BIT},
+			</if>
+			<if test="downlodLink != null">
+				#{downlodLink,jdbcType=VARCHAR},
+			</if>
+			<if test="createOn != null">
+				#{createOn,jdbcType=BIGINT},
+			</if>
+		</trim>
+	</insert>
+	<delete id="delete">
+		DELETE FROM variety_resources WHERE id IN
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+		 	#{item}
+		</foreach> 
+	</delete>
+	<update id="update" parameterType="java.util.Map">
+		UPDATE variety_resources
+		<set>
+			<if test="varietyId != null">
+				varietyId = #{varietyId,jdbcType=BIGINT},
+			</if>
+			<if test="programName != null">
+				programName = #{programName,jdbcType=VARCHAR},
+			</if>
+			<if test="clarity != null">
+				clarity = #{clarity,jdbcType=VARCHAR},
+			</if>
+			<if test="size != null">
+				size = #{size,jdbcType=DOUBLE},
+			</if>
+			<if test="downlodMode != null">
+				downlodMode = #{downlodMode,jdbcType=BIT},
+			</if>
+			<if test="downlodLink != null">
+				downlodLink = #{downlodLink,jdbcType=VARCHAR},
+			</if>
+			<if test="createOn != null">
+				createOn = #{createOn,jdbcType=BIGINT},
+			</if>
+		</set>
+		WHERE id = #{id,jdbcType=BIGINT}
+	</update>
+	<select id="selectById" parameterType="java.lang.Long" resultType="java.util.Map">
+		SELECT 'false' as QUERYID,
+		<include refid="Base_Column_List" />
+		FROM variety_resources
+		WHERE id = #{id,jdbcType=BIGINT}
+	</select>
+	
+  <select id="selectByPage" parameterType="java.util.Map" resultType="java.util.Map">
+   SELECT vr.* ,v.`name` varietyName FROM variety_resources vr,variety v WHERE vr.varietyId=v.id
+  </select>
+  <select id="selectAll" resultType="java.util.Map">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		variety_resources
+	</select>
+</mapper>

@@ -1,0 +1,114 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>编辑电影语言页</title>
+    <meta name="description" content="编辑电影语言页"/>
+    <meta name="keywords" content="index"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" href="/assets/i/favicon.png"/>
+    <link rel="apple-touch-icon-precomposed" href="/assets/i/app-icon72x72@2x.png"/>
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="stylesheet" href="/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/assets/css/admin.css"/>
+    <link rel="stylesheet" href="/assets/css/app.css"/>
+</head>
+<body data-type="generalComponents">
+<!-- 顶部菜单栏 -->
+<div th:replace="/admin/header :: header"></div>
+<div class="tpl-page-container tpl-page-header-fixed">
+	<!-- 左边菜单栏 -->
+	<div th:replace="/admin/nav :: div"></div>
+    <div class="tpl-content-wrapper">
+        <div class="tpl-content-page-title">电影语言列表</div>
+        <ol class="am-breadcrumb">
+            <li><a href="/admin/index" class="am-icon-home">首页</a></li>
+            <li><a href="#">电影语言管理</a></li>
+            <li><a href="/admin/variety">电影语言列表</a></li>
+            <li class="am-active">编辑电影语言信息</li>
+        </ol>
+        <div class="tpl-portlet-components">
+            <div class="tpl-block ">
+                <div class="am-g tpl-amazeui-form">
+                    <div class="am-u-sm-12 am-u-md-9">
+                        <form id="doc-vld-msg" class="am-form am-form-horizontal" action="/admin/movieLanguage/update" method="post">
+                            <input type="hidden" th:value="${movieLanguage.id}" name="id"/>
+                            <div class="am-form-group">
+                                <label for="name" class="am-u-sm-3 am-form-label">语言名称</label>
+                                <div class="am-u-sm-9">
+                                    <input th:value="${movieLanguage.languageName}" type="text" id="languageName" name="languageName" placeholder="语言名称" data-validation-message="请填写语言名称" required="required"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="asName" class="am-u-sm-3 am-form-label">排序</label>
+                                <div class="am-u-sm-9">
+                                    <input th:value="${movieLanguage.sort}" type="text" id="sort" name="sort" placeholder="排序" data-validation-message="请填写排序" required="required"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <div class="am-u-sm-9 am-u-sm-push-3">
+                                    <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success">提交
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/js/amazeui.min.js"></script>
+<script src="/assets/js/app.js"></script>
+<script src="/layer/layer.js"></script>
+<script src="/js/jquery.form.js"></script>
+<script type="text/javascript" th:inline="javascript">
+	//<![CDATA[
+		$(function() {
+		  $('#doc-vld-msg').validator({
+		    onValid: function(validity) {
+		      $(validity.field).closest('.am-form-group').find('.am-alert').hide();
+		    }, 
+		    onInValid: function(validity) {
+		      var $field = $(validity.field);
+		      var $group = $field.closest('.am-form-group .am-u-sm-9');
+		      var $alert = $group.find('.am-alert');
+		      // 使用自定义的提示信息 或 插件内置的提示信息
+		      var msg = $field.data('validationMessage') || this.getValidationMessage(validity);
+		
+		      if (!$alert.length) {
+		        $alert = $('<div class="am-alert am-alert-danger"></div>').hide().
+		          appendTo($group);
+		      } 
+		      $alert.html(msg).show();
+		    }
+		  });
+		// from表单ajax控制提交，并接受返回的json数据
+		  	var options = {   
+		        type: 'POST',  
+		        url: '/admin/movieLanguage/update',  
+		        success : function(xhr, status, err) {  
+		        	layer.msg(xhr.message, { icon: 1, shade: 0.5 });
+					setTimeout(function(){
+						window.location= "/admin/movieLanguage/list"; //刷新父页面
+					}		
+					, 1000);
+		        } ,    
+		        dataType: 'json',  
+		        error : function(xhr, status, err) {  
+		        	layer.msg( "修改失败!" );             
+		        }  
+		    };  
+		    $("#doc-vld-msg").submit(function(){   
+		        $(this).ajaxSubmit(options);   
+		        return false;   //防止表单自动提交  
+		    });
+		});
+    //]]>
+</script>
+</body>
+</html>

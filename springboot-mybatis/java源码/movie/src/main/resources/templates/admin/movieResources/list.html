@@ -1,0 +1,124 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>电影来源列表</title>
+    <meta name="description" content="电影来源列表"/>
+    <meta name="keywords" content="index"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" href="/assets/i/favicon.png"/>
+    <link rel="apple-touch-icon-precomposed" href="/assets/i/app-icon72x72@2x.png"/>
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="stylesheet" href="/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/assets/css/admin.css"/>
+    <link rel="stylesheet" href="/assets/css/app.css"/>
+</head>
+<body data-type="generalComponents">
+<!-- 顶部菜单栏 -->
+<div th:replace="/admin/header :: header"></div>
+<div class="tpl-page-container tpl-page-header-fixed">
+	<!-- 左边菜单栏 -->
+	<div th:replace="/admin/nav :: div"></div>
+    <div class="tpl-content-wrapper">
+        <div class="tpl-content-page-title">电影来源列表</div>
+        <ol class="am-breadcrumb">
+            <li><a href="http://localhost:8888/admin/index" class="am-icon-home">首页</a></li>
+            <li><a href="#">电影来源管理</a></li>
+            <li class="am-active">电影来源列表</li>
+        </ol>
+        <div class="tpl-portlet-components">
+            <div class="tpl-block">
+                <div class="am-g">
+                    <div class="am-u-sm-12 am-u-md-6">
+                        <div class="am-btn-toolbar">
+                            <div class="am-btn-group am-btn-group-xs">
+                                <a type="button" class="am-btn am-btn-default am-btn-success am-round" href="/admin/movieResources/add">
+                                	<span class="am-icon-plus"></span> 新增 
+                                </a>
+                                <a type="button" class="am-btn am-btn-default am-btn-danger am-round" href="/admin/movieResources/del">
+                                	<span class="am-icon-trash-o"></span> 删除
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="am-g">
+                    <div class="am-u-sm-12">
+                        <form class="am-form" id="from" action="/admin/movieResources">
+                            <table class="am-table am-table-striped am-table-hover table-main">
+                                <colgroup> 
+									<col width="5%"/>
+									<col width="15%"/>
+									<col width="10%"/>
+									<col width="10%"/>
+									<col width="10%"/>
+									<col width="10%"/>
+								</colgroup>
+                                <thead>
+	                                <tr>
+	                                    <th class="table-check">
+	                                        <input type="checkbox" class="tpl-table-fz-check"/>
+	                                    </th>
+	                                    <th>ID</th>
+	                                    <th>电影</th>
+	                                    <th>清晰度</th>
+	                                    <th>视频大小</th>
+	                                    <th>下载方式</th>
+	                                    <th>创建时间</th>
+	                                    <th>操作</th>
+	                                </tr>
+                                </thead>
+                                <tbody>
+	                                <tr th:each="list,item:${pageBean.items}">
+	                                    <td><input type="checkbox" th:value="${list.id}"/></td>
+	                                    <td th:text="${list.id}"></td>
+	                                    <td th:text="${list.name}">电影</td>
+	                                    <td th:text="${list.clarity}">清晰度</td>
+	                                    <td th:text="${list.size}">视频大小</td>
+	                                    <td th:text="${list.downlodMode=='1'?'迅雷':'百度云'}">下载方式</td>
+	                                    <td th:text="${#dates.format(list.createOn, 'yyyy-MM-dd HH:mm')}">创建时间</td>
+	                                    <td>
+	                                        <div class="am-btn-toolbar">
+	                                            <div class="am-btn-group am-btn-group-xs">
+	                                                <a class="am-btn am-btn-default am-btn-secondary"  th:href="@{'/admin/movieResources/edit?id='+${list.id}}">
+	                                                <span class="am-icon-pencil-square-o"></span> 编辑
+	                                                </a>
+	                                                <a class="am-btn am-btn-default am-btn-danger"  th:href="@{'/admin/movieResources/del?id='+${list.id}}">
+	                                                    <span class="am-icon-trash-o"></span> 删除
+	                                                </a>
+	                                            </div>
+	                                        </div>
+	                                    </td>
+	                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="nav page am-cf">
+                            </div>
+                            <hr/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="tpl-alert">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/js/amazeui.min.js"></script>
+<script src="/layer/layer.js"></script>
+<script src="/assets/js/app.js"></script>
+<script src="/js/pageUtils.js"></script>
+<script type="text/javascript" th:inline="javascript">
+	//<![CDATA[
+	//分页
+	$(function(){
+		$(".nav.page").initPage([[${pageBean.totalPage}]],[[${pageBean.currentPage}]],[[${pageBean.pageSize}]],'from');
+	});
+	//]]>
+</script>
+</body>
+</html>

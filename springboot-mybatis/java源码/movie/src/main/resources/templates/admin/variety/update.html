@@ -1,0 +1,189 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>编辑综艺页</title>
+    <meta name="description" content="编辑综艺页"/>
+    <meta name="keywords" content="index"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" href="/assets/i/favicon.png"/>
+    <link rel="apple-touch-icon-precomposed" href="/assets/i/app-icon72x72@2x.png"/>
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="stylesheet" href="/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/assets/css/admin.css"/>
+    <link rel="stylesheet" href="/assets/css/app.css"/>
+</head>
+<body data-type="generalComponents">
+<!-- 顶部菜单栏 -->
+<div th:replace="/admin/header :: header"></div>
+<div class="tpl-page-container tpl-page-header-fixed">
+	<!-- 左边菜单栏 -->
+	<div th:replace="/admin/nav :: div"></div>
+    <div class="tpl-content-wrapper">
+        <div class="tpl-content-page-title">综艺列表</div>
+        <ol class="am-breadcrumb">
+            <li><a href="/admin/index" class="am-icon-home">首页</a></li>
+            <li><a href="#">综艺管理</a></li>
+            <li><a href="/admin/variety">综艺列表</a></li>
+            <li class="am-active">编辑综艺信息</li>
+        </ol>
+        <div class="tpl-portlet-components">
+            <div class="tpl-block ">
+                <div class="am-g tpl-amazeui-form">
+                    <div class="am-u-sm-12 am-u-md-9">
+                        <form id="doc-vld-msg" class="am-form am-form-horizontal" action="/admin/variety/add">
+                       		<input type="hidden" id="id" name="id" th:value="${variety.id}">
+                            <div class="am-form-group">
+                                <label for="name" class="am-u-sm-3 am-form-label">综艺名称</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" id="name" name="name" placeholder="综艺名称" data-validation-message="请填写综艺名称" required="required"
+                                     th:value="${variety.name}"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="asName" class="am-u-sm-3 am-form-label">又名</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" id="asName" name="asName" placeholder="又名，别名" data-validation-message="请填写又名" required="required"
+                                     th:value="${variety.asName}"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="coverImg" class="am-u-sm-3 am-form-label">封面图片</label>
+                                <div class="am-u-sm-9">
+                                    <input type="file" id="coverImg" name="coverImg" placeholder="封面图片" data-validation-message="请上传封面图片" required="required"
+                                     th:value="${variety.coverImg}"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="isHot" class="am-u-sm-3 am-form-label">是否为热门</label>
+                                <div class="am-u-sm-9">
+                                    <div class="tpl-switch">
+                                        <input type="checkbox" class="ios-switch bigswitch tpl-switch-btn" name="isHot"  th:value="${variety.isHot}"/>
+                                        <div class="tpl-switch-btn-view">
+                                            <div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="updateCycle" class="am-u-sm-3 am-form-label">更新周期 </label>
+                                <div class="am-u-sm-9">
+                                    <select data-am-selected="{searchBox: 1}" name="updateCycle">
+                                        <option value="1">一天</option>
+                                        <option value="7">一周</option>
+                                        <option value="30">一月</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="director" class="am-u-sm-3 am-form-label">导演</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" id="director" name="director" placeholder="导演" data-validation-message="请填写导演姓名" required="required"
+                                     th:value="${variety.director}"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="actors" class="am-u-sm-3 am-form-label">演员</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" id="actors" name="actors" placeholder="请填写演员姓名用英文逗号隔开" data-validation-message="请填写演员姓名" 
+                                     th:value="${variety.actors}" required="required"/>
+                                </div>
+                            </div>
+                            <div class="am-u-sm-12 am-u-md-3">
+		                   		<label for="areaId" class="am-u-sm-3 am-form-label">所属地区 </label>
+		                        <div class="am-form-group">
+		                            <select data-am-selected="{btnSize: 'sm'}" name="areaId">
+		                                <option th:each="list,item:${areas}" th:text="${list.areaName}" th:value="${list.id}" >所有地区</option>
+		                            </select>
+		                        </div>
+		                    </div>
+		                    <div class="am-u-sm-12 am-u-md-3">
+		                   		<label for="typeId" class="am-u-sm-3 am-form-label">所属分类 </label>
+		                        <div class="am-form-group">
+		                            <select data-am-selected="{btnSize: 'sm'}" name="typeId">
+		                                <option th:each="list,item:${types}" th:text="${list.typeName}" th:value="${list.id}" >所有类别</option>
+		                            </select>
+		                        </div>
+		                    </div>
+                            <div class="am-form-group">
+                                <label for="year" class="am-u-sm-3 am-form-label">上映年份</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" id="year" name="year" placeholder="上映年份" data-validation-message="请填写上映年份" 
+                                     th:value="${variety.year}" required="required"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="releaseDate" class="am-u-sm-3 am-form-label">上映日期</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" id="releaseDate" name="releaseDate" placeholder="上映日期" data-validation-message="请填写上映日期" 
+                                     th:value="${variety.releaseDate}" required="required"
+                                     class="am-form-field tpl-form-no-bg" data-am-datepicker="data-am-datepicker" readonly="readonly"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="timeSize" class="am-u-sm-3 am-form-label">时长</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" id="timeSize" name="timeSize" placeholder="时长" data-validation-message="请填写时长" 
+                                     th:value="${variety.timeSize}" required="required"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="videoCapture" class="am-u-sm-3 am-form-label">视频截图</label>
+                                <div class="am-u-sm-9">
+                                    <input type="file" id="videoCapture" name="videoCapture" placeholder="视频截图" data-validation-message="请填写视频截图" 
+                                     th:value="${variety.videoCapture}" required="required"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="synopsis" class="am-u-sm-3 am-form-label">剧情简介</label>
+                                <div class="am-u-sm-9">
+                                    <textarea class="" rows="10" id="user-intro" placeholder="请填写剧情简介" name="synopsis"  th:text="${variety.synopsis}"></textarea>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <div class="am-u-sm-9 am-u-sm-push-3">
+                                    <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success">提交
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/js/amazeui.min.js"></script>
+<script src="/assets/js/app.js"></script>
+<script src="/layer/layer.js"></script>
+<script type="text/javascript" th:inline="javascript">
+	//<![CDATA[
+		$(function() {
+		  $('#doc-vld-msg').validator({
+		    onValid: function(validity) {
+		      $(validity.field).closest('.am-form-group').find('.am-alert').hide();
+		    }, 
+		    onInValid: function(validity) {
+		      var $field = $(validity.field);
+		      var $group = $field.closest('.am-form-group .am-u-sm-9');
+		      var $alert = $group.find('.am-alert');
+		      // 使用自定义的提示信息 或 插件内置的提示信息
+		      var msg = $field.data('validationMessage') || this.getValidationMessage(validity);
+		
+		      if (!$alert.length) {
+		        $alert = $('<div class="am-alert am-alert-danger"></div>').hide().
+		          appendTo($group);
+		      } 
+		      $alert.html(msg).show();
+		    }
+		  });
+		});
+    //]]>
+</script>
+</body>
+</html>

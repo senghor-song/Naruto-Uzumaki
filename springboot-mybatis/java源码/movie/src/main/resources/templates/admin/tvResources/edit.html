@@ -1,0 +1,136 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>新增电视剧</title>
+    <meta name="description" content="这是一个 index 页面"/>
+    <meta name="keywords" content="index"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" href="/assets/i/favicon.png"/>
+    <link rel="apple-touch-icon-precomposed" href="/assets/i/app-icon72x72@2x.png"/>
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="stylesheet" href="/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/assets/css/admin.css"/>
+    <link rel="stylesheet" href="/assets/css/app.css"/>
+</head>
+<body data-type="generalComponents">
+<!-- 顶部菜单栏 -->
+<div th:replace="/admin/header :: header"></div>
+<div class="tpl-page-container tpl-page-header-fixed">
+	<!-- 左边菜单栏 -->
+    <div th:replace="/admin/nav :: div"></div>
+    <div class="tpl-content-wrapper">
+        <div class="tpl-content-page-title">电视剧地域管理</div>
+        <ol class="am-breadcrumb">
+            <li><a href="#" class="am-icon-home">首页</a></li>
+            <li><a href="#">电视剧地域管理</a></li>
+            <li class="am-active">修改电视剧地域</li>
+        </ol>
+        <div class="tpl-portlet-components">
+            <div class="portlet-title">
+                <div class="caption font-green bold">
+                    <span class="am-icon-code">电视剧地域详情</span> 
+                </div>
+                <div class="tpl-portlet-input tpl-fz-ml">
+                    <div class="portlet-input input-small input-inline">
+                        <div class="input-icon right">
+                            <i class="am-icon-search"></i>
+                            <input type="text" class="form-control form-control-solid" placeholder="搜索..."/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tpl-portlet-components">
+            <div class="tpl-block ">
+                <div class="am-g tpl-amazeui-form">
+                    <div class="am-u-sm-12 am-u-md-9">
+                        <form id="doc-vld-msg" class="am-form am-form-horizontal" method="post" action="/admin/tvResources/update">
+                        <input type="hidden" th:value="${tvResources.id}" id="id" name="id"/>
+                            <div class="am-form-group">
+                                <label for="updateCycle" class="am-u-sm-3 am-form-label">更新周期 </label>
+                                <div class="am-u-sm-9">
+                                    <select name="tvId" data-am-selected="{searchBox: tvResources.tvId}">
+                                        <option  th:each="list,item:${tvs}" th:value="${list.id}" th:text="${list.name}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="asName" class="am-u-sm-3 am-form-label">集数</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" th:value="${tvResources.episodes}" id="episodes" name="episodes" placeholder="集数" data-validation-message="请填写集数" required="required"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="director" class="am-u-sm-3 am-form-label">清晰度</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" th:value="${tvResources.clarity}" id="clarity" name="clarity" placeholder="清晰度" data-validation-message="请填写清晰度" required="required"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="director" class="am-u-sm-3 am-form-label">视频大小</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" th:value="${tvResources.size}" id="size" name="size" placeholder="视频大小" data-validation-message="请填写视频大小" required="required"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="updateCycle" class="am-u-sm-3 am-form-label">下载方式 </label>
+                                <div class="am-u-sm-9">
+                                    <select data-am-selected="{searchBox: tvResources.downlodMode}" name="downlodMode">
+                                        <option value="0">百度云</option>
+                                        <option value="1">迅雷</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="timeSize" class="am-u-sm-3 am-form-label">资源种子或资源链接</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" th:value="${tvResources.downlodLink}" id="downlodLink" name="downlodLink" placeholder="资源种子或资源链接" data-validation-message="请填写资源种子或资源链接" required="required"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <div class="am-u-sm-9 am-u-sm-push-3">
+                                    <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success">提交
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/js/amazeui.min.js"></script>
+<script src="/layer/layer.js"></script>
+<script src="/assets/js/app.js"></script>
+<script type="text/javascript" th:inline="javascript">
+	//<![CDATA[
+		$(function() {
+		  $('#doc-vld-msg').validator({
+		    onValid: function(validity) {
+		      $(validity.field).closest('.am-form-group').find('.am-alert').hide();
+		    }, 
+		    onInValid: function(validity) {
+		      var $field = $(validity.field);
+		      var $group = $field.closest('.am-form-group .am-u-sm-9');
+		      var $alert = $group.find('.am-alert');
+		      // 使用自定义的提示信息 或 插件内置的提示信息
+		      var msg = $field.data('validationMessage') || this.getValidationMessage(validity);
+		
+		      if (!$alert.length) {
+		        $alert = $('<div class="am-alert am-alert-danger"></div>').hide().
+		          appendTo($group);
+		      } 
+		      $alert.html(msg).show();
+		    }
+		  });
+		});
+    //]]>
+</script>
+</body>
+</html>

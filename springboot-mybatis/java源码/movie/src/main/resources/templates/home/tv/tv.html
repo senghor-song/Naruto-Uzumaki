@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8"/>
+		<title>电视剧</title>
+		<link rel="stylesheet" href="/home/css/animate.css" />
+		<link rel="stylesheet" href="/home/css/site.css" />
+		<link rel="stylesheet" href="/home/css/style.css" />
+		<link rel="stylesheet" href="/home/css/void.css" />
+		<link rel="stylesheet" href="/home/css/layui.css" />
+		<script type="text/javascript" src="/home/js/jquery-1.9.1.min.js"/>
+		<script type="text/javascript" src="/home/js/layer/layer.js"></script>
+		<script type="text/javascript" src="/home/js/news.js"></script>
+		<script src="/home/js/layui/layui.js"></script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="w960">
+				<a class="logo" href="##" title="" style="padding-top:10px"><img width="160px" src="/home/images/logo.png"/></a>
+				<ul class="layui-nav" lay-filter="">
+					<li class="layui-nav-item ">
+						<a href="/home">网站首页</a>
+					</li>
+					<li class="layui-nav-item ">
+						<a href="/home/movie">电影</a>
+					</li>
+					<li class="layui-nav-item layui-this">
+						<a href="/home/tv">电视剧</a>
+					</li>
+					<li class="layui-nav-item ">
+						<a href="/home/variety">综艺</a>
+					</li>
+					<span class="layui-nav-bar" style="width: 0px; left: 0px; opacity: 0;"></span></ul>
+			</div>
+		</div>
+
+		<div class="w960 bcolor">
+			<div class="mar10" style="margin-top: 60px;"></div>
+			<div class="mar10"></div>
+			<div class="vod-xuan">
+				<ul>
+					<li class="vod-option">
+						<b class="left">类型：</b>
+						<div class="vod-cls" id="type">
+							<a href="?id="><span class="vodon">全部</span></a>
+							<a href="?id=5"><span class="">动作片</span></a>
+							<a href="?id=6"><span class="">喜剧片</span></a>
+							<a href="?id=7"><span class="">爱情片</span></a>
+							<a href="?id=8"><span class="">剧情片</span></a>
+							<a href="?id=9"><span class="">犯罪片</span></a>
+							<a href="?id=10"><span class="">冒险片</span></a>
+							<a href="?id=11"><span class="">战争片</span></a>
+							<a href="?id=12"><span class="">惊悚片</span></a>
+							<a href="?id=13"><span class="">悬疑片</span></a>
+							<a href="?id=14"><span class="">恐怖片</span></a>
+							<a href="?id=15"><span class="">科幻片</span></a>
+							<a href="?id=16"><span class="">奇幻片</span></a>
+							<a href="?id=17"><span class="">家庭片</span></a>
+							<a href="?id=18"><span class="">动画片</span></a>
+							<a href="?id=19"><span class="">历史片</span></a>
+							<a href="?id=20"><span class="">武侠片</span></a>
+							<a href="?id=21"><span class="">伦理片</span></a>
+
+						</div>
+					</li>
+					<li class="vod-option">
+						<b class="left">地区：</b>
+						<div class="vod-cls">
+							<a href="?gj=&amp;id=1"><span class="vodon">全部</span></a>
+							<a href="?gj=1&amp;id=1"><span class="">内地</span></a>
+							<a href="?gj=2&amp;id=1"><span class="">香港</span></a>
+							<a href="?gj=3&amp;id=1"><span class="">台湾</span></a>
+							<a href="?gj=4&amp;id=1"><span class="">美国</span></a>
+							<a href="?gj=5&amp;id=1"><span class="">欧洲</span></a>
+							<a href="?gj=6&amp;id=1"><span class="">韩国</span></a>
+							<a href="?gj=7&amp;id=1"><span class="">日本</span></a>
+							<a href="?gj=8&amp;id=1"><span class="">泰国</span></a>
+							<a href="?gj=9&amp;id=1"><span class="">印度</span></a>
+							<a href="?gj=10&amp;id=1"><span class="">其他</span></a>
+						</div>
+					</li>
+					<li class="vod-option">
+						<b class="left">年代：</b>
+						<div class="vod-cls">
+							<a href="?nf=&amp;id=1"><span class="vodon">全部</span></a>
+							<a href="?nf=10&amp;id=1"><span class="">2017</span></a>
+							<a href="?nf=9&amp;id=1"><span class="">2016</span></a>
+							<a href="?nf=8&amp;id=1"><span class="">2015</span></a>
+							<a href="?nf=7&amp;id=1"><span class="">2014</span></a>
+							<a href="?nf=6&amp;id=1"><span class="">2011-2013</span></a>
+							<a href="?nf=5&amp;id=1"><span class="">2006-2010</span></a>
+							<a href="?nf=4&amp;id=1"><span class="">2000-2005</span></a>
+							<a href="?nf=3&amp;id=1"><span class="">90年代</span></a>
+							<a href="?nf=2&amp;id=1"><span class="">80年代</span></a>
+							<a href="?nf=1&amp;id=1"><span class="">其他</span></a>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="layui-tab layui-tab-brief crte">
+				<ul class="layui-tab-title crte_ul">
+					<li class="layui-this"><img src="images/vidao.png"/>最新电影</li>
+					<span class="right vcount">共有&nbsp;<em style="color: red">182</em>&nbsp;个视频</span>
+				</ul>
+				<div class="layui-tab-content" style="padding-top: 0px">
+					<div class="layui-tab-item layui-show fadeInUp animated" style="overflow: hidden;zoom: 1;">
+						<div class="vod-two">
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/5wryj2oo24kuc261510440658/260" alt="功守道"/></a>
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>功守道</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/s4o48i25x6kg8s71510046636/260" alt="刀剑笑新传之花魁"/></a>
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>刀剑笑新传之花魁</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/i1wy6h1octewf681509523538/260" alt="豆福传"/></a>
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>豆福传</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/uyev4jv34obpyxl1509851420/260" alt="造梦师"/></a>
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>造梦师</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/5wryj2oo24kuc261510440658/260" alt="功守道"/></a>
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>功守道</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/s4o48i25x6kg8s71510046636/260" alt="刀剑笑新传之花魁"/></a>
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>刀剑笑新传之花魁</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/i1wy6h1octewf681509523538/260" alt="豆福传"/></a>
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>豆福传</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/uyev4jv34obpyxl1509851420/260" alt="造梦师"/></a>
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>造梦师</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/5wryj2oo24kuc261510440658/260" alt="功守道"/></a>
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>功守道</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/s4o48i25x6kg8s71510046636/260" alt="刀剑笑新传之花魁"/></a>
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>刀剑笑新传之花魁</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/i1wy6h1octewf681509523538/260" alt="豆福传"/></a>
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>豆福传</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/uyev4jv34obpyxl1509851420/260" alt="造梦师"/></a>
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>造梦师</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/5wryj2oo24kuc261510440658/260" alt="功守道"/></a>
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>功守道</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/s4o48i25x6kg8s71510046636/260" alt="刀剑笑新传之花魁"/></a>
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>刀剑笑新传之花魁</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/i1wy6h1octewf681509523538/260" alt="豆福传"/></a>
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>豆福传</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/uyev4jv34obpyxl1509851420/260" alt="造梦师"/></a>
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>造梦师</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/5wryj2oo24kuc261510440658/260" alt="功守道"/></a>
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>功守道</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/s4o48i25x6kg8s71510046636/260" alt="刀剑笑新传之花魁"/></a>
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>刀剑笑新传之花魁</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/i1wy6h1octewf681509523538/260" alt="豆福传"/></a>
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>豆福传</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/uyev4jv34obpyxl1509851420/260" alt="造梦师"/></a>
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>造梦师</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/5wryj2oo24kuc261510440658/260" alt="功守道"/></a>
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>功守道</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/s4o48i25x6kg8s71510046636/260" alt="刀剑笑新传之花魁"/></a>
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>刀剑笑新传之花魁</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/i1wy6h1octewf681509523538/260" alt="豆福传"/></a>
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>豆福传</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/uyev4jv34obpyxl1509851420/260" alt="造梦师"/></a>
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>造梦师</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/5wryj2oo24kuc261510440658/260" alt="功守道"/></a>
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>功守道</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/s4o48i25x6kg8s71510046636/260" alt="刀剑笑新传之花魁"/></a>
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>刀剑笑新传之花魁</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/i1wy6h1octewf681509523538/260" alt="豆福传"/></a>
+							<a title="豆福传" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>豆福传</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/uyev4jv34obpyxl1509851420/260" alt="造梦师"/></a>
+							<a title="造梦师" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>造梦师</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/5wryj2oo24kuc261510440658/260" alt="功守道"/></a>
+							<a title="功守道" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>功守道</p>
+							</a>
+						</div>
+						<div class="vod-two">
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+							<img width="175" height="245" src="https://puui.qpic.cn/vcover_vt_pic/0/s4o48i25x6kg8s71510046636/260" alt="刀剑笑新传之花魁"/></a>
+							<a title="刀剑笑新传之花魁" href="/home/tv/teleplay?id=1" target="_blank">
+								<p>刀剑笑新传之花魁</p>
+							</a>
+						</div>
+					</div>
+					<div class="mar10"></div>
+					<div class="page" style="text-align: center; ">
+						<div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-0">
+							<a class="layui-btn-disabled">上一页</a>
+							<a class="on">1</a>
+							<a href="/cate/dy.html?p=2&amp;id=1">2</a>
+							<a href="/cate/dy.html?p=3&amp;id=1">3</a>
+							<a href="/cate/dy.html?p=4&amp;id=1">4</a>
+							<a href="/cate/dy.html?p=5&amp;id=1">5</a>
+							<a href="/cate/dy.html?p=6&amp;id=1">6</a>
+							<a href="/cate/dy.html?p=2&amp;id=1" class="layui-laypage-next">下一页</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="mar10"></div>
+		<div id="footer">
+			<div class="footer_img">
+				<img src="images/baidu.png" />
+			</div>
+			<div class="w960 pb10">
+				<p>Copyright 2208 - 2256 http://www.tiantangdiany.net/ All rights reserved 粤ICP备18765654号-1</p>
+			</div>
+		</div>
+		<script>
+			 layui.use(['element','layer'], function(){
+                var element = layui.element;
+            });
+		</script>
+		<!--<script>
+			(function() {
+				var bp = document.createElement('script');
+				var curProtocol = window.location.protocol.split(':')[0];
+				if(curProtocol === 'https') {
+					bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+				} else {
+					bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+				}
+				var s = document.getElementsByTagName("script")[0];
+				s.parentNode.insertBefore(bp, s);
+			})();
+
+			var _hmt = _hmt || [];
+			(function() {
+				var hm = document.createElement("script");
+				hm.src = "https://hm.baidu.com/hm.js?42dee80aa2b8748c46a657955f9193bc";
+				var s = document.getElementsByTagName("script")[0];
+				s.parentNode.insertBefore(hm, s);
+			})();
+		</script>-->
+
+	</body>
+
+</html>

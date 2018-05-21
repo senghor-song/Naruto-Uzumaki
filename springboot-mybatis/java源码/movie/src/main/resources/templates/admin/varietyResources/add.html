@@ -1,0 +1,153 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>添加综艺资源页</title>
+    <meta name="description" content="添加综艺资源页"/>
+    <meta name="keywords" content="index"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" href="/assets/i/favicon.png"/>
+    <link rel="apple-touch-icon-precomposed" href="/assets/i/app-icon72x72@2x.png"/>
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="stylesheet" href="/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/assets/css/admin.css"/>
+    <link rel="stylesheet" href="/assets/css/app.css"/>
+</head>
+<body data-type="generalComponents">
+<!-- 顶部菜单栏 -->
+<div th:replace="/admin/header :: header"></div>
+<div class="tpl-page-container tpl-page-header-fixed">
+	<!-- 左边菜单栏 -->
+	<div th:replace="/admin/nav :: div"></div>
+    <div class="tpl-content-wrapper">
+        <div class="tpl-content-page-title">综艺资源列表</div>
+        <ol class="am-breadcrumb">
+            <li><a href="/admin/index" class="am-icon-home">首页</a></li>
+            <li><a href="#">综艺资源管理</a></li>
+            <li><a href="/admin/varietyResources">综艺资源列表</a></li>
+            <li class="am-active">添加综艺资源信息</li>
+        </ol>
+        <div class="tpl-portlet-components">
+            <div class="tpl-block ">
+                <div class="am-g tpl-amazeui-form">
+                    <div class="am-u-sm-12 am-u-md-9">
+                        <form id="doc-vld-msg" class="am-form am-form-horizontal" action="/admin/varietyResources/insert">
+                        	<div class="am-form-group">
+                                <label for="varietyId" class="am-u-sm-3 am-form-label">所属综艺节目 </label>
+                                <div class="am-u-sm-9">
+                                    <select data-am-selected="{searchBox: 1}" required="required" name="varietyId">
+                                        <option value="1">天天向上</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="programName" class="am-u-sm-3 am-form-label">本期节目名称</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" id="programName" name="programName" placeholder="本期节目名称" data-validation-message="请填写本期节目名称" 
+                                    required="required"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="clarity" class="am-u-sm-3 am-form-label">清晰度</label>
+                                <div class="am-u-sm-9">
+                                	<select data-am-selected="{searchBox: 1}" name="clarity" required="required">
+                                        <option value="抢版">抢版</option>
+                                        <option value="普清">普清</option>
+                                        <option value="高清">高清</option>
+                                        <option value="超清">超清</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="size" class="am-u-sm-3 am-form-label">资源大小</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" id="doc-vld-age-2-1" name="size" placeholder="多少MB" min="1" max="1000" 
+                                    required="required"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="downlodMode" class="am-u-sm-3 am-form-label">下载方式</label>
+                                <div class="am-u-sm-9">
+                                    <select data-am-selected="{searchBox: 1}" name="downlodMode">
+                                        <option value="0">迅雷</option>
+                                        <option value="1">百度云</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="downlodLink" class="am-u-sm-3 am-form-label">资源下载链接</label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" id="downlodLink" name="downlodLink" placeholder="资源下载链接" data-validation-message="请填写资源下载链接" 
+                                    required="required"/>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <div class="am-u-sm-9 am-u-sm-push-3">
+                                    <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success">提交
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/js/amazeui.min.js"></script>
+<script src="/assets/js/app.js"></script>
+<script src="/layer/layer.js"></script>
+<script src="/js/jquery.form.js"></script>
+<script type="text/javascript" th:inline="javascript">
+	//<![CDATA[
+	$(function() {
+		var form = $('#doc-vld-msg');
+		form.validator({
+		  onValid: function(validity) {
+		    $(validity.field).closest('.am-form-group').find('.am-alert').hide();
+		  }, 
+		  onInValid: function(validity) {
+		    var $field = $(validity.field);
+		    var $group = $field.closest('.am-form-group .am-u-sm-9');
+		    var $alert = $group.find('.am-alert');
+		    // 使用自定义的提示信息 或 插件内置的提示信息
+		    var msg = $field.data('validationMessage') || this.getValidationMessage(validity);
+		
+		    if (!$alert.length) {
+		      $alert = $('<div class="am-alert am-alert-danger"></div>').hide().
+		        appendTo($group);
+		    } 
+		    $alert.html(msg).show();
+		  },
+		  	
+		    
+		});
+		var options = {   
+	        type: 'POST',  
+	        url: '/admin/varietyResources/insert',  
+	        success : function(xhr, status, err) {  
+				// from表单ajax控制提交，并接受返回的json数据
+	        	layer.msg(xhr.message, { icon: 1, shade: 0.5 });
+				setTimeout(function(){
+					window.location= "/admin/varietyResources/list"; //刷新父页面
+				}		
+				, 1000);
+	        } ,    
+	        dataType: 'json',  
+	        error : function(xhr, status, err) {  
+	        	/* layer.msg( "添加失败!" );  */    
+	        }  
+	    };  
+		$("#doc-vld-msg").submit(function(){   
+		    $(this).ajaxSubmit(options);   
+	        return false;   //防止表单自动提交  
+	    });
+	});
+    //]]>
+</script>
+</body>
+</html>

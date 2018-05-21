@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruiec.springboot.dao.TvMapper">
+	<sql id="TableName">
+		tv t
+	</sql>
+	<sql id="TRTableName">
+		tv_resources tr
+	</sql>
+	<sql id="TvResources_Column_List">
+		tr.id trid, tr.tvId, tr.episodes, tr.clarity, tr.size,
+		tr.downlodMode, tr.downlodLink, tr.createOn
+	</sql>
+	<sql id="Base_Column_List">
+		t.id id, t.name, t.asName, t.isHot, t.recent, t.total,
+		t.updateCycle, t.actors, t.typeId,
+		t.areaId, t.director,t.coverImg,
+		t.year, t.releaseDate, t.updatedDate, t.timeSize, t.watercressScore,
+		t.synopsis,
+		t.videoCapture,
+		t.createOn
+	</sql>
+	<insert id="insert" parameterType="java.util.Map">
+		INSERT INTO
+		tv
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="asName != null">
+				asName,
+			</if>
+			<if test="coverImg != null">
+				coverImg,
+			</if>
+			<if test="isHot != null">
+				isHot,
+			</if>
+			<if test="recent != null">
+				recent,
+			</if>
+			<if test="total != null">
+				total,
+			</if>
+			<if test="updateCycle != null">
+				updateCycle,
+			</if>
+			<if test="actors != null">
+				actors,
+			</if>
+			<if test="typeId != null">
+				typeId,
+			</if>
+			<if test="areaId != null">
+				areaId,
+			</if>
+			<if test="director != null">
+				director,
+			</if>
+			<if test="year != null">
+				year,
+			</if>
+			<if test="releaseDate != null">
+				releaseDate,
+			</if>
+			<if test="updatedDate != null">
+				updatedDate,
+			</if>
+			<if test="timeSize != null">
+				timeSize,
+			</if>
+			<if test="watercressScore != null">
+				watercressScore,
+			</if>
+			<if test="synopsis != null">
+				synopsis,
+			</if>
+			<if test="videoCapture != null">
+				videoCapture,
+			</if>
+			<if test="createOn != null">
+				createOn,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="asName != null">
+				#{asName,jdbcType=VARCHAR},
+			</if>
+			<if test="coverImg != null">
+				#{coverImg,jdbcType=VARCHAR},
+			</if>
+			<if test="isHot != null">
+				#{isHot,jdbcType=INTEGER},
+			</if>
+			<if test="recent != null">
+				#{recent,jdbcType=INTEGER},
+			</if>
+			<if test="total != null">
+				#{total,jdbcType=INTEGER},
+			</if>
+			<if test="updateCycle != null">
+				#{updateCycle,jdbcType=VARCHAR},
+			</if>
+			<if test="actors != null">
+				#{actors,jdbcType=VARCHAR},
+			</if>
+			<if test="typeId != null">
+				#{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="areaId != null">
+				#{areaId,jdbcType=INTEGER},
+			</if>
+			<if test="director != null">
+				#{director,jdbcType=VARCHAR},
+			</if>
+			<if test="year != null">
+				#{year,jdbcType=INTEGER},
+			</if>
+			<if test="releaseDate != null">
+				#{releaseDate,jdbcType=BIGINT},
+			</if>
+			<if test="updatedDate != null">
+				#{updatedDate,jdbcType=BIGINT},
+			</if>
+			<if test="timeSize != null">
+				#{timeSize,jdbcType=INTEGER},
+			</if>
+			<if test="watercressScore != null">
+				#{watercressScore,jdbcType=DOUBLE},
+			</if>
+			<if test="synopsis != null">
+				#{synopsis,jdbcType=VARCHAR},
+			</if>
+			<if test="videoCapture != null">
+				#{videoCapture,jdbcType=VARCHAR},
+			</if>
+			<if test="createOn != null">
+				#{createOn,jdbcType=BIGINT},
+			</if>
+		</trim>
+	</insert>
+	<delete id="delete">
+		DELETE FROM
+		<include refid="TableName" />
+		WHERE id IN
+		<foreach item="item" index="index" collection="array" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	<update id="update" parameterType="java.util.Map">
+		UPDATE
+		<include refid="TableName" />
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="asName != null">
+				asName = #{asName,jdbcType=VARCHAR},
+			</if>
+			<if test="coverImg != null">
+				coverImg = #{coverImg,jdbcType=VARCHAR},
+			</if>
+			<if test="isHot != null">
+				isHot = #{isHot,jdbcType=BIT},
+			</if>
+			<if test="recent != null">
+				recent = #{recent,jdbcType=INTEGER},
+			</if>
+			<if test="total != null">
+				total = #{total,jdbcType=INTEGER},
+			</if>
+			<if test="updateCycle != null">
+				updateCycle = #{updateCycle,jdbcType=VARCHAR},
+			</if>
+			<if test="actors != null">
+				actors = #{actors,jdbcType=VARCHAR},
+			</if>
+			<if test="typeId != null">
+				typeId = #{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="areaId != null">
+				areaId = #{areaId,jdbcType=INTEGER},
+			</if>
+			<if test="director != null">
+				director = #{director,jdbcType=VARCHAR},
+			</if>
+			<if test="year != null">
+				year = #{year,jdbcType=INTEGER},
+			</if>
+			<if test="releaseDate != null">
+				releaseDate = #{releaseDate,jdbcType=BIGINT},
+			</if>
+			<if test="updatedDate != null">
+				updatedDate = #{updatedDate,jdbcType=BIGINT},
+			</if>
+			<if test="timeSize != null">
+				timeSize = #{timeSize,jdbcType=INTEGER},
+			</if>
+			<if test="watercressScore != null">
+				watercressScore = #{watercressScore,jdbcType=DOUBLE},
+			</if>
+			<if test="synopsis != null">
+				synopsis = #{synopsis,jdbcType=VARCHAR},
+			</if>
+			<if test="videoCapture != null">
+				videoCapture = #{videoCapture,jdbcType=VARCHAR},
+			</if>
+			<if test="createOn != null">
+				createOn = #{createOn,jdbcType=BIGINT},
+			</if>
+		</set>
+		WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="selectById" parameterType="java.lang.Long"
+		resultType="java.util.Map">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		<include refid="TableName" />
+		WHERE id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectPaged" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT
+		<include refid="Base_Column_List" />
+		,
+		<include refid="TvResources_Column_List" />
+		,
+		tt.typeName,ta.areaName
+		FROM
+		<include refid="TableName" />
+		LEFT JOIN tv_resources tr ON tr.tvId = t.id
+		LEFT JOIN tv_type tt ON
+		tt.Id = t.typeId
+		LEFT JOIN tv_area ta ON ta.Id = t.AreaId
+	</select>
+	<select id="selectAll" resultType="java.util.Map">
+		SELECT
+		<include refid="Base_Column_List" />
+		,
+		<include refid="TvResources_Column_List" />
+		,
+		tt.typeName,ta.areaName
+		FROM
+		<include refid="TableName" />
+		LEFT JOIN tv_resources tr ON tr.tvId = t.id
+		LEFT JOIN tv_type tt ON
+		tt.Id = t.typeId
+		LEFT JOIN tv_area ta ON ta.Id = t.AreaId
+	</select>
+	<!-- ↓↓↓↓↓↓↓↓↓↓ 扩展方法 ↓↓↓↓↓↓↓↓↓↓ -->
+
+	<!-- ↑↑↑↑↑↑↑↑↑↑ 扩展方法 ↑↑↑↑↑↑↑↑↑↑ -->
+</mapper>
