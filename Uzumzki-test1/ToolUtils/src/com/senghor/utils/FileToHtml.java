@@ -1,4 +1,4 @@
-package src.com.senghor.utils;
+package com.senghor.utils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
