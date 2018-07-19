@@ -8,6 +8,4 @@
 <span style="float:right">—— Dr.西尔尔克《海贼王》</span>
 励志语录
 
-### 像漩涡鸣人一样<br>
-路飞:皮,不存在的,开心就完事了<br>
-索隆:有点意思,那我是不是也要开心一下
+### MyBatis生成model、dao、mapper工程项目

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xiaoyi.ssm.dao.MassBindMapper" >
+  <resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassBind" >
+    <id column="ID" property="id" jdbcType="CHAR" />
+    <result column="Platform" property="platform" jdbcType="CHAR" />
+    <result column="Account" property="account" jdbcType="VARCHAR" />
+    <result column="Pwd" property="pwd" jdbcType="VARCHAR" />
+    <result column="Remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, Platform, Account, Pwd, Remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from MassBind
+    where ID = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from MassBind
+    where ID = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiaoyi.ssm.model.MassBind" >
+    insert into MassBind (ID, Platform, Account, 
+      Pwd, Remark)
+    values (#{id,jdbcType=CHAR}, #{platform,jdbcType=CHAR}, #{account,jdbcType=VARCHAR}, 
+      #{pwd,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassBind" >
+    insert into MassBind
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="platform != null" >
+        Platform,
+      </if>
+      <if test="account != null" >
+        Account,
+      </if>
+      <if test="pwd != null" >
+        Pwd,
+      </if>
+      <if test="remark != null" >
+        Remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="platform != null" >
+        #{platform,jdbcType=CHAR},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassBind" >
+    update MassBind
+    <set >
+      <if test="platform != null" >
+        Platform = #{platform,jdbcType=CHAR},
+      </if>
+      <if test="account != null" >
+        Account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        Pwd = #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassBind" >
+    update MassBind
+    set Platform = #{platform,jdbcType=CHAR},
+      Account = #{account,jdbcType=VARCHAR},
+      Pwd = #{pwd,jdbcType=VARCHAR},
+      Remark = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

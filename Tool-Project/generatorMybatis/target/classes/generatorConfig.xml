@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+	<!-- ojdbc6.jar已经直接放到项目中,无需指定了,同时mysql驱动包也一样,这里同样无需指定 -->
+	<!-- <classPathEntry location="ojdbc6.jar" /> -->
+	<context id="context1" targetRuntime="MyBatis3">
+		<!-- 指定生成的java文件的编码,没有直接生成到项目时中文可能会乱码 -->
+		<property name="javaFileEncoding" value="UTF-8" />
+	    <!-- 生成的pojo，将implements Serializable,为生成的Java模型类添加序列化接口-->    
+	    <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/> 
+		<!-- 这里的type里写的是你的实现类的类全路径 -->
+		<commentGenerator type="com.test.get.MyCommentGenerator">
+			<!-- connectionURL="jdbc:mysql://db.ekeae.com/EKE0902" userId="cy" password="www.ekeae.com"> -->
+		</commentGenerator>
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://db.ekeae.com/EKE0902?useUnicode=true&amp;characterEncoding=utf-8"
+			userId="cy" password="123123123">
+			<!-- 针对mysql数据库 -->
+			<property name="useInformationSchema" value="true"></property>
+		</jdbcConnection>
+
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+
+		<!-- dto class -->
+		<javaModelGenerator targetPackage="com.xiaoyi.ssm.model"
+			targetProject="C:\Users\Administrator\Desktop">
+			<property name="enableSubPackages" value="true" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+
+		<!-- mybatis xml file -->
+		<sqlMapGenerator targetPackage="com.xiaoyi.ssm.mapper"
+			targetProject="C:\Users\Administrator\Desktop">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+
+		<!-- mapper class -->
+		<javaClientGenerator type="XMLMAPPER"
+			targetPackage="com.xiaoyi.ssm.dao" targetProject="C:\Users\Administrator\Desktop">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+
+		<table tableName="Cust" domainObjectName="Cust"
+			enableCountByExample="false" enableUpdateByExample="false"
+			enableDeleteByExample="false" enableSelectByExample="false"
+			selectByExampleQueryId="false"></table>
+
+		<!-- <table tableName="MassBind" domainObjectName="MassBind" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassEmpDescTemplate" 
+			domainObjectName="MassEmpDescTemplate" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="MassEmpImg" domainObjectName="MassEmpImg" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassEmpLayout" 
+			domainObjectName="MassEmpLayout" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="MassEmpPay" domainObjectName="MassEmpPay" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassEmpSet" domainObjectName="MassEmpSet" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassEmpWatermark" domainObjectName="MassEmpWatermark" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassEstateHabit" 
+			domainObjectName="MassEstateHabit" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="MassEstateHabitLog" domainObjectName="MassEstateHabitLog" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassEstateHabitTell" domainObjectName="MassEstateHabitTell" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassEstateXray" 
+			domainObjectName="MassEstateXray" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="MassEstateXrayCategory" domainObjectName="MassEstateXrayCategory" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassEstateXrayLog" domainObjectName="MassEstateXrayLog" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassNotice" domainObjectName="MassNotice" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassNoticeEmp" domainObjectName="MassNoticeEmp" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassNoticeLog" 
+			domainObjectName="MassNoticeLog" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="MassOrder" domainObjectName="MassOrder" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassPersonBuyWant" 
+			domainObjectName="MassPersonBuyWant" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="MassPersonRent" domainObjectName="MassPersonRent" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassPersonRentWant" 
+			domainObjectName="MassPersonRentWant" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="MassPersonSale" domainObjectName="MassPersonSale" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassProperty" domainObjectName="MassProperty" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassPropertyOut" domainObjectName="MassPropertyOut" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassRefreshEmpSet58" 
+			domainObjectName="MassRefreshEmpSet58" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="MassRefreshEmpSet58Time" domainObjectName="MassRefreshEmpSet58Time" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassRefreshEmpSetAn" domainObjectName="MassRefreshEmpSetAn" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassRefreshEmpSetAnTime" 
+			domainObjectName="MassRefreshEmpSetAnTime" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="MassRefreshEmpSetFang" domainObjectName="MassRefreshEmpSetFang" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassRefreshEmpSetFangTime" domainObjectName="MassRefreshEmpSetFangTime" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassRefreshEmpSetGanji" domainObjectName="MassRefreshEmpSetGanji" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassRefreshEmpSetGanjiTime" domainObjectName="MassRefreshEmpSetGanjiTime" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassRefreshEmpSetSina" domainObjectName="MassRefreshEmpSetSina" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassRefreshEmpSetSinaTime" domainObjectName="MassRefreshEmpSetSinaTime" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassRefreshEmpSetSzhome" domainObjectName="MassRefreshEmpSetSzhome" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassRefreshEmpSetSzhomeTime" domainObjectName="MassRefreshEmpSetSzhomeTime" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassRefreshLog" domainObjectName="MassRefreshLog" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassRefreshStatistics" 
+			domainObjectName="MassRefreshStatistics" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="MassStatisticsPropertyOut" domainObjectName="MassStatisticsPropertyOut" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassStatisticsPropertyOutSuccess" domainObjectName="MassStatisticsPropertyOutSuccess" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="Area" domainObjectName="Area" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="City" domainObjectName="City" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="District" domainObjectName="District" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="EmpStore" domainObjectName="EmpStore" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="Employee" domainObjectName="Employee" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassPersonBuyWantEmpCondi" domainObjectName="MassPersonBuyWantEmpCondi" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassPersonRentEmpCondi" domainObjectName="MassPersonRentEmpCondi" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassPersonRentWantEmpCondi" domainObjectName="MassPersonRentWantEmpCondi" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassPersonSaleEmpCondi" domainObjectName="MassPersonSaleEmpCondi" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="Estate" domainObjectName="Estate" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassSiteNew" domainObjectName="MassSiteNew" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="EmpLog" domainObjectName="EmpLog" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassHouse" domainObjectName="MassHouse" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="MassPropertyRent" domainObjectName="MassPropertyRent" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="MassPropertySale" 
+			domainObjectName="MassPropertySale" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="MassPropertyPublish" domainObjectName="MassPropertyPublish" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="BlackListEmp" domainObjectName="BlackListEmp" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="EmpCustPerson" 
+			domainObjectName="EmpCustPerson" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="PropertyImage" domainObjectName="PropertyImage" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="EstateImageEmp" 
+			domainObjectName="EstateImageEmp" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="MassHouse" domainObjectName="MassHouse" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> <table tableName="EstateImageEmp" 
+			domainObjectName="EstateImageEmp" enableCountByExample="false" enableUpdateByExample="false" 
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> 
+			<table tableName="HouseTypeImageEmp" domainObjectName="HouseTypeImageEmp" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"></table> <table 
+			tableName="PropertyImageEmp" domainObjectName="PropertyImageEmp" enableCountByExample="false" 
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+			selectByExampleQueryId="false"></table> -->
+
+
+	</context>
+</generatorConfiguration>
