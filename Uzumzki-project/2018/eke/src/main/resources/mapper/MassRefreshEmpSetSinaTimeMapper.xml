@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassRefreshEmpSetSinaTimeMapper">
+	<resultMap id="BaseResultMap"
+		type="com.xiaoyi.ssm.model.MassRefreshEmpSetSinaTime">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Remark
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassRefreshEmpSetSinaTime
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from MassRefreshEmpSetSinaTime
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassRefreshEmpSetSinaTime">
+		insert into MassRefreshEmpSetSinaTime (ID, Remark)
+		values (#{id,jdbcType=CHAR}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassRefreshEmpSetSinaTime">
+		insert into MassRefreshEmpSetSinaTime
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassRefreshEmpSetSinaTime">
+		update MassRefreshEmpSetSinaTime
+		<set>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassRefreshEmpSetSinaTime">
+		update MassRefreshEmpSetSinaTime
+		set Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

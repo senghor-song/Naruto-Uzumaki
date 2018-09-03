@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.TrainJoinMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.TrainJoin">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="ModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
+		<result column="TrainID" jdbcType="VARCHAR" property="trainid" />
+		<result column="MemberID" jdbcType="VARCHAR" property="memberid" />
+		<result column="Price" jdbcType="DOUBLE" property="price" />
+    	<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="Type" jdbcType="INTEGER" property="type" />
+		<result column="PayType" jdbcType="INTEGER" property="paytype" />
+		<result column="PayRemark" jdbcType="VARCHAR" property="payremark" />
+		<result column="AmountID" jdbcType="VARCHAR" property="amountid" />
+		<result column="AmountType" jdbcType="INTEGER" property="amounttype" />
+		<association property="member" javaType="com.xiaoyi.ssm.model.Member">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="mName" jdbcType="VARCHAR" property="name" />
+		</association>
+		<association property="train" javaType="com.xiaoyi.ssm.model.Train">
+			<id column="tID" jdbcType="CHAR" property="id" />
+			<result column="tTrainNO" jdbcType="INTEGER" property="trainno" />
+			<result column="tCreateTime" jdbcType="TIMESTAMP" property="createtime" />
+			<result column="tModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
+			<result column="tVenueID" jdbcType="VARCHAR" property="venueid" />
+			<result column="tManagerID" jdbcType="VARCHAR" property="managerid" />
+			<result column="tPrice" jdbcType="DOUBLE" property="price" />
+			<result column="tTrainBaseID" jdbcType="VARCHAR" property="trainbaseid" />
+			<result column="tImage" jdbcType="VARCHAR" property="image" />
+			<result column="tContent" jdbcType="LONGVARCHAR" property="content" />
+			<result column="tContentText" jdbcType="VARCHAR" property="contenttext" />
+		</association>
+		
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CreateTime, ModifyTime, TrainID, MemberID, Price, Content, Type, PayType, PayRemark, AmountID, AmountType
+	</sql>
+	<sql id="Train_Column_List">
+		  t.ID tID, t.TrainNO tTrainNO, t.CreateTime tCreateTime, t.ModifyTime tModifyTime, t.VenueID tVenueID, 
+		  t.ManagerID tManagerID, t.Price tPrice, t.TrainBaseID tTrainBaseID, t.Image tImage, t.Content tContent, t.ContentText tContentText
+	</sql>
+
+	<select id="countByTrain" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0) from TrainJoin where TrainID =
+		#{id,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByAmount" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tj.*, <include refid="Train_Column_List" /> , m.`Name` mName
+		FROM TrainJoin tj INNER JOIN Train t ON tj.`TrainID` = t.`ID` LEFT JOIN Member m ON m.`ID` = tj.`MemberID`
+		WHERE tj.`AmountID` = #{amountid}
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from TrainJoin
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from TrainJoin
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.TrainJoin">
+    insert into TrainJoin (ID, CreateTime, ModifyTime, 
+      TrainID, MemberID, Price, 
+      Content, Type, PayType, 
+      PayRemark, AmountID, AmountType
+      )
+    values (#{id,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP}, 
+      #{trainid,jdbcType=VARCHAR}, #{memberid,jdbcType=VARCHAR}, #{price,jdbcType=DOUBLE}, 
+      #{content,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{paytype,jdbcType=INTEGER}, 
+      #{payremark,jdbcType=VARCHAR}, #{amountid,jdbcType=VARCHAR}, #{amounttype,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.TrainJoin">
+    insert into TrainJoin
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="createtime != null">
+        CreateTime,
+      </if>
+      <if test="modifytime != null">
+        ModifyTime,
+      </if>
+      <if test="trainid != null">
+        TrainID,
+      </if>
+      <if test="memberid != null">
+        MemberID,
+      </if>
+      <if test="price != null">
+        Price,
+      </if>
+      <if test="content != null">
+        Content,
+      </if>
+      <if test="type != null">
+        Type,
+      </if>
+      <if test="paytype != null">
+        PayType,
+      </if>
+      <if test="payremark != null">
+        PayRemark,
+      </if>
+      <if test="amountid != null">
+        AmountID,
+      </if>
+      <if test="amounttype != null">
+        AmountType,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifytime != null">
+        #{modifytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="trainid != null">
+        #{trainid,jdbcType=VARCHAR},
+      </if>
+      <if test="memberid != null">
+        #{memberid,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="paytype != null">
+        #{paytype,jdbcType=INTEGER},
+      </if>
+      <if test="payremark != null">
+        #{payremark,jdbcType=VARCHAR},
+      </if>
+      <if test="amountid != null">
+        #{amountid,jdbcType=VARCHAR},
+      </if>
+      <if test="amounttype != null">
+        #{amounttype,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.TrainJoin">
+    update TrainJoin
+    <set>
+      <if test="createtime != null">
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifytime != null">
+        ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="trainid != null">
+        TrainID = #{trainid,jdbcType=VARCHAR},
+      </if>
+      <if test="memberid != null">
+        MemberID = #{memberid,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        Price = #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="content != null">
+        Content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        Type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="paytype != null">
+        PayType = #{paytype,jdbcType=INTEGER},
+      </if>
+      <if test="payremark != null">
+        PayRemark = #{payremark,jdbcType=VARCHAR},
+      </if>
+      <if test="amountid != null">
+        AmountID = #{amountid,jdbcType=VARCHAR},
+      </if>
+      <if test="amounttype != null">
+        AmountType = #{amounttype,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.TrainJoin">
+    update TrainJoin
+    set CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+      TrainID = #{trainid,jdbcType=VARCHAR},
+      MemberID = #{memberid,jdbcType=VARCHAR},
+      Price = #{price,jdbcType=DOUBLE},
+      Content = #{content,jdbcType=VARCHAR},
+      Type = #{type,jdbcType=INTEGER},
+      PayType = #{paytype,jdbcType=INTEGER},
+      PayRemark = #{payremark,jdbcType=VARCHAR},
+      AmountID = #{amountid,jdbcType=VARCHAR},
+      AmountType = #{amounttype,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassNoticeMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassNotice">
+		<id column="mnID" jdbcType="CHAR" property="id" />
+		<result column="mnCreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="mnModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
+		<result column="mnNoticeNo" jdbcType="INTEGER" property="noticeno" />
+		<result column="mnTitle" jdbcType="VARCHAR" property="title" />
+		<result column="mnType" jdbcType="INTEGER" property="type" />
+		<result column="mnStaffID" jdbcType="VARCHAR" property="staffid" />
+		<result column="mnRemark" jdbcType="VARCHAR" property="remark" />
+		<result column="mnContent" jdbcType="LONGVARCHAR" property="content" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		 mn.ID mnID, mn.CreateTime mnCreateTime, mn.ModifyTime mnModifyTime, mn.NoticeNo mnNoticeNo, mn.Title mnTitle, 
+		 mn.Type mnType, mn.StaffID mnStaffID, mn.Remark mnRemark, mn.Content mnContent
+	</sql>
+
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.MassNotice" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassNotice mn order by CreateTime desc
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassNotice mn
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+
+	<select id="selectByEmp5" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> FROM MassNoticeEmp mne INNER JOIN
+		MassNotice mn ON mn.ID=mne.NoticeId where
+		mne.EmpId = #{empId} LIMIT 5
+	</select>
+
+	<select id="selectByEmpLIst" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> FROM MassNoticeEmp mne
+		INNER JOIN MassNotice mn ON mn.ID=mne.NoticeId
+		<where>
+			<if test="empId != null and empId != ''">
+				and mne.EmpId = #{empId}
+			</if>
+			<if test="noticeType != null and noticeType != ''">
+				and mn.Type = #{noticeType}
+			</if>
+		</where>
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from MassNotice
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassNotice">
+		insert into MassNotice (ID, CreateTime, ModifyTime,
+		NoticeNo, Title, Type,
+		StaffID, Remark, Content
+		)
+		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP},
+		#{noticeno,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},
+		#{staffid,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassNotice">
+		insert into MassNotice
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="modifytime != null">
+				ModifyTime,
+			</if>
+			<if test="noticeno != null">
+				NoticeNo,
+			</if>
+			<if test="title != null">
+				Title,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="staffid != null">
+				StaffID,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				#{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="noticeno != null">
+				#{noticeno,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="staffid != null">
+				#{staffid,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassNotice">
+		update MassNotice
+		<set>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="noticeno != null">
+				NoticeNo = #{noticeno,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				Title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="staffid != null">
+				StaffID = #{staffid,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.xiaoyi.ssm.model.MassNotice">
+		update MassNotice
+		set CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+		NoticeNo = #{noticeno,jdbcType=INTEGER},
+		Title = #{title,jdbcType=VARCHAR},
+		Type = #{type,jdbcType=INTEGER},
+		StaffID = #{staffid,jdbcType=VARCHAR},
+		Remark = #{remark,jdbcType=VARCHAR},
+		Content = #{content,jdbcType=LONGVARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassNotice">
+		update MassNotice
+		set CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+		NoticeNo = #{noticeno,jdbcType=INTEGER},
+		Title = #{title,jdbcType=VARCHAR},
+		Type = #{type,jdbcType=INTEGER},
+		StaffID = #{staffid,jdbcType=VARCHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

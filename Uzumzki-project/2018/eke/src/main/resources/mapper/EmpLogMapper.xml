@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EmpLogMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EmpLog">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="LogNO" jdbcType="INTEGER" property="logno" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="RegDate" jdbcType="TIMESTAMP" property="regdate" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, LogNO, EmpID, RegDate, Content
+	</sql>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EmpLog
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+
+	<select id="selectAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EmpLog
+		where EmpId = #{empid,jdbcType=CHAR} ORDER BY RegDate DESC
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from EmpLog
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EmpLog">
+		insert into EmpLog (ID, LogNO, EmpID, RegDate,
+		Content)
+		values (#{id,jdbcType=CHAR}, #{logno,jdbcType=INTEGER}, #{empid,jdbcType=CHAR},
+		#{regdate,jdbcType=TIMESTAMP},
+		#{content,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EmpLog">
+		insert into EmpLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="logno != null">
+				LogNO,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="regdate != null">
+				RegDate,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="logno != null">
+				#{logno,jdbcType=INTEGER},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="regdate != null">
+				#{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EmpLog">
+		update EmpLog
+		<set>
+			<if test="logno != null">
+				LogNO = #{logno,jdbcType=INTEGER},
+			</if>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="regdate != null">
+				RegDate = #{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EmpLog">
+		update EmpLog
+		set LogNO = #{logno,jdbcType=INTEGER},
+		EmpID = #{empid,jdbcType=CHAR},
+		RegDate = #{regdate,jdbcType=TIMESTAMP},
+		Content = #{content,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

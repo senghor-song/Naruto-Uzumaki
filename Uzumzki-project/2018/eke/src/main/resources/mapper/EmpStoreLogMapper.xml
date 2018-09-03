@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EmpStoreLogMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EmpStoreLog">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EmpStoreID" jdbcType="CHAR" property="empstoreid" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="StaffID" jdbcType="CHAR" property="staffid" />
+		<result column="Mes" jdbcType="VARCHAR" property="mes" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, EmpStoreID, CreateTime, StaffID, Mes, Remark
+	</sql>
+	<select id="countByEmpStore" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0) from EmpStoreLog where EmpStoreID = #{id,jdbcType=CHAR}
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EmpStoreLog
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from EmpStoreLog
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EmpStoreLog">
+		insert into EmpStoreLog (ID, EmpStoreID, CreateTime,
+		StaffID, Mes, Remark)
+		values (#{id,jdbcType=CHAR}, #{empstoreid,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP},
+		#{staffid,jdbcType=CHAR}, #{mes,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EmpStoreLog">
+		insert into EmpStoreLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="empstoreid != null">
+				EmpStoreID,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="staffid != null">
+				StaffID,
+			</if>
+			<if test="mes != null">
+				Mes,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="empstoreid != null">
+				#{empstoreid,jdbcType=CHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="staffid != null">
+				#{staffid,jdbcType=CHAR},
+			</if>
+			<if test="mes != null">
+				#{mes,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EmpStoreLog">
+		update EmpStoreLog
+		<set>
+			<if test="empstoreid != null">
+				EmpStoreID = #{empstoreid,jdbcType=CHAR},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="staffid != null">
+				StaffID = #{staffid,jdbcType=CHAR},
+			</if>
+			<if test="mes != null">
+				Mes = #{mes,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EmpStoreLog">
+		update EmpStoreLog
+		set EmpStoreID = #{empstoreid,jdbcType=CHAR},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		StaffID = #{staffid,jdbcType=CHAR},
+		Mes = #{mes,jdbcType=VARCHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

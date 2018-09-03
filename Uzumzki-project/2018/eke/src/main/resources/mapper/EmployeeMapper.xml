@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EmployeeMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Employee">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EmpNo" jdbcType="INTEGER" property="empno" />
+		<result column="Emp" jdbcType="VARCHAR" property="emp" />
+		<result column="Password" jdbcType="CHAR" property="password" />
+		<result column="ThirdPWD" jdbcType="CHAR" property="thirdpwd" />
+		<result column="Tel" jdbcType="VARCHAR" property="tel" />
+		<result column="TelCard" jdbcType="CHAR" property="telcard" />
+		<result column="ContactInform" jdbcType="VARCHAR" property="contactinform" />
+		<result column="Status" jdbcType="CHAR" property="status" />
+		<result column="Sex" jdbcType="CHAR" property="sex" />
+		<result column="IDCard" jdbcType="VARCHAR" property="idcard" />
+		<result column="EMail" jdbcType="VARCHAR" property="email" />
+		<result column="Signer" jdbcType="VARCHAR" property="signer" />
+		<result column="Icon" jdbcType="VARCHAR" property="icon" />
+		<result column="IconTime" jdbcType="TIMESTAMP" property="icontime" />
+		<result column="WXNo" jdbcType="VARCHAR" property="wxno" />
+		<result column="WXOpenID" jdbcType="VARCHAR" property="wxopenid" />
+		<result column="StoreID" jdbcType="CHAR" property="storeid" />
+		<result column="Store" jdbcType="VARCHAR" property="store" />
+		<result column="StoreManage" jdbcType="TINYINT" property="storemanage" />
+		<result column="AuthState" jdbcType="CHAR" property="authstate" />
+		<result column="Feature" jdbcType="VARCHAR" property="feature" />
+		<result column="FeatureModTime" jdbcType="TIMESTAMP" property="featuremodtime" />
+		<result column="MassValidity" jdbcType="DATE" property="massvalidity" />
+		<result column="MassType" jdbcType="CHAR" property="masstype" />
+		<result column="MassQuota" jdbcType="INTEGER" property="massquota" />
+		<result column="MassStock" jdbcType="INTEGER" property="massstock" />
+		<result column="CityID" jdbcType="VARCHAR" property="cityid" />
+		<result column="CityName" jdbcType="VARCHAR" property="cityname" />
+		<result column="Score" jdbcType="INTEGER" property="score" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<association property="empStore" javaType="com.xiaoyi.ssm.model.EmpStore">
+			<id property="id" column="ID" />
+			<result column="esEmpStore" property="empstore" />
+			<association property="cityT" javaType="com.xiaoyi.ssm.model.City">
+				<id column="ID" jdbcType="CHAR" property="id" />
+				<result column="cCity" jdbcType="VARCHAR" property="city" />
+			</association>
+			<association property="districtT" javaType="com.xiaoyi.ssm.model.District">
+				<id column="ID" jdbcType="CHAR" property="id" />
+				<result column="dDistrict" jdbcType="VARCHAR" property="district" />
+			</association>
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, EmpNo, Emp, Password, ThirdPWD, Tel, TelCard, ContactInform, Status, Sex, IDCard,
+		EMail, Signer, Icon, IconTime, WXNo, WXOpenID, StoreID, Store, StoreManage, AuthState,
+		Feature, FeatureModTime, MassValidity, MassType, MassQuota, MassStock, CityID, CityName,
+		Score, Remark
+	</sql>
+
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Employee" resultMap="BaseResultMap">
+		SELECT e.* , es.EmpStore esEmpStore,c.`City` cCity,d.`District` dDistrict FROM Employee e LEFT JOIN EmpStore es ON 
+		e.StoreID=es.ID LEFT JOIN City c ON es.`CityID` = c.`ID` LEFT JOIN District d ON es.`DistrictID` = d.`ID` 
+		<where>
+			<if test="storeid != null">
+				AND StoreID = #{storeid,jdbcType=CHAR}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectBySearch" parameterType="com.xiaoyi.ssm.dto.AdminEmpLoyeeDto" resultMap="BaseResultMap">
+		SELECT e.* , es.EmpStore esEmpStore,c.`City` cCity,d.`District` dDistrict FROM Employee e LEFT JOIN EmpStore es ON 
+		e.StoreID=es.ID LEFT JOIN City c ON es.`CityID` = c.`ID` LEFT JOIN District d ON es.`DistrictID` = d.`ID` 
+		<where>
+			<if test="selectType == 0">
+				AND e.emp like concat('%',concat('${keyword}','%'))
+			</if>
+			<if test="selectType == 1">
+				AND CAST(e.EmpNo AS CHAR(10)) LIKE CONCAT('%',CONCAT('${keyword}','%'))
+			</if>
+			<if test="selectType == 2">
+				AND es.EmpStore like concat('%',concat('${keyword}','%'))
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectByStore" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Employee WHERE StoreID = #{id,jdbcType=CHAR}
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select e.*,es.EmpStore esEmpStore from Employee e LEFT JOIN EmpStore es ON 
+		e.StoreID=es.ID where e.ID = #{id,jdbcType=CHAR}
+	</select>
+
+	<select id="login" parameterType="com.xiaoyi.ssm.model.Employee" resultMap="BaseResultMap">
+		SELECT e.* , es.EmpStore esEmpStore,c.`City` cCity,d.`District` dDistrict FROM Employee e LEFT JOIN EmpStore es ON 
+		e.StoreID=es.ID LEFT JOIN City c ON es.`CityID` = c.`ID` LEFT JOIN District d ON es.`DistrictID` = d.`ID` 
+		where
+		Tel = #{tel,jdbcType=CHAR} and
+		Password = #{password,jdbcType=CHAR}
+	</select>
+
+	<select id="getPhoneRegister" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select * from
+		Employee where Tel = #{phone}
+	</select>
+
+	<update id="updatePassword" parameterType="com.xiaoyi.ssm.dto.EmployeeDto">
+		update Employee set
+		Password =
+		#{newPwd,jdbcType=CHAR} where ID = #{id,jdbcType=CHAR}
+	</update>
+
+	<update id="updatePhonePassword" parameterType="com.xiaoyi.ssm.model.Employee">
+		update Employee
+		set Password = #{password}
+		where Tel = #{tel}
+	</update>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Employee
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Employee">
+		insert into Employee (ID, EmpNo, Emp,
+		Password, ThirdPWD, Tel,
+		TelCard, ContactInform, Status,
+		Sex, IDCard, EMail, Signer,
+		Icon, IconTime, WXNo,
+		WXOpenID, StoreID, Store,
+		StoreManage, AuthState, Feature,
+		FeatureModTime, MassValidity, MassType,
+		MassQuota, MassStock, CityID,
+		CityName, Score, Remark
+		)
+		values (#{id,jdbcType=CHAR}, #{empno,jdbcType=INTEGER}, #{emp,jdbcType=VARCHAR},
+		#{password,jdbcType=CHAR}, #{thirdpwd,jdbcType=CHAR}, #{tel,jdbcType=VARCHAR},
+		#{telcard,jdbcType=CHAR}, #{contactinform,jdbcType=VARCHAR}, #{status,jdbcType=CHAR},
+		#{sex,jdbcType=CHAR}, #{idcard,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+		#{signer,jdbcType=VARCHAR},
+		#{icon,jdbcType=VARCHAR}, #{icontime,jdbcType=TIMESTAMP}, #{wxno,jdbcType=VARCHAR},
+		#{wxopenid,jdbcType=VARCHAR}, #{storeid,jdbcType=CHAR}, #{store,jdbcType=VARCHAR},
+		#{storemanage,jdbcType=TINYINT}, #{authstate,jdbcType=CHAR}, #{feature,jdbcType=VARCHAR},
+		#{featuremodtime,jdbcType=TIMESTAMP}, #{massvalidity,jdbcType=DATE}, #{masstype,jdbcType=CHAR},
+		#{massquota,jdbcType=INTEGER}, #{massstock,jdbcType=INTEGER}, #{cityid,jdbcType=VARCHAR},
+		#{cityname,jdbcType=VARCHAR}, #{score,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Employee">
+		insert into Employee
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="empno != null">
+				EmpNo,
+			</if>
+			<if test="emp != null">
+				Emp,
+			</if>
+			<if test="password != null">
+				Password,
+			</if>
+			<if test="thirdpwd != null">
+				ThirdPWD,
+			</if>
+			<if test="tel != null">
+				Tel,
+			</if>
+			<if test="telcard != null">
+				TelCard,
+			</if>
+			<if test="contactinform != null">
+				ContactInform,
+			</if>
+			<if test="status != null">
+				Status,
+			</if>
+			<if test="sex != null">
+				Sex,
+			</if>
+			<if test="idcard != null">
+				IDCard,
+			</if>
+			<if test="email != null">
+				EMail,
+			</if>
+			<if test="signer != null">
+				Signer,
+			</if>
+			<if test="icon != null">
+				Icon,
+			</if>
+			<if test="icontime != null">
+				IconTime,
+			</if>
+			<if test="wxno != null">
+				WXNo,
+			</if>
+			<if test="wxopenid != null">
+				WXOpenID,
+			</if>
+			<if test="storeid != null">
+				StoreID,
+			</if>
+			<if test="store != null">
+				Store,
+			</if>
+			<if test="storemanage != null">
+				StoreManage,
+			</if>
+			<if test="authstate != null">
+				AuthState,
+			</if>
+			<if test="feature != null">
+				Feature,
+			</if>
+			<if test="featuremodtime != null">
+				FeatureModTime,
+			</if>
+			<if test="massvalidity != null">
+				MassValidity,
+			</if>
+			<if test="masstype != null">
+				MassType,
+			</if>
+			<if test="massquota != null">
+				MassQuota,
+			</if>
+			<if test="massstock != null">
+				MassStock,
+			</if>
+			<if test="cityid != null">
+				CityID,
+			</if>
+			<if test="cityname != null">
+				CityName,
+			</if>
+			<if test="score != null">
+				Score,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="empno != null">
+				#{empno,jdbcType=INTEGER},
+			</if>
+			<if test="emp != null">
+				#{emp,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=CHAR},
+			</if>
+			<if test="thirdpwd != null">
+				#{thirdpwd,jdbcType=CHAR},
+			</if>
+			<if test="tel != null">
+				#{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="telcard != null">
+				#{telcard,jdbcType=CHAR},
+			</if>
+			<if test="contactinform != null">
+				#{contactinform,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=CHAR},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=CHAR},
+			</if>
+			<if test="idcard != null">
+				#{idcard,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				#{email,jdbcType=VARCHAR},
+			</if>
+			<if test="signer != null">
+				#{signer,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				#{icon,jdbcType=VARCHAR},
+			</if>
+			<if test="icontime != null">
+				#{icontime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="wxno != null">
+				#{wxno,jdbcType=VARCHAR},
+			</if>
+			<if test="wxopenid != null">
+				#{wxopenid,jdbcType=VARCHAR},
+			</if>
+			<if test="storeid != null">
+				#{storeid,jdbcType=CHAR},
+			</if>
+			<if test="store != null">
+				#{store,jdbcType=VARCHAR},
+			</if>
+			<if test="storemanage != null">
+				#{storemanage,jdbcType=TINYINT},
+			</if>
+			<if test="authstate != null">
+				#{authstate,jdbcType=CHAR},
+			</if>
+			<if test="feature != null">
+				#{feature,jdbcType=VARCHAR},
+			</if>
+			<if test="featuremodtime != null">
+				#{featuremodtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="massvalidity != null">
+				#{massvalidity,jdbcType=DATE},
+			</if>
+			<if test="masstype != null">
+				#{masstype,jdbcType=CHAR},
+			</if>
+			<if test="massquota != null">
+				#{massquota,jdbcType=INTEGER},
+			</if>
+			<if test="massstock != null">
+				#{massstock,jdbcType=INTEGER},
+			</if>
+			<if test="cityid != null">
+				#{cityid,jdbcType=VARCHAR},
+			</if>
+			<if test="cityname != null">
+				#{cityname,jdbcType=VARCHAR},
+			</if>
+			<if test="score != null">
+				#{score,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Employee">
+		update Employee
+		<set>
+			<if test="empno != null">
+				EmpNo = #{empno,jdbcType=INTEGER},
+			</if>
+			<if test="emp != null">
+				Emp = #{emp,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				Password = #{password,jdbcType=CHAR},
+			</if>
+			<if test="thirdpwd != null">
+				ThirdPWD = #{thirdpwd,jdbcType=CHAR},
+			</if>
+			<if test="tel != null">
+				Tel = #{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="telcard != null">
+				TelCard = #{telcard,jdbcType=CHAR},
+			</if>
+			<if test="contactinform != null">
+				ContactInform = #{contactinform,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				Status = #{status,jdbcType=CHAR},
+			</if>
+			<if test="sex != null">
+				Sex = #{sex,jdbcType=CHAR},
+			</if>
+			<if test="idcard != null">
+				IDCard = #{idcard,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				EMail = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="signer != null">
+				Signer = #{signer,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				Icon = #{icon,jdbcType=VARCHAR},
+			</if>
+			<if test="icontime != null">
+				IconTime = #{icontime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="wxno != null">
+				WXNo = #{wxno,jdbcType=VARCHAR},
+			</if>
+			<if test="wxopenid != null">
+				WXOpenID = #{wxopenid,jdbcType=VARCHAR},
+			</if>
+			<if test="storeid != null">
+				StoreID = #{storeid,jdbcType=CHAR},
+			</if>
+			<if test="store != null">
+				Store = #{store,jdbcType=VARCHAR},
+			</if>
+			<if test="storemanage != null">
+				StoreManage = #{storemanage,jdbcType=TINYINT},
+			</if>
+			<if test="authstate != null">
+				AuthState = #{authstate,jdbcType=CHAR},
+			</if>
+			<if test="feature != null">
+				Feature = #{feature,jdbcType=VARCHAR},
+			</if>
+			<if test="featuremodtime != null">
+				FeatureModTime = #{featuremodtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="massvalidity != null">
+				MassValidity = #{massvalidity,jdbcType=DATE},
+			</if>
+			<if test="masstype != null">
+				MassType = #{masstype,jdbcType=CHAR},
+			</if>
+			<if test="massquota != null">
+				MassQuota = #{massquota,jdbcType=INTEGER},
+			</if>
+			<if test="massstock != null">
+				MassStock = #{massstock,jdbcType=INTEGER},
+			</if>
+			<if test="cityid != null">
+				CityID = #{cityid,jdbcType=VARCHAR},
+			</if>
+			<if test="cityname != null">
+				CityName = #{cityname,jdbcType=VARCHAR},
+			</if>
+			<if test="score != null">
+				Score = #{score,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Employee">
+		update Employee
+		set EmpNo = #{empno,jdbcType=INTEGER},
+		Emp = #{emp,jdbcType=VARCHAR},
+		Password = #{password,jdbcType=CHAR},
+		ThirdPWD = #{thirdpwd,jdbcType=CHAR},
+		Tel = #{tel,jdbcType=VARCHAR},
+		TelCard = #{telcard,jdbcType=CHAR},
+		ContactInform = #{contactinform,jdbcType=VARCHAR},
+		Status = #{status,jdbcType=CHAR},
+		Sex = #{sex,jdbcType=CHAR},
+		IDCard = #{idcard,jdbcType=VARCHAR},
+		EMail = #{email,jdbcType=VARCHAR},
+		Signer = #{signer,jdbcType=VARCHAR},
+		Icon = #{icon,jdbcType=VARCHAR},
+		IconTime = #{icontime,jdbcType=TIMESTAMP},
+		WXNo = #{wxno,jdbcType=VARCHAR},
+		WXOpenID = #{wxopenid,jdbcType=VARCHAR},
+		StoreID = #{storeid,jdbcType=CHAR},
+		Store = #{store,jdbcType=VARCHAR},
+		StoreManage = #{storemanage,jdbcType=TINYINT},
+		AuthState = #{authstate,jdbcType=CHAR},
+		Feature = #{feature,jdbcType=VARCHAR},
+		FeatureModTime = #{featuremodtime,jdbcType=TIMESTAMP},
+		MassValidity = #{massvalidity,jdbcType=DATE},
+		MassType = #{masstype,jdbcType=CHAR},
+		MassQuota = #{massquota,jdbcType=INTEGER},
+		MassStock = #{massstock,jdbcType=INTEGER},
+		CityID = #{cityid,jdbcType=VARCHAR},
+		CityName = #{cityname,jdbcType=VARCHAR},
+		Score = #{score,jdbcType=INTEGER},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

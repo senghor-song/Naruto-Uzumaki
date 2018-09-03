@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.NewsCustMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.NewsCust">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="NewsCustNo" jdbcType="VARCHAR" property="newscustno" />
+		<result column="Status" jdbcType="CHAR" property="status" />
+		<result column="Title" jdbcType="VARCHAR" property="title" />
+		<result column="Source" jdbcType="VARCHAR" property="source" />
+		<result column="StaffID" jdbcType="CHAR" property="staffid" />
+		<result column="RegDate" jdbcType="TIMESTAMP" property="regdate" />
+		<result column="ShowDate" jdbcType="TIMESTAMP" property="showdate" />
+		<result column="CoverPath" jdbcType="VARCHAR" property="coverpath" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="FlagTop" jdbcType="TINYINT" property="flagtop" />
+		<result column="ViewCount" jdbcType="INTEGER" property="viewcount" />
+		<result column="FlagDeleted" jdbcType="TINYINT" property="flagdeleted" />
+		<result column="DeletedTime" jdbcType="TIMESTAMP" property="deletedtime" />
+		<result column="Sort" jdbcType="INTEGER" property="sort" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, NewsCustNo, Status, Title, Source, StaffID, RegDate, ShowDate, CoverPath, Content,
+		FlagTop, ViewCount, FlagDeleted, DeletedTime, Sort, Remark
+	</sql>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.NewsCust" resultMap="BaseResultMap">
+		SELECT * FROM NewsCust ORDER BY NewsCustNo DESC
+	</select>
+	
+	<select id="selectBySearch" parameterType="com.xiaoyi.ssm.dto.AdminNewsHeadDto" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from NewsCust
+		<where>
+			<if test="selectType == 0">
+				AND CAST(NewsCustNo AS CHAR(10)) LIKE CONCAT('%',CONCAT('${keyword}','%'))
+			</if>
+			<if test="selectType == 1">
+				AND Title like concat('%',concat('${keyword}','%'))
+			</if>
+		</where>
+		order by NewsCustNo desc
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from NewsCust
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from NewsCust
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.NewsCust">
+		insert into NewsCust (ID, NewsCustNo, Status,
+		Title, Source, StaffID,
+		RegDate, ShowDate, CoverPath,
+		Content, FlagTop, ViewCount,
+		FlagDeleted, DeletedTime, Sort,
+		Remark)
+		values (#{id,jdbcType=CHAR}, #{newscustno,jdbcType=VARCHAR}, #{status,jdbcType=CHAR},
+		#{title,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, #{staffid,jdbcType=CHAR},
+		#{regdate,jdbcType=TIMESTAMP}, #{showdate,jdbcType=TIMESTAMP}, #{coverpath,jdbcType=VARCHAR},
+		#{content,jdbcType=VARCHAR}, #{flagtop,jdbcType=TINYINT}, #{viewcount,jdbcType=INTEGER},
+		#{flagdeleted,jdbcType=TINYINT}, #{deletedtime,jdbcType=TIMESTAMP}, #{sort,jdbcType=INTEGER},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.NewsCust">
+		insert into NewsCust
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="newscustno != null">
+				NewsCustNo,
+			</if>
+			<if test="status != null">
+				Status,
+			</if>
+			<if test="title != null">
+				Title,
+			</if>
+			<if test="source != null">
+				Source,
+			</if>
+			<if test="staffid != null">
+				StaffID,
+			</if>
+			<if test="regdate != null">
+				RegDate,
+			</if>
+			<if test="showdate != null">
+				ShowDate,
+			</if>
+			<if test="coverpath != null">
+				CoverPath,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+			<if test="flagtop != null">
+				FlagTop,
+			</if>
+			<if test="viewcount != null">
+				ViewCount,
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted,
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime,
+			</if>
+			<if test="sort != null">
+				Sort,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="newscustno != null">
+				#{newscustno,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=CHAR},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="source != null">
+				#{source,jdbcType=VARCHAR},
+			</if>
+			<if test="staffid != null">
+				#{staffid,jdbcType=CHAR},
+			</if>
+			<if test="regdate != null">
+				#{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="showdate != null">
+				#{showdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="coverpath != null">
+				#{coverpath,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="flagtop != null">
+				#{flagtop,jdbcType=TINYINT},
+			</if>
+			<if test="viewcount != null">
+				#{viewcount,jdbcType=INTEGER},
+			</if>
+			<if test="flagdeleted != null">
+				#{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				#{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sort != null">
+				#{sort,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.NewsCust">
+		update NewsCust
+		<set>
+			<if test="newscustno != null">
+				NewsCustNo = #{newscustno,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				Status = #{status,jdbcType=CHAR},
+			</if>
+			<if test="title != null">
+				Title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="source != null">
+				Source = #{source,jdbcType=VARCHAR},
+			</if>
+			<if test="staffid != null">
+				StaffID = #{staffid,jdbcType=CHAR},
+			</if>
+			<if test="regdate != null">
+				RegDate = #{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="showdate != null">
+				ShowDate = #{showdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="coverpath != null">
+				CoverPath = #{coverpath,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="flagtop != null">
+				FlagTop = #{flagtop,jdbcType=TINYINT},
+			</if>
+			<if test="viewcount != null">
+				ViewCount = #{viewcount,jdbcType=INTEGER},
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sort != null">
+				Sort = #{sort,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.NewsCust">
+		update NewsCust
+		set NewsCustNo = #{newscustno,jdbcType=VARCHAR},
+		Status = #{status,jdbcType=CHAR},
+		Title = #{title,jdbcType=VARCHAR},
+		Source = #{source,jdbcType=VARCHAR},
+		StaffID = #{staffid,jdbcType=CHAR},
+		RegDate = #{regdate,jdbcType=TIMESTAMP},
+		ShowDate = #{showdate,jdbcType=TIMESTAMP},
+		CoverPath = #{coverpath,jdbcType=VARCHAR},
+		Content = #{content,jdbcType=VARCHAR},
+		FlagTop = #{flagtop,jdbcType=TINYINT},
+		ViewCount = #{viewcount,jdbcType=INTEGER},
+		FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+		DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+		Sort = #{sort,jdbcType=INTEGER},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

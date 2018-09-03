@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EstateMatchMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EstateMatch">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="MatchNo" jdbcType="INTEGER" property="matchno" />
+		<result column="EstateID" jdbcType="CHAR" property="estateid" />
+		<result column="WebID" jdbcType="CHAR" property="webid" />
+		<result column="Name" jdbcType="VARCHAR" property="name" />
+		<result column="CreateTime" jdbcType="DATE" property="createtime" />
+		<result column="ModifyTime" jdbcType="DATE" property="modifytime" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<association property="webSite" javaType="com.xiaoyi.ssm.model.WebSite">
+			<id column="ID" property="id" />
+			<result column="wsWebName" jdbcType="VARCHAR" property="webname" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, MatchNo, EstateID, WebID, Name, CreateTime, ModifyTime, Remark
+	</sql>
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.EstateMatch" resultMap="BaseResultMap">
+		SELECT em.*,ws.`WebName` wsWebName FROM EstateMatch em, WebSite ws WHERE em.`WebID` = ws.`ID`
+		<if test="matchno != null">
+			AND MatchNo = #{matchno,jdbcType=INTEGER}
+		</if>
+		<if test="estateid != null">
+			AND EstateID = #{estateid,jdbcType=CHAR}
+		</if>
+		<if test="webid != null">
+			AND WebID = #{webid,jdbcType=CHAR}
+		</if>
+		<if test="name != null">
+			AND Name = #{name,jdbcType=VARCHAR}
+		</if>
+		<if test="createtime != null">
+			AND CreateTime = #{createtime,jdbcType=DATE}
+		</if>
+		<if test="modifytime != null">
+			AND ModifyTime = #{modifytime,jdbcType=DATE}
+		</if>
+		<if test="remark != null">
+			AND Remark = #{remark,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<select id="selectByEstateWeb" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EstateMatch
+		where EstateID = #{estateId} AND WebID = #{webId}  limit 1
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EstateMatch
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from EstateMatch
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EstateMatch">
+		insert into EstateMatch (ID, MatchNo, EstateID,
+		WebID, Name, CreateTime,
+		ModifyTime, Remark)
+		values (#{id,jdbcType=CHAR}, #{matchno,jdbcType=INTEGER}, #{estateid,jdbcType=CHAR},
+		#{webid,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{createtime,jdbcType=DATE},
+		#{modifytime,jdbcType=DATE}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EstateMatch">
+		insert into EstateMatch
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="matchno != null">
+				MatchNo,
+			</if>
+			<if test="estateid != null">
+				EstateID,
+			</if>
+			<if test="webid != null">
+				WebID,
+			</if>
+			<if test="name != null">
+				Name,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="modifytime != null">
+				ModifyTime,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="matchno != null">
+				#{matchno,jdbcType=INTEGER},
+			</if>
+			<if test="estateid != null">
+				#{estateid,jdbcType=CHAR},
+			</if>
+			<if test="webid != null">
+				#{webid,jdbcType=CHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=DATE},
+			</if>
+			<if test="modifytime != null">
+				#{modifytime,jdbcType=DATE},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EstateMatch">
+		update EstateMatch
+		<set>
+			<if test="matchno != null">
+				MatchNo = #{matchno,jdbcType=INTEGER},
+			</if>
+			<if test="estateid != null">
+				EstateID = #{estateid,jdbcType=CHAR},
+			</if>
+			<if test="webid != null">
+				WebID = #{webid,jdbcType=CHAR},
+			</if>
+			<if test="name != null">
+				Name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=DATE},
+			</if>
+			<if test="modifytime != null">
+				ModifyTime = #{modifytime,jdbcType=DATE},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EstateMatch">
+		update EstateMatch
+		set MatchNo = #{matchno,jdbcType=INTEGER},
+		EstateID = #{estateid,jdbcType=CHAR},
+		WebID = #{webid,jdbcType=CHAR},
+		Name = #{name,jdbcType=VARCHAR},
+		CreateTime = #{createtime,jdbcType=DATE},
+		ModifyTime = #{modifytime,jdbcType=DATE},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

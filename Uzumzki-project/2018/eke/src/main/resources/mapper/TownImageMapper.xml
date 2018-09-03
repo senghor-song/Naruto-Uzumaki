@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.TownImageMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.TownImage">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="UploadTime" jdbcType="TIMESTAMP" property="uploadtime" />
+		<result column="StaffID" jdbcType="CHAR" property="staffid" />
+		<result column="TownID" jdbcType="CHAR" property="townid" />
+		<result column="Town" jdbcType="VARCHAR" property="town" />
+		<result column="Size" jdbcType="INTEGER" property="size" />
+		<result column="Path" jdbcType="VARCHAR" property="path" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, UploadTime, StaffID, TownID, Town, Size, Path, Remark
+	</sql>
+	
+	<select id="countByTown" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0) from TownImage where TownID = #{id,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from TownImage
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from TownImage
+		where ID =
+		#{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.TownImage">
+		insert into TownImage (ID, UploadTime, StaffID,
+		TownID,
+		Town, Size, Path,
+		Remark)
+		values (#{id,jdbcType=CHAR}, #{uploadtime,jdbcType=TIMESTAMP},
+		#{staffid,jdbcType=CHAR},
+		#{townid,jdbcType=CHAR}, #{town,jdbcType=VARCHAR},
+		#{size,jdbcType=INTEGER},
+		#{path,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.TownImage">
+		insert into TownImage
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="uploadtime != null">
+				UploadTime,
+			</if>
+			<if test="staffid != null">
+				StaffID,
+			</if>
+			<if test="townid != null">
+				TownID,
+			</if>
+			<if test="town != null">
+				Town,
+			</if>
+			<if test="size != null">
+				Size,
+			</if>
+			<if test="path != null">
+				Path,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="uploadtime != null">
+				#{uploadtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="staffid != null">
+				#{staffid,jdbcType=CHAR},
+			</if>
+			<if test="townid != null">
+				#{townid,jdbcType=CHAR},
+			</if>
+			<if test="town != null">
+				#{town,jdbcType=VARCHAR},
+			</if>
+			<if test="size != null">
+				#{size,jdbcType=INTEGER},
+			</if>
+			<if test="path != null">
+				#{path,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.TownImage">
+		update TownImage
+		<set>
+			<if test="uploadtime != null">
+				UploadTime = #{uploadtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="staffid != null">
+				StaffID = #{staffid,jdbcType=CHAR},
+			</if>
+			<if test="townid != null">
+				TownID = #{townid,jdbcType=CHAR},
+			</if>
+			<if test="town != null">
+				Town = #{town,jdbcType=VARCHAR},
+			</if>
+			<if test="size != null">
+				Size = #{size,jdbcType=INTEGER},
+			</if>
+			<if test="path != null">
+				Path = #{path,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.TownImage">
+		update TownImage
+		set UploadTime =
+		#{uploadtime,jdbcType=TIMESTAMP},
+		StaffID = #{staffid,jdbcType=CHAR},
+		TownID =
+		#{townid,jdbcType=CHAR},
+		Town = #{town,jdbcType=VARCHAR},
+		Size = #{size,jdbcType=INTEGER},
+		Path =
+		#{path,jdbcType=VARCHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

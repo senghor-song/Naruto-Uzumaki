@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EstateMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Estate">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="Estate" jdbcType="VARCHAR" property="estate" />
+		<result column="EstateNo" jdbcType="VARCHAR" property="estateno" />
+		<result column="City" jdbcType="VARCHAR" property="city" />
+		<result column="District" jdbcType="VARCHAR" property="district" />
+		<result column="Area" jdbcType="VARCHAR" property="area" />
+		<result column="CityID" jdbcType="CHAR" property="cityid" />
+		<result column="DistrictID" jdbcType="CHAR" property="districtid" />
+		<result column="AreaID" jdbcType="CHAR" property="areaid" />
+		<result column="Spell" jdbcType="VARCHAR" property="spell" />
+		<result column="HeadImg" jdbcType="VARCHAR" property="headimg" />
+		<result column="Latitude" jdbcType="DOUBLE" property="latitude" />
+		<result column="Longitude" jdbcType="DOUBLE" property="longitude" />
+		<result column="Address" jdbcType="VARCHAR" property="address" />
+		<result column="MgtTel" jdbcType="VARCHAR" property="mgttel" />
+		<result column="ModTime" jdbcType="TIMESTAMP" property="modtime" />
+		<result column="FlagDeleted" jdbcType="TINYINT" property="flagdeleted" />
+		<result column="DeletedTime" jdbcType="TIMESTAMP" property="deletedtime" />
+		<result column="MoreDescribe" jdbcType="VARCHAR" property="moredescribe" />
+		<result column="MoreCompleteYear" jdbcType="VARCHAR" property="morecompleteyear" />
+		<result column="MoreType" jdbcType="VARCHAR" property="moretype" />
+		<result column="MoreParking" jdbcType="VARCHAR" property="moreparking" />
+		<result column="MoreFee" jdbcType="VARCHAR" property="morefee" />
+		<result column="MoreDeveloper" jdbcType="VARCHAR" property="moredeveloper" />
+		<result column="MoreMgt" jdbcType="VARCHAR" property="moremgt" />
+		<result column="MoreRoom" jdbcType="INTEGER" property="moreroom" />
+		<result column="ConfigBus" jdbcType="VARCHAR" property="configbus" />
+		<result column="ConfigKindergarten" jdbcType="VARCHAR" property="configkindergarten" />
+		<result column="ConfigSecondary" jdbcType="VARCHAR" property="configsecondary" />
+		<result column="ConfigUniversity" jdbcType="VARCHAR" property="configuniversity" />
+		<result column="ConfigShopping" jdbcType="VARCHAR" property="configshopping" />
+		<result column="ConfigHospital" jdbcType="VARCHAR" property="confighospital" />
+		<result column="ConfigEmail" jdbcType="VARCHAR" property="configemail" />
+		<result column="ConfigBank" jdbcType="VARCHAR" property="configbank" />
+		<result column="ConfigElse" jdbcType="VARCHAR" property="configelse" />
+		<result column="ConfigInterior" jdbcType="VARCHAR" property="configinterior" />
+		<result column="Match58" jdbcType="VARCHAR" property="match58" />
+		<result column="MatchFang" jdbcType="VARCHAR" property="matchfang" />
+		<result column="MatchAn" jdbcType="VARCHAR" property="matchan" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<association property="cityT" javaType="com.xiaoyi.ssm.model.City">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="cCity" jdbcType="VARCHAR" property="city" />
+		</association>
+		<association property="districtT" javaType="com.xiaoyi.ssm.model.District">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="dDistrict" jdbcType="VARCHAR" property="district" />
+		</association>
+		<association property="areaT" javaType="com.xiaoyi.ssm.model.Area">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="aArea" jdbcType="VARCHAR" property="area" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Estate, EstateNo, City, District, Area, CityID, DistrictID, AreaID,
+		Spell, HeadImg,
+		Latitude, Longitude, Address, MgtTel, ModTime, FlagDeleted, DeletedTime,
+		MoreDescribe,
+		MoreCompleteYear, MoreType, MoreParking, MoreFee, MoreDeveloper, MoreMgt, MoreRoom,
+		ConfigBus, ConfigKindergarten, ConfigSecondary, ConfigUniversity,
+		ConfigShopping,
+		ConfigHospital, ConfigEmail, ConfigBank, ConfigElse, ConfigInterior, Match58,
+		MatchFang,
+		MatchAn, Remark
+	</sql>
+	
+	
+	<select id="selectByArea" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select e.*, c.`City` cCity, d.`District` dDistrict, a.`Area` aArea
+		from  Estate e LEFT JOIN City c ON  e.`CityID` = c.`ID` LEFT JOIN District d ON e.`DistrictID` = d.`ID` LEFT JOIN `Area` a ON e.`AreaID` = a.`ID`
+		WHERE a.`ID` = #{id}
+	</select>
+	
+	<select id="selectByEstateName" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select e.*, c.`City` cCity, d.`District` dDistrict, a.`Area` aArea
+		from  Estate e LEFT JOIN City c ON  e.`CityID` = c.`ID` LEFT JOIN District d ON e.`DistrictID` = d.`ID` LEFT JOIN `Area` a ON e.`AreaID` = a.`ID`
+		WHERE Estate = #{name} limit 1
+	</select>
+	
+	<select id="selectByStoreCount" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0) FROM EmpStoreEstate WHERE estateid = #{estateid}
+	</select>
+	
+	<select id="selectByImageStorageCount" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0) FROM EstateImageStorage WHERE estate = #{estateid}
+	</select>
+	
+	<select id="selectByEstateImageCount" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0) FROM EstateImage WHERE estateid = #{estateid}
+	</select>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Estate"
+		resultMap="BaseResultMap">
+		select e.*, c.`City` cCity, d.`District` dDistrict, a.`Area` aArea
+		from  Estate e LEFT JOIN City c ON  e.`CityID` = c.`ID` LEFT JOIN District d ON e.`DistrictID` = d.`ID` LEFT JOIN `Area` a ON e.`AreaID` = a.`ID`
+		<where>
+			<if test="estate != null">
+				AND e.Estate = #{estate,jdbcType=VARCHAR}
+			</if>
+			<if test="estateno != null">
+				AND e.EstateNo = #{estateno,jdbcType=VARCHAR}
+			</if>
+			<if test="city != null">
+				AND e.City = #{city,jdbcType=VARCHAR}
+			</if>
+			<if test="district != null">
+				AND e.District = #{district,jdbcType=VARCHAR}
+			</if>
+			<if test="area != null">
+				AND e.Area = #{area,jdbcType=VARCHAR}
+			</if>
+			<if test="cityid != null">
+				AND e.CityID = #{cityid,jdbcType=CHAR}
+			</if>
+			<if test="districtid != null">
+				AND e.DistrictID = #{districtid,jdbcType=CHAR}
+			</if>
+			<if test="areaid != null">
+				AND e.AreaID = #{areaid,jdbcType=CHAR}
+			</if>
+			<if test="spell != null">
+				AND e.Spell = #{spell,jdbcType=VARCHAR}
+			</if>
+			<if test="headimg != null">
+				AND e.HeadImg = #{headimg,jdbcType=VARCHAR}
+			</if>
+			<if test="latitude != null">
+				AND e.Latitude = #{latitude,jdbcType=DOUBLE}
+			</if>
+			<if test="longitude != null">
+				AND e.Longitude = #{longitude,jdbcType=DOUBLE}
+			</if>
+			<if test="address != null">
+				AND e.Address = #{address,jdbcType=VARCHAR}
+			</if>
+			<if test="mgttel != null">
+				AND e.MgtTel = #{mgttel,jdbcType=VARCHAR}
+			</if>
+			<if test="modtime != null">
+				AND e.ModTime = #{modtime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="flagdeleted != null">
+				AND e.FlagDeleted = #{flagdeleted,jdbcType=TINYINT}
+			</if>
+			<if test="deletedtime != null">
+				AND e.DeletedTime = #{deletedtime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="moredescribe != null">
+				AND e.MoreDescribe = #{moredescribe,jdbcType=VARCHAR}
+			</if>
+			<if test="morecompleteyear != null">
+				AND e.MoreCompleteYear = #{morecompleteyear,jdbcType=VARCHAR}
+			</if>
+			<if test="moretype != null">
+				AND e.MoreType = #{moretype,jdbcType=VARCHAR}
+			</if>
+			<if test="moreparking != null">
+				AND e.MoreParking = #{moreparking,jdbcType=VARCHAR}
+			</if>
+			<if test="morefee != null">
+				AND e.MoreFee = #{morefee,jdbcType=VARCHAR}
+			</if>
+			<if test="moredeveloper != null">
+				AND e.MoreDeveloper = #{moredeveloper,jdbcType=VARCHAR}
+			</if>
+			<if test="moremgt != null">
+				AND e.MoreMgt = #{moremgt,jdbcType=VARCHAR}
+			</if>
+			<if test="moreroom != null">
+				AND e.MoreRoom = #{moreroom,jdbcType=INTEGER}
+			</if>
+			<if test="configbus != null">
+				AND e.ConfigBus = #{configbus,jdbcType=VARCHAR}
+			</if>
+			<if test="configkindergarten != null">
+				AND e.ConfigKindergarten = #{configkindergarten,jdbcType=VARCHAR}
+			</if>
+			<if test="configsecondary != null">
+				AND e.ConfigSecondary = #{configsecondary,jdbcType=VARCHAR}
+			</if>
+			<if test="configuniversity != null">
+				AND e.ConfigUniversity = #{configuniversity,jdbcType=VARCHAR}
+			</if>
+			<if test="configshopping != null">
+				AND e.ConfigShopping = #{configshopping,jdbcType=VARCHAR}
+			</if>
+			<if test="confighospital != null">
+				AND e.ConfigHospital = #{confighospital,jdbcType=VARCHAR}
+			</if>
+			<if test="configemail != null">
+				AND e.ConfigEmail = #{configemail,jdbcType=VARCHAR}
+			</if>
+			<if test="configbank != null">
+				AND e.ConfigBank = #{configbank,jdbcType=VARCHAR}
+			</if>
+			<if test="configelse != null">
+				AND e.ConfigElse = #{configelse,jdbcType=VARCHAR}
+			</if>
+			<if test="configinterior != null">
+				AND e.ConfigInterior = #{configinterior,jdbcType=VARCHAR}
+			</if>
+			<if test="match58 != null">
+				AND e.Match58 = #{match58,jdbcType=VARCHAR}
+			</if>
+			<if test="matchfang != null">
+				AND e.MatchFang = #{matchfang,jdbcType=VARCHAR}
+			</if>
+			<if test="matchan != null">
+				AND e.MatchAn = #{matchan,jdbcType=VARCHAR}
+			</if>
+			<if test="remark != null">
+				AND e.Remark = #{remark,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	<select id="selectByName" parameterType="com.xiaoyi.ssm.dto.HouseEnterDto"
+		resultMap="BaseResultMap">
+		select e.*, c.`City` cCity, d.`District` dDistrict, a.`Area` aArea
+		from  Estate e LEFT JOIN City c ON  e.`CityID` = c.`ID` LEFT JOIN District d ON e.`DistrictID` = d.`ID` LEFT JOIN `Area` a ON e.`AreaID` = a.`ID`
+		<where>
+			<if test="estateName != null">
+				and estate like concat('%',concat('${estateName}','%'))
+			</if>
+		</where>
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select e.*, c.`City` cCity, d.`District` dDistrict, a.`Area` aArea
+		from  Estate e LEFT JOIN City c ON  e.`CityID` = c.`ID` LEFT JOIN District d ON e.`DistrictID` = d.`ID` LEFT JOIN `Area` a ON e.`AreaID` = a.`ID`
+		where e.ID = #{id,jdbcType=CHAR}
+	</select>
+	
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Estate
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Estate">
+		insert into Estate (ID, Estate, EstateNo,
+		City, District, Area,
+		CityID, DistrictID, AreaID,
+		Spell, HeadImg, Latitude,
+		Longitude, Address, MgtTel,
+		ModTime, FlagDeleted, DeletedTime,
+		MoreDescribe, MoreCompleteYear, MoreType,
+		MoreParking, MoreFee, MoreDeveloper,
+		MoreMgt, MoreRoom, ConfigBus,
+		ConfigKindergarten, ConfigSecondary, ConfigUniversity,
+		ConfigShopping, ConfigHospital, ConfigEmail,
+		ConfigBank, ConfigElse, ConfigInterior,
+		Match58, MatchFang, MatchAn,
+		Remark)
+		values (#{id,jdbcType=CHAR}, #{estate,jdbcType=VARCHAR},
+		#{estateno,jdbcType=VARCHAR},
+		#{city,jdbcType=VARCHAR}, #{district,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR},
+		#{cityid,jdbcType=CHAR}, #{districtid,jdbcType=CHAR},
+		#{areaid,jdbcType=CHAR},
+		#{spell,jdbcType=VARCHAR}, #{headimg,jdbcType=VARCHAR}, #{latitude,jdbcType=DOUBLE},
+		#{longitude,jdbcType=DOUBLE}, #{address,jdbcType=VARCHAR},
+		#{mgttel,jdbcType=VARCHAR},
+		#{modtime,jdbcType=TIMESTAMP}, #{flagdeleted,jdbcType=TINYINT}, #{deletedtime,jdbcType=TIMESTAMP},
+		#{moredescribe,jdbcType=VARCHAR},
+		#{morecompleteyear,jdbcType=VARCHAR}, #{moretype,jdbcType=VARCHAR},
+		#{moreparking,jdbcType=VARCHAR}, #{morefee,jdbcType=VARCHAR},
+		#{moredeveloper,jdbcType=VARCHAR},
+		#{moremgt,jdbcType=VARCHAR}, #{moreroom,jdbcType=INTEGER}, #{configbus,jdbcType=VARCHAR},
+		#{configkindergarten,jdbcType=VARCHAR},
+		#{configsecondary,jdbcType=VARCHAR},
+		#{configuniversity,jdbcType=VARCHAR},
+		#{configshopping,jdbcType=VARCHAR},
+		#{confighospital,jdbcType=VARCHAR}, #{configemail,jdbcType=VARCHAR},
+		#{configbank,jdbcType=VARCHAR}, #{configelse,jdbcType=VARCHAR},
+		#{configinterior,jdbcType=VARCHAR},
+		#{match58,jdbcType=VARCHAR}, #{matchfang,jdbcType=VARCHAR}, #{matchan,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Estate">
+		insert into Estate
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="estate != null">
+				Estate,
+			</if>
+			<if test="estateno != null">
+				EstateNo,
+			</if>
+			<if test="city != null">
+				City,
+			</if>
+			<if test="district != null">
+				District,
+			</if>
+			<if test="area != null">
+				Area,
+			</if>
+			<if test="cityid != null">
+				CityID,
+			</if>
+			<if test="districtid != null">
+				DistrictID,
+			</if>
+			<if test="areaid != null">
+				AreaID,
+			</if>
+			<if test="spell != null">
+				Spell,
+			</if>
+			<if test="headimg != null">
+				HeadImg,
+			</if>
+			<if test="latitude != null">
+				Latitude,
+			</if>
+			<if test="longitude != null">
+				Longitude,
+			</if>
+			<if test="address != null">
+				Address,
+			</if>
+			<if test="mgttel != null">
+				MgtTel,
+			</if>
+			<if test="modtime != null">
+				ModTime,
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted,
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime,
+			</if>
+			<if test="moredescribe != null">
+				MoreDescribe,
+			</if>
+			<if test="morecompleteyear != null">
+				MoreCompleteYear,
+			</if>
+			<if test="moretype != null">
+				MoreType,
+			</if>
+			<if test="moreparking != null">
+				MoreParking,
+			</if>
+			<if test="morefee != null">
+				MoreFee,
+			</if>
+			<if test="moredeveloper != null">
+				MoreDeveloper,
+			</if>
+			<if test="moremgt != null">
+				MoreMgt,
+			</if>
+			<if test="moreroom != null">
+				MoreRoom,
+			</if>
+			<if test="configbus != null">
+				ConfigBus,
+			</if>
+			<if test="configkindergarten != null">
+				ConfigKindergarten,
+			</if>
+			<if test="configsecondary != null">
+				ConfigSecondary,
+			</if>
+			<if test="configuniversity != null">
+				ConfigUniversity,
+			</if>
+			<if test="configshopping != null">
+				ConfigShopping,
+			</if>
+			<if test="confighospital != null">
+				ConfigHospital,
+			</if>
+			<if test="configemail != null">
+				ConfigEmail,
+			</if>
+			<if test="configbank != null">
+				ConfigBank,
+			</if>
+			<if test="configelse != null">
+				ConfigElse,
+			</if>
+			<if test="configinterior != null">
+				ConfigInterior,
+			</if>
+			<if test="match58 != null">
+				Match58,
+			</if>
+			<if test="matchfang != null">
+				MatchFang,
+			</if>
+			<if test="matchan != null">
+				MatchAn,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="estate != null">
+				#{estate,jdbcType=VARCHAR},
+			</if>
+			<if test="estateno != null">
+				#{estateno,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="district != null">
+				#{district,jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				#{area,jdbcType=VARCHAR},
+			</if>
+			<if test="cityid != null">
+				#{cityid,jdbcType=CHAR},
+			</if>
+			<if test="districtid != null">
+				#{districtid,jdbcType=CHAR},
+			</if>
+			<if test="areaid != null">
+				#{areaid,jdbcType=CHAR},
+			</if>
+			<if test="spell != null">
+				#{spell,jdbcType=VARCHAR},
+			</if>
+			<if test="headimg != null">
+				#{headimg,jdbcType=VARCHAR},
+			</if>
+			<if test="latitude != null">
+				#{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="longitude != null">
+				#{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="mgttel != null">
+				#{mgttel,jdbcType=VARCHAR},
+			</if>
+			<if test="modtime != null">
+				#{modtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="flagdeleted != null">
+				#{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				#{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="moredescribe != null">
+				#{moredescribe,jdbcType=VARCHAR},
+			</if>
+			<if test="morecompleteyear != null">
+				#{morecompleteyear,jdbcType=VARCHAR},
+			</if>
+			<if test="moretype != null">
+				#{moretype,jdbcType=VARCHAR},
+			</if>
+			<if test="moreparking != null">
+				#{moreparking,jdbcType=VARCHAR},
+			</if>
+			<if test="morefee != null">
+				#{morefee,jdbcType=VARCHAR},
+			</if>
+			<if test="moredeveloper != null">
+				#{moredeveloper,jdbcType=VARCHAR},
+			</if>
+			<if test="moremgt != null">
+				#{moremgt,jdbcType=VARCHAR},
+			</if>
+			<if test="moreroom != null">
+				#{moreroom,jdbcType=INTEGER},
+			</if>
+			<if test="configbus != null">
+				#{configbus,jdbcType=VARCHAR},
+			</if>
+			<if test="configkindergarten != null">
+				#{configkindergarten,jdbcType=VARCHAR},
+			</if>
+			<if test="configsecondary != null">
+				#{configsecondary,jdbcType=VARCHAR},
+			</if>
+			<if test="configuniversity != null">
+				#{configuniversity,jdbcType=VARCHAR},
+			</if>
+			<if test="configshopping != null">
+				#{configshopping,jdbcType=VARCHAR},
+			</if>
+			<if test="confighospital != null">
+				#{confighospital,jdbcType=VARCHAR},
+			</if>
+			<if test="configemail != null">
+				#{configemail,jdbcType=VARCHAR},
+			</if>
+			<if test="configbank != null">
+				#{configbank,jdbcType=VARCHAR},
+			</if>
+			<if test="configelse != null">
+				#{configelse,jdbcType=VARCHAR},
+			</if>
+			<if test="configinterior != null">
+				#{configinterior,jdbcType=VARCHAR},
+			</if>
+			<if test="match58 != null">
+				#{match58,jdbcType=VARCHAR},
+			</if>
+			<if test="matchfang != null">
+				#{matchfang,jdbcType=VARCHAR},
+			</if>
+			<if test="matchan != null">
+				#{matchan,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Estate">
+		update Estate
+		<set>
+			<if test="estate != null">
+				Estate = #{estate,jdbcType=VARCHAR},
+			</if>
+			<if test="estateno != null">
+				EstateNo = #{estateno,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				City = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="district != null">
+				District = #{district,jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				Area = #{area,jdbcType=VARCHAR},
+			</if>
+			<if test="cityid != null">
+				CityID = #{cityid,jdbcType=CHAR},
+			</if>
+			<if test="districtid != null">
+				DistrictID = #{districtid,jdbcType=CHAR},
+			</if>
+			<if test="areaid != null">
+				AreaID = #{areaid,jdbcType=CHAR},
+			</if>
+			<if test="spell != null">
+				Spell = #{spell,jdbcType=VARCHAR},
+			</if>
+			<if test="headimg != null">
+				HeadImg = #{headimg,jdbcType=VARCHAR},
+			</if>
+			<if test="latitude != null">
+				Latitude = #{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="longitude != null">
+				Longitude = #{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="address != null">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="mgttel != null">
+				MgtTel = #{mgttel,jdbcType=VARCHAR},
+			</if>
+			<if test="modtime != null">
+				ModTime = #{modtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="moredescribe != null">
+				MoreDescribe = #{moredescribe,jdbcType=VARCHAR},
+			</if>
+			<if test="morecompleteyear != null">
+				MoreCompleteYear = #{morecompleteyear,jdbcType=VARCHAR},
+			</if>
+			<if test="moretype != null">
+				MoreType = #{moretype,jdbcType=VARCHAR},
+			</if>
+			<if test="moreparking != null">
+				MoreParking = #{moreparking,jdbcType=VARCHAR},
+			</if>
+			<if test="morefee != null">
+				MoreFee = #{morefee,jdbcType=VARCHAR},
+			</if>
+			<if test="moredeveloper != null">
+				MoreDeveloper = #{moredeveloper,jdbcType=VARCHAR},
+			</if>
+			<if test="moremgt != null">
+				MoreMgt = #{moremgt,jdbcType=VARCHAR},
+			</if>
+			<if test="moreroom != null">
+				MoreRoom = #{moreroom,jdbcType=INTEGER},
+			</if>
+			<if test="configbus != null">
+				ConfigBus = #{configbus,jdbcType=VARCHAR},
+			</if>
+			<if test="configkindergarten != null">
+				ConfigKindergarten = #{configkindergarten,jdbcType=VARCHAR},
+			</if>
+			<if test="configsecondary != null">
+				ConfigSecondary = #{configsecondary,jdbcType=VARCHAR},
+			</if>
+			<if test="configuniversity != null">
+				ConfigUniversity = #{configuniversity,jdbcType=VARCHAR},
+			</if>
+			<if test="configshopping != null">
+				ConfigShopping = #{configshopping,jdbcType=VARCHAR},
+			</if>
+			<if test="confighospital != null">
+				ConfigHospital = #{confighospital,jdbcType=VARCHAR},
+			</if>
+			<if test="configemail != null">
+				ConfigEmail = #{configemail,jdbcType=VARCHAR},
+			</if>
+			<if test="configbank != null">
+				ConfigBank = #{configbank,jdbcType=VARCHAR},
+			</if>
+			<if test="configelse != null">
+				ConfigElse = #{configelse,jdbcType=VARCHAR},
+			</if>
+			<if test="configinterior != null">
+				ConfigInterior = #{configinterior,jdbcType=VARCHAR},
+			</if>
+			<if test="match58 != null">
+				Match58 = #{match58,jdbcType=VARCHAR},
+			</if>
+			<if test="matchfang != null">
+				MatchFang = #{matchfang,jdbcType=VARCHAR},
+			</if>
+			<if test="matchan != null">
+				MatchAn = #{matchan,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Estate">
+		update Estate
+		set Estate = #{estate,jdbcType=VARCHAR},
+		EstateNo = #{estateno,jdbcType=VARCHAR},
+		City = #{city,jdbcType=VARCHAR},
+		District = #{district,jdbcType=VARCHAR},
+		Area = #{area,jdbcType=VARCHAR},
+		CityID = #{cityid,jdbcType=CHAR},
+		DistrictID = #{districtid,jdbcType=CHAR},
+		AreaID = #{areaid,jdbcType=CHAR},
+		Spell = #{spell,jdbcType=VARCHAR},
+		HeadImg = #{headimg,jdbcType=VARCHAR},
+		Latitude = #{latitude,jdbcType=DOUBLE},
+		Longitude = #{longitude,jdbcType=DOUBLE},
+		Address = #{address,jdbcType=VARCHAR},
+		MgtTel = #{mgttel,jdbcType=VARCHAR},
+		ModTime = #{modtime,jdbcType=TIMESTAMP},
+		FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+		DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+		MoreDescribe = #{moredescribe,jdbcType=VARCHAR},
+		MoreCompleteYear = #{morecompleteyear,jdbcType=VARCHAR},
+		MoreType = #{moretype,jdbcType=VARCHAR},
+		MoreParking = #{moreparking,jdbcType=VARCHAR},
+		MoreFee = #{morefee,jdbcType=VARCHAR},
+		MoreDeveloper = #{moredeveloper,jdbcType=VARCHAR},
+		MoreMgt = #{moremgt,jdbcType=VARCHAR},
+		MoreRoom = #{moreroom,jdbcType=INTEGER},
+		ConfigBus = #{configbus,jdbcType=VARCHAR},
+		ConfigKindergarten = #{configkindergarten,jdbcType=VARCHAR},
+		ConfigSecondary = #{configsecondary,jdbcType=VARCHAR},
+		ConfigUniversity = #{configuniversity,jdbcType=VARCHAR},
+		ConfigShopping = #{configshopping,jdbcType=VARCHAR},
+		ConfigHospital = #{confighospital,jdbcType=VARCHAR},
+		ConfigEmail = #{configemail,jdbcType=VARCHAR},
+		ConfigBank = #{configbank,jdbcType=VARCHAR},
+		ConfigElse = #{configelse,jdbcType=VARCHAR},
+		ConfigInterior = #{configinterior,jdbcType=VARCHAR},
+		Match58 = #{match58,jdbcType=VARCHAR},
+		MatchFang = #{matchfang,jdbcType=VARCHAR},
+		MatchAn = #{matchan,jdbcType=VARCHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

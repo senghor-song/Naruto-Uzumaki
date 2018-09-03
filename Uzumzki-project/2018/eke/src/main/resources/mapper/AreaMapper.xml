@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.AreaMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Area">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="Area" jdbcType="VARCHAR" property="area" />
+		<result column="AreaNo" jdbcType="INTEGER" property="areano" />
+		<result column="DistrictID" jdbcType="CHAR" property="districtid" />
+		<result column="District" jdbcType="VARCHAR" property="district" />
+		<result column="CityID" jdbcType="CHAR" property="cityid" />
+		<result column="City" jdbcType="VARCHAR" property="city" />
+		<result column="Latitude" jdbcType="DOUBLE" property="latitude" />
+		<result column="Longitude" jdbcType="DOUBLE" property="longitude" />
+		<result column="Range" jdbcType="VARCHAR" property="range" />
+		<result column="TotalRent" jdbcType="INTEGER" property="totalrent" />
+		<result column="TotalSale" jdbcType="INTEGER" property="totalsale" />
+		<result column="TotalTown" jdbcType="INTEGER" property="totaltown" />
+		<result column="TotalRefresh" jdbcType="TIMESTAMP" property="totalrefresh" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Area, AreaNo, DistrictID, District, CityID, City,
+		Latitude,
+		Longitude, `Range`,
+		TotalRent, TotalSale, TotalTown,
+		TotalRefresh
+	</sql>
+	
+	<select id="selectByAreaName" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM Area WHERE Area = #{name} limit 1
+	</select>
+	
+	<select id="countAreaByDistrict" parameterType="java.lang.String" resultType="Integer">
+		select count(*) from Area where DistrictID = #{districtId,jdbcType=CHAR}
+	</select>
+	
+	<select id="countAreaByCity" parameterType="java.lang.String" resultType="Integer">
+		select count(*) from Area where CityID = #{cityId,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Area
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Area" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Area
+		<where>
+			<if test="area != null">
+				AND Area = #{area,jdbcType=VARCHAR}
+			</if>
+			<if test="areano != null">
+				AND AreaNo = #{areano,jdbcType=INTEGER}
+			</if>
+			<if test="districtid != null">
+				AND DistrictID = #{districtid,jdbcType=CHAR}
+			</if>
+			<if test="district != null">
+				AND District = #{district,jdbcType=VARCHAR}
+			</if>
+			<if test="cityid != null">
+				AND CityID = #{cityid,jdbcType=CHAR}
+			</if>
+			<if test="city != null">
+				AND City = #{city,jdbcType=VARCHAR}
+			</if>
+			<if test="latitude != null">
+				AND Latitude = #{latitude,jdbcType=DOUBLE}
+			</if>
+			<if test="longitude != null">
+				AND Longitude = #{longitude,jdbcType=DOUBLE}
+			</if>
+			<if test="range != null">
+				AND Range = #{range,jdbcType=VARCHAR}
+			</if>
+			<if test="totalrent != null">
+				AND TotalRent = #{totalrent,jdbcType=INTEGER}
+			</if>
+			<if test="totalsale != null">
+				AND TotalSale = #{totalsale,jdbcType=INTEGER}
+			</if>
+			<if test="totaltown != null">
+				AND TotalTown = #{totaltown,jdbcType=INTEGER}
+			</if>
+			<if test="totalrefresh != null">
+				AND TotalRefresh = #{totalrefresh,jdbcType=TIMESTAMP}
+			</if>
+		</where>
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Area
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Area">
+		insert into Area (ID, Area,
+		AreaNo,
+		DistrictID, District, CityID,
+		City, Latitude, Longitude,
+		Range,
+		TotalRent, TotalSale,
+		TotalTown, TotalRefresh)
+		values
+		(#{id,jdbcType=CHAR}, #{area,jdbcType=VARCHAR},
+		#{areano,jdbcType=INTEGER},
+		#{districtid,jdbcType=CHAR},
+		#{district,jdbcType=VARCHAR}, #{cityid,jdbcType=CHAR},
+		#{city,jdbcType=VARCHAR}, #{latitude,jdbcType=DOUBLE},
+		#{longitude,jdbcType=DOUBLE},
+		#{range,jdbcType=VARCHAR},
+		#{totalrent,jdbcType=INTEGER}, #{totalsale,jdbcType=INTEGER},
+		#{totaltown,jdbcType=INTEGER}, #{totalrefresh,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Area">
+		insert into Area
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="area != null">
+				Area,
+			</if>
+			<if test="areano != null">
+				AreaNo,
+			</if>
+			<if test="districtid != null">
+				DistrictID,
+			</if>
+			<if test="district != null">
+				District,
+			</if>
+			<if test="cityid != null">
+				CityID,
+			</if>
+			<if test="city != null">
+				City,
+			</if>
+			<if test="latitude != null">
+				Latitude,
+			</if>
+			<if test="longitude != null">
+				Longitude,
+			</if>
+			<if test="range != null">
+				Range,
+			</if>
+			<if test="totalrent != null">
+				TotalRent,
+			</if>
+			<if test="totalsale != null">
+				TotalSale,
+			</if>
+			<if test="totaltown != null">
+				TotalTown,
+			</if>
+			<if test="totalrefresh != null">
+				TotalRefresh,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="area != null">
+				#{area,jdbcType=VARCHAR},
+			</if>
+			<if test="areano != null">
+				#{areano,jdbcType=INTEGER},
+			</if>
+			<if test="districtid != null">
+				#{districtid,jdbcType=CHAR},
+			</if>
+			<if test="district != null">
+				#{district,jdbcType=VARCHAR},
+			</if>
+			<if test="cityid != null">
+				#{cityid,jdbcType=CHAR},
+			</if>
+			<if test="city != null">
+				#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="latitude != null">
+				#{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="longitude != null">
+				#{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="range != null">
+				#{range,jdbcType=VARCHAR},
+			</if>
+			<if test="totalrent != null">
+				#{totalrent,jdbcType=INTEGER},
+			</if>
+			<if test="totalsale != null">
+				#{totalsale,jdbcType=INTEGER},
+			</if>
+			<if test="totaltown != null">
+				#{totaltown,jdbcType=INTEGER},
+			</if>
+			<if test="totalrefresh != null">
+				#{totalrefresh,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Area">
+		update Area
+		<set>
+			<if test="area != null">
+				Area = #{area,jdbcType=VARCHAR},
+			</if>
+			<if test="areano != null">
+				AreaNo = #{areano,jdbcType=INTEGER},
+			</if>
+			<if test="districtid != null">
+				DistrictID = #{districtid,jdbcType=CHAR},
+			</if>
+			<if test="district != null">
+				District = #{district,jdbcType=VARCHAR},
+			</if>
+			<if test="cityid != null">
+				CityID = #{cityid,jdbcType=CHAR},
+			</if>
+			<if test="city != null">
+				City = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="latitude != null">
+				Latitude = #{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="longitude != null">
+				Longitude = #{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="range != null">
+				Range = #{range,jdbcType=VARCHAR},
+			</if>
+			<if test="totalrent != null">
+				TotalRent = #{totalrent,jdbcType=INTEGER},
+			</if>
+			<if test="totalsale != null">
+				TotalSale = #{totalsale,jdbcType=INTEGER},
+			</if>
+			<if test="totaltown != null">
+				TotalTown = #{totaltown,jdbcType=INTEGER},
+			</if>
+			<if test="totalrefresh != null">
+				TotalRefresh = #{totalrefresh,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Area">
+		update Area
+		set
+		Area = #{area,jdbcType=VARCHAR},
+		AreaNo = #{areano,jdbcType=INTEGER},
+		DistrictID = #{districtid,jdbcType=CHAR},
+		District =
+		#{district,jdbcType=VARCHAR},
+		CityID = #{cityid,jdbcType=CHAR},
+		City =
+		#{city,jdbcType=VARCHAR},
+		Latitude = #{latitude,jdbcType=DOUBLE},
+		Longitude = #{longitude,jdbcType=DOUBLE},
+		Range =
+		#{range,jdbcType=VARCHAR},
+		TotalRent = #{totalrent,jdbcType=INTEGER},
+		TotalSale = #{totalsale,jdbcType=INTEGER},
+		TotalTown =
+		#{totaltown,jdbcType=INTEGER},
+		TotalRefresh =
+		#{totalrefresh,jdbcType=TIMESTAMP}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

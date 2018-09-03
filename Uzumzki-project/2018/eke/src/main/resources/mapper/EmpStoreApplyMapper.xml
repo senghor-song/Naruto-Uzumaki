@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EmpStoreApplyMapper">
+  <resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EmpStoreApply">
+    <id column="ID" jdbcType="CHAR" property="id" />
+    <result column="Apply" jdbcType="TIMESTAMP" property="apply" />
+    <result column="EmpApply" jdbcType="CHAR" property="empapply" />
+    <result column="Emp" jdbcType="VARCHAR" property="emp" />
+    <result column="StoreApply" jdbcType="VARCHAR" property="storeapply" />
+    <result column="CityID" jdbcType="CHAR" property="cityid" />
+    <result column="Latitude" jdbcType="DOUBLE" property="latitude" />
+    <result column="Longitude" jdbcType="DOUBLE" property="longitude" />
+    <result column="Address" jdbcType="VARCHAR" property="address" />
+    <result column="Leader" jdbcType="VARCHAR" property="leader" />
+    <result column="LeaderTel" jdbcType="VARCHAR" property="leadertel" />
+    <result column="FlagDeleted" jdbcType="TINYINT" property="flagdeleted" />
+    <result column="DeletedTime" jdbcType="TIMESTAMP" property="deletedtime" />
+    <result column="Remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, Apply, EmpApply, Emp, StoreApply, CityID, Latitude, Longitude, Address, Leader, 
+    LeaderTel, FlagDeleted, DeletedTime, Remark
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from EmpStoreApply
+    where ID = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from EmpStoreApply
+    where ID = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiaoyi.ssm.model.EmpStoreApply">
+    insert into EmpStoreApply (ID, Apply, EmpApply, 
+      Emp, StoreApply, CityID, 
+      Latitude, Longitude, Address, 
+      Leader, LeaderTel, FlagDeleted, 
+      DeletedTime, Remark)
+    values (#{id,jdbcType=CHAR}, #{apply,jdbcType=TIMESTAMP}, #{empapply,jdbcType=CHAR}, 
+      #{emp,jdbcType=VARCHAR}, #{storeapply,jdbcType=VARCHAR}, #{cityid,jdbcType=CHAR}, 
+      #{latitude,jdbcType=DOUBLE}, #{longitude,jdbcType=DOUBLE}, #{address,jdbcType=VARCHAR}, 
+      #{leader,jdbcType=VARCHAR}, #{leadertel,jdbcType=VARCHAR}, #{flagdeleted,jdbcType=TINYINT}, 
+      #{deletedtime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EmpStoreApply">
+    insert into EmpStoreApply
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="apply != null">
+        Apply,
+      </if>
+      <if test="empapply != null">
+        EmpApply,
+      </if>
+      <if test="emp != null">
+        Emp,
+      </if>
+      <if test="storeapply != null">
+        StoreApply,
+      </if>
+      <if test="cityid != null">
+        CityID,
+      </if>
+      <if test="latitude != null">
+        Latitude,
+      </if>
+      <if test="longitude != null">
+        Longitude,
+      </if>
+      <if test="address != null">
+        Address,
+      </if>
+      <if test="leader != null">
+        Leader,
+      </if>
+      <if test="leadertel != null">
+        LeaderTel,
+      </if>
+      <if test="flagdeleted != null">
+        FlagDeleted,
+      </if>
+      <if test="deletedtime != null">
+        DeletedTime,
+      </if>
+      <if test="remark != null">
+        Remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="apply != null">
+        #{apply,jdbcType=TIMESTAMP},
+      </if>
+      <if test="empapply != null">
+        #{empapply,jdbcType=CHAR},
+      </if>
+      <if test="emp != null">
+        #{emp,jdbcType=VARCHAR},
+      </if>
+      <if test="storeapply != null">
+        #{storeapply,jdbcType=VARCHAR},
+      </if>
+      <if test="cityid != null">
+        #{cityid,jdbcType=CHAR},
+      </if>
+      <if test="latitude != null">
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="longitude != null">
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="leader != null">
+        #{leader,jdbcType=VARCHAR},
+      </if>
+      <if test="leadertel != null">
+        #{leadertel,jdbcType=VARCHAR},
+      </if>
+      <if test="flagdeleted != null">
+        #{flagdeleted,jdbcType=TINYINT},
+      </if>
+      <if test="deletedtime != null">
+        #{deletedtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EmpStoreApply">
+    update EmpStoreApply
+    <set>
+      <if test="apply != null">
+        Apply = #{apply,jdbcType=TIMESTAMP},
+      </if>
+      <if test="empapply != null">
+        EmpApply = #{empapply,jdbcType=CHAR},
+      </if>
+      <if test="emp != null">
+        Emp = #{emp,jdbcType=VARCHAR},
+      </if>
+      <if test="storeapply != null">
+        StoreApply = #{storeapply,jdbcType=VARCHAR},
+      </if>
+      <if test="cityid != null">
+        CityID = #{cityid,jdbcType=CHAR},
+      </if>
+      <if test="latitude != null">
+        Latitude = #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="longitude != null">
+        Longitude = #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="address != null">
+        Address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="leader != null">
+        Leader = #{leader,jdbcType=VARCHAR},
+      </if>
+      <if test="leadertel != null">
+        LeaderTel = #{leadertel,jdbcType=VARCHAR},
+      </if>
+      <if test="flagdeleted != null">
+        FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+      </if>
+      <if test="deletedtime != null">
+        DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EmpStoreApply">
+    update EmpStoreApply
+    set Apply = #{apply,jdbcType=TIMESTAMP},
+      EmpApply = #{empapply,jdbcType=CHAR},
+      Emp = #{emp,jdbcType=VARCHAR},
+      StoreApply = #{storeapply,jdbcType=VARCHAR},
+      CityID = #{cityid,jdbcType=CHAR},
+      Latitude = #{latitude,jdbcType=DOUBLE},
+      Longitude = #{longitude,jdbcType=DOUBLE},
+      Address = #{address,jdbcType=VARCHAR},
+      Leader = #{leader,jdbcType=VARCHAR},
+      LeaderTel = #{leadertel,jdbcType=VARCHAR},
+      FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+      DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+      Remark = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassPersonRentMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassPersonRent">
+		<id column="mprID" jdbcType="CHAR" property="id" />
+		<result column="mprCollectDate" jdbcType="TIMESTAMP" property="collectdate" />
+		<result column="mprSite" jdbcType="VARCHAR" property="site" />
+		<result column="mprCity" jdbcType="VARCHAR" property="city" />
+		<result column="mprDistrict" jdbcType="VARCHAR" property="district" />
+		<result column="mprArea" jdbcType="VARCHAR" property="area" />
+		<result column="mprEstate" jdbcType="VARCHAR" property="estate" />
+		<result column="mprTitle" jdbcType="VARCHAR" property="title" />
+		<result column="mprCountF" jdbcType="INTEGER" property="countf" />
+		<result column="mprCountT" jdbcType="INTEGER" property="countt" />
+		<result column="mprCountW" jdbcType="INTEGER" property="countw" />
+		<result column="mprImg" jdbcType="INTEGER" property="img" />
+		<result column="mprType" jdbcType="CHAR" property="type" />
+		<result column="mprDirection" jdbcType="CHAR" property="direction" />
+		<result column="mprDecoration" jdbcType="CHAR" property="decoration" />
+		<result column="mprSquare" jdbcType="DECIMAL" property="square" />
+		<result column="mprPrice" jdbcType="INTEGER" property="price" />
+		<result column="mprRegDate" jdbcType="VARCHAR" property="regdate" />
+		<result column="mprRegName" jdbcType="VARCHAR" property="regname" />
+		<result column="mprRegTel" jdbcType="VARCHAR" property="regtel" />
+		<result column="mprFloor" jdbcType="INTEGER" property="floor" />
+		<result column="mprFloorAll" jdbcType="INTEGER" property="floorall" />
+		<result column="mprDetailPath" jdbcType="VARCHAR" property="detailpath" />
+		<result column="mprFlagDeleted" jdbcType="TINYINT" property="flagdeleted" />
+		<result column="mprDeletedTime" jdbcType="TIMESTAMP" property="deletedtime" />
+		<result column="mprRemark" jdbcType="VARCHAR" property="remark" />
+		<association property="empCustPerson" javaType="com.xiaoyi.ssm.model.EmpCustPerson">
+			<id column="ecpID" jdbcType="VARCHAR" property="id" />
+			<result column="ecpEmpId" jdbcType="VARCHAR" property="empid" />
+			<result column="ecpHouseId" jdbcType="VARCHAR" property="houseid" />
+			<result column="ecpHouseType" jdbcType="VARCHAR" property="housetype" />
+			<result column="ecpCreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		mpr.ID mprID, mpr.CollectDate mprCollectDate, mpr.Site mprSite, mpr.City
+		mprCity, mpr.District mprDistrict, mpr.Area mprArea,
+		mpr.Estate mprEstate, mpr.Title mprTitle, mpr.CountF mprCountF, mpr.CountT
+		mprCountT, mpr.CountW mprCountW, mpr.Img mprImg,
+		mpr.Type mprType, mpr.Direction mprDirection, mpr.Decoration mprDecoration,
+		mpr.Square mprSquare, mpr.Price mprPrice,
+		mpr.RegDate mprRegDate, mpr.RegName mprRegName, mpr.RegTel mprRegTel, mpr.Floor
+		mprFloor, mpr.FloorAll mprFloorAll,
+		mpr.DetailPath mprDetailPath, mpr.FlagDeleted mprFlagDeleted, mpr.DeletedTime
+		mprDeletedTime, mpr.Remark mprRemark
+	</sql>
+	<sql id="EmpCustPerson_Column_List">
+		ecp.ID ecpID, ecp.EmpId ecpEmpId, ecp.HouseId ecpHouseId,
+		ecp.HouseType ecpHouseType, ecp.CreateTime ecpCreateTime
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassPersonRent mpr
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<select id="selectAll" parameterType="com.xiaoyi.ssm.dto.MassPersonDto"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="EmpCustPerson_Column_List" />
+		<if test="cust == 0">
+			from MassPersonRent mpr LEFT JOIN (SELECT * FROM
+			EmpCustPerson WHERE EmpId = '${empId}') ecp ON ecp.`HouseId` =
+			mpr.`ID`
+		</if>
+		<if test="cust == 1">
+			from MassPersonRent mpr INNER JOIN (SELECT * FROM
+			EmpCustPerson WHERE EmpId = '${empId}') ecp ON ecp.`HouseId` =
+			mpr.`ID`
+		</if>
+		<where>
+			<if test="districtNa != null and districtNa != '' and districtNas == ''">
+				AND mpr.District=#{districtNa}
+			</if>
+			<if test="districtNa == '' and districtNas != null and districtNas != ''">
+				AND mpr.District in
+				<foreach collection="districtNasList" index="index" item="item"
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="houseType != null and houseType != ''">
+				AND mpr.Type=#{houseType}
+			</if>
+			<if test="roomType != null">
+				AND mpr.CountF=#{roomType}
+			</if>
+			<if test="minHouseArea != null">
+				AND mpr.Square &gt;= #{minHouseArea}
+			</if>
+			<if test="maxHouseArea != null">
+				AND mpr.Square &lt;= #{maxHouseArea}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				AND mpr.Collectdate &gt;= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND mpr.Collectdate &lt;= #{endTime}
+			</if>
+			<if test="minPrice != null">
+				AND mpr.Price &gt;= #{minPrice}
+			</if>
+			<if test="maxPrice != null">
+				AND mpr.Price &lt;= #{maxPrice}
+			</if>
+			<if test="webName != null and webName != '' and webNames == '' ">
+				AND mpr.Site=#{webName}
+			</if>
+			<if test=" webName == '' and webNames != null and webNames != ''">
+				AND mpr.Site in
+				<foreach collection="webNameList" index="index" item="item"
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test=" blacklist != null">
+				AND mpr.regtel not in
+				<foreach collection="blacklist" index="index" item="item"
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from
+		MassPersonRent
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassPersonRent">
+		insert into MassPersonRent
+		(ID, CollectDate, Site,
+		City, District, Area,
+		Estate, Title, CountF,
+		CountT, CountW, Img,
+		Type, Direction, Decoration,
+		Square, Price,
+		RegDate,
+		RegName, RegTel, Floor,
+		FloorAll, DetailPath, FlagDeleted,
+		DeletedTime, Remark)
+		values (#{id,jdbcType=CHAR},
+		#{collectdate,jdbcType=TIMESTAMP},
+		#{site,jdbcType=VARCHAR},
+		#{city,jdbcType=VARCHAR}, #{district,jdbcType=VARCHAR},
+		#{area,jdbcType=VARCHAR},
+		#{estate,jdbcType=VARCHAR},
+		#{title,jdbcType=VARCHAR},
+		#{countf,jdbcType=INTEGER},
+		#{countt,jdbcType=INTEGER}, #{countw,jdbcType=INTEGER},
+		#{img,jdbcType=INTEGER},
+		#{type,jdbcType=CHAR},
+		#{direction,jdbcType=CHAR},
+		#{decoration,jdbcType=CHAR},
+		#{square,jdbcType=DECIMAL}, #{price,jdbcType=INTEGER},
+		#{regdate,jdbcType=VARCHAR},
+		#{regname,jdbcType=VARCHAR},
+		#{regtel,jdbcType=VARCHAR},
+		#{floor,jdbcType=INTEGER},
+		#{floorall,jdbcType=INTEGER}, #{detailpath,jdbcType=VARCHAR},
+		#{flagdeleted,jdbcType=TINYINT},
+		#{deletedtime,jdbcType=TIMESTAMP},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassPersonRent">
+		insert into MassPersonRent
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="collectdate != null">
+				CollectDate,
+			</if>
+			<if test="site != null">
+				Site,
+			</if>
+			<if test="city != null">
+				City,
+			</if>
+			<if test="district != null">
+				District,
+			</if>
+			<if test="area != null">
+				Area,
+			</if>
+			<if test="estate != null">
+				Estate,
+			</if>
+			<if test="title != null">
+				Title,
+			</if>
+			<if test="countf != null">
+				CountF,
+			</if>
+			<if test="countt != null">
+				CountT,
+			</if>
+			<if test="countw != null">
+				CountW,
+			</if>
+			<if test="img != null">
+				Img,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="direction != null">
+				Direction,
+			</if>
+			<if test="decoration != null">
+				Decoration,
+			</if>
+			<if test="square != null">
+				Square,
+			</if>
+			<if test="price != null">
+				Price,
+			</if>
+			<if test="regdate != null">
+				RegDate,
+			</if>
+			<if test="regname != null">
+				RegName,
+			</if>
+			<if test="regtel != null">
+				RegTel,
+			</if>
+			<if test="floor != null">
+				Floor,
+			</if>
+			<if test="floorall != null">
+				FloorAll,
+			</if>
+			<if test="detailpath != null">
+				DetailPath,
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted,
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="collectdate != null">
+				#{collectdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="site != null">
+				#{site,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="district != null">
+				#{district,jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				#{area,jdbcType=VARCHAR},
+			</if>
+			<if test="estate != null">
+				#{estate,jdbcType=VARCHAR},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="countf != null">
+				#{countf,jdbcType=INTEGER},
+			</if>
+			<if test="countt != null">
+				#{countt,jdbcType=INTEGER},
+			</if>
+			<if test="countw != null">
+				#{countw,jdbcType=INTEGER},
+			</if>
+			<if test="img != null">
+				#{img,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=CHAR},
+			</if>
+			<if test="direction != null">
+				#{direction,jdbcType=CHAR},
+			</if>
+			<if test="decoration != null">
+				#{decoration,jdbcType=CHAR},
+			</if>
+			<if test="square != null">
+				#{square,jdbcType=DECIMAL},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=INTEGER},
+			</if>
+			<if test="regdate != null">
+				#{regdate,jdbcType=VARCHAR},
+			</if>
+			<if test="regname != null">
+				#{regname,jdbcType=VARCHAR},
+			</if>
+			<if test="regtel != null">
+				#{regtel,jdbcType=VARCHAR},
+			</if>
+			<if test="floor != null">
+				#{floor,jdbcType=INTEGER},
+			</if>
+			<if test="floorall != null">
+				#{floorall,jdbcType=INTEGER},
+			</if>
+			<if test="detailpath != null">
+				#{detailpath,jdbcType=VARCHAR},
+			</if>
+			<if test="flagdeleted != null">
+				#{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				#{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassPersonRent">
+		update MassPersonRent
+		<set>
+			<if test="collectdate != null">
+				CollectDate = #{collectdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="site != null">
+				Site = #{site,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				City = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="district != null">
+				District = #{district,jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				Area = #{area,jdbcType=VARCHAR},
+			</if>
+			<if test="estate != null">
+				Estate = #{estate,jdbcType=VARCHAR},
+			</if>
+			<if test="title != null">
+				Title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="countf != null">
+				CountF = #{countf,jdbcType=INTEGER},
+			</if>
+			<if test="countt != null">
+				CountT = #{countt,jdbcType=INTEGER},
+			</if>
+			<if test="countw != null">
+				CountW = #{countw,jdbcType=INTEGER},
+			</if>
+			<if test="img != null">
+				Img = #{img,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=CHAR},
+			</if>
+			<if test="direction != null">
+				Direction = #{direction,jdbcType=CHAR},
+			</if>
+			<if test="decoration != null">
+				Decoration = #{decoration,jdbcType=CHAR},
+			</if>
+			<if test="square != null">
+				Square = #{square,jdbcType=DECIMAL},
+			</if>
+			<if test="price != null">
+				Price = #{price,jdbcType=INTEGER},
+			</if>
+			<if test="regdate != null">
+				RegDate = #{regdate,jdbcType=VARCHAR},
+			</if>
+			<if test="regname != null">
+				RegName = #{regname,jdbcType=VARCHAR},
+			</if>
+			<if test="regtel != null">
+				RegTel = #{regtel,jdbcType=VARCHAR},
+			</if>
+			<if test="floor != null">
+				Floor = #{floor,jdbcType=INTEGER},
+			</if>
+			<if test="floorall != null">
+				FloorAll = #{floorall,jdbcType=INTEGER},
+			</if>
+			<if test="detailpath != null">
+				DetailPath = #{detailpath,jdbcType=VARCHAR},
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassPersonRent">
+		update
+		MassPersonRent
+		set CollectDate = #{collectdate,jdbcType=TIMESTAMP},
+		Site = #{site,jdbcType=VARCHAR},
+		City = #{city,jdbcType=VARCHAR},
+		District = #{district,jdbcType=VARCHAR},
+		Area =
+		#{area,jdbcType=VARCHAR},
+		Estate = #{estate,jdbcType=VARCHAR},
+		Title =
+		#{title,jdbcType=VARCHAR},
+		CountF = #{countf,jdbcType=INTEGER},
+		CountT =
+		#{countt,jdbcType=INTEGER},
+		CountW = #{countw,jdbcType=INTEGER},
+		Img =
+		#{img,jdbcType=INTEGER},
+		Type = #{type,jdbcType=CHAR},
+		Direction =
+		#{direction,jdbcType=CHAR},
+		Decoration = #{decoration,jdbcType=CHAR},
+		Square = #{square,jdbcType=DECIMAL},
+		Price = #{price,jdbcType=INTEGER},
+		RegDate = #{regdate,jdbcType=VARCHAR},
+		RegName =
+		#{regname,jdbcType=VARCHAR},
+		RegTel = #{regtel,jdbcType=VARCHAR},
+		Floor
+		= #{floor,jdbcType=INTEGER},
+		FloorAll = #{floorall,jdbcType=INTEGER},
+		DetailPath = #{detailpath,jdbcType=VARCHAR},
+		FlagDeleted =
+		#{flagdeleted,jdbcType=TINYINT},
+		DeletedTime =
+		#{deletedtime,jdbcType=TIMESTAMP},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

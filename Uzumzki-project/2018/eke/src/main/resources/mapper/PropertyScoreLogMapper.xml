@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.PropertyScoreLogMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.PropertyScoreLog">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="PropertyID" jdbcType="CHAR" property="propertyid" />
+		<result column="Source" jdbcType="VARCHAR" property="source" />
+		<result column="SourceItem" jdbcType="VARCHAR" property="sourceitem" />
+		<result column="Score" jdbcType="INTEGER" property="score" />
+		<result column="CreateTime" jdbcType="DATE" property="createtime" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, PropertyID, Source, SourceItem, Score, CreateTime, Remark
+	</sql>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.PropertyScoreLog" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from PropertyScoreLog 
+		<where>
+			<if test="propertyid != null">
+				AND PropertyID = #{propertyid,jdbcType=CHAR}
+			</if>
+			<if test="source != null">
+				AND Source = #{source,jdbcType=VARCHAR}
+			</if>
+			<if test="sourceitem != null">
+				AND SourceItem = #{sourceitem,jdbcType=VARCHAR}
+			</if>
+			<if test="score != null">
+				AND Score = #{score,jdbcType=INTEGER}
+			</if>
+			<if test="createtime != null">
+				AND CreateTime = #{createtime,jdbcType=DATE}
+			</if>
+			<if test="remark != null">
+				AND Remark = #{remark,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from PropertyScoreLog
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from PropertyScoreLog
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.PropertyScoreLog">
+		insert into PropertyScoreLog (ID, PropertyID, Source,
+		SourceItem, Score, CreateTime,
+		Remark)
+		values (#{id,jdbcType=CHAR}, #{propertyid,jdbcType=CHAR}, #{source,jdbcType=VARCHAR},
+		#{sourceitem,jdbcType=VARCHAR}, #{score,jdbcType=INTEGER}, #{createtime,jdbcType=DATE},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.PropertyScoreLog">
+		insert into PropertyScoreLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="propertyid != null">
+				PropertyID,
+			</if>
+			<if test="source != null">
+				Source,
+			</if>
+			<if test="sourceitem != null">
+				SourceItem,
+			</if>
+			<if test="score != null">
+				Score,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="propertyid != null">
+				#{propertyid,jdbcType=CHAR},
+			</if>
+			<if test="source != null">
+				#{source,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceitem != null">
+				#{sourceitem,jdbcType=VARCHAR},
+			</if>
+			<if test="score != null">
+				#{score,jdbcType=INTEGER},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=DATE},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.xiaoyi.ssm.model.PropertyScoreLog">
+		update PropertyScoreLog
+		<set>
+			<if test="propertyid != null">
+				PropertyID = #{propertyid,jdbcType=CHAR},
+			</if>
+			<if test="source != null">
+				Source = #{source,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceitem != null">
+				SourceItem = #{sourceitem,jdbcType=VARCHAR},
+			</if>
+			<if test="score != null">
+				Score = #{score,jdbcType=INTEGER},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=DATE},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.PropertyScoreLog">
+		update PropertyScoreLog
+		set PropertyID = #{propertyid,jdbcType=CHAR},
+		Source = #{source,jdbcType=VARCHAR},
+		SourceItem = #{sourceitem,jdbcType=VARCHAR},
+		Score = #{score,jdbcType=INTEGER},
+		CreateTime = #{createtime,jdbcType=DATE},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

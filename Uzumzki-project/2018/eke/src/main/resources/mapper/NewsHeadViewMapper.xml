@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.NewsHeadViewMapper">
+  <resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.NewsHeadView">
+    <id column="ID" jdbcType="CHAR" property="id" />
+    <result column="NewsHeadID" jdbcType="CHAR" property="newsheadid" />
+    <result column="Date" jdbcType="TIMESTAMP" property="date" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, NewsHeadID, Date
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from NewsHeadView
+    where ID = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from NewsHeadView
+    where ID = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiaoyi.ssm.model.NewsHeadView">
+    insert into NewsHeadView (ID, NewsHeadID, Date
+      )
+    values (#{id,jdbcType=CHAR}, #{newsheadid,jdbcType=CHAR}, #{date,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.NewsHeadView">
+    insert into NewsHeadView
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="newsheadid != null">
+        NewsHeadID,
+      </if>
+      <if test="date != null">
+        Date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="newsheadid != null">
+        #{newsheadid,jdbcType=CHAR},
+      </if>
+      <if test="date != null">
+        #{date,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.NewsHeadView">
+    update NewsHeadView
+    <set>
+      <if test="newsheadid != null">
+        NewsHeadID = #{newsheadid,jdbcType=CHAR},
+      </if>
+      <if test="date != null">
+        Date = #{date,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.NewsHeadView">
+    update NewsHeadView
+    set NewsHeadID = #{newsheadid,jdbcType=CHAR},
+      Date = #{date,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

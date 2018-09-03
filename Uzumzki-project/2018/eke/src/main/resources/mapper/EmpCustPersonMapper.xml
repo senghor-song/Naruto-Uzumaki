@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EmpCustPersonMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EmpCustPerson">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="EmpId" jdbcType="VARCHAR" property="empid" />
+		<result column="HouseId" jdbcType="VARCHAR" property="houseid" />
+		<result column="HouseType" jdbcType="VARCHAR" property="housetype" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, EmpId, HouseId, HouseType, CreateTime
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EmpCustPerson
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from
+		EmpCustPerson
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<delete id="delEmpCustPerson" parameterType="java.lang.String">
+		delete from
+		EmpCustPerson
+		where EmpId = #{empId,jdbcType=VARCHAR} and HouseId =
+		#{houseId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EmpCustPerson">
+		insert into EmpCustPerson (ID,
+		EmpId, HouseId,
+		HouseType, CreateTime)
+		values (#{id,jdbcType=VARCHAR},
+		#{empid,jdbcType=VARCHAR},
+		#{houseid,jdbcType=VARCHAR},
+		#{housetype,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EmpCustPerson">
+		insert into EmpCustPerson
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="empid != null">
+				EmpId,
+			</if>
+			<if test="houseid != null">
+				HouseId,
+			</if>
+			<if test="housetype != null">
+				HouseType,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=VARCHAR},
+			</if>
+			<if test="houseid != null">
+				#{houseid,jdbcType=VARCHAR},
+			</if>
+			<if test="housetype != null">
+				#{housetype,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EmpCustPerson">
+		update EmpCustPerson
+		<set>
+			<if test="empid != null">
+				EmpId = #{empid,jdbcType=VARCHAR},
+			</if>
+			<if test="houseid != null">
+				HouseId = #{houseid,jdbcType=VARCHAR},
+			</if>
+			<if test="housetype != null">
+				HouseType = #{housetype,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EmpCustPerson">
+		update
+		EmpCustPerson
+		set EmpId = #{empid,jdbcType=VARCHAR},
+		HouseId =
+		#{houseid,jdbcType=VARCHAR},
+		HouseType = #{housetype,jdbcType=VARCHAR},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP}
+		where ID =
+		#{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

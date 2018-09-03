@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassPersonSaleEmpCondiMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassPersonSaleEmpCondi">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="AddTime" jdbcType="TIMESTAMP" property="addtime" />
+		<result column="Site" jdbcType="VARCHAR" property="site" />
+		<result column="Sites" jdbcType="VARCHAR" property="sites" />
+		<result column="District" jdbcType="VARCHAR" property="district" />
+		<result column="Districts" jdbcType="VARCHAR" property="districts" />
+		<result column="Type" jdbcType="VARCHAR" property="type" />
+		<result column="AreaID" jdbcType="VARCHAR" property="areaid" />
+		<result column="Area" jdbcType="VARCHAR" property="area" />
+		<result column="KeyWord" jdbcType="VARCHAR" property="keyword" />
+		<result column="CountF" jdbcType="INTEGER" property="countf" />
+		<result column="PriceMax" jdbcType="INTEGER" property="pricemax" />
+		<result column="PriceMin" jdbcType="INTEGER" property="pricemin" />
+		<result column="SizeMax" jdbcType="INTEGER" property="sizemax" />
+		<result column="SizeMin" jdbcType="INTEGER" property="sizemin" />
+		<result column="Def" jdbcType="TINYINT" property="def" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, EmpID, AddTime, Site, Sites, District, Districts, Type,
+		Area,
+		KeyWord, CountF,
+		PriceMax, PriceMin, SizeMax, SizeMin, Def,
+		Remark,AreaID
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassPersonSaleEmpCondi
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<select id="selectAllSearch" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassPersonSaleEmpCondi
+		where EmpId = #{empId,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from
+		MassPersonSaleEmpCondi
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassPersonSaleEmpCondi">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		insert into MassPersonSaleEmpCondi (ID, EmpID, AddTime,
+		Site, Sites,
+		District,
+		Districts, Type, Area,
+		KeyWord, CountF, PriceMax,
+		PriceMin,
+		SizeMax, SizeMin,
+		Def, Remark,AreaID)
+		values (#{id,jdbcType=CHAR},
+		#{empid,jdbcType=CHAR},
+		#{addtime,jdbcType=TIMESTAMP},
+		#{site,jdbcType=VARCHAR}, #{sites,jdbcType=VARCHAR},
+		#{district,jdbcType=VARCHAR},
+		#{districts,jdbcType=VARCHAR},
+		#{type,jdbcType=VARCHAR},
+		#{area,jdbcType=VARCHAR},
+		#{keyword,jdbcType=VARCHAR}, #{countf,jdbcType=INTEGER},
+		#{pricemax,jdbcType=INTEGER},
+		#{pricemin,jdbcType=INTEGER},
+		#{sizemax,jdbcType=INTEGER},
+		#{sizemin,jdbcType=INTEGER},
+		#{def,jdbcType=TINYINT}, #{remark,jdbcType=VARCHAR},
+		#{areaid,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassPersonSaleEmpCondi">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+			select replace(uuid(),'-','') from dual
+		</selectKey>
+		insert into MassPersonSaleEmpCondi
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="addtime != null">
+				AddTime,
+			</if>
+			<if test="site != null">
+				Site,
+			</if>
+			<if test="sites != null">
+				Sites,
+			</if>
+			<if test="district != null">
+				District,
+			</if>
+			<if test="districts != null">
+				Districts,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="area != null">
+				Area,
+			</if>
+			<if test="keyword != null">
+				KeyWord,
+			</if>
+			<if test="countf != null">
+				CountF,
+			</if>
+			<if test="pricemax != null">
+				PriceMax,
+			</if>
+			<if test="pricemin != null">
+				PriceMin,
+			</if>
+			<if test="sizemax != null">
+				SizeMax,
+			</if>
+			<if test="sizemin != null">
+				SizeMin,
+			</if>
+			<if test="def != null">
+				Def,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="areaid != null">
+				AreaID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="addtime != null">
+				#{addtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="site != null">
+				#{site,jdbcType=VARCHAR},
+			</if>
+			<if test="sites != null">
+				#{sites,jdbcType=VARCHAR},
+			</if>
+			<if test="district != null">
+				#{district,jdbcType=VARCHAR},
+			</if>
+			<if test="districts != null">
+				#{districts,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				#{area,jdbcType=VARCHAR},
+			</if>
+			<if test="keyword != null">
+				#{keyword,jdbcType=VARCHAR},
+			</if>
+			<if test="countf != null">
+				#{countf,jdbcType=INTEGER},
+			</if>
+			<if test="pricemax != null">
+				#{pricemax,jdbcType=INTEGER},
+			</if>
+			<if test="pricemin != null">
+				#{pricemin,jdbcType=INTEGER},
+			</if>
+			<if test="sizemax != null">
+				#{sizemax,jdbcType=INTEGER},
+			</if>
+			<if test="sizemin != null">
+				#{sizemin,jdbcType=INTEGER},
+			</if>
+			<if test="def != null">
+				#{def,jdbcType=TINYINT},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="areaid != null">
+				#{areaid,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassPersonSaleEmpCondi">
+		update MassPersonSaleEmpCondi
+		<set>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="addtime != null">
+				AddTime = #{addtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="site != null">
+				Site = #{site,jdbcType=VARCHAR},
+			</if>
+			<if test="sites != null">
+				Sites = #{sites,jdbcType=VARCHAR},
+			</if>
+			<if test="district != null">
+				District = #{district,jdbcType=VARCHAR},
+			</if>
+			<if test="districts != null">
+				Districts = #{districts,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				Area = #{area,jdbcType=VARCHAR},
+			</if>
+			<if test="areaid != null">
+				AreaID = #{areaid,jdbcType=VARCHAR},
+			</if>
+			<if test="keyword != null">
+				KeyWord = #{keyword,jdbcType=VARCHAR},
+			</if>
+			<if test="countf != null">
+				CountF = #{countf,jdbcType=INTEGER},
+			</if>
+			<if test="pricemax != null">
+				PriceMax = #{pricemax,jdbcType=INTEGER},
+			</if>
+			<if test="pricemin != null">
+				PriceMin = #{pricemin,jdbcType=INTEGER},
+			</if>
+			<if test="sizemax != null">
+				SizeMax = #{sizemax,jdbcType=INTEGER},
+			</if>
+			<if test="sizemin != null">
+				SizeMin = #{sizemin,jdbcType=INTEGER},
+			</if>
+			<if test="def != null">
+				Def = #{def,jdbcType=TINYINT},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassPersonSaleEmpCondi">
+		update
+		MassPersonSaleEmpCondi
+		set EmpID = #{empid,jdbcType=CHAR},
+		AddTime =
+		#{addtime,jdbcType=TIMESTAMP},
+		Site = #{site,jdbcType=VARCHAR},
+		Sites =
+		#{sites,jdbcType=VARCHAR},
+		District = #{district,jdbcType=VARCHAR},
+		Districts = #{districts,jdbcType=VARCHAR},
+		Type =
+		#{type,jdbcType=VARCHAR},,
+		AreaID = #{areaid,jdbcType=VARCHAR}
+		Area =
+		#{area,jdbcType=VARCHAR},
+		KeyWord = #{keyword,jdbcType=VARCHAR},
+		CountF
+		= #{countf,jdbcType=INTEGER},
+		PriceMax = #{pricemax,jdbcType=INTEGER},
+		PriceMin = #{pricemin,jdbcType=INTEGER},
+		SizeMax =
+		#{sizemax,jdbcType=INTEGER},
+		SizeMin = #{sizemin,jdbcType=INTEGER},
+		Def
+		= #{def,jdbcType=TINYINT},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID
+		= #{id,jdbcType=CHAR}
+	</update>
+</mapper>

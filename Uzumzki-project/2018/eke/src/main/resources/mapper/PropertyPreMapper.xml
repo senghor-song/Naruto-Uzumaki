@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.PropertyPreMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.PropertyPre">
+		<id column="ppID" jdbcType="CHAR" property="id" />
+		<result column="ppRegDate" jdbcType="TIMESTAMP" property="regdate" />
+		<result column="ppRegWay" jdbcType="CHAR" property="regway" />
+		<result column="ppEstateID" jdbcType="CHAR" property="estateid" />
+		<result column="ppEstate" jdbcType="VARCHAR" property="estate" />
+		<result column="ppTrade" jdbcType="CHAR" property="trade" />
+		<result column="ppStatus" jdbcType="CHAR" property="status" />
+		<result column="ppSquare" jdbcType="DECIMAL" property="square" />
+		<result column="ppPrice" jdbcType="INTEGER" property="price" />
+		<result column="ppCustID" jdbcType="CHAR" property="custid" />
+		<result column="ppCust" jdbcType="VARCHAR" property="cust" />
+		<result column="ppCustTel" jdbcType="VARCHAR" property="custtel" />
+		<result column="ppFlagSublet" jdbcType="TINYINT" property="flagsublet" />
+		<result column="ppFlagPay" jdbcType="TINYINT" property="flagpay" />
+		<result column="ppRemark" jdbcType="VARCHAR" property="remark" />
+		<association property="estateT" javaType="com.xiaoyi.ssm.model.Estate">
+			<id property="id" column="ID" />
+			<result column="eCity" property="city" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		pp.ID ppID, pp.RegDate ppRegDate, pp.RegWay ppRegWay, pp.EstateID ppEstateID, pp.Estate
+		ppEstate,
+		pp.Trade ppTrade,
+		pp.Status ppStatus, pp.Square ppSquare, pp.Price ppPrice, pp.CustID
+		ppCustID, pp.Cust ppCust, pp.CustTel
+		ppCustTel,
+		pp.FlagSublet ppFlagSublet, pp.FlagPay ppFlagPay,
+		pp.Remark ppRemark
+	</sql>
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.PropertyPre"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		,e.`City` eCity FROM PropertyPre pp,Estate e WHERE pp.`EstateID` = e.`ID`
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from PropertyPre pp
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from PropertyPre
+		where ID =
+		#{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.PropertyPre">
+		insert into PropertyPre (ID, RegDate, RegWay,
+		EstateID,
+		Estate, Trade,
+		Status, Square, Price,
+		CustID, Cust, CustTel,
+		FlagSublet, FlagPay, Remark
+		)
+		values
+		(#{id,jdbcType=CHAR}, #{regdate,jdbcType=TIMESTAMP}, #{regway,jdbcType=CHAR},
+		#{estateid,jdbcType=CHAR}, #{estate,jdbcType=VARCHAR}, #{trade,jdbcType=CHAR},
+		#{status,jdbcType=CHAR}, #{square,jdbcType=DECIMAL}, #{price,jdbcType=INTEGER},
+		#{custid,jdbcType=CHAR}, #{cust,jdbcType=VARCHAR}, #{custtel,jdbcType=VARCHAR},
+		#{flagsublet,jdbcType=TINYINT}, #{flagpay,jdbcType=TINYINT}, #{remark,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.PropertyPre">
+		insert into PropertyPre
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="regdate != null">
+				RegDate,
+			</if>
+			<if test="regway != null">
+				RegWay,
+			</if>
+			<if test="estateid != null">
+				EstateID,
+			</if>
+			<if test="estate != null">
+				Estate,
+			</if>
+			<if test="trade != null">
+				Trade,
+			</if>
+			<if test="status != null">
+				Status,
+			</if>
+			<if test="square != null">
+				Square,
+			</if>
+			<if test="price != null">
+				Price,
+			</if>
+			<if test="custid != null">
+				CustID,
+			</if>
+			<if test="cust != null">
+				Cust,
+			</if>
+			<if test="custtel != null">
+				CustTel,
+			</if>
+			<if test="flagsublet != null">
+				FlagSublet,
+			</if>
+			<if test="flagpay != null">
+				FlagPay,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="regdate != null">
+				#{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="regway != null">
+				#{regway,jdbcType=CHAR},
+			</if>
+			<if test="estateid != null">
+				#{estateid,jdbcType=CHAR},
+			</if>
+			<if test="estate != null">
+				#{estate,jdbcType=VARCHAR},
+			</if>
+			<if test="trade != null">
+				#{trade,jdbcType=CHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=CHAR},
+			</if>
+			<if test="square != null">
+				#{square,jdbcType=DECIMAL},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=INTEGER},
+			</if>
+			<if test="custid != null">
+				#{custid,jdbcType=CHAR},
+			</if>
+			<if test="cust != null">
+				#{cust,jdbcType=VARCHAR},
+			</if>
+			<if test="custtel != null">
+				#{custtel,jdbcType=VARCHAR},
+			</if>
+			<if test="flagsublet != null">
+				#{flagsublet,jdbcType=TINYINT},
+			</if>
+			<if test="flagpay != null">
+				#{flagpay,jdbcType=TINYINT},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.PropertyPre">
+		update PropertyPre
+		<set>
+			<if test="regdate != null">
+				RegDate = #{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="regway != null">
+				RegWay = #{regway,jdbcType=CHAR},
+			</if>
+			<if test="estateid != null">
+				EstateID = #{estateid,jdbcType=CHAR},
+			</if>
+			<if test="estate != null">
+				Estate = #{estate,jdbcType=VARCHAR},
+			</if>
+			<if test="trade != null">
+				Trade = #{trade,jdbcType=CHAR},
+			</if>
+			<if test="status != null">
+				Status = #{status,jdbcType=CHAR},
+			</if>
+			<if test="square != null">
+				Square = #{square,jdbcType=DECIMAL},
+			</if>
+			<if test="price != null">
+				Price = #{price,jdbcType=INTEGER},
+			</if>
+			<if test="custid != null">
+				CustID = #{custid,jdbcType=CHAR},
+			</if>
+			<if test="cust != null">
+				Cust = #{cust,jdbcType=VARCHAR},
+			</if>
+			<if test="custtel != null">
+				CustTel = #{custtel,jdbcType=VARCHAR},
+			</if>
+			<if test="flagsublet != null">
+				FlagSublet = #{flagsublet,jdbcType=TINYINT},
+			</if>
+			<if test="flagpay != null">
+				FlagPay = #{flagpay,jdbcType=TINYINT},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.PropertyPre">
+		update PropertyPre
+		set RegDate =
+		#{regdate,jdbcType=TIMESTAMP},
+		RegWay = #{regway,jdbcType=CHAR},
+		EstateID =
+		#{estateid,jdbcType=CHAR},
+		Estate = #{estate,jdbcType=VARCHAR},
+		Trade = #{trade,jdbcType=CHAR},
+		Status = #{status,jdbcType=CHAR},
+		Square = #{square,jdbcType=DECIMAL},
+		Price =
+		#{price,jdbcType=INTEGER},
+		CustID = #{custid,jdbcType=CHAR},
+		Cust = #{cust,jdbcType=VARCHAR},
+		CustTel = #{custtel,jdbcType=VARCHAR},
+		FlagSublet = #{flagsublet,jdbcType=TINYINT},
+		FlagPay =
+		#{flagpay,jdbcType=TINYINT},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

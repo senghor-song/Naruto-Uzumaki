@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.TownMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Town">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="Town" jdbcType="VARCHAR" property="town" />
+		<result column="CityID" jdbcType="CHAR" property="cityid" />
+		<result column="City" jdbcType="VARCHAR" property="city" />
+		<result column="DistrictID" jdbcType="VARCHAR" property="districtid" />
+		<result column="District" jdbcType="VARCHAR" property="district" />
+		<result column="AreaID" jdbcType="VARCHAR" property="areaid" />
+		<result column="Area" jdbcType="VARCHAR" property="area" />
+		<result column="Sort" jdbcType="INTEGER" property="sort" />
+		<result column="Status" jdbcType="INTEGER" property="status" />
+		<result column="Longitude" jdbcType="VARCHAR" property="longitude" />
+		<result column="Latitude" jdbcType="VARCHAR" property="latitude" />
+		<result column="Address" jdbcType="VARCHAR" property="address" />
+		<result column="Price" jdbcType="INTEGER" property="price" />
+		<result column="Feature" jdbcType="VARCHAR" property="feature" />
+		<result column="Show" jdbcType="DATE" property="show" />
+		<result column="Layout" jdbcType="VARCHAR" property="layout" />
+		<result column="HeadImg" jdbcType="VARCHAR" property="headimg" />
+		<result column="RegDate" jdbcType="DATE" property="regdate" />
+		<result column="Contact" jdbcType="VARCHAR" property="contact" />
+		<result column="ContactTel" jdbcType="CHAR" property="contacttel" />
+		<result column="Open" jdbcType="DATE" property="open" />
+		<result column="CooperationStart" jdbcType="DATE" property="cooperationstart" />
+		<result column="CooperationEnd" jdbcType="DATE" property="cooperationend" />
+		<result column="CommissionBilling" jdbcType="INTEGER" property="commissionbilling" />
+		<result column="Traffic" jdbcType="VARCHAR" property="traffic" />
+		<result column="Education" jdbcType="VARCHAR" property="education" />
+		<result column="Medical" jdbcType="VARCHAR" property="medical" />
+		<result column="Entertainment" jdbcType="VARCHAR" property="entertainment" />
+		<result column="HandOverDate" jdbcType="DATE" property="handoverdate" />
+		<result column="DevCompany" jdbcType="VARCHAR" property="devcompany" />
+		<result column="MgtCompany" jdbcType="VARCHAR" property="mgtcompany" />
+		<result column="MgtTel" jdbcType="VARCHAR" property="mgttel" />
+		<result column="Square" jdbcType="DOUBLE" property="square" />
+		<result column="Green" jdbcType="VARCHAR" property="green" />
+		<result column="Room" jdbcType="INTEGER" property="room" />
+		<result column="Park" jdbcType="INTEGER" property="park" />
+		<result column="AveragePrice" jdbcType="DOUBLE" property="averageprice" />
+		<result column="MgtPrice" jdbcType="DOUBLE" property="mgtprice" />
+		<result column="PropertyType" jdbcType="VARCHAR" property="propertytype" />
+		<result column="Decoration" jdbcType="VARCHAR" property="decoration" />
+		<result column="LandGrade" jdbcType="INTEGER" property="landgrade" />
+		<result column="TownType" jdbcType="INTEGER" property="towntype" />
+		<result column="ViewTimesFlash" jdbcType="TIMESTAMP" property="viewtimesflash" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<association property="cityT" javaType="com.xiaoyi.ssm.model.City">
+			<id column="ID" property="id" />
+			<result column="cCity" property="city" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Town, CityID, City, DistrictID, District, AreaID, Area, Sort, Status, Longitude,
+		Latitude, Address, Price, Feature, Show, Layout, HeadImg, RegDate, Contact, ContactTel,
+		Open, CooperationStart, CooperationEnd, CommissionBilling, Traffic, Education, Medical,
+		Entertainment, HandOverDate, DevCompany, MgtCompany, MgtTel, Square, Green, Room,
+		Park, AveragePrice, MgtPrice, PropertyType, Decoration, LandGrade, TownType, ViewTimesFlash,
+		Remark
+	</sql>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Town" resultMap="BaseResultMap">
+		SELECT t.*,c.City cCity FROM Town t LEFT JOIN City c ON t.`CityID` = c.`ID`
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Town
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Town
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Town">
+		insert into Town (ID, Town, CityID, City,
+		DistrictID, District, AreaID,
+		Area, Sort, Status,
+		Longitude, Latitude, Address,
+		Price, Feature, Show,
+		Layout, HeadImg, RegDate,
+		Contact, ContactTel, Open,
+		CooperationStart, CooperationEnd, CommissionBilling,
+		Traffic, Education, Medical,
+		Entertainment, HandOverDate, DevCompany,
+		MgtCompany, MgtTel, Square,
+		Green, Room, Park,
+		AveragePrice, MgtPrice, PropertyType,
+		Decoration, LandGrade, TownType,
+		ViewTimesFlash, Remark)
+		values (#{id,jdbcType=CHAR}, #{town,jdbcType=VARCHAR}, #{cityid,jdbcType=CHAR},
+		#{city,jdbcType=VARCHAR},
+		#{districtid,jdbcType=VARCHAR}, #{district,jdbcType=VARCHAR}, #{areaid,jdbcType=VARCHAR},
+		#{area,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, #{status,jdbcType=INTEGER},
+		#{longitude,jdbcType=VARCHAR}, #{latitude,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+		#{price,jdbcType=INTEGER}, #{feature,jdbcType=VARCHAR}, #{show,jdbcType=DATE},
+		#{layout,jdbcType=VARCHAR}, #{headimg,jdbcType=VARCHAR}, #{regdate,jdbcType=DATE},
+		#{contact,jdbcType=VARCHAR}, #{contacttel,jdbcType=CHAR}, #{open,jdbcType=DATE},
+		#{cooperationstart,jdbcType=DATE}, #{cooperationend,jdbcType=DATE}, #{commissionbilling,jdbcType=INTEGER},
+		#{traffic,jdbcType=VARCHAR}, #{education,jdbcType=VARCHAR}, #{medical,jdbcType=VARCHAR},
+		#{entertainment,jdbcType=VARCHAR}, #{handoverdate,jdbcType=DATE}, #{devcompany,jdbcType=VARCHAR},
+		#{mgtcompany,jdbcType=VARCHAR}, #{mgttel,jdbcType=VARCHAR}, #{square,jdbcType=DOUBLE},
+		#{green,jdbcType=VARCHAR}, #{room,jdbcType=INTEGER}, #{park,jdbcType=INTEGER},
+		#{averageprice,jdbcType=DOUBLE}, #{mgtprice,jdbcType=DOUBLE}, #{propertytype,jdbcType=VARCHAR},
+		#{decoration,jdbcType=VARCHAR}, #{landgrade,jdbcType=INTEGER}, #{towntype,jdbcType=INTEGER},
+		#{viewtimesflash,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Town">
+		insert into Town
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="town != null">
+				Town,
+			</if>
+			<if test="cityid != null">
+				CityID,
+			</if>
+			<if test="city != null">
+				City,
+			</if>
+			<if test="districtid != null">
+				DistrictID,
+			</if>
+			<if test="district != null">
+				District,
+			</if>
+			<if test="areaid != null">
+				AreaID,
+			</if>
+			<if test="area != null">
+				Area,
+			</if>
+			<if test="sort != null">
+				Sort,
+			</if>
+			<if test="status != null">
+				Status,
+			</if>
+			<if test="longitude != null">
+				Longitude,
+			</if>
+			<if test="latitude != null">
+				Latitude,
+			</if>
+			<if test="address != null">
+				Address,
+			</if>
+			<if test="price != null">
+				Price,
+			</if>
+			<if test="feature != null">
+				Feature,
+			</if>
+			<if test="show != null">
+				Show,
+			</if>
+			<if test="layout != null">
+				Layout,
+			</if>
+			<if test="headimg != null">
+				HeadImg,
+			</if>
+			<if test="regdate != null">
+				RegDate,
+			</if>
+			<if test="contact != null">
+				Contact,
+			</if>
+			<if test="contacttel != null">
+				ContactTel,
+			</if>
+			<if test="open != null">
+				Open,
+			</if>
+			<if test="cooperationstart != null">
+				CooperationStart,
+			</if>
+			<if test="cooperationend != null">
+				CooperationEnd,
+			</if>
+			<if test="commissionbilling != null">
+				CommissionBilling,
+			</if>
+			<if test="traffic != null">
+				Traffic,
+			</if>
+			<if test="education != null">
+				Education,
+			</if>
+			<if test="medical != null">
+				Medical,
+			</if>
+			<if test="entertainment != null">
+				Entertainment,
+			</if>
+			<if test="handoverdate != null">
+				HandOverDate,
+			</if>
+			<if test="devcompany != null">
+				DevCompany,
+			</if>
+			<if test="mgtcompany != null">
+				MgtCompany,
+			</if>
+			<if test="mgttel != null">
+				MgtTel,
+			</if>
+			<if test="square != null">
+				Square,
+			</if>
+			<if test="green != null">
+				Green,
+			</if>
+			<if test="room != null">
+				Room,
+			</if>
+			<if test="park != null">
+				Park,
+			</if>
+			<if test="averageprice != null">
+				AveragePrice,
+			</if>
+			<if test="mgtprice != null">
+				MgtPrice,
+			</if>
+			<if test="propertytype != null">
+				PropertyType,
+			</if>
+			<if test="decoration != null">
+				Decoration,
+			</if>
+			<if test="landgrade != null">
+				LandGrade,
+			</if>
+			<if test="towntype != null">
+				TownType,
+			</if>
+			<if test="viewtimesflash != null">
+				ViewTimesFlash,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="town != null">
+				#{town,jdbcType=VARCHAR},
+			</if>
+			<if test="cityid != null">
+				#{cityid,jdbcType=CHAR},
+			</if>
+			<if test="city != null">
+				#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="districtid != null">
+				#{districtid,jdbcType=VARCHAR},
+			</if>
+			<if test="district != null">
+				#{district,jdbcType=VARCHAR},
+			</if>
+			<if test="areaid != null">
+				#{areaid,jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				#{area,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				#{sort,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="longitude != null">
+				#{longitude,jdbcType=VARCHAR},
+			</if>
+			<if test="latitude != null">
+				#{latitude,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=INTEGER},
+			</if>
+			<if test="feature != null">
+				#{feature,jdbcType=VARCHAR},
+			</if>
+			<if test="show != null">
+				#{show,jdbcType=DATE},
+			</if>
+			<if test="layout != null">
+				#{layout,jdbcType=VARCHAR},
+			</if>
+			<if test="headimg != null">
+				#{headimg,jdbcType=VARCHAR},
+			</if>
+			<if test="regdate != null">
+				#{regdate,jdbcType=DATE},
+			</if>
+			<if test="contact != null">
+				#{contact,jdbcType=VARCHAR},
+			</if>
+			<if test="contacttel != null">
+				#{contacttel,jdbcType=CHAR},
+			</if>
+			<if test="open != null">
+				#{open,jdbcType=DATE},
+			</if>
+			<if test="cooperationstart != null">
+				#{cooperationstart,jdbcType=DATE},
+			</if>
+			<if test="cooperationend != null">
+				#{cooperationend,jdbcType=DATE},
+			</if>
+			<if test="commissionbilling != null">
+				#{commissionbilling,jdbcType=INTEGER},
+			</if>
+			<if test="traffic != null">
+				#{traffic,jdbcType=VARCHAR},
+			</if>
+			<if test="education != null">
+				#{education,jdbcType=VARCHAR},
+			</if>
+			<if test="medical != null">
+				#{medical,jdbcType=VARCHAR},
+			</if>
+			<if test="entertainment != null">
+				#{entertainment,jdbcType=VARCHAR},
+			</if>
+			<if test="handoverdate != null">
+				#{handoverdate,jdbcType=DATE},
+			</if>
+			<if test="devcompany != null">
+				#{devcompany,jdbcType=VARCHAR},
+			</if>
+			<if test="mgtcompany != null">
+				#{mgtcompany,jdbcType=VARCHAR},
+			</if>
+			<if test="mgttel != null">
+				#{mgttel,jdbcType=VARCHAR},
+			</if>
+			<if test="square != null">
+				#{square,jdbcType=DOUBLE},
+			</if>
+			<if test="green != null">
+				#{green,jdbcType=VARCHAR},
+			</if>
+			<if test="room != null">
+				#{room,jdbcType=INTEGER},
+			</if>
+			<if test="park != null">
+				#{park,jdbcType=INTEGER},
+			</if>
+			<if test="averageprice != null">
+				#{averageprice,jdbcType=DOUBLE},
+			</if>
+			<if test="mgtprice != null">
+				#{mgtprice,jdbcType=DOUBLE},
+			</if>
+			<if test="propertytype != null">
+				#{propertytype,jdbcType=VARCHAR},
+			</if>
+			<if test="decoration != null">
+				#{decoration,jdbcType=VARCHAR},
+			</if>
+			<if test="landgrade != null">
+				#{landgrade,jdbcType=INTEGER},
+			</if>
+			<if test="towntype != null">
+				#{towntype,jdbcType=INTEGER},
+			</if>
+			<if test="viewtimesflash != null">
+				#{viewtimesflash,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Town">
+		update Town
+		<set>
+			<if test="town != null">
+				Town = #{town,jdbcType=VARCHAR},
+			</if>
+			<if test="cityid != null">
+				CityID = #{cityid,jdbcType=CHAR},
+			</if>
+			<if test="city != null">
+				City = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="districtid != null">
+				DistrictID = #{districtid,jdbcType=VARCHAR},
+			</if>
+			<if test="district != null">
+				District = #{district,jdbcType=VARCHAR},
+			</if>
+			<if test="areaid != null">
+				AreaID = #{areaid,jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				Area = #{area,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				Sort = #{sort,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				Status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="longitude != null">
+				Longitude = #{longitude,jdbcType=VARCHAR},
+			</if>
+			<if test="latitude != null">
+				Latitude = #{latitude,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				Price = #{price,jdbcType=INTEGER},
+			</if>
+			<if test="feature != null">
+				Feature = #{feature,jdbcType=VARCHAR},
+			</if>
+			<if test="show != null">
+				Show = #{show,jdbcType=DATE},
+			</if>
+			<if test="layout != null">
+				Layout = #{layout,jdbcType=VARCHAR},
+			</if>
+			<if test="headimg != null">
+				HeadImg = #{headimg,jdbcType=VARCHAR},
+			</if>
+			<if test="regdate != null">
+				RegDate = #{regdate,jdbcType=DATE},
+			</if>
+			<if test="contact != null">
+				Contact = #{contact,jdbcType=VARCHAR},
+			</if>
+			<if test="contacttel != null">
+				ContactTel = #{contacttel,jdbcType=CHAR},
+			</if>
+			<if test="open != null">
+				Open = #{open,jdbcType=DATE},
+			</if>
+			<if test="cooperationstart != null">
+				CooperationStart = #{cooperationstart,jdbcType=DATE},
+			</if>
+			<if test="cooperationend != null">
+				CooperationEnd = #{cooperationend,jdbcType=DATE},
+			</if>
+			<if test="commissionbilling != null">
+				CommissionBilling = #{commissionbilling,jdbcType=INTEGER},
+			</if>
+			<if test="traffic != null">
+				Traffic = #{traffic,jdbcType=VARCHAR},
+			</if>
+			<if test="education != null">
+				Education = #{education,jdbcType=VARCHAR},
+			</if>
+			<if test="medical != null">
+				Medical = #{medical,jdbcType=VARCHAR},
+			</if>
+			<if test="entertainment != null">
+				Entertainment = #{entertainment,jdbcType=VARCHAR},
+			</if>
+			<if test="handoverdate != null">
+				HandOverDate = #{handoverdate,jdbcType=DATE},
+			</if>
+			<if test="devcompany != null">
+				DevCompany = #{devcompany,jdbcType=VARCHAR},
+			</if>
+			<if test="mgtcompany != null">
+				MgtCompany = #{mgtcompany,jdbcType=VARCHAR},
+			</if>
+			<if test="mgttel != null">
+				MgtTel = #{mgttel,jdbcType=VARCHAR},
+			</if>
+			<if test="square != null">
+				Square = #{square,jdbcType=DOUBLE},
+			</if>
+			<if test="green != null">
+				Green = #{green,jdbcType=VARCHAR},
+			</if>
+			<if test="room != null">
+				Room = #{room,jdbcType=INTEGER},
+			</if>
+			<if test="park != null">
+				Park = #{park,jdbcType=INTEGER},
+			</if>
+			<if test="averageprice != null">
+				AveragePrice = #{averageprice,jdbcType=DOUBLE},
+			</if>
+			<if test="mgtprice != null">
+				MgtPrice = #{mgtprice,jdbcType=DOUBLE},
+			</if>
+			<if test="propertytype != null">
+				PropertyType = #{propertytype,jdbcType=VARCHAR},
+			</if>
+			<if test="decoration != null">
+				Decoration = #{decoration,jdbcType=VARCHAR},
+			</if>
+			<if test="landgrade != null">
+				LandGrade = #{landgrade,jdbcType=INTEGER},
+			</if>
+			<if test="towntype != null">
+				TownType = #{towntype,jdbcType=INTEGER},
+			</if>
+			<if test="viewtimesflash != null">
+				ViewTimesFlash = #{viewtimesflash,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Town">
+		update Town
+		set Town = #{town,jdbcType=VARCHAR},
+		CityID = #{cityid,jdbcType=CHAR},
+		City = #{city,jdbcType=VARCHAR},
+		DistrictID = #{districtid,jdbcType=VARCHAR},
+		District = #{district,jdbcType=VARCHAR},
+		AreaID = #{areaid,jdbcType=VARCHAR},
+		Area = #{area,jdbcType=VARCHAR},
+		Sort = #{sort,jdbcType=INTEGER},
+		Status = #{status,jdbcType=INTEGER},
+		Longitude = #{longitude,jdbcType=VARCHAR},
+		Latitude = #{latitude,jdbcType=VARCHAR},
+		Address = #{address,jdbcType=VARCHAR},
+		Price = #{price,jdbcType=INTEGER},
+		Feature = #{feature,jdbcType=VARCHAR},
+		Show = #{show,jdbcType=DATE},
+		Layout = #{layout,jdbcType=VARCHAR},
+		HeadImg = #{headimg,jdbcType=VARCHAR},
+		RegDate = #{regdate,jdbcType=DATE},
+		Contact = #{contact,jdbcType=VARCHAR},
+		ContactTel = #{contacttel,jdbcType=CHAR},
+		Open = #{open,jdbcType=DATE},
+		CooperationStart = #{cooperationstart,jdbcType=DATE},
+		CooperationEnd = #{cooperationend,jdbcType=DATE},
+		CommissionBilling = #{commissionbilling,jdbcType=INTEGER},
+		Traffic = #{traffic,jdbcType=VARCHAR},
+		Education = #{education,jdbcType=VARCHAR},
+		Medical = #{medical,jdbcType=VARCHAR},
+		Entertainment = #{entertainment,jdbcType=VARCHAR},
+		HandOverDate = #{handoverdate,jdbcType=DATE},
+		DevCompany = #{devcompany,jdbcType=VARCHAR},
+		MgtCompany = #{mgtcompany,jdbcType=VARCHAR},
+		MgtTel = #{mgttel,jdbcType=VARCHAR},
+		Square = #{square,jdbcType=DOUBLE},
+		Green = #{green,jdbcType=VARCHAR},
+		Room = #{room,jdbcType=INTEGER},
+		Park = #{park,jdbcType=INTEGER},
+		AveragePrice = #{averageprice,jdbcType=DOUBLE},
+		MgtPrice = #{mgtprice,jdbcType=DOUBLE},
+		PropertyType = #{propertytype,jdbcType=VARCHAR},
+		Decoration = #{decoration,jdbcType=VARCHAR},
+		LandGrade = #{landgrade,jdbcType=INTEGER},
+		TownType = #{towntype,jdbcType=INTEGER},
+		ViewTimesFlash = #{viewtimesflash,jdbcType=TIMESTAMP},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

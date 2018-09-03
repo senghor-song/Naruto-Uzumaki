@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassHouseMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassHouse">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="HouseType" jdbcType="VARCHAR" property="housetype" />
+		<result column="HouseSubType" jdbcType="VARCHAR" property="housesubtype" />
+		<result column="HouseProperty" jdbcType="VARCHAR" property="houseproperty" />
+		<result column="LandYear" jdbcType="VARCHAR" property="landyear" />
+		<result column="HouseStructure" jdbcType="VARCHAR" property="housestructure" />
+		<result column="HouseYear" jdbcType="INTEGER" property="houseyear" />
+		<result column="OnlyHouse" jdbcType="INTEGER" property="onlyhouse" />
+		<result column="BasicEquip" jdbcType="VARCHAR" property="basicequip" />
+		<result column="AdvEquip" jdbcType="VARCHAR" property="advequip" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, HouseType, HouseSubType, HouseProperty, LandYear, HouseStructure,
+		HouseYear,
+		OnlyHouse, BasicEquip, AdvEquip
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassHouse
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from MassHouse
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassHouse">
+		insert into MassHouse (ID, HouseType, HouseSubType,
+		HouseProperty, LandYear, HouseStructure,
+		HouseYear, OnlyHouse, BasicEquip,
+		AdvEquip)
+		values (#{id,jdbcType=VARCHAR}, #{housetype,jdbcType=VARCHAR},
+		#{housesubtype,jdbcType=VARCHAR},
+		#{houseproperty,jdbcType=VARCHAR}, #{landyear,jdbcType=VARCHAR}, #{housestructure,jdbcType=VARCHAR},
+		#{houseyear,jdbcType=INTEGER}, #{onlyhouse,jdbcType=INTEGER},
+		#{basicequip,jdbcType=VARCHAR},
+		#{advequip,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassHouse">
+		insert into MassHouse
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="housetype != null">
+				HouseType,
+			</if>
+			<if test="housesubtype != null">
+				HouseSubType,
+			</if>
+			<if test="houseproperty != null">
+				HouseProperty,
+			</if>
+			<if test="landyear != null">
+				LandYear,
+			</if>
+			<if test="housestructure != null">
+				HouseStructure,
+			</if>
+			<if test="houseyear != null">
+				HouseYear,
+			</if>
+			<if test="onlyhouse != null">
+				OnlyHouse,
+			</if>
+			<if test="basicequip != null">
+				BasicEquip,
+			</if>
+			<if test="advequip != null">
+				AdvEquip,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="housetype != null">
+				#{housetype,jdbcType=VARCHAR},
+			</if>
+			<if test="housesubtype != null">
+				#{housesubtype,jdbcType=VARCHAR},
+			</if>
+			<if test="houseproperty != null">
+				#{houseproperty,jdbcType=VARCHAR},
+			</if>
+			<if test="landyear != null">
+				#{landyear,jdbcType=VARCHAR},
+			</if>
+			<if test="housestructure != null">
+				#{housestructure,jdbcType=VARCHAR},
+			</if>
+			<if test="houseyear != null">
+				#{houseyear,jdbcType=INTEGER},
+			</if>
+			<if test="onlyhouse != null">
+				#{onlyhouse,jdbcType=INTEGER},
+			</if>
+			<if test="basicequip != null">
+				#{basicequip,jdbcType=VARCHAR},
+			</if>
+			<if test="advequip != null">
+				#{advequip,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassHouse">
+		update MassHouse
+		<set>
+			<if test="housetype != null">
+				HouseType = #{housetype,jdbcType=VARCHAR},
+			</if>
+			<if test="housesubtype != null">
+				HouseSubType = #{housesubtype,jdbcType=VARCHAR},
+			</if>
+			<if test="houseproperty != null">
+				HouseProperty = #{houseproperty,jdbcType=VARCHAR},
+			</if>
+			<if test="landyear != null">
+				LandYear = #{landyear,jdbcType=VARCHAR},
+			</if>
+			<if test="housestructure != null">
+				HouseStructure = #{housestructure,jdbcType=VARCHAR},
+			</if>
+			<if test="houseyear != null">
+				HouseYear = #{houseyear,jdbcType=INTEGER},
+			</if>
+			<if test="onlyhouse != null">
+				OnlyHouse = #{onlyhouse,jdbcType=INTEGER},
+			</if>
+			<if test="basicequip != null">
+				BasicEquip = #{basicequip,jdbcType=VARCHAR},
+			</if>
+			<if test="advequip != null">
+				AdvEquip = #{advequip,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassHouse">
+		update MassHouse
+		set HouseType = #{housetype,jdbcType=VARCHAR},
+		HouseSubType = #{housesubtype,jdbcType=VARCHAR},
+		HouseProperty = #{houseproperty,jdbcType=VARCHAR},
+		LandYear = #{landyear,jdbcType=VARCHAR},
+		HouseStructure = #{housestructure,jdbcType=VARCHAR},
+		HouseYear = #{houseyear,jdbcType=INTEGER},
+		OnlyHouse = #{onlyhouse,jdbcType=INTEGER},
+		BasicEquip = #{basicequip,jdbcType=VARCHAR},
+		AdvEquip = #{advequip,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

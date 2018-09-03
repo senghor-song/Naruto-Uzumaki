@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EstateImageEmpMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EstateImageEmp">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EstateID" jdbcType="CHAR" property="estateid" />
+		<result column="HouseID" jdbcType="CHAR" property="houseid" />
+		<result column="CountF" jdbcType="INTEGER" property="countf" />
+		<result column="City" jdbcType="VARCHAR" property="city" />
+		<result column="Estate" jdbcType="VARCHAR" property="estate" />
+		<result column="AddTime" jdbcType="TIMESTAMP" property="addtime" />
+		<result column="OperatorID" jdbcType="CHAR" property="operatorid" />
+		<result column="Filename" jdbcType="VARCHAR" property="filename" />
+		<result column="Size" jdbcType="INTEGER" property="size" />
+		<result column="Path" jdbcType="VARCHAR" property="path" />
+		<result column="FlagDeleted" jdbcType="TINYINT" property="flagdeleted" />
+		<result column="DeletedTime" jdbcType="TIMESTAMP" property="deletedtime" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<resultMap id="ImageResultMap" type="java.util.HashMap">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="Path" jdbcType="VARCHAR" property="path" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		ID, EstateID, HouseID, CountF, City, Estate, AddTime, OperatorID,
+		Filename, Size,
+		Path, FlagDeleted, DeletedTime, Remark
+	</sql>
+	<select id="selectByEmpImage" parameterType="com.xiaoyi.ssm.dto.EstateImageDto"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EstateImageEmp
+		where OperatorID = #{empid}
+		<if test="estateid != null and estateid != ''">
+			AND EstateID = #{estateid}
+		</if>
+		<if test="countf != null">
+			AND CountF = #{countf}
+		</if>
+	</select>
+	<select id="selectByEmpEstate" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		SELECT DISTINCT EstateID estateid,Estate estate FROM
+		EstateImageEmp WHERE
+		OperatorID = #{empid}
+	</select>
+	<select id="selectByImageUrl" parameterType="java.lang.String"
+		resultMap="ImageResultMap">
+		SELECT ID,Path FROM
+		EstateImageEmp WHERE
+		OperatorID = #{empid}
+		AND HouseID = #{houseid}
+	</select>
+
+	<delete id="deleteByPrimaryKeys">
+		delete from
+		EstateImageEmp
+		where ID in
+		<foreach collection="array" item="item" open="(" separator=","
+			close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EstateImageEmp
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from EstateImageEmp
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EstateImageEmp">
+		insert into EstateImageEmp (ID, EstateID, HouseID,
+		CountF, City, Estate,
+		AddTime, OperatorID, Filename,
+		Size, Path, FlagDeleted,
+		DeletedTime, Remark)
+		values (#{id,jdbcType=CHAR}, #{estateid,jdbcType=CHAR},
+		#{houseid,jdbcType=CHAR},
+		#{countf,jdbcType=INTEGER}, #{city,jdbcType=VARCHAR}, #{estate,jdbcType=VARCHAR},
+		#{addtime,jdbcType=TIMESTAMP}, #{operatorid,jdbcType=CHAR},
+		#{filename,jdbcType=VARCHAR},
+		#{size,jdbcType=INTEGER}, #{path,jdbcType=VARCHAR}, #{flagdeleted,jdbcType=TINYINT},
+		#{deletedtime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EstateImageEmp">
+		insert into EstateImageEmp
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="estateid != null">
+				EstateID,
+			</if>
+			<if test="houseid != null">
+				HouseID,
+			</if>
+			<if test="countf != null">
+				CountF,
+			</if>
+			<if test="city != null">
+				City,
+			</if>
+			<if test="estate != null">
+				Estate,
+			</if>
+			<if test="addtime != null">
+				AddTime,
+			</if>
+			<if test="operatorid != null">
+				OperatorID,
+			</if>
+			<if test="filename != null">
+				Filename,
+			</if>
+			<if test="size != null">
+				Size,
+			</if>
+			<if test="path != null">
+				Path,
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted,
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="estateid != null">
+				#{estateid,jdbcType=CHAR},
+			</if>
+			<if test="houseid != null">
+				#{houseid,jdbcType=CHAR},
+			</if>
+			<if test="countf != null">
+				#{countf,jdbcType=INTEGER},
+			</if>
+			<if test="city != null">
+				#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="estate != null">
+				#{estate,jdbcType=VARCHAR},
+			</if>
+			<if test="addtime != null">
+				#{addtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="operatorid != null">
+				#{operatorid,jdbcType=CHAR},
+			</if>
+			<if test="filename != null">
+				#{filename,jdbcType=VARCHAR},
+			</if>
+			<if test="size != null">
+				#{size,jdbcType=INTEGER},
+			</if>
+			<if test="path != null">
+				#{path,jdbcType=VARCHAR},
+			</if>
+			<if test="flagdeleted != null">
+				#{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				#{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EstateImageEmp">
+		update EstateImageEmp
+		<set>
+			<if test="estateid != null">
+				EstateID = #{estateid,jdbcType=CHAR},
+			</if>
+			<if test="houseid != null">
+				HouseID = #{houseid,jdbcType=CHAR},
+			</if>
+			<if test="countf != null">
+				CountF = #{countf,jdbcType=INTEGER},
+			</if>
+			<if test="city != null">
+				City = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="estate != null">
+				Estate = #{estate,jdbcType=VARCHAR},
+			</if>
+			<if test="addtime != null">
+				AddTime = #{addtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="operatorid != null">
+				OperatorID = #{operatorid,jdbcType=CHAR},
+			</if>
+			<if test="filename != null">
+				Filename = #{filename,jdbcType=VARCHAR},
+			</if>
+			<if test="size != null">
+				Size = #{size,jdbcType=INTEGER},
+			</if>
+			<if test="path != null">
+				Path = #{path,jdbcType=VARCHAR},
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EstateImageEmp">
+		update EstateImageEmp
+		set EstateID = #{estateid,jdbcType=CHAR},
+		HouseID = #{houseid,jdbcType=CHAR},
+		CountF = #{countf,jdbcType=INTEGER},
+		City = #{city,jdbcType=VARCHAR},
+		Estate = #{estate,jdbcType=VARCHAR},
+		AddTime = #{addtime,jdbcType=TIMESTAMP},
+		OperatorID = #{operatorid,jdbcType=CHAR},
+		Filename = #{filename,jdbcType=VARCHAR},
+		Size = #{size,jdbcType=INTEGER},
+		Path = #{path,jdbcType=VARCHAR},
+		FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+		DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

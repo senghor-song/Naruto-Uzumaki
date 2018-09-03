@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EmpCustMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EmpCust">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="CustID" jdbcType="CHAR" property="custid" />
+		<result column="Cust" jdbcType="VARCHAR" property="cust" />
+		<result column="Sex" jdbcType="CHAR" property="sex" />
+		<result column="Mobile" jdbcType="CHAR" property="mobile" />
+		<result column="Level" jdbcType="CHAR" property="level" />
+		<result column="BudgetMax" jdbcType="INTEGER" property="budgetmax" />
+		<result column="BudgetMin" jdbcType="INTEGER" property="budgetmin" />
+		<result column="SquareMax" jdbcType="INTEGER" property="squaremax" />
+		<result column="SquareMin" jdbcType="INTEGER" property="squaremin" />
+		<result column="Layout" jdbcType="VARCHAR" property="layout" />
+		<result column="Region" jdbcType="VARCHAR" property="region" />
+		<result column="CountW" jdbcType="INTEGER" property="countw" />
+		<result column="CustSource" jdbcType="CHAR" property="custsource" />
+		<result column="Direction" jdbcType="CHAR" property="direction" />
+		<result column="Decoration" jdbcType="CHAR" property="decoration" />
+		<result column="Floor" jdbcType="CHAR" property="floor" />
+		<result column="Elevator" jdbcType="CHAR" property="elevator" />
+		<result column="Purchase" jdbcType="CHAR" property="purchase" />
+		<result column="Use" jdbcType="CHAR" property="use" />
+		<result column="Structure" jdbcType="CHAR" property="structure" />
+		<result column="Payment" jdbcType="CHAR" property="payment" />
+		<result column="Identity" jdbcType="CHAR" property="identity" />
+		<result column="Amount" jdbcType="CHAR" property="amount" />
+		<result column="Registered" jdbcType="CHAR" property="registered" />
+		<result column="WX" jdbcType="VARCHAR" property="wx" />
+		<result column="Population" jdbcType="CHAR" property="population" />
+		<result column="Marriage" jdbcType="CHAR" property="marriage" />
+		<result column="NewHouse" jdbcType="BIT" property="newhouse" />
+		<result column="Sale" jdbcType="BIT" property="sale" />
+		<result column="Rent" jdbcType="BIT" property="rent" />
+		<result column="Describe" jdbcType="VARCHAR" property="describe" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, EmpID, CustID, Cust, Sex, Mobile, Level, BudgetMax, BudgetMin, SquareMax, SquareMin,
+		Layout, Region, CountW, CustSource, Direction, Decoration, Floor, Elevator, Purchase,
+		Use, Structure, Payment, Identity, Amount, Registered, WX, Population, Marriage,
+		NewHouse, Sale, Rent, Describe, Remark
+	</sql>
+	<select id="countByEmp" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0) from EmpCust where EmpID = #{empId,jdbcType=CHAR}
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EmpCust
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from EmpCust
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EmpCust">
+		insert into EmpCust (ID, EmpID, CustID, Cust,
+		Sex, Mobile, Level, BudgetMax,
+		BudgetMin, SquareMax, SquareMin,
+		Layout, Region, CountW,
+		CustSource, Direction, Decoration,
+		Floor, Elevator, Purchase, Use,
+		Structure, Payment, Identity,
+		Amount, Registered, WX, Population,
+		Marriage, NewHouse, Sale, Rent,
+		Describe, Remark)
+		values (#{id,jdbcType=CHAR}, #{empid,jdbcType=CHAR}, #{custid,jdbcType=CHAR}, #{cust,jdbcType=VARCHAR},
+		#{sex,jdbcType=CHAR}, #{mobile,jdbcType=CHAR}, #{level,jdbcType=CHAR},
+		#{budgetmax,jdbcType=INTEGER},
+		#{budgetmin,jdbcType=INTEGER}, #{squaremax,jdbcType=INTEGER}, #{squaremin,jdbcType=INTEGER},
+		#{layout,jdbcType=VARCHAR}, #{region,jdbcType=VARCHAR}, #{countw,jdbcType=INTEGER},
+		#{custsource,jdbcType=CHAR}, #{direction,jdbcType=CHAR}, #{decoration,jdbcType=CHAR},
+		#{floor,jdbcType=CHAR}, #{elevator,jdbcType=CHAR}, #{purchase,jdbcType=CHAR}, #{use,jdbcType=CHAR},
+		#{structure,jdbcType=CHAR}, #{payment,jdbcType=CHAR}, #{identity,jdbcType=CHAR},
+		#{amount,jdbcType=CHAR}, #{registered,jdbcType=CHAR}, #{wx,jdbcType=VARCHAR},
+		#{population,jdbcType=CHAR},
+		#{marriage,jdbcType=CHAR}, #{newhouse,jdbcType=BIT}, #{sale,jdbcType=BIT}, #{rent,jdbcType=BIT},
+		#{describe,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EmpCust">
+		insert into EmpCust
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="custid != null">
+				CustID,
+			</if>
+			<if test="cust != null">
+				Cust,
+			</if>
+			<if test="sex != null">
+				Sex,
+			</if>
+			<if test="mobile != null">
+				Mobile,
+			</if>
+			<if test="level != null">
+				Level,
+			</if>
+			<if test="budgetmax != null">
+				BudgetMax,
+			</if>
+			<if test="budgetmin != null">
+				BudgetMin,
+			</if>
+			<if test="squaremax != null">
+				SquareMax,
+			</if>
+			<if test="squaremin != null">
+				SquareMin,
+			</if>
+			<if test="layout != null">
+				Layout,
+			</if>
+			<if test="region != null">
+				Region,
+			</if>
+			<if test="countw != null">
+				CountW,
+			</if>
+			<if test="custsource != null">
+				CustSource,
+			</if>
+			<if test="direction != null">
+				Direction,
+			</if>
+			<if test="decoration != null">
+				Decoration,
+			</if>
+			<if test="floor != null">
+				Floor,
+			</if>
+			<if test="elevator != null">
+				Elevator,
+			</if>
+			<if test="purchase != null">
+				Purchase,
+			</if>
+			<if test="use != null">
+				Use,
+			</if>
+			<if test="structure != null">
+				Structure,
+			</if>
+			<if test="payment != null">
+				Payment,
+			</if>
+			<if test="identity != null">
+				Identity,
+			</if>
+			<if test="amount != null">
+				Amount,
+			</if>
+			<if test="registered != null">
+				Registered,
+			</if>
+			<if test="wx != null">
+				WX,
+			</if>
+			<if test="population != null">
+				Population,
+			</if>
+			<if test="marriage != null">
+				Marriage,
+			</if>
+			<if test="newhouse != null">
+				NewHouse,
+			</if>
+			<if test="sale != null">
+				Sale,
+			</if>
+			<if test="rent != null">
+				Rent,
+			</if>
+			<if test="describe != null">
+				Describe,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="custid != null">
+				#{custid,jdbcType=CHAR},
+			</if>
+			<if test="cust != null">
+				#{cust,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=CHAR},
+			</if>
+			<if test="mobile != null">
+				#{mobile,jdbcType=CHAR},
+			</if>
+			<if test="level != null">
+				#{level,jdbcType=CHAR},
+			</if>
+			<if test="budgetmax != null">
+				#{budgetmax,jdbcType=INTEGER},
+			</if>
+			<if test="budgetmin != null">
+				#{budgetmin,jdbcType=INTEGER},
+			</if>
+			<if test="squaremax != null">
+				#{squaremax,jdbcType=INTEGER},
+			</if>
+			<if test="squaremin != null">
+				#{squaremin,jdbcType=INTEGER},
+			</if>
+			<if test="layout != null">
+				#{layout,jdbcType=VARCHAR},
+			</if>
+			<if test="region != null">
+				#{region,jdbcType=VARCHAR},
+			</if>
+			<if test="countw != null">
+				#{countw,jdbcType=INTEGER},
+			</if>
+			<if test="custsource != null">
+				#{custsource,jdbcType=CHAR},
+			</if>
+			<if test="direction != null">
+				#{direction,jdbcType=CHAR},
+			</if>
+			<if test="decoration != null">
+				#{decoration,jdbcType=CHAR},
+			</if>
+			<if test="floor != null">
+				#{floor,jdbcType=CHAR},
+			</if>
+			<if test="elevator != null">
+				#{elevator,jdbcType=CHAR},
+			</if>
+			<if test="purchase != null">
+				#{purchase,jdbcType=CHAR},
+			</if>
+			<if test="use != null">
+				#{use,jdbcType=CHAR},
+			</if>
+			<if test="structure != null">
+				#{structure,jdbcType=CHAR},
+			</if>
+			<if test="payment != null">
+				#{payment,jdbcType=CHAR},
+			</if>
+			<if test="identity != null">
+				#{identity,jdbcType=CHAR},
+			</if>
+			<if test="amount != null">
+				#{amount,jdbcType=CHAR},
+			</if>
+			<if test="registered != null">
+				#{registered,jdbcType=CHAR},
+			</if>
+			<if test="wx != null">
+				#{wx,jdbcType=VARCHAR},
+			</if>
+			<if test="population != null">
+				#{population,jdbcType=CHAR},
+			</if>
+			<if test="marriage != null">
+				#{marriage,jdbcType=CHAR},
+			</if>
+			<if test="newhouse != null">
+				#{newhouse,jdbcType=BIT},
+			</if>
+			<if test="sale != null">
+				#{sale,jdbcType=BIT},
+			</if>
+			<if test="rent != null">
+				#{rent,jdbcType=BIT},
+			</if>
+			<if test="describe != null">
+				#{describe,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EmpCust">
+		update EmpCust
+		<set>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="custid != null">
+				CustID = #{custid,jdbcType=CHAR},
+			</if>
+			<if test="cust != null">
+				Cust = #{cust,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				Sex = #{sex,jdbcType=CHAR},
+			</if>
+			<if test="mobile != null">
+				Mobile = #{mobile,jdbcType=CHAR},
+			</if>
+			<if test="level != null">
+				Level = #{level,jdbcType=CHAR},
+			</if>
+			<if test="budgetmax != null">
+				BudgetMax = #{budgetmax,jdbcType=INTEGER},
+			</if>
+			<if test="budgetmin != null">
+				BudgetMin = #{budgetmin,jdbcType=INTEGER},
+			</if>
+			<if test="squaremax != null">
+				SquareMax = #{squaremax,jdbcType=INTEGER},
+			</if>
+			<if test="squaremin != null">
+				SquareMin = #{squaremin,jdbcType=INTEGER},
+			</if>
+			<if test="layout != null">
+				Layout = #{layout,jdbcType=VARCHAR},
+			</if>
+			<if test="region != null">
+				Region = #{region,jdbcType=VARCHAR},
+			</if>
+			<if test="countw != null">
+				CountW = #{countw,jdbcType=INTEGER},
+			</if>
+			<if test="custsource != null">
+				CustSource = #{custsource,jdbcType=CHAR},
+			</if>
+			<if test="direction != null">
+				Direction = #{direction,jdbcType=CHAR},
+			</if>
+			<if test="decoration != null">
+				Decoration = #{decoration,jdbcType=CHAR},
+			</if>
+			<if test="floor != null">
+				Floor = #{floor,jdbcType=CHAR},
+			</if>
+			<if test="elevator != null">
+				Elevator = #{elevator,jdbcType=CHAR},
+			</if>
+			<if test="purchase != null">
+				Purchase = #{purchase,jdbcType=CHAR},
+			</if>
+			<if test="use != null">
+				Use = #{use,jdbcType=CHAR},
+			</if>
+			<if test="structure != null">
+				Structure = #{structure,jdbcType=CHAR},
+			</if>
+			<if test="payment != null">
+				Payment = #{payment,jdbcType=CHAR},
+			</if>
+			<if test="identity != null">
+				Identity = #{identity,jdbcType=CHAR},
+			</if>
+			<if test="amount != null">
+				Amount = #{amount,jdbcType=CHAR},
+			</if>
+			<if test="registered != null">
+				Registered = #{registered,jdbcType=CHAR},
+			</if>
+			<if test="wx != null">
+				WX = #{wx,jdbcType=VARCHAR},
+			</if>
+			<if test="population != null">
+				Population = #{population,jdbcType=CHAR},
+			</if>
+			<if test="marriage != null">
+				Marriage = #{marriage,jdbcType=CHAR},
+			</if>
+			<if test="newhouse != null">
+				NewHouse = #{newhouse,jdbcType=BIT},
+			</if>
+			<if test="sale != null">
+				Sale = #{sale,jdbcType=BIT},
+			</if>
+			<if test="rent != null">
+				Rent = #{rent,jdbcType=BIT},
+			</if>
+			<if test="describe != null">
+				Describe = #{describe,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EmpCust">
+		update EmpCust
+		set EmpID = #{empid,jdbcType=CHAR},
+		CustID = #{custid,jdbcType=CHAR},
+		Cust = #{cust,jdbcType=VARCHAR},
+		Sex = #{sex,jdbcType=CHAR},
+		Mobile = #{mobile,jdbcType=CHAR},
+		Level = #{level,jdbcType=CHAR},
+		BudgetMax = #{budgetmax,jdbcType=INTEGER},
+		BudgetMin = #{budgetmin,jdbcType=INTEGER},
+		SquareMax = #{squaremax,jdbcType=INTEGER},
+		SquareMin = #{squaremin,jdbcType=INTEGER},
+		Layout = #{layout,jdbcType=VARCHAR},
+		Region = #{region,jdbcType=VARCHAR},
+		CountW = #{countw,jdbcType=INTEGER},
+		CustSource = #{custsource,jdbcType=CHAR},
+		Direction = #{direction,jdbcType=CHAR},
+		Decoration = #{decoration,jdbcType=CHAR},
+		Floor = #{floor,jdbcType=CHAR},
+		Elevator = #{elevator,jdbcType=CHAR},
+		Purchase = #{purchase,jdbcType=CHAR},
+		Use = #{use,jdbcType=CHAR},
+		Structure = #{structure,jdbcType=CHAR},
+		Payment = #{payment,jdbcType=CHAR},
+		Identity = #{identity,jdbcType=CHAR},
+		Amount = #{amount,jdbcType=CHAR},
+		Registered = #{registered,jdbcType=CHAR},
+		WX = #{wx,jdbcType=VARCHAR},
+		Population = #{population,jdbcType=CHAR},
+		Marriage = #{marriage,jdbcType=CHAR},
+		NewHouse = #{newhouse,jdbcType=BIT},
+		Sale = #{sale,jdbcType=BIT},
+		Rent = #{rent,jdbcType=BIT},
+		Describe = #{describe,jdbcType=VARCHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

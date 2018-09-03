@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.BlackListEmpMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.BlackListEmp">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="Tel" jdbcType="VARCHAR" property="tel" />
+		<result column="Mes" jdbcType="VARCHAR" property="mes" />
+		<result column="FlagDeleted" jdbcType="TINYINT" property="flagdeleted" />
+		<result column="DeletedTime" jdbcType="TIMESTAMP" property="deletedtime" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		ID, EmpID, Tel, Mes, FlagDeleted, DeletedTime, Remark
+	</sql>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from BlackListEmp
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectAll" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from BlackListEmp
+		where EmpId = #{empId,jdbcType=CHAR}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from BlackListEmp
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.BlackListEmp">
+		insert into BlackListEmp (ID, EmpID, Tel, Mes,
+		FlagDeleted, DeletedTime, Remark
+		)
+		values (#{id,jdbcType=CHAR}, #{empid,jdbcType=CHAR},
+		#{tel,jdbcType=VARCHAR}, #{mes,jdbcType=VARCHAR},
+		#{flagdeleted,jdbcType=TINYINT}, #{deletedtime,jdbcType=TIMESTAMP},
+		#{remark,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.BlackListEmp">
+		insert into BlackListEmp
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="tel != null">
+				Tel,
+			</if>
+			<if test="mes != null">
+				Mes,
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted,
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="tel != null">
+				#{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="mes != null">
+				#{mes,jdbcType=VARCHAR},
+			</if>
+			<if test="flagdeleted != null">
+				#{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				#{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.BlackListEmp">
+		update BlackListEmp
+		<set>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="tel != null">
+				Tel = #{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="mes != null">
+				Mes = #{mes,jdbcType=VARCHAR},
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.BlackListEmp">
+		update BlackListEmp
+		set EmpID = #{empid,jdbcType=CHAR},
+		Tel = #{tel,jdbcType=VARCHAR},
+		Mes = #{mes,jdbcType=VARCHAR},
+		FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+		DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EmpStoreMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EmpStore">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EmpStore" jdbcType="VARCHAR" property="empstore" />
+		<result column="EmpStoreNo" jdbcType="INTEGER" property="empstoreno" />
+		<result column="Type" jdbcType="CHAR" property="type" />
+		<result column="CityID" jdbcType="VARCHAR" property="cityid" />
+		<result column="DistrictID" jdbcType="VARCHAR" property="districtid" />
+		<result column="AreaID" jdbcType="VARCHAR" property="areaid" />
+		<result column="Address" jdbcType="VARCHAR" property="address" />
+		<result column="Longitude" jdbcType="DOUBLE" property="longitude" />
+		<result column="Latitude" jdbcType="DOUBLE" property="latitude" />
+		<result column="Status" jdbcType="CHAR" property="status" />
+		<result column="FlagDeleted" jdbcType="TINYINT" property="flagdeleted" />
+		<result column="DeletedTime" jdbcType="TIMESTAMP" property="deletedtime" />
+		<result column="ImageUrl" jdbcType="VARCHAR" property="imageurl" />
+		<result column="LogoID" jdbcType="CHAR" property="logoid" />
+		<result column="EmpSum" jdbcType="INTEGER" property="empsum" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<association property="cityT" javaType="com.xiaoyi.ssm.model.City">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="cCity" jdbcType="VARCHAR" property="city" />
+		</association>
+		<association property="districtT" javaType="com.xiaoyi.ssm.model.District">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="dDistrict" jdbcType="VARCHAR" property="district" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, EmpStore, EmpStoreNo, Type, CityID, DistrictID, AreaID, Address, Longitude,
+		Latitude,
+		Status, FlagDeleted, DeletedTime, ImageUrl, LogoID, EmpSum, Remark
+	</sql>
+	
+	<select id="selectByType" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT es.*,c.`City` cCity , d.`District` dDistrict FROM EmpStore es LEFT JOIN City c ON es.`CityID` = c.`ID` LEFT JOIN District d ON es.`DistrictID` = d.`ID` 
+		<where>
+			<if test='type == "1"'>
+				`type` = '加盟' OR `type` = '合作'
+			</if>
+			<if test='type == "0"'>
+				`type` = '普通'
+			</if>
+		</where>
+	</select>
+
+	<select id="countPropertyByStoreId" parameterType="java.lang.String" resultType="Integer">
+		SELECT
+		COUNT(0) FROM
+		( SELECT e.`ID` FROM EmpStore es , Employee e WHERE es.`ID` = e.`StoreID` AND es.`ID` = #{id}
+		) e, Property p INNER JOIN MassProperty mp ON p.`MassPropertyID` = mp.`ID` WHERE e.id = mp.EmpID
+	</select>
+
+	<select id="countEmpByStoreId" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0)
+		FROM EmpStore es , Employee e WHERE es.`ID` = e.`StoreID` AND es.`ID` = #{id}
+	</select>
+
+	<select id="avgStoreByStoreId" parameterType="java.lang.String" resultType="Double">
+		SELECT IFNULL(AVG(score),0) FROM EmpStore es , Employee e WHERE es.`ID` = e.`StoreID` AND es.`ID` = #{id}
+	</select>
+
+	<select id="selectByAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT es.*,c.`City` cCity , d.`District` dDistrict FROM EmpStore es LEFT JOIN City c ON es.`CityID` = c.`ID` LEFT JOIN District d ON es.`DistrictID` = d.`ID`
+	</select>
+	
+	<select id="selectBySearch" parameterType="com.xiaoyi.ssm.dto.AdminStoreDto" resultMap="BaseResultMap">
+		SELECT es.*,c.`City` cCity , d.`District` dDistrict FROM EmpStore es LEFT JOIN City c ON es.`CityID` = c.`ID` LEFT JOIN District d ON es.`DistrictID` = d.`ID`
+		<where>
+			<if test="selectType == 0">
+				and es.`EmpStore` like concat('%',concat('${keyword}','%'))
+			</if>
+			<if test="selectType == 1">
+				and CAST(es.EmpStoreNo AS CHAR(10)) LIKE CONCAT('%',CONCAT('${keyword}','%'))
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByCity" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT es.*,c.`City` cCity , d.`District` dDistrict FROM EmpStore es LEFT JOIN City c ON es.`CityID` = c.`ID` LEFT JOIN District d ON es.`DistrictID` = d.`ID`
+		<where>
+			<if test="city != null">
+				and CityID = #{city}
+			</if>
+			<if test="content != null">
+				and empstore like concat('%',concat('${content}','%'))
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT es.*,c.`City` cCity , d.`District` dDistrict FROM EmpStore es LEFT JOIN City c ON es.`CityID` = c.`ID` LEFT JOIN District d ON es.`DistrictID` = d.`ID`
+		where es.ID = #{id,jdbcType=CHAR}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from EmpStore
+		where ID =
+		#{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EmpStore">
+		insert into EmpStore (ID, EmpStore, EmpStoreNo,
+		Type,
+		CityID, DistrictID,
+		AreaID, Address, Longitude,
+		Latitude, Status, FlagDeleted,
+		DeletedTime, ImageUrl,
+		LogoID,
+		EmpSum, Remark)
+		values (#{id,jdbcType=CHAR}, #{empstore,jdbcType=VARCHAR},
+		#{empstoreno,jdbcType=INTEGER},
+		#{type,jdbcType=CHAR}, #{cityid,jdbcType=VARCHAR},
+		#{districtid,jdbcType=VARCHAR},
+		#{areaid,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+		#{longitude,jdbcType=DOUBLE},
+		#{latitude,jdbcType=DOUBLE}, #{status,jdbcType=CHAR},
+		#{flagdeleted,jdbcType=TINYINT},
+		#{deletedtime,jdbcType=TIMESTAMP}, #{imageurl,jdbcType=VARCHAR},
+		#{logoid,jdbcType=CHAR},
+		#{empsum,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EmpStore">
+		insert into EmpStore
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="empstore != null">
+				EmpStore,
+			</if>
+			<if test="empstoreno != null">
+				EmpStoreNo,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="cityid != null">
+				CityID,
+			</if>
+			<if test="districtid != null">
+				DistrictID,
+			</if>
+			<if test="areaid != null">
+				AreaID,
+			</if>
+			<if test="address != null">
+				Address,
+			</if>
+			<if test="longitude != null">
+				Longitude,
+			</if>
+			<if test="latitude != null">
+				Latitude,
+			</if>
+			<if test="status != null">
+				Status,
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted,
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime,
+			</if>
+			<if test="imageurl != null">
+				ImageUrl,
+			</if>
+			<if test="logoid != null">
+				LogoID,
+			</if>
+			<if test="empsum != null">
+				EmpSum,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="empstore != null">
+				#{empstore,jdbcType=VARCHAR},
+			</if>
+			<if test="empstoreno != null">
+				#{empstoreno,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=CHAR},
+			</if>
+			<if test="cityid != null">
+				#{cityid,jdbcType=VARCHAR},
+			</if>
+			<if test="districtid != null">
+				#{districtid,jdbcType=VARCHAR},
+			</if>
+			<if test="areaid != null">
+				#{areaid,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="longitude != null">
+				#{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="latitude != null">
+				#{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=CHAR},
+			</if>
+			<if test="flagdeleted != null">
+				#{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				#{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="imageurl != null">
+				#{imageurl,jdbcType=VARCHAR},
+			</if>
+			<if test="logoid != null">
+				#{logoid,jdbcType=CHAR},
+			</if>
+			<if test="empsum != null">
+				#{empsum,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EmpStore">
+		update EmpStore
+		<set>
+			<if test="empstore != null">
+				EmpStore = #{empstore,jdbcType=VARCHAR},
+			</if>
+			<if test="empstoreno != null">
+				EmpStoreNo = #{empstoreno,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=CHAR},
+			</if>
+			<if test="cityid != null">
+				CityID = #{cityid,jdbcType=VARCHAR},
+			</if>
+			<if test="districtid != null">
+				DistrictID = #{districtid,jdbcType=VARCHAR},
+			</if>
+			<if test="areaid != null">
+				AreaID = #{areaid,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="longitude != null">
+				Longitude = #{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="latitude != null">
+				Latitude = #{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="status != null">
+				Status = #{status,jdbcType=CHAR},
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="imageurl != null">
+				ImageUrl = #{imageurl,jdbcType=VARCHAR},
+			</if>
+			<if test="logoid != null">
+				LogoID = #{logoid,jdbcType=CHAR},
+			</if>
+			<if test="empsum != null">
+				EmpSum = #{empsum,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EmpStore">
+		update EmpStore
+		set EmpStore =
+		#{empstore,jdbcType=VARCHAR},
+		EmpStoreNo = #{empstoreno,jdbcType=INTEGER},
+		Type =
+		#{type,jdbcType=CHAR},
+		CityID = #{cityid,jdbcType=VARCHAR},
+		DistrictID =
+		#{districtid,jdbcType=VARCHAR},
+		AreaID = #{areaid,jdbcType=VARCHAR},
+		Address =
+		#{address,jdbcType=VARCHAR},
+		Longitude = #{longitude,jdbcType=DOUBLE},
+		Latitude =
+		#{latitude,jdbcType=DOUBLE},
+		Status = #{status,jdbcType=CHAR},
+		FlagDeleted =
+		#{flagdeleted,jdbcType=TINYINT},
+		DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+		ImageUrl =
+		#{imageurl,jdbcType=VARCHAR},
+		LogoID = #{logoid,jdbcType=CHAR},
+		EmpSum = #{empsum,jdbcType=INTEGER},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

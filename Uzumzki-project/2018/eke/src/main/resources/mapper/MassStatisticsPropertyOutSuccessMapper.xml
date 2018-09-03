@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassStatisticsPropertyOutSuccessMapper">
+	<resultMap id="BaseResultMap"
+		type="com.xiaoyi.ssm.model.MassStatisticsPropertyOutSuccess">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="MassPropertyID" jdbcType="CHAR" property="masspropertyid" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, MassPropertyID, Remark
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassStatisticsPropertyOutSuccess
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from MassStatisticsPropertyOutSuccess
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert"
+		parameterType="com.xiaoyi.ssm.model.MassStatisticsPropertyOutSuccess">
+		insert into MassStatisticsPropertyOutSuccess (ID, MassPropertyID, Remark
+		)
+		values (#{id,jdbcType=CHAR}, #{masspropertyid,jdbcType=CHAR},
+		#{remark,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.xiaoyi.ssm.model.MassStatisticsPropertyOutSuccess">
+		insert into MassStatisticsPropertyOutSuccess
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="masspropertyid != null">
+				MassPropertyID,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="masspropertyid != null">
+				#{masspropertyid,jdbcType=CHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.xiaoyi.ssm.model.MassStatisticsPropertyOutSuccess">
+		update MassStatisticsPropertyOutSuccess
+		<set>
+			<if test="masspropertyid != null">
+				MassPropertyID = #{masspropertyid,jdbcType=CHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.xiaoyi.ssm.model.MassStatisticsPropertyOutSuccess">
+		update MassStatisticsPropertyOutSuccess
+		set MassPropertyID = #{masspropertyid,jdbcType=CHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

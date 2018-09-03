@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.ProposalMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Proposal">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="ProposalNO" jdbcType="INTEGER" property="proposalno" />
+		<result column="RevTime" jdbcType="TIMESTAMP" property="revtime" />
+		<result column="UserID" jdbcType="CHAR" property="userid" />
+		<result column="Type" jdbcType="INTEGER" property="type" />
+		<result column="Detail" jdbcType="VARCHAR" property="detail" />
+		<result column="DisposeStaff" jdbcType="VARCHAR" property="disposestaff" />
+		<result column="DisposeOpinion" jdbcType="VARCHAR" property="disposeopinion" />
+		<result column="DisposeTime" jdbcType="TIMESTAMP" property="disposetime" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<association property="staff" javaType="com.xiaoyi.ssm.model.Staff">
+			<id property="staffid" column="ID" />
+			<result column="sRName" property="rname" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, ProposalNO, RevTime, UserID, Type, Detail, DisposeStaff, DisposeOpinion, DisposeTime,
+		Remark
+	</sql>
+	<select id="selectByNoDispose" resultType="Integer">
+		SELECT p.*,s.`RName` sRName FROM Proposal p LEFT JOIN Staff s ON p.`DisposeStaff` = s.`StaffID` WHERE DisposeStaff IS NULL
+	</select>
+	<select id="countByNoDispose" resultType="Integer">
+		SELECT COUNT(0) FROM Proposal WHERE DisposeStaff IS NULL
+	</select>
+	<select id="selectByAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT p.*,s.`RName` sRName FROM Proposal p LEFT JOIN Staff s ON p.`DisposeStaff` = s.`StaffID`
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Proposal
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Proposal
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Proposal">
+		insert into Proposal (ID, ProposalNO, RevTime,
+		UserID, Type, Detail,
+		DisposeStaff, DisposeOpinion, DisposeTime,
+		Remark)
+		values (#{id,jdbcType=CHAR}, #{proposalno,jdbcType=INTEGER}, #{revtime,jdbcType=TIMESTAMP},
+		#{userid,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{detail,jdbcType=VARCHAR},
+		#{disposestaff,jdbcType=VARCHAR}, #{disposeopinion,jdbcType=VARCHAR},
+		#{disposetime,jdbcType=TIMESTAMP},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Proposal">
+		insert into Proposal
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="proposalno != null">
+				ProposalNO,
+			</if>
+			<if test="revtime != null">
+				RevTime,
+			</if>
+			<if test="userid != null">
+				UserID,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="detail != null">
+				Detail,
+			</if>
+			<if test="disposestaff != null">
+				DisposeStaff,
+			</if>
+			<if test="disposeopinion != null">
+				DisposeOpinion,
+			</if>
+			<if test="disposetime != null">
+				DisposeTime,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="proposalno != null">
+				#{proposalno,jdbcType=INTEGER},
+			</if>
+			<if test="revtime != null">
+				#{revtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="userid != null">
+				#{userid,jdbcType=CHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="detail != null">
+				#{detail,jdbcType=VARCHAR},
+			</if>
+			<if test="disposestaff != null">
+				#{disposestaff,jdbcType=VARCHAR},
+			</if>
+			<if test="disposeopinion != null">
+				#{disposeopinion,jdbcType=VARCHAR},
+			</if>
+			<if test="disposetime != null">
+				#{disposetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Proposal">
+		update Proposal
+		<set>
+			<if test="proposalno != null">
+				ProposalNO = #{proposalno,jdbcType=INTEGER},
+			</if>
+			<if test="revtime != null">
+				RevTime = #{revtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="userid != null">
+				UserID = #{userid,jdbcType=CHAR},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="detail != null">
+				Detail = #{detail,jdbcType=VARCHAR},
+			</if>
+			<if test="disposestaff != null">
+				DisposeStaff = #{disposestaff,jdbcType=VARCHAR},
+			</if>
+			<if test="disposeopinion != null">
+				DisposeOpinion = #{disposeopinion,jdbcType=VARCHAR},
+			</if>
+			<if test="disposetime != null">
+				DisposeTime = #{disposetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Proposal">
+		update Proposal
+		set ProposalNO = #{proposalno,jdbcType=INTEGER},
+		RevTime = #{revtime,jdbcType=TIMESTAMP},
+		UserID = #{userid,jdbcType=CHAR},
+		Type = #{type,jdbcType=INTEGER},
+		Detail = #{detail,jdbcType=VARCHAR},
+		DisposeStaff = #{disposestaff,jdbcType=VARCHAR},
+		DisposeOpinion = #{disposeopinion,jdbcType=VARCHAR},
+		DisposeTime = #{disposetime,jdbcType=TIMESTAMP},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

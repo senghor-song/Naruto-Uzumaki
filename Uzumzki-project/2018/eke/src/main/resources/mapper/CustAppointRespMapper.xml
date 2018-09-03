@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.CustAppointRespMapper">
+  <resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.CustAppointResp">
+    <id column="ID" jdbcType="CHAR" property="id" />
+    <result column="CustID" jdbcType="CHAR" property="custid" />
+    <result column="AppointTime" jdbcType="TIMESTAMP" property="appointtime" />
+    <result column="CustPositionJ" jdbcType="DOUBLE" property="custpositionj" />
+    <result column="CustPositionW" jdbcType="DOUBLE" property="custpositionw" />
+    <result column="Type" jdbcType="CHAR" property="type" />
+    <result column="EmpID" jdbcType="CHAR" property="empid" />
+    <result column="EstateID" jdbcType="CHAR" property="estateid" />
+    <result column="PropertyID" jdbcType="CHAR" property="propertyid" />
+    <result column="RespTime" jdbcType="TIMESTAMP" property="resptime" />
+    <result column="RespContent" jdbcType="VARCHAR" property="respcontent" />
+    <result column="ExpectTime" jdbcType="VARCHAR" property="expecttime" />
+    <result column="CustSay" jdbcType="VARCHAR" property="custsay" />
+    <result column="Remark" jdbcType="VARCHAR" property="remark" />
+    <association property="cust" javaType="com.xiaoyi.ssm.model.Cust">
+		<id property="id" column="ID" />
+		<result column="cMobile" property="mobile" />
+	</association>
+    <association property="estate" javaType="com.xiaoyi.ssm.model.Estate">
+		<id property="id" column="ID" />
+		<result column="eEstate" property="estate" />
+		<result column="eCity" property="city" />
+	</association>
+    <association property="employee" javaType="com.xiaoyi.ssm.model.Employee">
+		<id property="id" column="ID" />
+		<result column="eEmp" property="emp" />
+		<result column="eStore" property="store" />
+	</association>
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, CustID, AppointTime, CustPositionJ, CustPositionW, Type, EmpID, EstateID, PropertyID, 
+    RespTime, RespContent, ExpectTime, CustSay, Remark
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from CustAppointResp
+    where ID = #{id,jdbcType=CHAR}
+  </select>
+  <select id="selectByAll" parameterType="com.xiaoyi.ssm.model.CustAppointResp" resultMap="BaseResultMap">
+    select car.*,c.`Mobile` cMobile,e.`Emp` eEmp,es.`Estate` eEstate,es.`city` eCity,e.`Store` eStore from CustAppointResp car , Cust c , Employee e, 
+    Estate es where car.`CustID` = c.`ID` AND car.`EmpID` = e.`ID` and car.`EstateID` = es.`ID`
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from CustAppointResp
+    where ID = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiaoyi.ssm.model.CustAppointResp">
+    insert into CustAppointResp (ID, CustID, AppointTime, 
+      CustPositionJ, CustPositionW, Type, 
+      EmpID, EstateID, PropertyID, 
+      RespTime, RespContent, ExpectTime, 
+      CustSay, Remark)
+    values (#{id,jdbcType=CHAR}, #{custid,jdbcType=CHAR}, #{appointtime,jdbcType=TIMESTAMP}, 
+      #{custpositionj,jdbcType=DOUBLE}, #{custpositionw,jdbcType=DOUBLE}, #{type,jdbcType=CHAR}, 
+      #{empid,jdbcType=CHAR}, #{estateid,jdbcType=CHAR}, #{propertyid,jdbcType=CHAR}, 
+      #{resptime,jdbcType=TIMESTAMP}, #{respcontent,jdbcType=VARCHAR}, #{expecttime,jdbcType=VARCHAR}, 
+      #{custsay,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.CustAppointResp">
+    insert into CustAppointResp
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="custid != null">
+        CustID,
+      </if>
+      <if test="appointtime != null">
+        AppointTime,
+      </if>
+      <if test="custpositionj != null">
+        CustPositionJ,
+      </if>
+      <if test="custpositionw != null">
+        CustPositionW,
+      </if>
+      <if test="type != null">
+        Type,
+      </if>
+      <if test="empid != null">
+        EmpID,
+      </if>
+      <if test="estateid != null">
+        EstateID,
+      </if>
+      <if test="propertyid != null">
+        PropertyID,
+      </if>
+      <if test="resptime != null">
+        RespTime,
+      </if>
+      <if test="respcontent != null">
+        RespContent,
+      </if>
+      <if test="expecttime != null">
+        ExpectTime,
+      </if>
+      <if test="custsay != null">
+        CustSay,
+      </if>
+      <if test="remark != null">
+        Remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="custid != null">
+        #{custid,jdbcType=CHAR},
+      </if>
+      <if test="appointtime != null">
+        #{appointtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="custpositionj != null">
+        #{custpositionj,jdbcType=DOUBLE},
+      </if>
+      <if test="custpositionw != null">
+        #{custpositionw,jdbcType=DOUBLE},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=CHAR},
+      </if>
+      <if test="empid != null">
+        #{empid,jdbcType=CHAR},
+      </if>
+      <if test="estateid != null">
+        #{estateid,jdbcType=CHAR},
+      </if>
+      <if test="propertyid != null">
+        #{propertyid,jdbcType=CHAR},
+      </if>
+      <if test="resptime != null">
+        #{resptime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="respcontent != null">
+        #{respcontent,jdbcType=VARCHAR},
+      </if>
+      <if test="expecttime != null">
+        #{expecttime,jdbcType=VARCHAR},
+      </if>
+      <if test="custsay != null">
+        #{custsay,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.CustAppointResp">
+    update CustAppointResp
+    <set>
+      <if test="custid != null">
+        CustID = #{custid,jdbcType=CHAR},
+      </if>
+      <if test="appointtime != null">
+        AppointTime = #{appointtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="custpositionj != null">
+        CustPositionJ = #{custpositionj,jdbcType=DOUBLE},
+      </if>
+      <if test="custpositionw != null">
+        CustPositionW = #{custpositionw,jdbcType=DOUBLE},
+      </if>
+      <if test="type != null">
+        Type = #{type,jdbcType=CHAR},
+      </if>
+      <if test="empid != null">
+        EmpID = #{empid,jdbcType=CHAR},
+      </if>
+      <if test="estateid != null">
+        EstateID = #{estateid,jdbcType=CHAR},
+      </if>
+      <if test="propertyid != null">
+        PropertyID = #{propertyid,jdbcType=CHAR},
+      </if>
+      <if test="resptime != null">
+        RespTime = #{resptime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="respcontent != null">
+        RespContent = #{respcontent,jdbcType=VARCHAR},
+      </if>
+      <if test="expecttime != null">
+        ExpectTime = #{expecttime,jdbcType=VARCHAR},
+      </if>
+      <if test="custsay != null">
+        CustSay = #{custsay,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.CustAppointResp">
+    update CustAppointResp
+    set CustID = #{custid,jdbcType=CHAR},
+      AppointTime = #{appointtime,jdbcType=TIMESTAMP},
+      CustPositionJ = #{custpositionj,jdbcType=DOUBLE},
+      CustPositionW = #{custpositionw,jdbcType=DOUBLE},
+      Type = #{type,jdbcType=CHAR},
+      EmpID = #{empid,jdbcType=CHAR},
+      EstateID = #{estateid,jdbcType=CHAR},
+      PropertyID = #{propertyid,jdbcType=CHAR},
+      RespTime = #{resptime,jdbcType=TIMESTAMP},
+      RespContent = #{respcontent,jdbcType=VARCHAR},
+      ExpectTime = #{expecttime,jdbcType=VARCHAR},
+      CustSay = #{custsay,jdbcType=VARCHAR},
+      Remark = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

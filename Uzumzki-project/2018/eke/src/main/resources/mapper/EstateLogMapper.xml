@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EstateLogMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EstateLog">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EstateID" jdbcType="CHAR" property="estateid" />
+		<result column="LogTime" jdbcType="TIMESTAMP" property="logtime" />
+		<result column="StaffID" jdbcType="CHAR" property="staffid" />
+		<result column="Staff" jdbcType="VARCHAR" property="staff" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<association property="staffT" javaType="com.xiaoyi.ssm.model.Staff">
+			<id property="staffid" column="ID" />
+			<result column="sRName" property="rname" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, EstateID, LogTime, StaffID, Staff, Content
+	</sql>
+	<select id="countLogByEstate" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0) FROM EstateLog where EstateID = #{id,jdbcType=CHAR}
+	</select>
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.EstateLog" resultMap="BaseResultMap">
+		SELECT el.*,s.RName sRName FROM EstateLog el,Staff s WHERE el.`StaffID` = s.`StaffID` AND EstateID = #{estateid,jdbcType=CHAR}
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EstateLog
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from EstateLog
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EstateLog">
+		insert into EstateLog (ID, EstateID, LogTime,
+		StaffID, Staff, Content
+		)
+		values (#{id,jdbcType=CHAR}, #{estateid,jdbcType=CHAR}, #{logtime,jdbcType=TIMESTAMP},
+		#{staffid,jdbcType=CHAR}, #{staff,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EstateLog">
+		insert into EstateLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="estateid != null">
+				EstateID,
+			</if>
+			<if test="logtime != null">
+				LogTime,
+			</if>
+			<if test="staffid != null">
+				StaffID,
+			</if>
+			<if test="staff != null">
+				Staff,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="estateid != null">
+				#{estateid,jdbcType=CHAR},
+			</if>
+			<if test="logtime != null">
+				#{logtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="staffid != null">
+				#{staffid,jdbcType=CHAR},
+			</if>
+			<if test="staff != null">
+				#{staff,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EstateLog">
+		update EstateLog
+		<set>
+			<if test="estateid != null">
+				EstateID = #{estateid,jdbcType=CHAR},
+			</if>
+			<if test="logtime != null">
+				LogTime = #{logtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="staffid != null">
+				StaffID = #{staffid,jdbcType=CHAR},
+			</if>
+			<if test="staff != null">
+				Staff = #{staff,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EstateLog">
+		update EstateLog
+		set EstateID = #{estateid,jdbcType=CHAR},
+		LogTime = #{logtime,jdbcType=TIMESTAMP},
+		StaffID = #{staffid,jdbcType=CHAR},
+		Staff = #{staff,jdbcType=VARCHAR},
+		Content = #{content,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

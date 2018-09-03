@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.NewsCustLogMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.NewsCustLog">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="NewsCustID" jdbcType="CHAR" property="newscustid" />
+		<result column="EditID" jdbcType="CHAR" property="editid" />
+		<result column="LogTime" jdbcType="TIMESTAMP" property="logtime" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<association property="staff" javaType="com.xiaoyi.ssm.model.Staff">
+			<id property="staffid" column="ID" />
+			<result column="sRName" property="rname" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, NewsCustID, EditID, LogTime, Content
+	</sql>
+	
+	<select id="countLogByNewsCust" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0) from NewsCustLog where
+		NewsCustID = #{id,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.NewsCustLog" resultMap="BaseResultMap">
+		SELECT ncl.*,s.RName sRName FROM NewsCustLog ncl LEFT JOIN Staff s ON ncl.`EditID` = s.`StaffID`
+		<where>
+			<if test="newscustid != null and newscustid !=''">
+				AND ncl.NewsCustID = #{newscustid,jdbcType=CHAR}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT ncl.*,s.RName sRName FROM NewsCustLog ncl LEFT JOIN Staff s ON ncl.`EditID` = s.`StaffID`
+		where ncl.ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from NewsCustLog
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.NewsCustLog">
+		insert into NewsCustLog (ID, NewsCustID, EditID,
+		LogTime, Content)
+		values (#{id,jdbcType=CHAR}, #{newscustid,jdbcType=CHAR}, #{editid,jdbcType=CHAR},
+		#{logtime,jdbcType=TIMESTAMP}, #{content,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.NewsCustLog">
+		insert into NewsCustLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="newscustid != null">
+				NewsCustID,
+			</if>
+			<if test="editid != null">
+				EditID,
+			</if>
+			<if test="logtime != null">
+				LogTime,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="newscustid != null">
+				#{newscustid,jdbcType=CHAR},
+			</if>
+			<if test="editid != null">
+				#{editid,jdbcType=CHAR},
+			</if>
+			<if test="logtime != null">
+				#{logtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.NewsCustLog">
+		update NewsCustLog
+		<set>
+			<if test="newscustid != null">
+				NewsCustID = #{newscustid,jdbcType=CHAR},
+			</if>
+			<if test="editid != null">
+				EditID = #{editid,jdbcType=CHAR},
+			</if>
+			<if test="logtime != null">
+				LogTime = #{logtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.NewsCustLog">
+		update NewsCustLog
+		set NewsCustID = #{newscustid,jdbcType=CHAR},
+		EditID = #{editid,jdbcType=CHAR},
+		LogTime = #{logtime,jdbcType=TIMESTAMP},
+		Content = #{content,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

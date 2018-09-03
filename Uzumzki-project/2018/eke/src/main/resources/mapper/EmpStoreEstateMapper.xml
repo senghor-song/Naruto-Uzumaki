@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EmpStoreEstateMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EmpStoreEstate">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EmpStoreID" jdbcType="CHAR" property="empstoreid" />
+		<result column="Type" jdbcType="TINYINT" property="type" />
+		<result column="EstateID" jdbcType="CHAR" property="estateid" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, EmpStoreID, Type, EstateID, Remark
+	</sql>
+	<select id="countByEstateType" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0) from EmpStoreEstate where Type = 1 AND EmpStoreID = #{id}
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EmpStoreEstate
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from EmpStoreEstate
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EmpStoreEstate">
+		insert into EmpStoreEstate (ID, EmpStoreID, Type,
+		EstateID, Remark)
+		values (#{id,jdbcType=CHAR}, #{empstoreid,jdbcType=CHAR}, #{type,jdbcType=TINYINT},
+		#{estateid,jdbcType=CHAR}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EmpStoreEstate">
+		insert into EmpStoreEstate
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="empstoreid != null">
+				EmpStoreID,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="estateid != null">
+				EstateID,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="empstoreid != null">
+				#{empstoreid,jdbcType=CHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=TINYINT},
+			</if>
+			<if test="estateid != null">
+				#{estateid,jdbcType=CHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EmpStoreEstate">
+		update EmpStoreEstate
+		<set>
+			<if test="empstoreid != null">
+				EmpStoreID = #{empstoreid,jdbcType=CHAR},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=TINYINT},
+			</if>
+			<if test="estateid != null">
+				EstateID = #{estateid,jdbcType=CHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EmpStoreEstate">
+		update EmpStoreEstate
+		set EmpStoreID = #{empstoreid,jdbcType=CHAR},
+		Type = #{type,jdbcType=TINYINT},
+		EstateID = #{estateid,jdbcType=CHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

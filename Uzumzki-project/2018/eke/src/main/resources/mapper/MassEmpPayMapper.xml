@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassEmpPayMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassEmpPay">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="Type" jdbcType="VARCHAR" property="type" />
+		<result column="BuyDuration" jdbcType="VARCHAR" property="buyduration" />
+		<result column="PayTime" jdbcType="TIMESTAMP" property="paytime" />
+		<result column="EndTime" jdbcType="TIMESTAMP" property="endtime" />
+		<result column="PayType" jdbcType="INTEGER" property="paytype" />
+		<result column="PaySet" jdbcType="DOUBLE" property="payset" />
+		<result column="PayAct" jdbcType="DOUBLE" property="payact" />
+		<result column="PayResult" jdbcType="INTEGER" property="payresult" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	    <association property="employee" javaType="com.xiaoyi.ssm.model.Employee">
+			<id property="id" column="ID" />
+			<result column="eEmp" property="emp" />
+			<result column="eTel" property="tel" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, EmpID, Type, BuyDuration, PayTime, EndTime, PayType, PaySet, PayAct,
+		PayResult,
+		Remark
+	</sql>
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.MassEmpPay" resultMap="BaseResultMap">
+		select mep.* , e.Tel eTel , e.Emp eEmp  from MassEmpPay mep,Employee e where mep.`EmpID` = e.`ID`
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassEmpPay
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<select id="selectAll" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassEmpPay where EmpID = #{empId}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from MassEmpPay
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassEmpPay">
+		insert into MassEmpPay (ID, EmpID, Type, BuyDuration,
+		PayTime, EndTime, PayType,
+		PaySet, PayAct, PayResult,
+		Remark)
+		values (#{id,jdbcType=CHAR}, #{empid,jdbcType=CHAR},
+		#{type,jdbcType=VARCHAR}, #{buyduration,jdbcType=VARCHAR},
+		#{paytime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP},
+		#{paytype,jdbcType=INTEGER},
+		#{payset,jdbcType=DOUBLE}, #{payact,jdbcType=DOUBLE}, #{payresult,jdbcType=INTEGER},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassEmpPay">
+		insert into MassEmpPay
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="buyduration != null">
+				BuyDuration,
+			</if>
+			<if test="paytime != null">
+				PayTime,
+			</if>
+			<if test="endtime != null">
+				EndTime,
+			</if>
+			<if test="paytype != null">
+				PayType,
+			</if>
+			<if test="payset != null">
+				PaySet,
+			</if>
+			<if test="payact != null">
+				PayAct,
+			</if>
+			<if test="payresult != null">
+				PayResult,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=VARCHAR},
+			</if>
+			<if test="buyduration != null">
+				#{buyduration,jdbcType=VARCHAR},
+			</if>
+			<if test="paytime != null">
+				#{paytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endtime != null">
+				#{endtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="paytype != null">
+				#{paytype,jdbcType=INTEGER},
+			</if>
+			<if test="payset != null">
+				#{payset,jdbcType=DOUBLE},
+			</if>
+			<if test="payact != null">
+				#{payact,jdbcType=DOUBLE},
+			</if>
+			<if test="payresult != null">
+				#{payresult,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassEmpPay">
+		update MassEmpPay
+		<set>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=VARCHAR},
+			</if>
+			<if test="buyduration != null">
+				BuyDuration = #{buyduration,jdbcType=VARCHAR},
+			</if>
+			<if test="paytime != null">
+				PayTime = #{paytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endtime != null">
+				EndTime = #{endtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="paytype != null">
+				PayType = #{paytype,jdbcType=INTEGER},
+			</if>
+			<if test="payset != null">
+				PaySet = #{payset,jdbcType=DOUBLE},
+			</if>
+			<if test="payact != null">
+				PayAct = #{payact,jdbcType=DOUBLE},
+			</if>
+			<if test="payresult != null">
+				PayResult = #{payresult,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassEmpPay">
+		update MassEmpPay
+		set EmpID = #{empid,jdbcType=CHAR},
+		Type = #{type,jdbcType=VARCHAR},
+		BuyDuration = #{buyduration,jdbcType=VARCHAR},
+		PayTime = #{paytime,jdbcType=TIMESTAMP},
+		EndTime = #{endtime,jdbcType=TIMESTAMP},
+		PayType = #{paytype,jdbcType=INTEGER},
+		PaySet = #{payset,jdbcType=DOUBLE},
+		PayAct = #{payact,jdbcType=DOUBLE},
+		PayResult = #{payresult,jdbcType=INTEGER},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

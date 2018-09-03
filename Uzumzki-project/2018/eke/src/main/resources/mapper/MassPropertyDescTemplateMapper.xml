@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassPropertyDescTemplateMapper">
+  <resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassPropertyDescTemplate">
+    <id column="ID" jdbcType="CHAR" property="id" />
+    <result column="RegDate" jdbcType="TIMESTAMP" property="regdate" />
+    <result column="TemplateNo" jdbcType="CHAR" property="templateno" />
+    <result column="Type" jdbcType="INTEGER" property="type" />
+    <result column="Remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.xiaoyi.ssm.model.MassPropertyDescTemplate">
+    <result column="Template" jdbcType="LONGVARCHAR" property="template" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, RegDate, TemplateNo, Type, Remark
+  </sql>
+  <sql id="Blob_Column_List">
+    Template
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from MassPropertyDescTemplate
+    where ID = #{id,jdbcType=CHAR}
+  </select>
+  
+  <select id="selectByEstateTypeAll" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from MassPropertyDescTemplate
+    WHERE Type = #{type}
+    ORDER BY RAND() LIMIT 10
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from MassPropertyDescTemplate
+    where ID = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiaoyi.ssm.model.MassPropertyDescTemplate">
+    insert into MassPropertyDescTemplate (ID, RegDate, TemplateNo, 
+      Type, Remark, Template
+      )
+    values (#{id,jdbcType=CHAR}, #{regdate,jdbcType=TIMESTAMP}, #{templateno,jdbcType=CHAR}, 
+      #{type,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{template,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassPropertyDescTemplate">
+    insert into MassPropertyDescTemplate
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="regdate != null">
+        RegDate,
+      </if>
+      <if test="templateno != null">
+        TemplateNo,
+      </if>
+      <if test="type != null">
+        Type,
+      </if>
+      <if test="remark != null">
+        Remark,
+      </if>
+      <if test="template != null">
+        Template,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="regdate != null">
+        #{regdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="templateno != null">
+        #{templateno,jdbcType=CHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="template != null">
+        #{template,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassPropertyDescTemplate">
+    update MassPropertyDescTemplate
+    <set>
+      <if test="regdate != null">
+        RegDate = #{regdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="templateno != null">
+        TemplateNo = #{templateno,jdbcType=CHAR},
+      </if>
+      <if test="type != null">
+        Type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="template != null">
+        Template = #{template,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.xiaoyi.ssm.model.MassPropertyDescTemplate">
+    update MassPropertyDescTemplate
+    set RegDate = #{regdate,jdbcType=TIMESTAMP},
+      TemplateNo = #{templateno,jdbcType=CHAR},
+      Type = #{type,jdbcType=INTEGER},
+      Remark = #{remark,jdbcType=VARCHAR},
+      Template = #{template,jdbcType=LONGVARCHAR}
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassPropertyDescTemplate">
+    update MassPropertyDescTemplate
+    set RegDate = #{regdate,jdbcType=TIMESTAMP},
+      TemplateNo = #{templateno,jdbcType=CHAR},
+      Type = #{type,jdbcType=INTEGER},
+      Remark = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.PropertyMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Property">
+		<id column="pID" jdbcType="CHAR" property="id" />
+		<result column="pMassDate" jdbcType="TIMESTAMP" property="massdate" />
+		<result column="pFlagDeleted" jdbcType="TINYINT" property="flagdeleted" />
+		<result column="pDeletedTime" jdbcType="TIMESTAMP" property="deletedtime" />
+		<result column="pViewTimes" jdbcType="INTEGER" property="viewtimes" />
+		<result column="pSortScore" jdbcType="INTEGER" property="sortscore" />
+		<result column="pMassPropertyType" jdbcType="INTEGER" property="masspropertytype" />
+		<result column="pMassPropertyID" jdbcType="VARCHAR" property="masspropertyid" />
+		<association property="massProperty" javaType="com.xiaoyi.ssm.model.MassProperty">
+		<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="RegDate" jdbcType="TIMESTAMP" property="regdate" />
+			<result column="RegType" jdbcType="TINYINT" property="regtype" />
+			<result column="EmpID" jdbcType="CHAR" property="empid" />
+			<result column="PropertyNo" jdbcType="INTEGER" property="propertyno" />
+			<result column="Trade" jdbcType="INTEGER" property="trade" />
+			<result column="EstateID" jdbcType="CHAR" property="estateid" />
+			<result column="Estate" jdbcType="VARCHAR" property="estate" />
+			<result column="Address" jdbcType="VARCHAR" property="address" />
+			<result column="BuildingType" jdbcType="INTEGER" property="buildingtype" />
+			<result column="BuildingValue" jdbcType="VARCHAR" property="buildingvalue" />
+			<result column="UnitType" jdbcType="INTEGER" property="unittype" />
+			<result column="UnitValue" jdbcType="VARCHAR" property="unitvalue" />
+			<result column="RoomNo" jdbcType="VARCHAR" property="roomno" />
+			<result column="Status" jdbcType="CHAR" property="status" />
+			<result column="CountF" jdbcType="INTEGER" property="countf" />
+			<result column="CountT" jdbcType="INTEGER" property="countt" />
+			<result column="CountW" jdbcType="INTEGER" property="countw" />
+			<result column="CountC" jdbcType="INTEGER" property="countc" />
+			<result column="CountY" jdbcType="INTEGER" property="county" />
+			<result column="DdlUsedYear" jdbcType="INTEGER" property="ddlusedyear" />
+			<result column="Usage" jdbcType="CHAR" property="usage" />
+			<result column="Direction" jdbcType="CHAR" property="direction" />
+			<result column="Look" jdbcType="CHAR" property="look" />
+			<result column="Decoration" jdbcType="CHAR" property="decoration" />
+			<result column="SquareJ" jdbcType="DECIMAL" property="squarej" />
+			<result column="SquareS" jdbcType="INTEGER" property="squares" />
+			<result column="Price" jdbcType="INTEGER" property="price" />
+			<result column="HouseLabel" jdbcType="VARCHAR" property="houselabel" />
+			<result column="CellLabel" jdbcType="VARCHAR" property="celllabel" />
+			<result column="Floor" jdbcType="INTEGER" property="floor" />
+			<result column="FloorAll" jdbcType="INTEGER" property="floorall" />
+			<result column="HeadImgPath" jdbcType="VARCHAR" property="headimgpath" />
+			<result column="FlagSublet" jdbcType="TINYINT" property="flagsublet" />
+			<result column="SubletNumber" jdbcType="INTEGER" property="subletnumber" />
+			<result column="SubletCondition" jdbcType="CHAR" property="subletcondition" />
+			<result column="SubletRoom" jdbcType="CHAR" property="subletroom" />
+			<result column="SubletPayType" jdbcType="CHAR" property="subletpaytype" />
+			<result column="FlagDeleted" jdbcType="TINYINT" property="flagdeleted" />
+			<result column="DeletedTime" jdbcType="TIMESTAMP" property="deletedtime" />
+			<result column="FeeCust" jdbcType="DECIMAL" property="feecust" />
+			<result column="SourceType" jdbcType="INTEGER" property="sourcetype" />
+			<result column="FlagVideo" jdbcType="TINYINT" property="flagvideo" />
+			<result column="FlagMoreImage" jdbcType="TINYINT" property="flagmoreimage" />
+			<result column="FeatureModTime" jdbcType="TIMESTAMP" property="featuremodtime" />
+			<result column="ViewTimes" jdbcType="INTEGER" property="viewtimes" />
+			<result column="ModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
+			<result column="SendTime" jdbcType="TIMESTAMP" property="sendtime" />
+			<result column="InternalNum" jdbcType="VARCHAR" property="internalnum" />
+			<result column="FileNo" jdbcType="VARCHAR" property="fileno" />
+			<result column="CityID" jdbcType="VARCHAR" property="cityid" />
+			<result column="CityName" jdbcType="VARCHAR" property="cityname" />
+			<result column="DistrictID" jdbcType="VARCHAR" property="districtid" />
+			<result column="DistrictName" jdbcType="VARCHAR" property="districtname" />
+			<result column="AreaID" jdbcType="VARCHAR" property="areaid" />
+			<result column="AreaName" jdbcType="VARCHAR" property="areaname" />
+			<result column="Title" jdbcType="VARCHAR" property="title" />
+			<result column="Mentality" jdbcType="VARCHAR" property="mentality" />
+			<result column="Environment" jdbcType="VARCHAR" property="environment" />
+			<result column="Serve" jdbcType="VARCHAR" property="serve" />
+			<result column="Taxation" jdbcType="VARCHAR" property="taxation" />
+			<result column="EmpFollowSay" jdbcType="VARCHAR" property="empfollowsay" />
+			<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		    <result column="Ower" jdbcType="VARCHAR" property="ower" />
+		    <result column="OwerTel" jdbcType="CHAR" property="owertel" />
+			<result column="Description" jdbcType="LONGVARCHAR" property="description" />
+			<association property="estateT" javaType="com.xiaoyi.ssm.model.Estate">
+				<id property="id" column="ID" />
+				<result column="eEstate" property="estate" />
+				<association property="cityT" javaType="com.xiaoyi.ssm.model.City">
+					<id column="ID" jdbcType="CHAR" property="id" />
+					<result column="cCity" jdbcType="VARCHAR" property="city" />
+				</association>
+				<association property="districtT" javaType="com.xiaoyi.ssm.model.District">
+					<id column="ID" jdbcType="CHAR" property="id" />
+					<result column="dDistrict" jdbcType="VARCHAR" property="district" />
+				</association>
+				<association property="areaT" javaType="com.xiaoyi.ssm.model.Area">
+					<id column="ID" jdbcType="CHAR" property="id" />
+					<result column="aArea" jdbcType="VARCHAR" property="area" />
+				</association>
+			</association>
+			<association property="employeeT" javaType="com.xiaoyi.ssm.model.Employee">
+				<id property="id" column="ID" />
+				<result column="eEmp" property="emp" />
+			</association>
+			<association property="empStoreT" javaType="com.xiaoyi.ssm.model.EmpStore">
+				<id property="id" column="ID" />
+				<result column="esEmpStore" property="empstore" />
+			</association>
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		p.ID pID, p.MassDate pMassDate, p.FlagDeleted pFlagDeleted, p.DeletedTime pDeletedTime, p.ViewTimes pViewTimes,
+		 p.SortScore pSortScore, p.MassPropertyType pMassPropertyType, p.MassPropertyID pMassPropertyID
+	</sql>
+	
+	<select id="selectByCity" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT pt.*,d.`District` dDistrict,a.`Area` aArea,c.`City` cCity FROM
+		(
+		SELECT <include refid="Base_Column_List" />,mp.*,e.`Estate` eEstate,e.`DistrictID` eDistrictID,e.`AreaID` eAreaID ,e.`CityID`
+		eCityID,emp.`Emp` eEmp, es.`EmpStore` esEmpStore
+		FROM Property p, MassProperty mp, Estate e, Employee emp, EmpStore es WHERE mp.`EstateID` = e.`ID` AND mp.`EmpID` =
+		emp.`ID` AND emp.`StoreID` = es.`ID` AND mp.`ID` = p.`MassPropertyID`
+		<if test="cityid != null and cityid != ''">
+			AND e.`CityID` = #{cityid}
+		</if>
+		) pt
+		LEFT JOIN City c ON pt.eCityID = c.`ID` LEFT JOIN District d ON pt.eDistrictID = d.`ID` LEFT JOIN
+		`Area` a ON pt.eAreaID = a.`ID` 
+	</select>
+	
+	
+	<select id="selectByWebsitePropertyDto" parameterType="com.xiaoyi.ssm.dto.WebsitePropertyDto" resultMap="BaseResultMap">
+		SELECT pt.*,d.`District` dDistrict,a.`Area` aArea,c.`City` cCity FROM
+		(
+		SELECT <include refid="Base_Column_List" />,mp.*,e.`Estate` eEstate,e.`DistrictID` eDistrictID,e.`AreaID` eAreaID ,e.`CityID`
+		eCityID,emp.`Emp` eEmp, es.`EmpStore` esEmpStore
+		FROM Property p, MassProperty mp, Estate e, Employee emp, EmpStore es WHERE mp.`EstateID` = e.`ID` AND mp.`EmpID` =
+		emp.`ID` AND emp.`StoreID` = es.`ID` AND mp.`ID` = p.`MassPropertyID`
+		
+		<if test="districtid != null and districtid != ''">
+			AND e.`DistrictID` = #{districtid}
+		</if>
+		<if test="massPropertyType != null and massPropertyType != ''">
+			AND mp.`trade` = #{massPropertyType}
+		</if>
+		
+		<if test="startPrice != null and startPrice != ''">
+			AND mp.Price &gt;= #{startPrice}
+		</if>
+		<if test="endPrice != null and endPrice != ''">
+			AND mp.Price &lt;= #{endPrice}
+		</if>
+		
+		<if test="startSquarej != null and startSquarej != ''">
+			AND mp.Squarej &gt;= #{startSquarej}
+		</if>
+		<if test="endSquarej != null and endSquarej != ''">
+			AND mp.Squarej &lt;= #{endSquarej}
+		</if>
+		
+		<if test="room != null and room != ''">
+			<if test="room == 5">
+				AND mp.CountF &gt;= #{room}
+			</if>
+			<if test="room != 5">
+				AND mp.CountF = #{room}
+			</if>
+		</if>
+		
+		<if test="year != null and year != ''">
+			AND mp.ddlusedyear &gt;= #{year}
+		</if>
+		
+		<if test="startFloor != null and startFloor != ''">
+			AND mp.Squarej &gt;= #{startFloor}
+		</if>
+		<if test="endFloor != null and endFloor != ''">
+			AND mp.Squarej &lt;= #{endFloor}
+		</if>
+		
+		<if test="direction != null and direction != ''">
+			AND mp.Direction = #{direction}
+		</if>
+		<if test="decoration != null and decoration != ''">
+			AND mp.Decoration = #{decoration}
+		</if>
+		
+		) pt
+		LEFT JOIN City c ON pt.eCityID = c.`ID` LEFT JOIN District d ON pt.eDistrictID = d.`ID` LEFT JOIN
+		`Area` a ON pt.eAreaID = a.`ID` 
+		<if test="orderby != null and orderby != ''">
+			<if test="orderby == 1">
+				ORDER BY pt.pMassDate desc
+			</if>
+		</if>
+	</select>
+	
+	
+	<select id="selectByEstate" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT pt.*,d.`District` dDistrict,a.`Area` aArea,c.`City` cCity FROM
+		(
+		SELECT <include refid="Base_Column_List" />,mp.*,e.`Estate` eEstate,e.`DistrictID` eDistrictID,e.`AreaID` eAreaID ,e.`CityID`
+		eCityID,emp.`Emp` eEmp, es.`EmpStore` esEmpStore
+		FROM Property p, MassProperty mp, Estate e, Employee emp, EmpStore es WHERE mp.`EstateID` = e.`ID` AND mp.`EmpID` =
+		emp.`ID` AND emp.`StoreID` = es.`ID` AND mp.`ID` = p.`MassPropertyID`
+		<if test="estate != null and estate != '' ">
+			AND e.`Estate` like concat('%',concat('${estate}','%')) 
+		</if>
+		<if test="estateid != null and estateid != '' ">
+			AND e.`ID` = #{estateid}
+		</if>
+		) pt
+		LEFT JOIN City c ON pt.eCityID = c.`ID` LEFT JOIN District d ON pt.eDistrictID = d.`ID` LEFT JOIN
+		`Area` a ON pt.eAreaID = a.`ID` 
+	</select>
+	
+	<select id="selectByLngLat" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" />,mp.*,e.`Estate` eEstate,a.`Area` aArea FROM Property p INNER JOIN MassProperty mp ON p.`MassPropertyID` = mp.`ID` 
+		LEFT JOIN  Estate e ON mp.`EstateID` = e.`ID`  LEFT JOIN  `Area` a ON e.`AreaID` = a.`ID` WHERE
+		e.`Longitude` &gt; #{startlng} AND  e.`Longitude` &lt; #{endlng} AND e.`Latitude` &gt; #{startlat} AND e.`Latitude` &lt; #{endlat}
+	</select>
+	
+	<select id="countPropertyByCity" resultType="Integer">
+		SELECT COUNT(0) FROM Property p
+		INNER JOIN MassProperty mp ON p.`MassPropertyID` = mp.`ID` WHERE mp.`CityID` = #{id}
+	</select>
+	
+	<select id="countPropertyByDistrict" resultType="Integer">
+		SELECT COUNT(0) FROM Property p
+		INNER JOIN MassProperty mp ON p.`MassPropertyID` = mp.`ID` WHERE mp.`DistrictID` = #{id} AND masspropertytype = #{type,jdbcType=TINYINT}
+	</select>
+
+	<select id="countPropertyByArea" resultType="Integer">
+		SELECT COUNT(0) FROM Property p
+		INNER JOIN MassProperty mp ON p.`MassPropertyID` = mp.`ID` WHERE mp.`AreaID` = #{id} AND masspropertytype = #{type,jdbcType=TINYINT}
+	</select>
+
+	<select id="countPropertyByEstate" resultType="Integer">
+		SELECT COUNT(0) FROM Property p
+		INNER JOIN MassProperty mp ON p.`MassPropertyID` = mp.`ID` WHERE mp.`EstateID` = #{id} AND masspropertytype = #{type,jdbcType=TINYINT}
+	</select>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Property" resultMap="BaseResultMap">
+		SELECT pt.*,d.`District` dDistrict,a.`Area` aArea,c.`City` cCity FROM
+		(
+		SELECT <include refid="Base_Column_List" />,mp.*,e.`Estate` eEstate,e.`DistrictID` eDistrictID,e.`AreaID` eAreaID ,e.`CityID`
+		eCityID,emp.`Emp` eEmp, es.`EmpStore` esEmpStore
+		FROM Property p, MassProperty mp, Estate e, Employee emp, EmpStore es WHERE mp.`EstateID` = e.`ID` AND mp.`EmpID` =
+		emp.`ID` AND emp.`StoreID` = es.`ID` AND mp.`ID` = p.`MassPropertyID`
+		) pt
+		LEFT JOIN City c ON pt.eCityID = c.`ID` LEFT JOIN District d ON pt.eDistrictID = d.`ID` LEFT JOIN
+		`Area` a ON pt.eAreaID = a.`ID` 
+	</select>
+	
+	<select id="countByEmp" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0) FROM Property p INNER JOIN MassProperty mp ON p.`MassPropertyID` = mp.`ID` where mp.EmpID = #{empId,jdbcType=CHAR}
+	</select>
+
+	<select id="selectByEstateCount" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0) FROM Property p INNER JOIN MassProperty mp ON p.`MassPropertyID` = mp.`ID` where mp.EstateID = #{estateid,jdbcType=CHAR}
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT pt.*,d.`District` dDistrict,a.`Area` aArea,c.`City` cCity FROM
+		(
+		SELECT <include refid="Base_Column_List" />,mp.*,e.`Estate` eEstate,e.`DistrictID` eDistrictID,e.`AreaID` eAreaID ,e.`CityID`
+		eCityID,emp.`Emp` eEmp, es.`EmpStore` esEmpStore
+		FROM Property p, MassProperty mp, Estate e, Employee emp, EmpStore es WHERE mp.`EstateID` = e.`ID` AND mp.`EmpID` =
+		emp.`ID` AND emp.`StoreID` = es.`ID` AND mp.`ID` = p.`MassPropertyID` AND p.`ID` = #{id,jdbcType=CHAR} 
+		) pt
+		LEFT JOIN City c ON pt.eCityID = c.`ID` LEFT JOIN District d ON pt.eDistrictID = d.`ID` LEFT JOIN
+		`Area` a ON pt.eAreaID = a.`ID` 
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Property
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Property">
+		insert into Property (ID, MassDate, FlagDeleted,
+		DeletedTime, ViewTimes, SortScore,
+		MassPropertyType, MassPropertyID)
+		values (#{id,jdbcType=CHAR}, #{massdate,jdbcType=TIMESTAMP}, #{flagdeleted,jdbcType=TINYINT},
+		#{deletedtime,jdbcType=TIMESTAMP}, #{viewtimes,jdbcType=INTEGER}, #{sortscore,jdbcType=INTEGER},
+		#{masspropertytype,jdbcType=INTEGER}, #{masspropertyid,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Property">
+		insert into Property
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="massdate != null">
+				MassDate,
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted,
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime,
+			</if>
+			<if test="viewtimes != null">
+				ViewTimes,
+			</if>
+			<if test="sortscore != null">
+				SortScore,
+			</if>
+			<if test="masspropertytype != null">
+				MassPropertyType,
+			</if>
+			<if test="masspropertyid != null">
+				MassPropertyID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="massdate != null">
+				#{massdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="flagdeleted != null">
+				#{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				#{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="viewtimes != null">
+				#{viewtimes,jdbcType=INTEGER},
+			</if>
+			<if test="sortscore != null">
+				#{sortscore,jdbcType=INTEGER},
+			</if>
+			<if test="masspropertytype != null">
+				#{masspropertytype,jdbcType=INTEGER},
+			</if>
+			<if test="masspropertyid != null">
+				#{masspropertyid,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Property">
+		update Property
+		<set>
+			<if test="massdate != null">
+				MassDate = #{massdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="viewtimes != null">
+				ViewTimes = #{viewtimes,jdbcType=INTEGER},
+			</if>
+			<if test="sortscore != null">
+				SortScore = #{sortscore,jdbcType=INTEGER},
+			</if>
+			<if test="masspropertytype != null">
+				MassPropertyType = #{masspropertytype,jdbcType=INTEGER},
+			</if>
+			<if test="masspropertyid != null">
+				MassPropertyID = #{masspropertyid,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Property">
+		update Property
+		set MassDate = #{massdate,jdbcType=TIMESTAMP},
+		FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+		DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+		ViewTimes = #{viewtimes,jdbcType=INTEGER},
+		SortScore = #{sortscore,jdbcType=INTEGER},
+		MassPropertyType = #{masspropertytype,jdbcType=INTEGER},
+		MassPropertyID = #{masspropertyid,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

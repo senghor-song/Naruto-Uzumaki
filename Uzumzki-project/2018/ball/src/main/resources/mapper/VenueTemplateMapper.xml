@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.VenueTemplateMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.VenueTemplate">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="CreateTime" jdbcType="DATE" property="createtime" />
+		<result column="ModifyTime" jdbcType="DATE" property="modifytime" />
+		<result column="VenueID" jdbcType="VARCHAR" property="venueid" />
+		<result column="Name" jdbcType="VARCHAR" property="name" />
+		<result column="Price" jdbcType="VARCHAR" property="price" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CreateTime, ModifyTime, VenueID, Name, Price
+	</sql>
+	
+	<select id="countByVenue" parameterType="java.lang.String" resultType="Integer">
+		select count(0) from VenueTemplate where VenueID = #{id}
+	</select>
+	
+	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueTemplate
+		where VenueID = #{venueid,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueTemplate
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from VenueTemplate
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueTemplate">
+		insert into VenueTemplate (ID, CreateTime, ModifyTime,
+		VenueID, Name, Price
+		)
+		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=DATE}, #{modifytime,jdbcType=DATE},
+		#{venueid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{price,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueTemplate">
+		insert into VenueTemplate
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="modifytime != null">
+				ModifyTime,
+			</if>
+			<if test="venueid != null">
+				VenueID,
+			</if>
+			<if test="name != null">
+				Name,
+			</if>
+			<if test="price != null">
+				Price,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=DATE},
+			</if>
+			<if test="modifytime != null">
+				#{modifytime,jdbcType=DATE},
+			</if>
+			<if test="venueid != null">
+				#{venueid,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.VenueTemplate">
+		update VenueTemplate
+		<set>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=DATE},
+			</if>
+			<if test="modifytime != null">
+				ModifyTime = #{modifytime,jdbcType=DATE},
+			</if>
+			<if test="venueid != null">
+				VenueID = #{venueid,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				Name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				Price = #{price,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.VenueTemplate">
+		update VenueTemplate
+		set CreateTime = #{createtime,jdbcType=DATE},
+		ModifyTime = #{modifytime,jdbcType=DATE},
+		VenueID = #{venueid,jdbcType=VARCHAR},
+		Name = #{name,jdbcType=VARCHAR},
+		Price = #{price,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

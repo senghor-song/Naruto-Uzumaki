@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.TownDeveloperStaffMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.TownDeveloperStaff">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="TownDeveloperStaff" jdbcType="VARCHAR" property="towndeveloperstaff" />
+		<result column="Tel" jdbcType="VARCHAR" property="tel" />
+		<result column="TownID" jdbcType="CHAR" property="townid" />
+		<result column="Town" jdbcType="VARCHAR" property="town" />
+		<result column="Status" jdbcType="CHAR" property="status" />
+		<result column="LoginName" jdbcType="VARCHAR" property="loginname" />
+		<result column="LoginPassword" jdbcType="CHAR" property="loginpassword" />
+		<result column="LoginDate" jdbcType="TIMESTAMP" property="logindate" />
+		<result column="FlagDeleted" jdbcType="TINYINT" property="flagdeleted" />
+		<result column="DeletedTime" jdbcType="TIMESTAMP" property="deletedtime" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, TownDeveloperStaff, Tel, TownID, Town, Status, LoginName, LoginPassword, LoginDate,
+		FlagDeleted, DeletedTime, Remark
+	</sql>
+	
+	<select id="countByTown" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0) from TownDeveloperStaff where TownID = #{id,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from TownDeveloperStaff
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from TownDeveloperStaff
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.TownDeveloperStaff">
+		insert into TownDeveloperStaff (ID, TownDeveloperStaff, Tel,
+		TownID, Town, Status, LoginName,
+		LoginPassword, LoginDate, FlagDeleted,
+		DeletedTime, Remark)
+		values (#{id,jdbcType=CHAR}, #{towndeveloperstaff,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR},
+		#{townid,jdbcType=CHAR}, #{town,jdbcType=VARCHAR}, #{status,jdbcType=CHAR},
+		#{loginname,jdbcType=VARCHAR},
+		#{loginpassword,jdbcType=CHAR}, #{logindate,jdbcType=TIMESTAMP}, #{flagdeleted,jdbcType=TINYINT},
+		#{deletedtime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.TownDeveloperStaff">
+		insert into TownDeveloperStaff
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="towndeveloperstaff != null">
+				TownDeveloperStaff,
+			</if>
+			<if test="tel != null">
+				Tel,
+			</if>
+			<if test="townid != null">
+				TownID,
+			</if>
+			<if test="town != null">
+				Town,
+			</if>
+			<if test="status != null">
+				Status,
+			</if>
+			<if test="loginname != null">
+				LoginName,
+			</if>
+			<if test="loginpassword != null">
+				LoginPassword,
+			</if>
+			<if test="logindate != null">
+				LoginDate,
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted,
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="towndeveloperstaff != null">
+				#{towndeveloperstaff,jdbcType=VARCHAR},
+			</if>
+			<if test="tel != null">
+				#{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="townid != null">
+				#{townid,jdbcType=CHAR},
+			</if>
+			<if test="town != null">
+				#{town,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=CHAR},
+			</if>
+			<if test="loginname != null">
+				#{loginname,jdbcType=VARCHAR},
+			</if>
+			<if test="loginpassword != null">
+				#{loginpassword,jdbcType=CHAR},
+			</if>
+			<if test="logindate != null">
+				#{logindate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="flagdeleted != null">
+				#{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				#{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.xiaoyi.ssm.model.TownDeveloperStaff">
+		update TownDeveloperStaff
+		<set>
+			<if test="towndeveloperstaff != null">
+				TownDeveloperStaff = #{towndeveloperstaff,jdbcType=VARCHAR},
+			</if>
+			<if test="tel != null">
+				Tel = #{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="townid != null">
+				TownID = #{townid,jdbcType=CHAR},
+			</if>
+			<if test="town != null">
+				Town = #{town,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				Status = #{status,jdbcType=CHAR},
+			</if>
+			<if test="loginname != null">
+				LoginName = #{loginname,jdbcType=VARCHAR},
+			</if>
+			<if test="loginpassword != null">
+				LoginPassword = #{loginpassword,jdbcType=CHAR},
+			</if>
+			<if test="logindate != null">
+				LoginDate = #{logindate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.TownDeveloperStaff">
+		update TownDeveloperStaff
+		set TownDeveloperStaff = #{towndeveloperstaff,jdbcType=VARCHAR},
+		Tel = #{tel,jdbcType=VARCHAR},
+		TownID = #{townid,jdbcType=CHAR},
+		Town = #{town,jdbcType=VARCHAR},
+		Status = #{status,jdbcType=CHAR},
+		LoginName = #{loginname,jdbcType=VARCHAR},
+		LoginPassword = #{loginpassword,jdbcType=CHAR},
+		LoginDate = #{logindate,jdbcType=TIMESTAMP},
+		FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+		DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

@@ -1,0 +1,640 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>后台管理系统</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/WebRelease/admin/static/css/site.css" rel="stylesheet">
+</head>
+
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom" id="topSidebar"></nav>
+    <aside class="main-sidebar sidebar-dark-primary elevation-4" id="leftSidebar" data-selectindex="1"></aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper pt-3">
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card card-secondary">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <div class="row">
+                                        <div class="col-lg-4 btncaozuo">
+                                            <button class="btn btn-primary btn-sm" id="importData">大数据</button>
+                                        </div>
+                                    </div>
+                                </h3>
+                                <div class="card-tools">
+                                    <div class="input-group input-group-sm" style="width: 350px;">
+                                        <select class="form-control float-right" id="selectType">
+                                            <option value="0">经纪人</option>
+                                            <option value="1">经纪人编号</option>
+                                            <option value="2">商户</option>
+                                        </select>
+                                        <input class="form-control float-right" id="keyword" name="table_search"
+                                               type="text" placeholder>
+
+                                        <div class="input-group-append">
+                                            <button class="btn btn-default" id="btnSearch" type="submit">
+                                                <i class="fa fa-search"></i> 搜索
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body table-responsive p-0">
+                                <table id="tableList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+            </div>
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
+</div>
+<script src="/WebRelease/admin/static/plugins/jquery/jquery.min.js"></script>
+<script src="/WebRelease/admin/static/js/layout.js"></script>
+<script src="/WebRelease/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
+<script>
+    $.widget.bridge('uibutton', $.ui.button)
+</script>
+<script src="/WebRelease/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/WebRelease/admin/static/js/raphael-min.js"></script>
+<script src="/WebRelease/admin/static/plugins/morris/morris.min.js"></script>
+<script src="/WebRelease/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
+<script src="/WebRelease/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="/WebRelease/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+<script src="/WebRelease/admin/static/plugins/knob/jquery.knob.js"></script>
+<script src="/WebRelease/admin/static/plugins/moment/moment.min.js"></script>
+<script src="/WebRelease/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="/WebRelease/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+<script src="/WebRelease/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<script src="/WebRelease/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<script src="/WebRelease/admin/static/plugins/fastclick/fastclick.js"></script>
+<script src="/WebRelease/admin/static/plugins/js/pages/dashboard.js"></script>
+<script src="/WebRelease/admin/static/plugins/js/demo.js"></script>
+<script src="/WebRelease/admin/static/js/echarts.min.js"></script>
+<script src="/WebRelease/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+<script src="/WebRelease/admin/static/plugins/layui/layui.all.js"></script>
+<script src="/WebRelease/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+<script src="/WebRelease/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="/WebRelease/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="/WebRelease/admin/static/js/jq-ext.js"></script>
+<script>
+    $(function () {
+        var tableObj = {
+            obj: null,
+            init: function () {
+                var self = this;
+                self.tableList();
+                self.search();
+            },
+            search: function () {
+                var self = this;
+                $("#btnSearch").unbind().on("click", function () {
+                    $.reload(self.obj);
+                });
+            },
+            tableList: function () {
+                var self = this;
+                self.obj = $.tableObject({
+                    tableId: 'tableList',
+                    tableOption: {
+                        url: '/WebRelease/admin/employee/list',
+                        page: true,
+                        height: $(window).height() - 150,
+                        where: {
+                            selectType: function () {
+                                return $("#selectType").val()
+                            },
+                            keyword: function () {
+                                return $("#keyword").val()
+                            }
+                        },
+                        cols: [
+                            [
+                                {field: 'city', title: '城市', sort: true},
+                                {field: 'emp', title: '经纪人', sort: false},
+                                {field: 'store', title: '商户', sort: true},
+                                {field: 'authstate', title: '实名', sort: true},
+                                {field: 'status', title: '状态', sort: true},
+                                {field: 'propertySum', title: '租售', sort: true},
+                                {field: 'empCustSum', title: '私客', sort: true},
+                                {field: 'score', title: '积分', sort: true},
+                                {field: 'empChatSum', title: '后台交流', sort: true},
+                                {field: 'masstype', title: '推房账户', sort: true},
+                                {field: 'massvalidity', title: '推房到期', sort: true},
+                                {field: 'massPropertyPublishSum', title: '累计群发', sort: true},
+                                {field: 'bingSum', title: '推房绑定', sort: true},
+                                {field: 'empImgSum', title: '推房图库', sort: true},
+                                {field: 'watermark', title: '推房水印', sort: true},
+                                {field: 'view8', title: '云刷新组', sort: true},
+                                {field: 'custGrabSum', title: '主动抢客', sort: true},
+                            ]
+                        ]
+                    },
+                    menuItem: {
+                        item1: {
+                            name: "查看", callback: function (key, opt) {
+                            	$.showContentMenuAjax(key, opt, 300, "/WebRelease/admin/employee/details", dataList[$(this).attr('data-index')].id, "look");
+                            }
+                        },
+                        item2: {
+                            name: "变更", callback: function (key, opt) {
+                            	$.showContentMenuAjax(key, opt, 300, "/WebRelease/admin/employee/details", dataList[$(this).attr('data-index')].id, "details");
+                            }
+                        },
+                        item3: {
+                            name: "积分明细", callback: function (key, opt) {
+                                $.showContentMenu(key, opt)
+                                $.tableObject({
+                                    tableId: 'tablescore',
+                                    tableOption: {
+                                        url: '/WebRelease/admin/employee/empscore/list?id='+dataList[$(this).attr('data-index')].id,
+                                        page: true,
+                                        height: $("#tablescore").parents(".layui-layer-content").height() - 40,
+                                        where: {},
+                                        cols: [
+                                            [
+                                                {field: 'time', title: '时间', sort: true},
+                                                {field: 'change', title: '分值', sort: true},
+                                                {field: 'score', title: '总分', sort: true},
+                                                {field: 'remark', title: '备注', sort: true},
+                                            ]
+                                        ]
+                                    }
+                                });
+                            }
+                        },
+                        item4: {
+                            name: "交流", callback: function (key, opt) {
+                                $.showContentMenu(key, opt)
+
+                                $.tableObject({
+                                    tableId: 'tablejl',
+                                    tableOption: {
+                                        url: 'data/data.html',
+                                        page: true,
+                                        height: $("#tablejl").parents(".layui-layer-content").height() - 100,
+                                        where: {},
+                                        cols: [
+                                            [
+                                                {field: 'aa', title: '时间', sort: true},
+                                                {field: 'bb', title: '类别', sort: true},
+                                                {field: 'cc', title: '内容', sort: true},
+                                            ]
+                                        ]
+                                    }
+                                });
+                            }
+                        },
+                        item5: {
+                            name: "推房绑定", callback: function (key, opt) {
+                                $.showContentMenu(key, opt)
+
+                                $.tableObject({
+                                    tableId: 'tablefang',
+                                    tableOption: {
+                                        url: '/WebRelease/admin/employee/massbind/list?id='+dataList[$(this).attr('data-index')].id,
+                                        page: true,
+                                        height: $("#tablefang").parents(".layui-layer-content").height() - 40,
+                                        where: {},
+                                        cols: [
+                                            [
+                                                {field: 'webname', title: '网站', sort: true},
+                                                {field: 'account', title: '账户名', sort: true},
+                                                {field: 'checkavailable', title: '状态', sort: true},
+                                                {field: 'remark', title: '备注', sort: true},
+                                            ]
+                                        ]
+                                    }
+                                });
+                            }
+                        },
+                        item6: {
+                            name: "推房图库", callback: function (key, opt) {
+                                $.showContentMenu(key, opt)
+
+                                $.tableObject({
+                                    tableId: 'tablefangimg',
+                                    tableOption: {
+                                        url: 'data/data.html',
+                                        page: true,
+                                        height: $("#tablefangimg").parents(".layui-layer-content").height() - 40,
+                                        where: {},
+                                        cols: [
+                                            [
+                                                {field: 'aa', title: '网站', sort: true},
+                                                {field: 'bb', title: '账户名', sort: true},
+                                                {field: 'cc', title: '状态', sort: true},
+                                                {field: 'dd', title: '备注', sort: true},
+                                            ]
+                                        ]
+                                    }
+                                });
+                            }
+                        },
+                        item7: {
+                            name: "推房水印", callback: function (key, opt) {
+                                $.showContentMenu(key, opt)
+
+                                $.tableObject({
+                                    tableId: 'tablewater',
+                                    tableOption: {
+                                        url: 'data/data.html',
+                                        page: true,
+                                        height: $("#tablewater").parents(".layui-layer-content").height() - 40,
+                                        where: {},
+                                        cols: [
+                                            [
+                                                {field: 'aa', title: '网站', sort: true},
+                                                {field: 'bb', title: '账户名', sort: true},
+                                                {field: 'cc', title: '状态', sort: true},
+                                                {field: 'dd', title: '备注', sort: true},
+                                            ]
+                                        ]
+                                    }
+                                });
+                            }
+                        },
+                        item8: {
+                            name: "云刷新", callback: function (key, opt) {
+                                $.showContentMenu(key, opt, $(window).height())
+                            }
+                        },
+                    }
+                });
+            }
+        }
+        tableObj.init();
+
+
+        $("#importData").on("click", function () {
+            var obj = $("#dataContent");
+            obj.removeClass("hide");
+            layer.open({
+                type: 1,
+                area: [$(document).width() + 'px', '500px'],
+                offset: 'b',
+                title: '大数据',
+                resize: true,
+                anim: 1,
+                maxmin: true,
+                content: obj,
+                cancel: function (index, layero) {
+                    $(".contextMenuDialog").addClass("hide");
+                }
+            });
+
+            $.tableObject({
+                tableId: 'tabledata',
+                tableOption: {
+                    url: 'data/data.html',
+                    page: true,
+                    height: $("#tabledata").parents(".layui-layer-content").height() - 110,
+                    where: {},
+                    cols: [
+                        [
+                            {field: 'aa', title: '城市', sort: true},
+                            {field: 'bb', title: '小区(轮询excel)', sort: true},
+                            {field: 'cc', title: '小区存在', sort: true},
+                            {field: 'dd', title: '添加小区', sort: true},
+                            {field: 'ee', title: '字段空白', sort: true},
+                            {field: 'ff', title: '字段空白填补', sort: true},
+                            {field: 'gg', title: '小区图导入', sort: true},
+                        ]
+                    ]
+                }
+            });
+        });
+    });
+</script>
+
+<div class="contextMenuDialog hide" id="dataContent">
+    <div class="card-body">
+        <div class="row">
+            <div class="input-group col-lg-3">
+                <div class="custom-file">
+                    <input class="custom-file-input" id="exampleInputFile" type="file">
+                    <label class="custom-file-label" for="exampleInputFile">选择Excel文件</label>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <input class="btn btn-primary" type="button" value="开始">
+            </div>
+            <div class="col-lg-6">
+                <div class="callout callout-info clearfix">
+                    <h5 class="float-left">
+                        <i class="fa fa-info"></i>备注：</h5>
+                    <span class="float-left">excel命名规范：表名=sheet1，城市列名=城市，小区列名=小区</span>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="row">
+                    <table id="tabledata"></table>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <textarea class="p-md-2" id="progress" name="progress" style="width: 100%;" rows="10"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="contextMenuDialog hide" id="item3">
+    <div class="card-body">
+        <div class="row">
+            <table id="tablescore"></table>
+        </div>
+    </div>
+</div>
+<div class="contextMenuDialog hide" id="item4">
+    <div class="card-body">
+        <div class="row lh-38">
+            <span class="col-lg-4">商户经纪：奥巴马地产>张三丰1390008877</span>
+            <span class="col-lg-4 border-secondary">
+                    <div class="row">
+                        <span class="float-left mr-2">短信模板</span>
+                        <select class="form-control float-left w-25 mr-2"></select>
+                        <button class="form-control float-left w-25 btn-primary">发送短信</button>
+                    </div>
+                </span>
+            <span class="col-lg-4 border-secondary">
+                    <span class="float-left mr-2">类别</span>
+                    <select class="form-control float-left w-25 mr-2">
+                        <option>后台去电</option>
+                    </select>
+                    <input class="form-control float-left w-25 mr-2" type="text">
+                    <button class="form-control float-left w-25 btn-primary">发送短信</button>
+                </span>
+        </div>
+        <br>
+        <div class="row">
+            <table id="tablejl"></table>
+        </div>
+    </div>
+</div>
+<div class="contextMenuDialog hide" id="item5">
+    <div class="card-body">
+
+        <div class="row">
+            <table id="tablefang"></table>
+        </div>
+    </div>
+</div>
+<div class="contextMenuDialog hide" id="item6">
+    <div class="card-body">
+
+        <div class="row">
+            <table id="tablefangimg"></table>
+        </div>
+    </div>
+</div>
+<div class="contextMenuDialog hide" id="item7">
+    <div class="card-body">
+
+        <div class="row">
+            <table id="tablewater"></table>
+        </div>
+    </div>
+</div>
+<div class="contextMenuDialog hide" id="item8">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">房天下</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row font-weight-bold">
+                            <div class="col-lg-2 col-sm-12 left">
+                                智能补刷：是
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                定时刷光：22:31
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                智能补推：9-11点
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划一
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划二
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划三
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划四
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划五
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划六
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划七
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划八
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划九
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划十
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划十一
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划十二
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">安居客</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row font-weight-bold">
+                            <div class="col-lg-2 col-sm-12 left">
+                                智能补推：9-11点
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划一
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">58</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row font-weight-bold">
+                            <div class="col-lg-2 col-sm-12 left">
+                                智能补刷：是
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                定时刷光：22:31
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                智能补推：9-11点
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划一
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划二
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">新浪二手房</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row font-weight-bold">
+                            <div class="col-lg-2 col-sm-12 left">
+                                智能补刷：是
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                定时刷光：22:31
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                智能补推：9-11点
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划一
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划二
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">百姓网</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row font-weight-bold">
+                            <div class="col-lg-2 col-sm-12 left">
+                                智能补刷：是
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                定时刷光：22:31
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                智能补推：9-11点
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划一
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划二
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">深圳房信网</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row font-weight-bold">
+                            <div class="col-lg-2 col-sm-12 left">
+                                智能补刷：是
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                定时刷光：22:31
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                智能补推：9-11点
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划一
+                            </div>
+                            <div class="col-lg-2 col-sm-12 left">
+                                刷新计划二
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

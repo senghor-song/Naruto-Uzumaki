@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassEmpLayoutMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassEmpLayout">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="Layout" jdbcType="VARCHAR" property="layout" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, EmpID, Layout, Remark
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassEmpLayout
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from
+		MassEmpLayout
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassEmpLayout">
+		insert into MassEmpLayout (ID,
+		EmpID, Layout,
+		Remark)
+		values (#{id,jdbcType=CHAR},
+		#{empid,jdbcType=CHAR},
+		#{layout,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassEmpLayout">
+		insert into MassEmpLayout
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="layout != null">
+				Layout,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="layout != null">
+				#{layout,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassEmpLayout">
+		update MassEmpLayout
+		<set>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="layout != null">
+				Layout = #{layout,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassEmpLayout">
+		update
+		MassEmpLayout
+		set EmpID = #{empid,jdbcType=CHAR},
+		Layout =
+		#{layout,jdbcType=VARCHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID
+		= #{id,jdbcType=CHAR}
+	</update>
+</mapper>

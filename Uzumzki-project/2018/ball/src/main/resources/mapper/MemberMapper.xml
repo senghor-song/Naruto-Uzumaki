@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MemberMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Member">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="CreateTime" jdbcType="DATE" property="createtime" />
+		<result column="ModifyTime" jdbcType="DATE" property="modifytime" />
+		<result column="Name" jdbcType="VARCHAR" property="name" />
+		<result column="Sex" jdbcType="INTEGER" property="sex" />
+		<result column="Phone" jdbcType="VARCHAR" property="phone" />
+		<result column="Password" jdbcType="VARCHAR" property="password" />
+		<result column="OpenID" jdbcType="VARCHAR" property="openid" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CreateTime, ModifyTime, Name, Sex, Phone, Password, OpenID
+	</sql>
+	<select id="login" parameterType="com.xiaoyi.ssm.model.Member" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Member
+		where Phone = #{phone,jdbcType=CHAR} AND Password = #{password,jdbcType=CHAR}
+	</select>
+
+	<select id="selectByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Member where Phone = #{phone,jdbcType=CHAR} limit 1
+	</select>
+
+	<update id="updateByPhone" parameterType="java.lang.String">
+		update Member
+		set Password = #{password,jdbcType=VARCHAR}
+		where Phone =
+		#{phone,jdbcType=CHAR}
+	</update>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Member
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Member
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Member">
+		insert into Member (ID, CreateTime, ModifyTime,
+		Name, Sex, Phone, Password,
+		OpenID)
+		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=DATE}, #{modifytime,jdbcType=DATE},
+		#{name,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+		#{openid,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Member">
+		insert into Member
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="modifytime != null">
+				ModifyTime,
+			</if>
+			<if test="name != null">
+				Name,
+			</if>
+			<if test="sex != null">
+				Sex,
+			</if>
+			<if test="phone != null">
+				Phone,
+			</if>
+			<if test="password != null">
+				Password,
+			</if>
+			<if test="openid != null">
+				OpenID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=DATE},
+			</if>
+			<if test="modifytime != null">
+				#{modifytime,jdbcType=DATE},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=INTEGER},
+			</if>
+			<if test="phone != null">
+				#{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+			<if test="openid != null">
+				#{openid,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Member">
+		update Member
+		<set>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=DATE},
+			</if>
+			<if test="modifytime != null">
+				ModifyTime = #{modifytime,jdbcType=DATE},
+			</if>
+			<if test="name != null">
+				Name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				Sex = #{sex,jdbcType=INTEGER},
+			</if>
+			<if test="phone != null">
+				Phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				Password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="openid != null">
+				OpenID = #{openid,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Member">
+		update Member
+		set CreateTime = #{createtime,jdbcType=DATE},
+		ModifyTime = #{modifytime,jdbcType=DATE},
+		Name = #{name,jdbcType=VARCHAR},
+		Sex = #{sex,jdbcType=INTEGER},
+		Phone = #{phone,jdbcType=VARCHAR},
+		Password = #{password,jdbcType=VARCHAR},
+		OpenID = #{openid,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassRefreshLogMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassRefreshLog">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="WebName" jdbcType="VARCHAR" property="webname" />
+		<result column="Account" jdbcType="VARCHAR" property="account" />
+		<result column="HouseType" jdbcType="VARCHAR" property="housetype" />
+		<result column="RefreshTime" jdbcType="TIMESTAMP" property="refreshtime" />
+		<result column="RefreshSum" jdbcType="INTEGER" property="refreshsum" />
+		<result column="RefreshRemain" jdbcType="INTEGER" property="refreshremain" />
+		<result column="RefreshResult" jdbcType="VARCHAR" property="refreshresult" />
+		<result column="RefreshHouse" jdbcType="VARCHAR" property="refreshhouse" />
+		<result column="ProjectName" jdbcType="VARCHAR" property="projectname" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, WebName, Account, HouseType, RefreshTime, RefreshSum, RefreshRemain,
+		RefreshResult,
+		RefreshHouse, ProjectName, Remark
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassRefreshLog
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<select id="selectAll" parameterType="com.xiaoyi.ssm.dto.MassRefreshDto"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassRefreshLog
+		<where>
+			<if test="webName != null and webName != ''">
+				AND WebName = #{webName}
+			</if>
+			<if test="account != null and account != ''">
+				AND Account = #{account}
+			</if>
+			<if test="result != null and result != ''">
+				AND RefreshResult = #{result}
+			</if>
+			<if test="pattern != null and pattern != ''">
+
+			</if>
+			<if test="project != null and project != ''">
+				AND ProjectName = #{project}
+			</if>
+			<if test="startDate != null and startDate != ''">
+				AND RefreshTime &gt;= #{startDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND RefreshTime &lt;= #{endDate}
+			</if>
+		</where>
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from MassRefreshLog
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassRefreshLog">
+		insert into MassRefreshLog (ID, WebName, Account,
+		HouseType, RefreshTime, RefreshSum,
+		RefreshRemain, RefreshResult, RefreshHouse,
+		ProjectName, Remark)
+		values (#{id,jdbcType=CHAR}, #{webname,jdbcType=VARCHAR},
+		#{account,jdbcType=VARCHAR},
+		#{housetype,jdbcType=VARCHAR}, #{refreshtime,jdbcType=TIMESTAMP}, #{refreshsum,jdbcType=INTEGER},
+		#{refreshremain,jdbcType=INTEGER}, #{refreshresult,jdbcType=VARCHAR},
+		#{refreshhouse,jdbcType=VARCHAR},
+		#{projectname,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassRefreshLog">
+		insert into MassRefreshLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="webname != null">
+				WebName,
+			</if>
+			<if test="account != null">
+				Account,
+			</if>
+			<if test="housetype != null">
+				HouseType,
+			</if>
+			<if test="refreshtime != null">
+				RefreshTime,
+			</if>
+			<if test="refreshsum != null">
+				RefreshSum,
+			</if>
+			<if test="refreshremain != null">
+				RefreshRemain,
+			</if>
+			<if test="refreshresult != null">
+				RefreshResult,
+			</if>
+			<if test="refreshhouse != null">
+				RefreshHouse,
+			</if>
+			<if test="projectname != null">
+				ProjectName,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="webname != null">
+				#{webname,jdbcType=VARCHAR},
+			</if>
+			<if test="account != null">
+				#{account,jdbcType=VARCHAR},
+			</if>
+			<if test="housetype != null">
+				#{housetype,jdbcType=VARCHAR},
+			</if>
+			<if test="refreshtime != null">
+				#{refreshtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="refreshsum != null">
+				#{refreshsum,jdbcType=INTEGER},
+			</if>
+			<if test="refreshremain != null">
+				#{refreshremain,jdbcType=INTEGER},
+			</if>
+			<if test="refreshresult != null">
+				#{refreshresult,jdbcType=VARCHAR},
+			</if>
+			<if test="refreshhouse != null">
+				#{refreshhouse,jdbcType=VARCHAR},
+			</if>
+			<if test="projectname != null">
+				#{projectname,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassRefreshLog">
+		update MassRefreshLog
+		<set>
+			<if test="webname != null">
+				WebName = #{webname,jdbcType=VARCHAR},
+			</if>
+			<if test="account != null">
+				Account = #{account,jdbcType=VARCHAR},
+			</if>
+			<if test="housetype != null">
+				HouseType = #{housetype,jdbcType=VARCHAR},
+			</if>
+			<if test="refreshtime != null">
+				RefreshTime = #{refreshtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="refreshsum != null">
+				RefreshSum = #{refreshsum,jdbcType=INTEGER},
+			</if>
+			<if test="refreshremain != null">
+				RefreshRemain = #{refreshremain,jdbcType=INTEGER},
+			</if>
+			<if test="refreshresult != null">
+				RefreshResult = #{refreshresult,jdbcType=VARCHAR},
+			</if>
+			<if test="refreshhouse != null">
+				RefreshHouse = #{refreshhouse,jdbcType=VARCHAR},
+			</if>
+			<if test="projectname != null">
+				ProjectName = #{projectname,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassRefreshLog">
+		update MassRefreshLog
+		set WebName = #{webname,jdbcType=VARCHAR},
+		Account = #{account,jdbcType=VARCHAR},
+		HouseType = #{housetype,jdbcType=VARCHAR},
+		RefreshTime = #{refreshtime,jdbcType=TIMESTAMP},
+		RefreshSum = #{refreshsum,jdbcType=INTEGER},
+		RefreshRemain = #{refreshremain,jdbcType=INTEGER},
+		RefreshResult = #{refreshresult,jdbcType=VARCHAR},
+		RefreshHouse = #{refreshhouse,jdbcType=VARCHAR},
+		ProjectName = #{projectname,jdbcType=VARCHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

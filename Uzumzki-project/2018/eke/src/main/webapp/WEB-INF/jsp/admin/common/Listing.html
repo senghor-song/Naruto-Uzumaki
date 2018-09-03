@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>后台管理系统</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="static/css/site.css" rel="stylesheet">
+</head>
+
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom" id="topSidebar"></nav>
+        <aside class="main-sidebar sidebar-dark-primary elevation-4" id="leftSidebar" data-selectindex="9"></aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper pt-3">
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card card-secondary">
+                                <!--<div class="card-header">
+                                    <h3 class="card-title">&nbsp;</h3>
+                                    <div class="card-tools">
+                                        <div class="input-group input-group-sm" style="width: 400px;">
+                                            <div style="position: relative;top: 8px;margin-right: 8px;">
+                                                <input type="checkbox" class="form-check-input" name="" id="" value="0" checked> 下架</div>
+                                            <select class="form-control float-right" id="selectType">
+                                                <option value="0">房源编号</option>
+                                                <option value="1">小区</option>
+                                            </select>
+                                            <input class="form-control float-right" id="keyword" name="table_search" type="text" placeholder>
+
+                                            <div class="input-group-append">
+                                                <button class="btn btn-default" id="btnSearch" type="submit">
+                                                    <i class="fa fa-search"></i> 搜索
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>-->
+
+                                <div class="card-body table-responsive p-0">
+                                    <table id="tableList"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.row -->
+
+                </div>
+                <!-- /.container-fluid -->
+            </section>
+            <!-- /.content -->
+        </div>
+
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+    <script src="static/plugins/jquery/jquery.min.js"></script>
+    <script src="static/js/layout.js"></script>
+    <script src="static/plugins/jQueryUI/jquery-ui.min.js"></script>
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+    <script src="static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/raphael-min.js"></script>
+    <script src="static/plugins/morris/morris.min.js"></script>
+    <script src="static/plugins/sparkline/jquery.sparkline.min.js"></script>
+    <script src="static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="static/plugins/knob/jquery.knob.js"></script>
+    <script src="static/plugins/moment/moment.min.js"></script>
+    <script src="static/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="static/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <script src="static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="static/plugins/fastclick/fastclick.js"></script>
+    <script src="static/plugins/js/pages/dashboard.js"></script>
+    <script src="static/plugins/js/demo.js"></script>
+    <script src="static/js/echarts.min.js"></script>
+    <script src="static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+    <script src="static/plugins/layui/layui.all.js"></script>
+    <script src="static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+    <script src="static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="static/js/jq-ext.js"></script>
+    <script>
+        $(function () {
+            var tableObj = {
+                obj: null,
+                init: function () {
+                    var self = this;
+                    self.tableList();
+                    self.search();
+                },
+                search: function () {
+                    var self = this;
+                    $("#btnSearch").unbind().on("click", function () {
+                        $.reload(self.obj);
+                    });
+                },
+                tableList: function () {
+                    var self = this;
+                    self.obj = $.tableObject({
+                        tableId: 'tableList',
+                        tableOption: {
+                            url: 'data/data.html',
+                            page: true,
+                            height: $(window).height() - 92,
+                            where: {
+                                selectType: function () {
+                                    return $("#selectType").val()
+                                },
+                                keyword: function () {
+                                    return $("#keyword").val()
+                                }
+                            },
+                            cols: [
+                                [
+                                    { field: 'll', title: '最新跟进', sort: true },
+                                    { field: 'kk', title: '城市', sort: true },
+                                    { field: 'aa', title: '小区', sort: true },
+                                    { field: 'cc', title: '房源编号', sort: true },
+                                    { field: 'dd', title: '状态', sort: true },
+                                    { field: 'ee', title: '交易', sort: true },
+                                    { field: 'ff', title: '经纪人', sort: true },
+                                    { field: 'gg', title: '商户', sort: true },
+                                    { field: 'hh', title: '室内图', sort: true },
+                                    { field: 'ii', title: '投诉', sort: true },
+                                    { field: 'bb', title: '排序计分', sort: true },
+                                    { field: 'bb', title: '跟进', sort: true },
+                                ]
+                            ]
+                        },
+                        menuItem: {
+                            item1: {
+                                name: "查看", callback: function (key, opt) {
+                                    $.showContentMenu(key, opt, 230);
+                                }
+                            },
+                            item2: {
+                                name: "室内图", callback: function (key, opt) {
+                                    $.showContentMenu(key, opt, $(window).height())
+                                    $.tableObject({
+                                        tableId: 'tableimg',
+                                        tableOption: {
+                                            url: 'data/data.html',
+                                            page: false,
+                                            where: {},
+                                            height: 250,
+                                            cols: [
+                                                [
+                                                    { field: 'id', title: '选中', type: 'checkbox', sort: true },
+                                                    { field: 'aa', title: '添加时间', sort: true },
+                                                    { field: 'bb', title: '来源', sort: true },
+                                                    { field: 'cc', title: '城市', sort: true },
+                                                    { field: 'dd', title: '小区', sort: true },
+                                                    { field: 'ee', title: '路径', sort: true },
+                                                ]
+                                            ]
+                                        }
+                                    });
+                                }
+                            },
+                            item3: {
+                                name: "跟进明细", callback: function (key, opt) {
+                                    $.showContentMenu(key, opt, 500)
+
+                                    $.tableObject({
+                                        tableId: 'tablegj',
+                                        tableOption: {
+                                            url: 'data/data.html',
+                                            page: true,
+                                            height: 430,
+                                            where: {},
+                                            cols: [
+                                                [
+                                                    { field: 'aa', title: '跟进时间', sort: true },
+                                                    { field: 'bb', title: '跟进人', sort: true },
+                                                    { field: 'cc', title: '主题', sort: true },
+                                                    { field: 'dd', title: '内容', sort: true },
+                                                ]
+                                            ]
+                                        }
+                                    });
+                                }
+                            },
+                            item4: {
+                                name: "排序积分", callback: function (key, opt) {
+                                    $.showContentMenu(key, opt, 500)
+
+                                    $.tableObject({
+                                        tableId: 'tablescore',
+                                        tableOption: {
+                                            url: 'data/data.html',
+                                            page: true,
+                                            height: $("#tablescore").parents(".layui-layer-content").height()-40,
+                                            where: {},
+                                            cols: [
+                                                [
+                                                    { field: 'aa', title: '时间', sort: true },
+                                                    { field: 'bb', title: '获分来源', sort: true },
+                                                    { field: 'cc', title: '获分项目', sort: true },
+                                                    { field: 'dd', title: '分值', sort: true },
+                                                    { field: 'ee', title: '备注', sort: true },
+                                                ]
+                                            ]
+                                        }
+                                    });
+                                }
+                            },
+
+                        }
+                    });
+                }
+            }
+            tableObj.init();
+        });
+    </script>
+
+    <div class="contextMenuDialog hide" id="item1">
+        <div class="card-body form-control p-0">
+            <div class="row pt-4 m-0">
+                <div class="col-lg-4">
+                    <div class="row">
+                        <div class="col-lg-2 nametl">房源编号</div>
+                        <div class="col-lg-4">
+                            0000998
+                        </div>
+                        <div class="col-lg-6">
+                            深圳 福田 香蜜湖 香芋中央花园
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2 nametl">登记时间</div>
+                        <div class="col-lg-4">
+                            2018-01-02
+                        </div>
+                        <div class="col-lg-6">
+                            三栋爱月阁 一单元 1020
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-1">
+                    <div class="row">
+                        <div class="col-lg-4 nametl">房厅卫</div>
+                        <div class="col-lg-8">
+                            321
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 nametl">面积</div>
+                        <div class="col-lg-8">
+                            98
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 nametl">楼层</div>
+                        <div class="col-lg-8">
+                            10/22
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-1">
+                    <div class="row">
+                        <div class="col-lg-4 nametl">朝向</div>
+                        <div class="col-lg-8">
+                            东南
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 nametl">装修</div>
+                        <div class="col-lg-8">
+                            精装
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 nametl">家具</div>
+                        <div class="col-lg-8">
+                            少量
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 nametl">委托</div>
+                        <div class="col-lg-8">
+                            代理
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="row">
+                        <div class="col-lg-3 nametl">商户</div>
+                        <div class="col-lg-9">
+                            奥巴马地产
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3 nametl">登记经纪</div>
+                        <div class="col-lg-9">
+                            张无忌
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3 nametl">获客经纪</div>
+                        <div class="col-lg-9">
+                            张三丰
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-1">
+                    <img src="static/image/u12003.png" class="w-100" alt="">
+                </div>
+                <div class="col-lg-2">
+                    <div class="row">
+                        <div class="col-lg-3 nametl">联系人</div>
+                        <div class="col-lg-9">
+                            王小姐13300990099
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3 nametl">业主信息</div>
+                        <div class="col-lg-9">
+                            无
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="contextMenuDialog hide" id="item2">
+            <div class="card-body">
+                    <div class="row">
+        
+                        <div id="showImg" style="max-height: 600px; overflow: auto;">
+                            <div class="img">
+                                <div class="img1">
+                                    <img src="static/image/u6894.jpg" alt="">
+                                    <div class="show">展示</div>
+                                    <div class="setfm">封面</div>
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                            <div class="img">
+                                <div>
+                                    <img src="static/image/u6894.jpg" alt="">
+                                </div>
+                                <div>2018-09-08 09:07:06　张晓晓</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <button class="form-control btn btn-primary mr-2" style="width: 120px;">设为封面</button>
+                        <button class="form-control btn btn-primary mr-2" style="width: 120px;">上传</button>
+                        <button class="form-control btn btn-primary mr-2" style="width: 120px;">删除</button>
+                        <button class="form-control btn btn-primary mr-2" style="width: 120px;">刷新</button>
+                        <button class="form-control btn btn-primary mr-2" style="width: 120px;">返回</button>
+                        <button class="form-control btn btn-primary mr-2" style="width: 120px;">从库存导入</button>
+                    </div>
+                    <div class="row mt-2">
+                        <table id="tableimg"></table>
+                    </div>
+                </div>
+    </div>
+    <div class="contextMenuDialog hide" id="item3">
+        <div class="card-body">
+            <div class="row">
+                <table id="tablegj"></table>
+            </div>
+        </div>
+    </div>
+    <div class="contextMenuDialog hide" id="item4">
+        <div class="card-body">
+            <div class="row">
+                <table id="tablescore"></table>
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+</html>

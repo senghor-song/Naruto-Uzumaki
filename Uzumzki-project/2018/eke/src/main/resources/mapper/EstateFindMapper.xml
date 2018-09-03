@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EstateFindMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EstateFind">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="CityID" jdbcType="CHAR" property="cityid" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="Estate" jdbcType="VARCHAR" property="estate" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="Type" jdbcType="CHAR" property="type" />
+		<result column="Lon" jdbcType="DOUBLE" property="lon" />
+		<result column="Lat" jdbcType="DOUBLE" property="lat" />
+		<result column="DisposeStaff" jdbcType="VARCHAR" property="disposestaff" />
+		<result column="DisposeOpinion" jdbcType="VARCHAR" property="disposeopinion" />
+		<result column="DisposeTime" jdbcType="TIMESTAMP" property="disposetime" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<association property="city" javaType="com.xiaoyi.ssm.model.City">
+			<id property="id" column="ID" />
+			<result column="cCity" property="city" />
+		</association>
+		<association property="employee" javaType="com.xiaoyi.ssm.model.Employee">
+			<id property="id" column="ID" />
+			<result column="eEmp" property="emp" />
+			<result column="eStore" property="store" />
+			<result column="eTel" property="tel" />
+			<result column="eMasstype" property="masstype" />
+		</association>
+		<association property="staff" javaType="com.xiaoyi.ssm.model.Staff">
+			<id property="staffid" column="ID" />
+			<result column="sRName" property="rname" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CityID, EmpID, Estate, CreateTime, Type, Lon, Lat, DisposeStaff, DisposeOpinion,
+		DisposeTime, Remark
+	</sql>
+	<select id="countByNoDispose" resultType="Integer">
+		SELECT COUNT(0) FROM ( SELECT ef.*,c.`City` cCity,e.`Emp` eEmp, e.`Store` eStore, e.`Tel`
+		eTel, e.`Masstype` eMasstype
+		FROM
+		EstateFind ef , City c , Employee e WHERE ef.`CityID` = c.`ID` AND ef.`EmpID` = e.`ID`
+		) a LEFT JOIN Staff s ON a.`DisposeStaff` = s.`StaffID` AND a.DisposeStaff IS NULL
+	</select>
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.EstateFind"
+		resultMap="BaseResultMap">
+		SELECT a.*,s.`RName` sRName FROM ( SELECT ef.*,c.`City` cCity,e.`Emp` eEmp, e.`Store` eStore, e.`Tel`
+		eTel, e.`Masstype` eMasstype
+		FROM
+		EstateFind ef , City c , Employee e WHERE ef.`CityID` = c.`ID` AND ef.`EmpID` = e.`ID`
+		) a LEFT JOIN Staff s ON a.`DisposeStaff` = s.`StaffID`
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EstateFind
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from EstateFind
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EstateFind">
+		insert into EstateFind (ID, CityID, EmpID, Estate,
+		CreateTime, Type, Lon,
+		Lat, DisposeStaff, DisposeOpinion,
+		DisposeTime, Remark)
+		values (#{id,jdbcType=CHAR}, #{cityid,jdbcType=CHAR}, #{empid,jdbcType=CHAR},
+		#{estate,jdbcType=VARCHAR},
+		#{createtime,jdbcType=TIMESTAMP}, #{type,jdbcType=CHAR}, #{lon,jdbcType=DOUBLE},
+		#{lat,jdbcType=DOUBLE}, #{disposestaff,jdbcType=VARCHAR}, #{disposeopinion,jdbcType=VARCHAR},
+		#{disposetime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EstateFind">
+		insert into EstateFind
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="cityid != null">
+				CityID,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="estate != null">
+				Estate,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="lon != null">
+				Lon,
+			</if>
+			<if test="lat != null">
+				Lat,
+			</if>
+			<if test="disposestaff != null">
+				DisposeStaff,
+			</if>
+			<if test="disposeopinion != null">
+				DisposeOpinion,
+			</if>
+			<if test="disposetime != null">
+				DisposeTime,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="cityid != null">
+				#{cityid,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="estate != null">
+				#{estate,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=CHAR},
+			</if>
+			<if test="lon != null">
+				#{lon,jdbcType=DOUBLE},
+			</if>
+			<if test="lat != null">
+				#{lat,jdbcType=DOUBLE},
+			</if>
+			<if test="disposestaff != null">
+				#{disposestaff,jdbcType=VARCHAR},
+			</if>
+			<if test="disposeopinion != null">
+				#{disposeopinion,jdbcType=VARCHAR},
+			</if>
+			<if test="disposetime != null">
+				#{disposetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EstateFind">
+		update EstateFind
+		<set>
+			<if test="cityid != null">
+				CityID = #{cityid,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="estate != null">
+				Estate = #{estate,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=CHAR},
+			</if>
+			<if test="lon != null">
+				Lon = #{lon,jdbcType=DOUBLE},
+			</if>
+			<if test="lat != null">
+				Lat = #{lat,jdbcType=DOUBLE},
+			</if>
+			<if test="disposestaff != null">
+				DisposeStaff = #{disposestaff,jdbcType=VARCHAR},
+			</if>
+			<if test="disposeopinion != null">
+				DisposeOpinion = #{disposeopinion,jdbcType=VARCHAR},
+			</if>
+			<if test="disposetime != null">
+				DisposeTime = #{disposetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EstateFind">
+		update EstateFind
+		set CityID = #{cityid,jdbcType=CHAR},
+		EmpID = #{empid,jdbcType=CHAR},
+		Estate = #{estate,jdbcType=VARCHAR},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		Type = #{type,jdbcType=CHAR},
+		Lon = #{lon,jdbcType=DOUBLE},
+		Lat = #{lat,jdbcType=DOUBLE},
+		DisposeStaff = #{disposestaff,jdbcType=VARCHAR},
+		DisposeOpinion = #{disposeopinion,jdbcType=VARCHAR},
+		DisposeTime = #{disposetime,jdbcType=TIMESTAMP},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

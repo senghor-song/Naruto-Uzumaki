@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.CoachMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Coach">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="ModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
+		<result column="VenueID" jdbcType="VARCHAR" property="venueid" />
+		<result column="Name" jdbcType="VARCHAR" property="name" />
+		<result column="Image" jdbcType="VARCHAR" property="image" />
+		<result column="Price" jdbcType="INTEGER" property="price" />
+		<result column="Introduce" jdbcType="VARCHAR" property="introduce" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CreateTime, ModifyTime, VenueID, Name, Image, Price, Introduce
+	</sql>
+	
+	<select id="countByVenue" parameterType="java.lang.String" resultType="Integer">
+		select count(0) from Coach where VenueID = #{id}
+	</select>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Coach" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Coach
+		<where>
+			<if test="createtime != null">
+				AND CreateTime = #{createtime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="modifytime != null">
+				AND ModifyTime = #{modifytime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="venueid != null">
+				AND VenueID = #{venueid,jdbcType=VARCHAR}
+			</if>
+			<if test="name != null">
+				AND Name = #{name,jdbcType=VARCHAR}
+			</if>
+			<if test="image != null">
+				AND Image = #{image,jdbcType=VARCHAR}
+			</if>
+			<if test="price != null">
+				AND Price = #{price,jdbcType=INTEGER}
+			</if>
+			<if test="introduce != null">
+				AND Introduce = #{introduce,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Coach
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Coach
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Coach">
+		insert into Coach (ID, CreateTime, ModifyTime,
+		VenueID, Name, Image,
+		Price, Introduce)
+		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP},
+		#{venueid,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR},
+		#{price,jdbcType=INTEGER}, #{introduce,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Coach">
+		insert into Coach
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="modifytime != null">
+				ModifyTime,
+			</if>
+			<if test="venueid != null">
+				VenueID,
+			</if>
+			<if test="name != null">
+				Name,
+			</if>
+			<if test="image != null">
+				Image,
+			</if>
+			<if test="price != null">
+				Price,
+			</if>
+			<if test="introduce != null">
+				Introduce,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				#{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueid != null">
+				#{venueid,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="image != null">
+				#{image,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=INTEGER},
+			</if>
+			<if test="introduce != null">
+				#{introduce,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Coach">
+		update Coach
+		<set>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueid != null">
+				VenueID = #{venueid,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				Name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="image != null">
+				Image = #{image,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				Price = #{price,jdbcType=INTEGER},
+			</if>
+			<if test="introduce != null">
+				Introduce = #{introduce,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Coach">
+		update Coach
+		set CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		ModifyTime =
+		#{modifytime,jdbcType=TIMESTAMP},
+		VenueID = #{venueid,jdbcType=VARCHAR},
+		Name = #{name,jdbcType=VARCHAR},
+		Image =
+		#{image,jdbcType=VARCHAR},
+		Price = #{price,jdbcType=INTEGER},
+		Introduce = #{introduce,jdbcType=VARCHAR}
+		where ID =
+		#{id,jdbcType=CHAR}
+	</update>
+</mapper>

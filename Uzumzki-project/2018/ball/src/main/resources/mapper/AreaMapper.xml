@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.AreaMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Area">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="AreaNo" jdbcType="INTEGER" property="areano" />
+		<result column="Area" jdbcType="VARCHAR" property="area" />
+		<result column="DistrictID" jdbcType="CHAR" property="districtid" />
+		<result column="CityID" jdbcType="CHAR" property="cityid" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, AreaNo, Area, DistrictID, CityID
+	</sql>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Area" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Area
+		<where>
+			<if test="areano != null and areano != ''">
+				AND AreaNo = #{areano,jdbcType=INTEGER}
+			</if>
+			<if test="area != null and area != ''">
+				AND Area = #{area,jdbcType=VARCHAR}
+			</if>
+			<if test="districtid != null and districtid != ''">
+				AND DistrictID = #{districtid,jdbcType=CHAR}
+			</if>
+			<if test="cityid != null and cityid != ''">
+				AND CityID = #{cityid,jdbcType=CHAR}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Area
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Area
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Area">
+		insert into Area (ID, AreaNo, Area,
+		DistrictID, CityID)
+		values (#{id,jdbcType=CHAR}, #{areano,jdbcType=INTEGER}, #{area,jdbcType=VARCHAR},
+		#{districtid,jdbcType=CHAR}, #{cityid,jdbcType=CHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Area">
+		insert into Area
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="areano != null">
+				AreaNo,
+			</if>
+			<if test="area != null">
+				Area,
+			</if>
+			<if test="districtid != null">
+				DistrictID,
+			</if>
+			<if test="cityid != null">
+				CityID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="areano != null">
+				#{areano,jdbcType=INTEGER},
+			</if>
+			<if test="area != null">
+				#{area,jdbcType=VARCHAR},
+			</if>
+			<if test="districtid != null">
+				#{districtid,jdbcType=CHAR},
+			</if>
+			<if test="cityid != null">
+				#{cityid,jdbcType=CHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Area">
+		update Area
+		<set>
+			<if test="areano != null">
+				AreaNo = #{areano,jdbcType=INTEGER},
+			</if>
+			<if test="area != null">
+				Area = #{area,jdbcType=VARCHAR},
+			</if>
+			<if test="districtid != null">
+				DistrictID = #{districtid,jdbcType=CHAR},
+			</if>
+			<if test="cityid != null">
+				CityID = #{cityid,jdbcType=CHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Area">
+		update Area
+		set AreaNo = #{areano,jdbcType=INTEGER},
+		Area = #{area,jdbcType=VARCHAR},
+		DistrictID = #{districtid,jdbcType=CHAR},
+		CityID = #{cityid,jdbcType=CHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

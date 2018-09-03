@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.VenueMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Venue">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="ModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
+		<result column="VenueNO" jdbcType="INTEGER" property="venueno" />
+		<result column="Name" jdbcType="VARCHAR" property="name" />
+		<result column="Address" jdbcType="VARCHAR" property="address" />
+		<result column="CityID" jdbcType="VARCHAR" property="cityid" />
+		<result column="DistrictID" jdbcType="VARCHAR" property="districtid" />
+		<result column="AreaID" jdbcType="VARCHAR" property="areaid" />
+		<result column="Tel" jdbcType="VARCHAR" property="tel" />
+		<result column="BallSum" jdbcType="INTEGER" property="ballsum" />
+		<result column="Image" jdbcType="VARCHAR" property="image" />
+		<result column="WarmReminder" jdbcType="VARCHAR" property="warmreminder" />
+		<result column="Amount" jdbcType="DOUBLE" property="amount" />
+		<result column="Balance" jdbcType="DOUBLE" property="balance" />
+		<result column="FreezeAmount" jdbcType="DOUBLE" property="freezeamount" />
+		<result column="OrderVerify" jdbcType="INTEGER" property="orderverify" />
+		<result column="AmountBank" jdbcType="VARCHAR" property="amountbank" />
+		<result column="AmountAccount" jdbcType="VARCHAR" property="amountaccount" />
+		<result column="AmountAccountNumber" jdbcType="VARCHAR" property="amountaccountnumber" />
+		<association property="cityT" javaType="com.xiaoyi.ssm.model.City">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="cCity" jdbcType="VARCHAR" property="city" />
+		</association>
+		<association property="districtT" javaType="com.xiaoyi.ssm.model.District">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="dDistrict" jdbcType="VARCHAR" property="district" />
+		</association>
+		<association property="areaT" javaType="com.xiaoyi.ssm.model.Area">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="aArea" jdbcType="VARCHAR" property="area" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CreateTime, ModifyTime, VenueNO, Name, Address, CityID, DistrictID, AreaID, Tel,
+		BallSum, Image, WarmReminder,
+		AmountBank, AmountAccount, AmountAccountNumber, Amount, Balance, FreezeAmount, OrderVerify
+	</sql>
+
+	<select id="selectByManager" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT v.* FROM Venue v INNER JOIN ManagerVenue mv
+		ON v.`ID` = mv.`VenueID` WHERE mv.`ManagerID` = #{managerid} LIMIT 1
+	</select>
+
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Venue" resultMap="BaseResultMap">
+		SELECT v.*,c.`City` cCity, d.`District` dDistrict, a.`Area` aArea FROM Venue v LEFT JOIN City c ON v.`CityID` = c.`ID`
+		LEFT JOIN District d ON v.`DistrictID` = d.`ID` LEFT JOIN `Area` a ON v.`AreaID` = a.`ID`
+		<where>
+			<if test="createtime != null">
+				AND v.CreateTime = #{createtime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="modifytime != null">
+				AND v.ModifyTime = #{modifytime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="venueno != null">
+				AND v.VenueNO = #{venueno,jdbcType=INTEGER}
+			</if>
+			<if test="name != null and name != ''">
+				AND v.Name = #{name,jdbcType=VARCHAR}
+			</if>
+			<if test="address != null and address != ''">
+				AND v.Address = #{address,jdbcType=VARCHAR}
+			</if>
+			<if test="cityid != null and cityid != ''">
+				AND v.CityID = #{cityid,jdbcType=VARCHAR}
+			</if>
+			<if test="districtid != null and districtid != ''">
+				AND v.DistrictID = #{districtid,jdbcType=VARCHAR}
+			</if>
+			<if test="areaid != null and areaid != ''">
+				AND v.AreaID = #{areaid,jdbcType=VARCHAR}
+			</if>
+			<if test="tel != null and tel != ''">
+				AND v.Tel = #{tel,jdbcType=VARCHAR}
+			</if>
+			<if test="ballsum != null">
+				AND v.BallSum = #{ballsum,jdbcType=INTEGER}
+			</if>
+			<if test="image != null and image != ''">
+				AND v.Image = #{image,jdbcType=VARCHAR}
+			</if>
+			<if test="warmreminder != null and warmreminder != ''">
+				AND v.WarmReminder = #{warmreminder,jdbcType=VARCHAR}
+			</if>
+			<if test="amount != null">
+				AND v.Amount = #{amount,jdbcType=DOUBLE}
+			</if>
+			<if test="balance != null">
+				AND v.Balance = #{balance,jdbcType=DOUBLE}
+			</if>
+			<if test="freezeamount != null">
+				AND v.FreezeAmount = #{freezeamount,jdbcType=DOUBLE}
+			</if>
+			<if test="orderverify != null">
+				AND v.OrderVerify = #{orderverify,jdbcType=INTEGER}
+			</if>
+		</where>
+	</select>
+
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Venue
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Venue
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Venue">
+		insert into Venue (ID, CreateTime, ModifyTime,
+		VenueNO, Name, Address,
+		CityID, DistrictID, AreaID,
+		Tel, BallSum, Image,
+		WarmReminder, AmountBank, AmountAccount,
+		AmountAccountNumber, Amount, Balance,
+		FreezeAmount, OrderVerify)
+		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP},
+		#{venueno,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+		#{cityid,jdbcType=VARCHAR}, #{districtid,jdbcType=VARCHAR}, #{areaid,jdbcType=VARCHAR},
+		#{tel,jdbcType=VARCHAR}, #{ballsum,jdbcType=INTEGER}, #{image,jdbcType=VARCHAR},
+		#{warmreminder,jdbcType=VARCHAR}, #{amountbank,jdbcType=VARCHAR}, #{amountaccount,jdbcType=VARCHAR},
+		#{amountaccountnumber,jdbcType=VARCHAR}, #{amount,jdbcType=DOUBLE}, #{balance,jdbcType=DOUBLE},
+		#{freezeamount,jdbcType=DOUBLE}, #{orderverify,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Venue">
+		insert into Venue
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="modifytime != null">
+				ModifyTime,
+			</if>
+			<if test="venueno != null">
+				VenueNO,
+			</if>
+			<if test="name != null">
+				Name,
+			</if>
+			<if test="address != null">
+				Address,
+			</if>
+			<if test="cityid != null">
+				CityID,
+			</if>
+			<if test="districtid != null">
+				DistrictID,
+			</if>
+			<if test="areaid != null">
+				AreaID,
+			</if>
+			<if test="tel != null">
+				Tel,
+			</if>
+			<if test="ballsum != null">
+				BallSum,
+			</if>
+			<if test="image != null">
+				Image,
+			</if>
+			<if test="warmreminder != null">
+				WarmReminder,
+			</if>
+			<if test="amountbank != null">
+				AmountBank,
+			</if>
+			<if test="amountaccount != null">
+				AmountAccount,
+			</if>
+			<if test="amountaccountnumber != null">
+				AmountAccountNumber,
+			</if>
+			<if test="amount != null">
+				Amount,
+			</if>
+			<if test="balance != null">
+				Balance,
+			</if>
+			<if test="freezeamount != null">
+				FreezeAmount,
+			</if>
+			<if test="orderverify != null">
+				OrderVerify,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				#{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueno != null">
+				#{venueno,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="cityid != null">
+				#{cityid,jdbcType=VARCHAR},
+			</if>
+			<if test="districtid != null">
+				#{districtid,jdbcType=VARCHAR},
+			</if>
+			<if test="areaid != null">
+				#{areaid,jdbcType=VARCHAR},
+			</if>
+			<if test="tel != null">
+				#{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="ballsum != null">
+				#{ballsum,jdbcType=INTEGER},
+			</if>
+			<if test="image != null">
+				#{image,jdbcType=VARCHAR},
+			</if>
+			<if test="warmreminder != null">
+				#{warmreminder,jdbcType=VARCHAR},
+			</if>
+			<if test="amountbank != null">
+				#{amountbank,jdbcType=VARCHAR},
+			</if>
+			<if test="amountaccount != null">
+				#{amountaccount,jdbcType=VARCHAR},
+			</if>
+			<if test="amountaccountnumber != null">
+				#{amountaccountnumber,jdbcType=VARCHAR},
+			</if>
+			<if test="amount != null">
+				#{amount,jdbcType=DOUBLE},
+			</if>
+			<if test="balance != null">
+				#{balance,jdbcType=DOUBLE},
+			</if>
+			<if test="freezeamount != null">
+				#{freezeamount,jdbcType=DOUBLE},
+			</if>
+			<if test="orderverify != null">
+				#{orderverify,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Venue">
+		update Venue
+		<set>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueno != null">
+				VenueNO = #{venueno,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				Name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="cityid != null">
+				CityID = #{cityid,jdbcType=VARCHAR},
+			</if>
+			<if test="districtid != null">
+				DistrictID = #{districtid,jdbcType=VARCHAR},
+			</if>
+			<if test="areaid != null">
+				AreaID = #{areaid,jdbcType=VARCHAR},
+			</if>
+			<if test="tel != null">
+				Tel = #{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="ballsum != null">
+				BallSum = #{ballsum,jdbcType=INTEGER},
+			</if>
+			<if test="image != null">
+				Image = #{image,jdbcType=VARCHAR},
+			</if>
+			<if test="warmreminder != null">
+				WarmReminder = #{warmreminder,jdbcType=VARCHAR},
+			</if>
+			<if test="amountbank != null">
+				AmountBank = #{amountbank,jdbcType=VARCHAR},
+			</if>
+			<if test="amountaccount != null">
+				AmountAccount = #{amountaccount,jdbcType=VARCHAR},
+			</if>
+			<if test="amountaccountnumber != null">
+				AmountAccountNumber = #{amountaccountnumber,jdbcType=VARCHAR},
+			</if>
+			<if test="amount != null">
+				Amount = #{amount,jdbcType=DOUBLE},
+			</if>
+			<if test="balance != null">
+				Balance = #{balance,jdbcType=DOUBLE},
+			</if>
+			<if test="freezeamount != null">
+				FreezeAmount = #{freezeamount,jdbcType=DOUBLE},
+			</if>
+			<if test="orderverify != null">
+				OrderVerify = #{orderverify,jdbcType=INTEGER},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Venue">
+		update Venue
+		set CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+		VenueNO = #{venueno,jdbcType=INTEGER},
+		Name = #{name,jdbcType=VARCHAR},
+		Address = #{address,jdbcType=VARCHAR},
+		CityID = #{cityid,jdbcType=VARCHAR},
+		DistrictID = #{districtid,jdbcType=VARCHAR},
+		AreaID = #{areaid,jdbcType=VARCHAR},
+		Tel = #{tel,jdbcType=VARCHAR},
+		BallSum = #{ballsum,jdbcType=INTEGER},
+		Image = #{image,jdbcType=VARCHAR},
+		WarmReminder = #{warmreminder,jdbcType=VARCHAR},
+		AmountBank = #{amountbank,jdbcType=VARCHAR},
+		AmountAccount = #{amountaccount,jdbcType=VARCHAR},
+		AmountAccountNumber = #{amountaccountnumber,jdbcType=VARCHAR},
+		Amount = #{amount,jdbcType=DOUBLE},
+		Balance = #{balance,jdbcType=DOUBLE},
+		FreezeAmount = #{freezeamount,jdbcType=DOUBLE},
+		OrderVerify = #{orderverify,jdbcType=INTEGER}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

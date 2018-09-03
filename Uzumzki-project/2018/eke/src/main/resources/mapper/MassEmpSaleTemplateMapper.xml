@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassEmpSaleTemplateMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassEmpSaleTemplate">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="AddTime" jdbcType="TIMESTAMP" property="addtime" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="Type" jdbcType="INTEGER" property="type" />
+		<result column="Title" jdbcType="VARCHAR" property="title" />
+		<result column="Mentality" jdbcType="VARCHAR" property="mentality" />
+		<result column="Environment" jdbcType="VARCHAR" property="environment" />
+		<result column="Serve" jdbcType="VARCHAR" property="serve" />
+		<result column="Taxation" jdbcType="VARCHAR" property="taxation" />
+	</resultMap>
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+		type="com.xiaoyi.ssm.model.MassEmpSaleTemplate">
+		<result column="DescribeData" jdbcType="LONGVARCHAR" property="describedata" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, AddTime, EmpID, Type, Title, Mentality, Environment, Serve, Taxation
+	</sql>
+	<sql id="Blob_Column_List">
+		DescribeData
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from MassEmpSaleTemplate
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<select id="selectByEmp" parameterType="java.lang.String"
+		resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from MassEmpSaleTemplate
+		where EmpId = #{empId,jdbcType=CHAR}
+		<if test="title != null and title != ''">
+			AND Title like concat('%',concat('${title}','%'))
+		</if>
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from MassEmpSaleTemplate
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassEmpSaleTemplate">
+		insert into MassEmpSaleTemplate (ID, AddTime, EmpID,
+		Type, Title, Mentality,
+		Environment, Serve, Taxation,
+		DescribeData)
+		values (#{id,jdbcType=CHAR}, #{addtime,jdbcType=TIMESTAMP},
+		#{empid,jdbcType=CHAR},
+		#{type,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{mentality,jdbcType=VARCHAR},
+		#{environment,jdbcType=VARCHAR}, #{serve,jdbcType=VARCHAR},
+		#{taxation,jdbcType=VARCHAR},
+		#{describedata,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassEmpSaleTemplate">
+		insert into MassEmpSaleTemplate
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="addtime != null">
+				AddTime,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="title != null">
+				Title,
+			</if>
+			<if test="mentality != null">
+				Mentality,
+			</if>
+			<if test="environment != null">
+				Environment,
+			</if>
+			<if test="serve != null">
+				Serve,
+			</if>
+			<if test="taxation != null">
+				Taxation,
+			</if>
+			<if test="describedata != null">
+				DescribeData,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="addtime != null">
+				#{addtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="mentality != null">
+				#{mentality,jdbcType=VARCHAR},
+			</if>
+			<if test="environment != null">
+				#{environment,jdbcType=VARCHAR},
+			</if>
+			<if test="serve != null">
+				#{serve,jdbcType=VARCHAR},
+			</if>
+			<if test="taxation != null">
+				#{taxation,jdbcType=VARCHAR},
+			</if>
+			<if test="describedata != null">
+				#{describedata,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassEmpSaleTemplate">
+		update MassEmpSaleTemplate
+		<set>
+			<if test="addtime != null">
+				AddTime = #{addtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				Title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="mentality != null">
+				Mentality = #{mentality,jdbcType=VARCHAR},
+			</if>
+			<if test="environment != null">
+				Environment = #{environment,jdbcType=VARCHAR},
+			</if>
+			<if test="serve != null">
+				Serve = #{serve,jdbcType=VARCHAR},
+			</if>
+			<if test="taxation != null">
+				Taxation = #{taxation,jdbcType=VARCHAR},
+			</if>
+			<if test="describedata != null">
+				DescribeData = #{describedata,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.xiaoyi.ssm.model.MassEmpSaleTemplate">
+		update MassEmpSaleTemplate
+		set AddTime = #{addtime,jdbcType=TIMESTAMP},
+		EmpID = #{empid,jdbcType=CHAR},
+		Type = #{type,jdbcType=INTEGER},
+		Title = #{title,jdbcType=VARCHAR},
+		Mentality = #{mentality,jdbcType=VARCHAR},
+		Environment = #{environment,jdbcType=VARCHAR},
+		Serve = #{serve,jdbcType=VARCHAR},
+		Taxation = #{taxation,jdbcType=VARCHAR},
+		DescribeData = #{describedata,jdbcType=LONGVARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassEmpSaleTemplate">
+		update MassEmpSaleTemplate
+		set AddTime = #{addtime,jdbcType=TIMESTAMP},
+		EmpID = #{empid,jdbcType=CHAR},
+		Type = #{type,jdbcType=INTEGER},
+		Title = #{title,jdbcType=VARCHAR},
+		Mentality = #{mentality,jdbcType=VARCHAR},
+		Environment = #{environment,jdbcType=VARCHAR},
+		Serve = #{serve,jdbcType=VARCHAR},
+		Taxation = #{taxation,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

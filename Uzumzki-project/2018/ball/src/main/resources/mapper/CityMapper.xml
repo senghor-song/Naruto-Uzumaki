@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.CityMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.City">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="CityNo" jdbcType="INTEGER" property="cityno" />
+		<result column="City" jdbcType="VARCHAR" property="city" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CityNo, City
+	</sql>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.City" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from City
+		<where>
+			<if test="cityno != null and cityno != ''">
+				AND CityNo = #{cityno,jdbcType=INTEGER}
+			</if>
+			<if test="city != null and city != ''">
+				AND City = #{city,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from City
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from City
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.City">
+		insert into City (ID, CityNo, City
+		)
+		values (#{id,jdbcType=CHAR}, #{cityno,jdbcType=INTEGER}, #{city,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.City">
+		insert into City
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="cityno != null">
+				CityNo,
+			</if>
+			<if test="city != null">
+				City,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="cityno != null">
+				#{cityno,jdbcType=INTEGER},
+			</if>
+			<if test="city != null">
+				#{city,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.City">
+		update City
+		<set>
+			<if test="cityno != null">
+				CityNo = #{cityno,jdbcType=INTEGER},
+			</if>
+			<if test="city != null">
+				City = #{city,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.City">
+		update City
+		set CityNo = #{cityno,jdbcType=INTEGER},
+		City = #{city,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

@@ -1,0 +1,1088 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassPropertyMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassProperty">
+		<id column="mpID" jdbcType="CHAR" property="id" />
+		<result column="mpRegDate" jdbcType="TIMESTAMP" property="regdate" />
+		<result column="mpRegType" jdbcType="TINYINT" property="regtype" />
+		<result column="mpEmpID" jdbcType="CHAR" property="empid" />
+		<result column="mpPropertyNo" jdbcType="INTEGER" property="propertyno" />
+		<result column="mpTrade" jdbcType="INTEGER" property="trade" />
+		<result column="mpEstateID" jdbcType="CHAR" property="estateid" />
+		<result column="mpEstate" jdbcType="VARCHAR" property="estate" />
+		<result column="mpAddress" jdbcType="VARCHAR" property="address" />
+		<result column="mpBuildingType" jdbcType="INTEGER" property="buildingtype" />
+		<result column="mpBuildingValue" jdbcType="VARCHAR" property="buildingvalue" />
+		<result column="mpUnitType" jdbcType="INTEGER" property="unittype" />
+		<result column="mpUnitValue" jdbcType="VARCHAR" property="unitvalue" />
+		<result column="mpRoomNo" jdbcType="VARCHAR" property="roomno" />
+		<result column="mpStatus" jdbcType="CHAR" property="status" />
+		<result column="mpCountF" jdbcType="INTEGER" property="countf" />
+		<result column="mpCountT" jdbcType="INTEGER" property="countt" />
+		<result column="mpCountW" jdbcType="INTEGER" property="countw" />
+		<result column="mpCountC" jdbcType="INTEGER" property="countc" />
+		<result column="mpCountY" jdbcType="INTEGER" property="county" />
+		<result column="mpDdlUsedYear" jdbcType="INTEGER" property="ddlusedyear" />
+		<result column="mpUsage" jdbcType="CHAR" property="usage" />
+		<result column="mpDirection" jdbcType="CHAR" property="direction" />
+		<result column="mpLook" jdbcType="CHAR" property="look" />
+		<result column="mpDecoration" jdbcType="CHAR" property="decoration" />
+		<result column="mpSquareJ" jdbcType="DECIMAL" property="squarej" />
+		<result column="mpSquareS" jdbcType="INTEGER" property="squares" />
+		<result column="mpPrice" jdbcType="INTEGER" property="price" />
+		<result column="mpHouseLabel" jdbcType="VARCHAR" property="houselabel" />
+		<result column="mpCellLabel" jdbcType="VARCHAR" property="celllabel" />
+		<result column="mpFloor" jdbcType="INTEGER" property="floor" />
+		<result column="mpFloorAll" jdbcType="INTEGER" property="floorall" />
+		<result column="mpHeadImgPath" jdbcType="VARCHAR" property="headimgpath" />
+		<result column="mpFlagSublet" jdbcType="TINYINT" property="flagsublet" />
+		<result column="mpSubletNumber" jdbcType="INTEGER" property="subletnumber" />
+		<result column="mpSubletCondition" jdbcType="CHAR" property="subletcondition" />
+		<result column="mpSubletRoom" jdbcType="CHAR" property="subletroom" />
+		<result column="mpSubletPayType" jdbcType="CHAR" property="subletpaytype" />
+		<result column="mpFlagDeleted" jdbcType="TINYINT" property="flagdeleted" />
+		<result column="mpDeletedTime" jdbcType="TIMESTAMP" property="deletedtime" />
+		<result column="mpFeeCust" jdbcType="DECIMAL" property="feecust" />
+		<result column="mpSourceType" jdbcType="INTEGER" property="sourcetype" />
+		<result column="mpFlagVideo" jdbcType="TINYINT" property="flagvideo" />
+		<result column="mpFlagMoreImage" jdbcType="TINYINT" property="flagmoreimage" />
+		<result column="mpFeatureModTime" jdbcType="TIMESTAMP" property="featuremodtime" />
+		<result column="mpViewTimes" jdbcType="INTEGER" property="viewtimes" />
+		<result column="mpModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
+		<result column="mpSendTime" jdbcType="TIMESTAMP" property="sendtime" />
+		<result column="mpInternalNum" jdbcType="VARCHAR" property="internalnum" />
+		<result column="mpFileNo" jdbcType="VARCHAR" property="fileno" />
+		<result column="mpCityID" jdbcType="VARCHAR" property="cityid" />
+		<result column="mpCityName" jdbcType="VARCHAR" property="cityname" />
+		<result column="mpDistrictID" jdbcType="VARCHAR" property="districtid" />
+		<result column="mpDistrictName" jdbcType="VARCHAR" property="districtname" />
+		<result column="mpAreaID" jdbcType="VARCHAR" property="areaid" />
+		<result column="mpAreaName" jdbcType="VARCHAR" property="areaname" />
+		<result column="mpTitle" jdbcType="VARCHAR" property="title" />
+		<result column="mpMentality" jdbcType="VARCHAR" property="mentality" />
+		<result column="mpEnvironment" jdbcType="VARCHAR" property="environment" />
+		<result column="mpServe" jdbcType="VARCHAR" property="serve" />
+		<result column="mpTaxation" jdbcType="VARCHAR" property="taxation" />
+		<result column="mpEmpFollowSay" jdbcType="VARCHAR" property="empfollowsay" />
+		<result column="mpRemark" jdbcType="VARCHAR" property="remark" />
+		<result column="mpDescription" jdbcType="LONGVARCHAR" property="description" />
+		<result column="mpOwer" jdbcType="VARCHAR" property="ower" />
+		<result column="mpOwerTel" jdbcType="CHAR" property="owertel" />
+		<association property="massHouse" javaType="com.xiaoyi.ssm.model.MassHouse">
+			<result column="mhID" jdbcType="VARCHAR" property="id" />
+			<result column="mhHouseType" jdbcType="VARCHAR" property="housetype" />
+			<result column="mhHouseSubType" jdbcType="VARCHAR" property="housesubtype" />
+			<result column="mhHouseProperty" jdbcType="VARCHAR" property="houseproperty" />
+			<result column="mhLandYear" jdbcType="VARCHAR" property="landyear" />
+			<result column="mhHouseStructure" jdbcType="VARCHAR" property="housestructure" />
+			<result column="mhHouseYear" jdbcType="INTEGER" property="houseyear" />
+			<result column="mhOnlyHouse" jdbcType="INTEGER" property="onlyhouse" />
+			<result column="mhBasicEquip" jdbcType="VARCHAR" property="basicequip" />
+			<result column="mhAdvEquip" jdbcType="VARCHAR" property="advequip" />
+		</association>
+		<association property="cityT" javaType="com.xiaoyi.ssm.model.City">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="cCity" jdbcType="VARCHAR" property="city" />
+		</association>
+		<association property="districtT" javaType="com.xiaoyi.ssm.model.District">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="dDistrict" jdbcType="VARCHAR" property="district" />
+		</association>
+		<association property="areaT" javaType="com.xiaoyi.ssm.model.Area">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="aArea" jdbcType="VARCHAR" property="area" />
+		</association>
+		<collection property="massPropertyPublishs" ofType="MassPropertyPublish" column="mpID" javaType="java.util.List"
+			select="selectByMassPropertyId">
+			<id column="mppID" jdbcType="CHAR" property="id" />
+			<result column="mppMassPropertyID" jdbcType="CHAR" property="masspropertyid" />
+			<result column="mppPublishTime" jdbcType="TIMESTAMP" property="publishtime" />
+			<result column="mppSite" jdbcType="VARCHAR" property="site" />
+			<result column="mppStatus" jdbcType="TINYINT" property="status" />
+			<result column="mppPublishUrl" jdbcType="VARCHAR" property="publishurl" />
+			<result column="mppEmpID" jdbcType="CHAR" property="empid" />
+			<result column="mppEmp" jdbcType="VARCHAR" property="emp" />
+			<result column="mppRemark" jdbcType="VARCHAR" property="remark" />
+		</collection>
+	</resultMap>
+	<resultMap id="PublishsResultMap" type="com.xiaoyi.ssm.model.MassPropertyPublish">
+		<id column="mppID" jdbcType="CHAR" property="id" />
+		<result column="mppMassPropertyID" jdbcType="CHAR" property="masspropertyid" />
+		<result column="mppPublishTime" jdbcType="TIMESTAMP" property="publishtime" />
+		<result column="mppSite" jdbcType="VARCHAR" property="site" />
+		<result column="mppStatus" jdbcType="TINYINT" property="status" />
+		<result column="mppPublishUrl" jdbcType="VARCHAR" property="publishurl" />
+		<result column="mppEmpID" jdbcType="CHAR" property="empid" />
+		<result column="mppEmp" jdbcType="VARCHAR" property="emp" />
+		<result column="mppRemark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		mp.ID mpID, mp.RegDate mpRegDate, mp.RegType mpRegType, mp.EmpID mpEmpID, mp.PropertyNo mpPropertyNo, mp.Trade mpTrade,
+		mp.EstateID mpEstateID, mp.Estate mpEstate, mp.Address mpAddress, mp.BuildingType mpBuildingType, mp.BuildingValue mpBuildingValue,
+		mp.UnitType mpUnitType, mp.UnitValue mpUnitValue, mp.RoomNo mpRoomNo, mp.Status mpStatus, mp.CountF mpCountF, mp.CountT
+		mpCountT,
+		mp.CountW mpCountW, mp.CountC mpCountC, mp.CountY mpCountY, mp.DdlUsedYear mpDdlUsedYear, mp.Usage mpUsage, mp.Direction mpDirection,
+		mp.Look mpLook, mp.Decoration mpDecoration, mp.SquareJ mpSquareJ, mp.SquareS mpSquareS, mp.Price mpPrice, mp.HouseLabel
+		mpHouseLabel,
+		mp.CellLabel mpCellLabel, mp.Floor mpFloor, mp.FloorAll mpFloorAll, mp.HeadImgPath mpHeadImgPath, mp.FlagSublet mpFlagSublet,
+		mp.SubletNumber mpSubletNumber, mp.SubletCondition mpSubletCondition, mp.SubletRoom mpSubletRoom, mp.SubletPayType
+		mpSubletPayType,
+		mp.FlagDeleted mpFlagDeleted, mp.DeletedTime mpDeletedTime, mp.FeeCust mpFeeCust, mp.SourceType mpSourceType, mp.FlagVideo mpFlagVideo,
+		mp.FlagMoreImage mpFlagMoreImage, mp.FeatureModTime mpFeatureModTime, mp.ViewTimes mpViewTimes, mp.ModifyTime mpModifyTime,
+		mp.SendTime mpSendTime,
+		mp.InternalNum mpInternalNum, mp.FileNo mpFileNo, mp.CityID mpCityID, mp.CityName mpCityName, mp.DistrictID mpDistrictID,
+		mp.DistrictName mpDistrictName, mp.AreaID mpAreaID, mp.AreaName mpAreaName, mp.Title mpTitle, mp.Mentality mpMentality,
+		mp.Environment mpEnvironment, mp.Serve mpServe, mp.Taxation mpTaxation, mp.EmpFollowSay mpEmpFollowSay, mp.Remark mpRemark,
+		mp.Description mpDescription, mp.Ower mpOwer, mp.OwerTel mpOwerTel
+	</sql>
+
+	<sql id="MassPropertyPublish_Column_List">
+		mpp.ID mppID, mpp.MassPropertyID mppMassPropertyID,
+		mpp.PublishTime mppPublishTime,
+		mpp.Site mppSite, mpp.Status
+		mppStatus,
+		mpp.PublishUrl mppPublishUrl,
+		mpp.EmpID mppEmpID, mpp.Emp
+		mppEmp, mpp.Remark mppRemark
+	</sql>
+	<sql id="MassHouse_Column_List">
+		mh.ID mhID, mh.HouseType mhHouseType, mh.HouseSubType
+		mhHouseSubType, mh.HouseProperty mhHouseProperty,
+		mh.LandYear
+		mhLandYear, mh.HouseStructure mhHouseStructure, mh.HouseYear
+		mhHouseYear, mh.OnlyHouse mhOnlyHouse,
+		mh.BasicEquip mhBasicEquip,
+		mh.AdvEquip mhAdvEquip
+	</sql>
+	<sql id="City_Column_List">
+		c.`City` cCity , d.`District` dDistrict , a.`Area` aArea
+	</sql>
+
+	<select id="selectByMassPropertyId" parameterType="java.lang.String" resultMap="PublishsResultMap">
+		select
+		<include refid="MassPropertyPublish_Column_List" />
+		FROM MassPropertyPublish mpp where mpp.MassPropertyID = #{mpID}
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT mp.*,
+		<include refid="MassHouse_Column_List" />
+		,
+		<include refid="City_Column_List" />
+		FROM (SELECT
+		<include refid="Base_Column_List" />
+		,
+		<include refid="MassPropertyPublish_Column_List" />
+		FROM MassProperty mp LEFT JOIN MassPropertyPublish mpp ON
+		mp.`ID` = mpp.`MassPropertyID`
+		WHERE mp.`ID` = #{id,jdbcType=CHAR})
+		mp
+		LEFT JOIN MassHouse mh ON mp.mpID = mh.`ID`
+		LEFT JOIN City c ON c.`ID` = mp.mpCityID
+		LEFT JOIN District d ON d.`ID` = mp.mpDistrictID
+		LEFT JOIN `Area` a ON a.`ID` = mp.mpAreaID
+	</select>
+
+	<select id="selectByEmpAll" parameterType="com.xiaoyi.ssm.dto.HouseEnterDto" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="City_Column_List" />
+		FROM MassProperty mp
+		LEFT JOIN City c ON c.`ID` = mp.CityID
+		LEFT JOIN District d ON d.`ID` = mp.DistrictID
+		LEFT JOIN `Area` a ON a.`ID` = mp.AreaID
+		where mp.Trade = #{postType} AND mp.EmpID = #{empId}
+		<if test="sourcetype != null and sourcetype != ''">
+			AND mp.SourceType = #{sourcetype}
+		</if>
+		<if test="tagstip != null and tagstip != ''">
+			AND mp.HouseLabel = concat('%',concat('${tagstip}','%'))
+		</if>
+		<if test="flagvideo != null and flagvideo != ''">
+			AND mp.FlagVideo = #{flagvideo}
+		</if>
+		<if test="flagmoreimage != null and flagmoreimage != ''">
+			AND mp.FlagMoreImage = #{flagmoreimage}
+		</if>
+		<if test="countf != null and countf != ''">
+			AND mp.CountF = #{countf}
+		</if>
+		<if test="priceMin != null and priceMin != ''">
+			AND mp.SalePrice &gt;= #{priceMin}
+		</if>
+		<if test="priceMax != null and priceMax != ''">
+			AND mp.SalePrice &lt;= #{priceMax}
+		</if>
+		<if test="keyword != null and keyword != ''">
+			AND CONCAT(mp.Title,mp.PropertyNo,mp.InternalNum) LIKE
+			concat('%',concat('${keyword}','%'))
+		</if>
+		<if test="isType == 0">
+			AND mp.`Status` = '发布中'
+		</if>
+		<if test="isType == 1">
+			AND mp.`Status` = '回收站'
+		</if>
+		<if test="isType == 2">
+			AND mp.`Status` = '草稿箱'
+		</if>
+		<if test="city != null and city != ''">
+			AND mp.CityID = #{city}
+		</if>
+		<if test="orderBy != null">
+			order by
+			<if test="orderBy == 0">
+				mp.ModifyTime desc
+			</if>
+			<if test="orderBy == 1">
+				mp.RegDate desc
+			</if>
+			<if test="orderBy == 2">
+				mp.SendTime desc
+			</if>
+			<if test="orderBy == 3">
+				mp.SalePrice desc
+			</if>
+			<if test="orderBy == 4">
+				mp.SalePrice asc
+			</if>
+			<if test="orderBy == 5">
+				mp.SquareJ desc
+			</if>
+			<if test="orderBy == 6">
+				mp.SquareJ asc
+			</if>
+		</if>
+	</select>
+
+	<select id="selectByEmp" parameterType="com.xiaoyi.ssm.dto.MassPropertyDto"
+		resultType="com.xiaoyi.ssm.dto.MassPropertyDto">
+		SELECT * FROM
+		(SELECT COUNT(0) propertySum1 FROM MassProperty WHERE EmpID = #{empId} ) a,
+		(SELECT COUNT(0)
+		propertyDaySumManual1 FROM MassProperty WHERE EmpID = #{empId} AND regtype='1' AND RegDate &gt;= #{startDate} AND RegDate &lt;=
+		#{endDate} ) b,
+		(SELECT COUNT(0) propertyDaySumNoManual1 FROM MassProperty WHERE EmpID = #{empId} AND regtype='0' AND RegDate
+		&gt;= #{startDate} AND RegDate &lt;= #{endDate} ) c,
+		(SELECT COUNT(0) propertySum2 FROM MassPropertyRent WHERE EmpID = #{empId})
+		d,
+		(SELECT COUNT(0) propertyDaySumManual2 FROM MassPropertyRent WHERE EmpID = #{empId} AND regtype='1' AND RegDate &gt;=
+		#{startDate} AND RegDate&lt;= #{endDate} ) e,
+		(SELECT COUNT(0) propertyDaySumNoManual2 FROM MassPropertyRent WHERE EmpID
+		=#{empId} AND regtype='0' AND RegDate &gt;= #{startDate} AND RegDate &lt;= #{endDate} ) f,
+		(SELECT COUNT(0) propertyDaySum FROM
+		MassPropertyPublish WHERE EmpID = #{empId} AND STATUS = 1 AND PublishUrl &gt;= #{startDate} AND PublishUrl &lt;= #{endDate}) g,
+		(SELECT COUNT(0) bindWebSum FROM MassBind WHERE EmpID = #{empId} ) h,
+		(SELECT COUNT(0) exceptionAccount FROM MassBind WHERE EmpID
+		= #{empId} AND CheckAvailable = '0') i
+	</select>
+
+	<select id="selectCountSum" parameterType="com.xiaoyi.ssm.dto.MassPropertyDto"
+		resultType="com.xiaoyi.ssm.dto.MassPropertyDto">
+		SELECT * FROM
+		(SELECT COUNT(0) releaseSum FROM MassProperty WHERE `Status` = '发布中' AND EmpID = #{empId} and Trade =
+		#{postType}) a,
+		(SELECT COUNT(0) draftSum FROM MassProperty WHERE `Status` = '草稿箱' AND EmpID = #{empId} and Trade = #{postType})
+		b,
+		(SELECT COUNT(0) recycleSum FROM MassProperty WHERE `Status` = '回收站' AND EmpID = #{empId} and Trade = #{postType}) c
+	</select>
+
+	<delete id="deleteAllRecycle" parameterType="java.lang.String">
+		delete from MassProperty WHERE `Status` = '回收站' and Trade = #{postType}
+	</delete>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from MassProperty
+		where ID =
+		#{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassProperty">
+		insert into MassProperty (ID, RegDate, RegType,
+		EmpID, PropertyNo, Trade,
+		EstateID, Estate, Address,
+		BuildingType, BuildingValue, UnitType,
+		UnitValue, RoomNo, Status,
+		CountF, CountT, CountW,
+		CountC, CountY, DdlUsedYear,
+		Usage, Direction, Look, Decoration,
+		SquareJ, SquareS, Price,
+		HouseLabel, CellLabel, Floor,
+		FloorAll, HeadImgPath, FlagSublet,
+		SubletNumber, SubletCondition, SubletRoom,
+		SubletPayType, FlagDeleted, DeletedTime,
+		FeeCust, SourceType, FlagVideo,
+		FlagMoreImage, FeatureModTime, ViewTimes,
+		ModifyTime, SendTime, InternalNum,
+		FileNo, CityID, CityName,
+		DistrictID, DistrictName, AreaID,
+		AreaName, Title, Mentality,
+		Environment, Serve, Taxation,
+		EmpFollowSay, Ower, OwerTel,
+		Remark, Description)
+		values (#{id,jdbcType=CHAR}, #{regdate,jdbcType=TIMESTAMP}, #{regtype,jdbcType=TINYINT},
+		#{empid,jdbcType=CHAR}, #{propertyno,jdbcType=INTEGER}, #{trade,jdbcType=INTEGER},
+		#{estateid,jdbcType=CHAR}, #{estate,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+		#{buildingtype,jdbcType=INTEGER}, #{buildingvalue,jdbcType=VARCHAR}, #{unittype,jdbcType=INTEGER},
+		#{unitvalue,jdbcType=VARCHAR}, #{roomno,jdbcType=VARCHAR}, #{status,jdbcType=CHAR},
+		#{countf,jdbcType=INTEGER}, #{countt,jdbcType=INTEGER}, #{countw,jdbcType=INTEGER},
+		#{countc,jdbcType=INTEGER}, #{county,jdbcType=INTEGER}, #{ddlusedyear,jdbcType=INTEGER},
+		#{usage,jdbcType=CHAR}, #{direction,jdbcType=CHAR}, #{look,jdbcType=CHAR}, #{decoration,jdbcType=CHAR},
+		#{squarej,jdbcType=DECIMAL}, #{squares,jdbcType=INTEGER}, #{price,jdbcType=INTEGER},
+		#{houselabel,jdbcType=VARCHAR}, #{celllabel,jdbcType=VARCHAR}, #{floor,jdbcType=INTEGER},
+		#{floorall,jdbcType=INTEGER}, #{headimgpath,jdbcType=VARCHAR}, #{flagsublet,jdbcType=TINYINT},
+		#{subletnumber,jdbcType=INTEGER}, #{subletcondition,jdbcType=CHAR}, #{subletroom,jdbcType=CHAR},
+		#{subletpaytype,jdbcType=CHAR}, #{flagdeleted,jdbcType=TINYINT}, #{deletedtime,jdbcType=TIMESTAMP},
+		#{feecust,jdbcType=DECIMAL}, #{sourcetype,jdbcType=INTEGER}, #{flagvideo,jdbcType=TINYINT},
+		#{flagmoreimage,jdbcType=TINYINT}, #{featuremodtime,jdbcType=TIMESTAMP}, #{viewtimes,jdbcType=INTEGER},
+		#{modifytime,jdbcType=TIMESTAMP}, #{sendtime,jdbcType=TIMESTAMP}, #{internalnum,jdbcType=VARCHAR},
+		#{fileno,jdbcType=VARCHAR}, #{cityid,jdbcType=VARCHAR}, #{cityname,jdbcType=VARCHAR},
+		#{districtid,jdbcType=VARCHAR}, #{districtname,jdbcType=VARCHAR}, #{areaid,jdbcType=VARCHAR},
+		#{areaname,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{mentality,jdbcType=VARCHAR},
+		#{environment,jdbcType=VARCHAR}, #{serve,jdbcType=VARCHAR}, #{taxation,jdbcType=VARCHAR},
+		#{empfollowsay,jdbcType=VARCHAR}, #{ower,jdbcType=VARCHAR}, #{owertel,jdbcType=CHAR},
+		#{remark,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassProperty">
+		insert into MassProperty
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="regdate != null">
+				RegDate,
+			</if>
+			<if test="regtype != null">
+				RegType,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="propertyno != null">
+				PropertyNo,
+			</if>
+			<if test="trade != null">
+				Trade,
+			</if>
+			<if test="estateid != null">
+				EstateID,
+			</if>
+			<if test="estate != null">
+				Estate,
+			</if>
+			<if test="address != null">
+				Address,
+			</if>
+			<if test="buildingtype != null">
+				BuildingType,
+			</if>
+			<if test="buildingvalue != null">
+				BuildingValue,
+			</if>
+			<if test="unittype != null">
+				UnitType,
+			</if>
+			<if test="unitvalue != null">
+				UnitValue,
+			</if>
+			<if test="roomno != null">
+				RoomNo,
+			</if>
+			<if test="status != null">
+				Status,
+			</if>
+			<if test="countf != null">
+				CountF,
+			</if>
+			<if test="countt != null">
+				CountT,
+			</if>
+			<if test="countw != null">
+				CountW,
+			</if>
+			<if test="countc != null">
+				CountC,
+			</if>
+			<if test="county != null">
+				CountY,
+			</if>
+			<if test="ddlusedyear != null">
+				DdlUsedYear,
+			</if>
+			<if test="usage != null">
+				Usage,
+			</if>
+			<if test="direction != null">
+				Direction,
+			</if>
+			<if test="look != null">
+				Look,
+			</if>
+			<if test="decoration != null">
+				Decoration,
+			</if>
+			<if test="squarej != null">
+				SquareJ,
+			</if>
+			<if test="squares != null">
+				SquareS,
+			</if>
+			<if test="price != null">
+				Price,
+			</if>
+			<if test="houselabel != null">
+				HouseLabel,
+			</if>
+			<if test="celllabel != null">
+				CellLabel,
+			</if>
+			<if test="floor != null">
+				Floor,
+			</if>
+			<if test="floorall != null">
+				FloorAll,
+			</if>
+			<if test="headimgpath != null">
+				HeadImgPath,
+			</if>
+			<if test="flagsublet != null">
+				FlagSublet,
+			</if>
+			<if test="subletnumber != null">
+				SubletNumber,
+			</if>
+			<if test="subletcondition != null">
+				SubletCondition,
+			</if>
+			<if test="subletroom != null">
+				SubletRoom,
+			</if>
+			<if test="subletpaytype != null">
+				SubletPayType,
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted,
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime,
+			</if>
+			<if test="feecust != null">
+				FeeCust,
+			</if>
+			<if test="sourcetype != null">
+				SourceType,
+			</if>
+			<if test="flagvideo != null">
+				FlagVideo,
+			</if>
+			<if test="flagmoreimage != null">
+				FlagMoreImage,
+			</if>
+			<if test="featuremodtime != null">
+				FeatureModTime,
+			</if>
+			<if test="viewtimes != null">
+				ViewTimes,
+			</if>
+			<if test="modifytime != null">
+				ModifyTime,
+			</if>
+			<if test="sendtime != null">
+				SendTime,
+			</if>
+			<if test="internalnum != null">
+				InternalNum,
+			</if>
+			<if test="fileno != null">
+				FileNo,
+			</if>
+			<if test="cityid != null">
+				CityID,
+			</if>
+			<if test="cityname != null">
+				CityName,
+			</if>
+			<if test="districtid != null">
+				DistrictID,
+			</if>
+			<if test="districtname != null">
+				DistrictName,
+			</if>
+			<if test="areaid != null">
+				AreaID,
+			</if>
+			<if test="areaname != null">
+				AreaName,
+			</if>
+			<if test="title != null">
+				Title,
+			</if>
+			<if test="mentality != null">
+				Mentality,
+			</if>
+			<if test="environment != null">
+				Environment,
+			</if>
+			<if test="serve != null">
+				Serve,
+			</if>
+			<if test="taxation != null">
+				Taxation,
+			</if>
+			<if test="empfollowsay != null">
+				EmpFollowSay,
+			</if>
+			<if test="ower != null">
+				Ower,
+			</if>
+			<if test="owertel != null">
+				OwerTel,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="description != null">
+				Description,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="regdate != null">
+				#{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="regtype != null">
+				#{regtype,jdbcType=TINYINT},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="propertyno != null">
+				#{propertyno,jdbcType=INTEGER},
+			</if>
+			<if test="trade != null">
+				#{trade,jdbcType=INTEGER},
+			</if>
+			<if test="estateid != null">
+				#{estateid,jdbcType=CHAR},
+			</if>
+			<if test="estate != null">
+				#{estate,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="buildingtype != null">
+				#{buildingtype,jdbcType=INTEGER},
+			</if>
+			<if test="buildingvalue != null">
+				#{buildingvalue,jdbcType=VARCHAR},
+			</if>
+			<if test="unittype != null">
+				#{unittype,jdbcType=INTEGER},
+			</if>
+			<if test="unitvalue != null">
+				#{unitvalue,jdbcType=VARCHAR},
+			</if>
+			<if test="roomno != null">
+				#{roomno,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=CHAR},
+			</if>
+			<if test="countf != null">
+				#{countf,jdbcType=INTEGER},
+			</if>
+			<if test="countt != null">
+				#{countt,jdbcType=INTEGER},
+			</if>
+			<if test="countw != null">
+				#{countw,jdbcType=INTEGER},
+			</if>
+			<if test="countc != null">
+				#{countc,jdbcType=INTEGER},
+			</if>
+			<if test="county != null">
+				#{county,jdbcType=INTEGER},
+			</if>
+			<if test="ddlusedyear != null">
+				#{ddlusedyear,jdbcType=INTEGER},
+			</if>
+			<if test="usage != null">
+				#{usage,jdbcType=CHAR},
+			</if>
+			<if test="direction != null">
+				#{direction,jdbcType=CHAR},
+			</if>
+			<if test="look != null">
+				#{look,jdbcType=CHAR},
+			</if>
+			<if test="decoration != null">
+				#{decoration,jdbcType=CHAR},
+			</if>
+			<if test="squarej != null">
+				#{squarej,jdbcType=DECIMAL},
+			</if>
+			<if test="squares != null">
+				#{squares,jdbcType=INTEGER},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=INTEGER},
+			</if>
+			<if test="houselabel != null">
+				#{houselabel,jdbcType=VARCHAR},
+			</if>
+			<if test="celllabel != null">
+				#{celllabel,jdbcType=VARCHAR},
+			</if>
+			<if test="floor != null">
+				#{floor,jdbcType=INTEGER},
+			</if>
+			<if test="floorall != null">
+				#{floorall,jdbcType=INTEGER},
+			</if>
+			<if test="headimgpath != null">
+				#{headimgpath,jdbcType=VARCHAR},
+			</if>
+			<if test="flagsublet != null">
+				#{flagsublet,jdbcType=TINYINT},
+			</if>
+			<if test="subletnumber != null">
+				#{subletnumber,jdbcType=INTEGER},
+			</if>
+			<if test="subletcondition != null">
+				#{subletcondition,jdbcType=CHAR},
+			</if>
+			<if test="subletroom != null">
+				#{subletroom,jdbcType=CHAR},
+			</if>
+			<if test="subletpaytype != null">
+				#{subletpaytype,jdbcType=CHAR},
+			</if>
+			<if test="flagdeleted != null">
+				#{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				#{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="feecust != null">
+				#{feecust,jdbcType=DECIMAL},
+			</if>
+			<if test="sourcetype != null">
+				#{sourcetype,jdbcType=INTEGER},
+			</if>
+			<if test="flagvideo != null">
+				#{flagvideo,jdbcType=TINYINT},
+			</if>
+			<if test="flagmoreimage != null">
+				#{flagmoreimage,jdbcType=TINYINT},
+			</if>
+			<if test="featuremodtime != null">
+				#{featuremodtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="viewtimes != null">
+				#{viewtimes,jdbcType=INTEGER},
+			</if>
+			<if test="modifytime != null">
+				#{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sendtime != null">
+				#{sendtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="internalnum != null">
+				#{internalnum,jdbcType=VARCHAR},
+			</if>
+			<if test="fileno != null">
+				#{fileno,jdbcType=VARCHAR},
+			</if>
+			<if test="cityid != null">
+				#{cityid,jdbcType=VARCHAR},
+			</if>
+			<if test="cityname != null">
+				#{cityname,jdbcType=VARCHAR},
+			</if>
+			<if test="districtid != null">
+				#{districtid,jdbcType=VARCHAR},
+			</if>
+			<if test="districtname != null">
+				#{districtname,jdbcType=VARCHAR},
+			</if>
+			<if test="areaid != null">
+				#{areaid,jdbcType=VARCHAR},
+			</if>
+			<if test="areaname != null">
+				#{areaname,jdbcType=VARCHAR},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="mentality != null">
+				#{mentality,jdbcType=VARCHAR},
+			</if>
+			<if test="environment != null">
+				#{environment,jdbcType=VARCHAR},
+			</if>
+			<if test="serve != null">
+				#{serve,jdbcType=VARCHAR},
+			</if>
+			<if test="taxation != null">
+				#{taxation,jdbcType=VARCHAR},
+			</if>
+			<if test="empfollowsay != null">
+				#{empfollowsay,jdbcType=VARCHAR},
+			</if>
+			<if test="ower != null">
+				#{ower,jdbcType=VARCHAR},
+			</if>
+			<if test="owertel != null">
+				#{owertel,jdbcType=CHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassProperty">
+		update MassProperty
+		<set>
+			<if test="regdate != null">
+				RegDate = #{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="regtype != null">
+				RegType = #{regtype,jdbcType=TINYINT},
+			</if>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="propertyno != null">
+				PropertyNo = #{propertyno,jdbcType=INTEGER},
+			</if>
+			<if test="trade != null">
+				Trade = #{trade,jdbcType=INTEGER},
+			</if>
+			<if test="estateid != null">
+				EstateID = #{estateid,jdbcType=CHAR},
+			</if>
+			<if test="estate != null">
+				Estate = #{estate,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="buildingtype != null">
+				BuildingType = #{buildingtype,jdbcType=INTEGER},
+			</if>
+			<if test="buildingvalue != null">
+				BuildingValue = #{buildingvalue,jdbcType=VARCHAR},
+			</if>
+			<if test="unittype != null">
+				UnitType = #{unittype,jdbcType=INTEGER},
+			</if>
+			<if test="unitvalue != null">
+				UnitValue = #{unitvalue,jdbcType=VARCHAR},
+			</if>
+			<if test="roomno != null">
+				RoomNo = #{roomno,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				Status = #{status,jdbcType=CHAR},
+			</if>
+			<if test="countf != null">
+				CountF = #{countf,jdbcType=INTEGER},
+			</if>
+			<if test="countt != null">
+				CountT = #{countt,jdbcType=INTEGER},
+			</if>
+			<if test="countw != null">
+				CountW = #{countw,jdbcType=INTEGER},
+			</if>
+			<if test="countc != null">
+				CountC = #{countc,jdbcType=INTEGER},
+			</if>
+			<if test="county != null">
+				CountY = #{county,jdbcType=INTEGER},
+			</if>
+			<if test="ddlusedyear != null">
+				DdlUsedYear = #{ddlusedyear,jdbcType=INTEGER},
+			</if>
+			<if test="usage != null">
+				Usage = #{usage,jdbcType=CHAR},
+			</if>
+			<if test="direction != null">
+				Direction = #{direction,jdbcType=CHAR},
+			</if>
+			<if test="look != null">
+				Look = #{look,jdbcType=CHAR},
+			</if>
+			<if test="decoration != null">
+				Decoration = #{decoration,jdbcType=CHAR},
+			</if>
+			<if test="squarej != null">
+				SquareJ = #{squarej,jdbcType=DECIMAL},
+			</if>
+			<if test="squares != null">
+				SquareS = #{squares,jdbcType=INTEGER},
+			</if>
+			<if test="price != null">
+				Price = #{price,jdbcType=INTEGER},
+			</if>
+			<if test="houselabel != null">
+				HouseLabel = #{houselabel,jdbcType=VARCHAR},
+			</if>
+			<if test="celllabel != null">
+				CellLabel = #{celllabel,jdbcType=VARCHAR},
+			</if>
+			<if test="floor != null">
+				Floor = #{floor,jdbcType=INTEGER},
+			</if>
+			<if test="floorall != null">
+				FloorAll = #{floorall,jdbcType=INTEGER},
+			</if>
+			<if test="headimgpath != null">
+				HeadImgPath = #{headimgpath,jdbcType=VARCHAR},
+			</if>
+			<if test="flagsublet != null">
+				FlagSublet = #{flagsublet,jdbcType=TINYINT},
+			</if>
+			<if test="subletnumber != null">
+				SubletNumber = #{subletnumber,jdbcType=INTEGER},
+			</if>
+			<if test="subletcondition != null">
+				SubletCondition = #{subletcondition,jdbcType=CHAR},
+			</if>
+			<if test="subletroom != null">
+				SubletRoom = #{subletroom,jdbcType=CHAR},
+			</if>
+			<if test="subletpaytype != null">
+				SubletPayType = #{subletpaytype,jdbcType=CHAR},
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="feecust != null">
+				FeeCust = #{feecust,jdbcType=DECIMAL},
+			</if>
+			<if test="sourcetype != null">
+				SourceType = #{sourcetype,jdbcType=INTEGER},
+			</if>
+			<if test="flagvideo != null">
+				FlagVideo = #{flagvideo,jdbcType=TINYINT},
+			</if>
+			<if test="flagmoreimage != null">
+				FlagMoreImage = #{flagmoreimage,jdbcType=TINYINT},
+			</if>
+			<if test="featuremodtime != null">
+				FeatureModTime = #{featuremodtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="viewtimes != null">
+				ViewTimes = #{viewtimes,jdbcType=INTEGER},
+			</if>
+			<if test="modifytime != null">
+				ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sendtime != null">
+				SendTime = #{sendtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="internalnum != null">
+				InternalNum = #{internalnum,jdbcType=VARCHAR},
+			</if>
+			<if test="fileno != null">
+				FileNo = #{fileno,jdbcType=VARCHAR},
+			</if>
+			<if test="cityid != null">
+				CityID = #{cityid,jdbcType=VARCHAR},
+			</if>
+			<if test="cityname != null">
+				CityName = #{cityname,jdbcType=VARCHAR},
+			</if>
+			<if test="districtid != null">
+				DistrictID = #{districtid,jdbcType=VARCHAR},
+			</if>
+			<if test="districtname != null">
+				DistrictName = #{districtname,jdbcType=VARCHAR},
+			</if>
+			<if test="areaid != null">
+				AreaID = #{areaid,jdbcType=VARCHAR},
+			</if>
+			<if test="areaname != null">
+				AreaName = #{areaname,jdbcType=VARCHAR},
+			</if>
+			<if test="title != null">
+				Title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="mentality != null">
+				Mentality = #{mentality,jdbcType=VARCHAR},
+			</if>
+			<if test="environment != null">
+				Environment = #{environment,jdbcType=VARCHAR},
+			</if>
+			<if test="serve != null">
+				Serve = #{serve,jdbcType=VARCHAR},
+			</if>
+			<if test="taxation != null">
+				Taxation = #{taxation,jdbcType=VARCHAR},
+			</if>
+			<if test="empfollowsay != null">
+				EmpFollowSay = #{empfollowsay,jdbcType=VARCHAR},
+			</if>
+			<if test="ower != null">
+				Ower = #{ower,jdbcType=VARCHAR},
+			</if>
+			<if test="owertel != null">
+				OwerTel = #{owertel,jdbcType=CHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				Description = #{description,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.xiaoyi.ssm.model.MassProperty">
+		update MassProperty
+		set RegDate = #{regdate,jdbcType=TIMESTAMP},
+		RegType = #{regtype,jdbcType=TINYINT},
+		EmpID = #{empid,jdbcType=CHAR},
+		PropertyNo = #{propertyno,jdbcType=INTEGER},
+		Trade = #{trade,jdbcType=INTEGER},
+		EstateID = #{estateid,jdbcType=CHAR},
+		Estate = #{estate,jdbcType=VARCHAR},
+		Address = #{address,jdbcType=VARCHAR},
+		BuildingType = #{buildingtype,jdbcType=INTEGER},
+		BuildingValue = #{buildingvalue,jdbcType=VARCHAR},
+		UnitType = #{unittype,jdbcType=INTEGER},
+		UnitValue = #{unitvalue,jdbcType=VARCHAR},
+		RoomNo = #{roomno,jdbcType=VARCHAR},
+		Status = #{status,jdbcType=CHAR},
+		CountF = #{countf,jdbcType=INTEGER},
+		CountT = #{countt,jdbcType=INTEGER},
+		CountW = #{countw,jdbcType=INTEGER},
+		CountC = #{countc,jdbcType=INTEGER},
+		CountY = #{county,jdbcType=INTEGER},
+		DdlUsedYear = #{ddlusedyear,jdbcType=INTEGER},
+		Usage = #{usage,jdbcType=CHAR},
+		Direction = #{direction,jdbcType=CHAR},
+		Look = #{look,jdbcType=CHAR},
+		Decoration = #{decoration,jdbcType=CHAR},
+		SquareJ = #{squarej,jdbcType=DECIMAL},
+		SquareS = #{squares,jdbcType=INTEGER},
+		Price = #{price,jdbcType=INTEGER},
+		HouseLabel = #{houselabel,jdbcType=VARCHAR},
+		CellLabel = #{celllabel,jdbcType=VARCHAR},
+		Floor = #{floor,jdbcType=INTEGER},
+		FloorAll = #{floorall,jdbcType=INTEGER},
+		HeadImgPath = #{headimgpath,jdbcType=VARCHAR},
+		FlagSublet = #{flagsublet,jdbcType=TINYINT},
+		SubletNumber = #{subletnumber,jdbcType=INTEGER},
+		SubletCondition = #{subletcondition,jdbcType=CHAR},
+		SubletRoom = #{subletroom,jdbcType=CHAR},
+		SubletPayType = #{subletpaytype,jdbcType=CHAR},
+		FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+		DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+		FeeCust = #{feecust,jdbcType=DECIMAL},
+		SourceType = #{sourcetype,jdbcType=INTEGER},
+		FlagVideo = #{flagvideo,jdbcType=TINYINT},
+		FlagMoreImage = #{flagmoreimage,jdbcType=TINYINT},
+		FeatureModTime = #{featuremodtime,jdbcType=TIMESTAMP},
+		ViewTimes = #{viewtimes,jdbcType=INTEGER},
+		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+		SendTime = #{sendtime,jdbcType=TIMESTAMP},
+		InternalNum = #{internalnum,jdbcType=VARCHAR},
+		FileNo = #{fileno,jdbcType=VARCHAR},
+		CityID = #{cityid,jdbcType=VARCHAR},
+		CityName = #{cityname,jdbcType=VARCHAR},
+		DistrictID = #{districtid,jdbcType=VARCHAR},
+		DistrictName = #{districtname,jdbcType=VARCHAR},
+		AreaID = #{areaid,jdbcType=VARCHAR},
+		AreaName = #{areaname,jdbcType=VARCHAR},
+		Title = #{title,jdbcType=VARCHAR},
+		Mentality = #{mentality,jdbcType=VARCHAR},
+		Environment = #{environment,jdbcType=VARCHAR},
+		Serve = #{serve,jdbcType=VARCHAR},
+		Taxation = #{taxation,jdbcType=VARCHAR},
+		EmpFollowSay = #{empfollowsay,jdbcType=VARCHAR},
+		Ower = #{ower,jdbcType=VARCHAR},
+		OwerTel = #{owertel,jdbcType=CHAR},
+		Remark = #{remark,jdbcType=VARCHAR},
+		Description = #{description,jdbcType=LONGVARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassProperty">
+		update MassProperty
+		set RegDate = #{regdate,jdbcType=TIMESTAMP},
+		RegType = #{regtype,jdbcType=TINYINT},
+		EmpID = #{empid,jdbcType=CHAR},
+		PropertyNo = #{propertyno,jdbcType=INTEGER},
+		Trade = #{trade,jdbcType=INTEGER},
+		EstateID = #{estateid,jdbcType=CHAR},
+		Estate = #{estate,jdbcType=VARCHAR},
+		Address = #{address,jdbcType=VARCHAR},
+		BuildingType = #{buildingtype,jdbcType=INTEGER},
+		BuildingValue = #{buildingvalue,jdbcType=VARCHAR},
+		UnitType = #{unittype,jdbcType=INTEGER},
+		UnitValue = #{unitvalue,jdbcType=VARCHAR},
+		RoomNo = #{roomno,jdbcType=VARCHAR},
+		Status = #{status,jdbcType=CHAR},
+		CountF = #{countf,jdbcType=INTEGER},
+		CountT = #{countt,jdbcType=INTEGER},
+		CountW = #{countw,jdbcType=INTEGER},
+		CountC = #{countc,jdbcType=INTEGER},
+		CountY = #{county,jdbcType=INTEGER},
+		DdlUsedYear = #{ddlusedyear,jdbcType=INTEGER},
+		Usage = #{usage,jdbcType=CHAR},
+		Direction = #{direction,jdbcType=CHAR},
+		Look = #{look,jdbcType=CHAR},
+		Decoration = #{decoration,jdbcType=CHAR},
+		SquareJ = #{squarej,jdbcType=DECIMAL},
+		SquareS = #{squares,jdbcType=INTEGER},
+		Price = #{price,jdbcType=INTEGER},
+		HouseLabel = #{houselabel,jdbcType=VARCHAR},
+		CellLabel = #{celllabel,jdbcType=VARCHAR},
+		Floor = #{floor,jdbcType=INTEGER},
+		FloorAll = #{floorall,jdbcType=INTEGER},
+		HeadImgPath = #{headimgpath,jdbcType=VARCHAR},
+		FlagSublet = #{flagsublet,jdbcType=TINYINT},
+		SubletNumber = #{subletnumber,jdbcType=INTEGER},
+		SubletCondition = #{subletcondition,jdbcType=CHAR},
+		SubletRoom = #{subletroom,jdbcType=CHAR},
+		SubletPayType = #{subletpaytype,jdbcType=CHAR},
+		FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+		DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+		FeeCust = #{feecust,jdbcType=DECIMAL},
+		SourceType = #{sourcetype,jdbcType=INTEGER},
+		FlagVideo = #{flagvideo,jdbcType=TINYINT},
+		FlagMoreImage = #{flagmoreimage,jdbcType=TINYINT},
+		FeatureModTime = #{featuremodtime,jdbcType=TIMESTAMP},
+		ViewTimes = #{viewtimes,jdbcType=INTEGER},
+		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+		SendTime = #{sendtime,jdbcType=TIMESTAMP},
+		InternalNum = #{internalnum,jdbcType=VARCHAR},
+		FileNo = #{fileno,jdbcType=VARCHAR},
+		CityID = #{cityid,jdbcType=VARCHAR},
+		CityName = #{cityname,jdbcType=VARCHAR},
+		DistrictID = #{districtid,jdbcType=VARCHAR},
+		DistrictName = #{districtname,jdbcType=VARCHAR},
+		AreaID = #{areaid,jdbcType=VARCHAR},
+		AreaName = #{areaname,jdbcType=VARCHAR},
+		Title = #{title,jdbcType=VARCHAR},
+		Mentality = #{mentality,jdbcType=VARCHAR},
+		Environment = #{environment,jdbcType=VARCHAR},
+		Serve = #{serve,jdbcType=VARCHAR},
+		Taxation = #{taxation,jdbcType=VARCHAR},
+		EmpFollowSay = #{empfollowsay,jdbcType=VARCHAR},
+		Ower = #{ower,jdbcType=VARCHAR},
+		OwerTel = #{owertel,jdbcType=CHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

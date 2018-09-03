@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.PropertyFollowMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.PropertyFollow">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="PropertyID" jdbcType="CHAR" property="propertyid" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="FollowDate" jdbcType="TIMESTAMP" property="followdate" />
+		<result column="View" jdbcType="CHAR" property="view" />
+		<result column="FollowType" jdbcType="CHAR" property="followtype" />
+		<result column="Theme" jdbcType="CHAR" property="theme" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="FlagDeleted" jdbcType="TINYINT" property="flagdeleted" />
+		<result column="DeletedTime" jdbcType="TIMESTAMP" property="deletedtime" />
+		<association property="employee" javaType="com.xiaoyi.ssm.model.Employee">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="eEmp" jdbcType="CHAR" property="emp" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, PropertyID, EmpID, FollowDate, View, FollowType, Theme, Content, FlagDeleted,
+		DeletedTime
+	</sql>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.dao.PropertyFollowMapper" resultMap="BaseResultMap">
+		SELECT pf.*,e.`Emp` eEmp FROM PropertyFollow pf , Employee e WHERE pf.`EmpID` = e.`ID`
+		<if test="empid !=null">
+			AND pf.`EmpID` = #{empid}
+		</if>
+	</select>
+	<select id="countByProperty" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0) from PropertyFollow where PropertyID = #{id,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT pf.*,e.`Emp` eEmp FROM PropertyFollow pf , Employee e WHERE pf.`EmpID` = e.`ID` AND
+		 ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from PropertyFollow
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.PropertyFollow">
+		insert into PropertyFollow (ID, PropertyID, EmpID,
+		FollowDate, View, FollowType,
+		Theme, Content, FlagDeleted,
+		DeletedTime)
+		values (#{id,jdbcType=CHAR}, #{propertyid,jdbcType=CHAR}, #{empid,jdbcType=CHAR},
+		#{followdate,jdbcType=TIMESTAMP}, #{view,jdbcType=CHAR}, #{followtype,jdbcType=CHAR},
+		#{theme,jdbcType=CHAR}, #{content,jdbcType=VARCHAR}, #{flagdeleted,jdbcType=TINYINT},
+		#{deletedtime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.PropertyFollow">
+		insert into PropertyFollow
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="propertyid != null">
+				PropertyID,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="followdate != null">
+				FollowDate,
+			</if>
+			<if test="view != null">
+				View,
+			</if>
+			<if test="followtype != null">
+				FollowType,
+			</if>
+			<if test="theme != null">
+				Theme,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted,
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="propertyid != null">
+				#{propertyid,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="followdate != null">
+				#{followdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="view != null">
+				#{view,jdbcType=CHAR},
+			</if>
+			<if test="followtype != null">
+				#{followtype,jdbcType=CHAR},
+			</if>
+			<if test="theme != null">
+				#{theme,jdbcType=CHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="flagdeleted != null">
+				#{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				#{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.PropertyFollow">
+		update PropertyFollow
+		<set>
+			<if test="propertyid != null">
+				PropertyID = #{propertyid,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="followdate != null">
+				FollowDate = #{followdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="view != null">
+				View = #{view,jdbcType=CHAR},
+			</if>
+			<if test="followtype != null">
+				FollowType = #{followtype,jdbcType=CHAR},
+			</if>
+			<if test="theme != null">
+				Theme = #{theme,jdbcType=CHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.PropertyFollow">
+		update PropertyFollow
+		set PropertyID = #{propertyid,jdbcType=CHAR},
+		EmpID = #{empid,jdbcType=CHAR},
+		FollowDate = #{followdate,jdbcType=TIMESTAMP},
+		View = #{view,jdbcType=CHAR},
+		FollowType = #{followtype,jdbcType=CHAR},
+		Theme = #{theme,jdbcType=CHAR},
+		Content = #{content,jdbcType=VARCHAR},
+		FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+		DeletedTime = #{deletedtime,jdbcType=TIMESTAMP}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

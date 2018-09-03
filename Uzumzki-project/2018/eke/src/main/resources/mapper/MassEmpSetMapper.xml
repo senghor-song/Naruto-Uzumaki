@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassEmpSetMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassEmpSet">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="Old" jdbcType="BIT" property="old" />
+		<result column="Repeat" jdbcType="CHAR" property="repeat" />
+		<result column="Days" jdbcType="INTEGER" property="days" />
+		<result column="Top" jdbcType="BIT" property="top" />
+		<result column="DesignSketch" jdbcType="BIT" property="designsketch" />
+		<result column="Mentality" jdbcType="BIT" property="mentality" />
+		<result column="Dynamic" jdbcType="BIT" property="dynamic" />
+		<result column="Contact" jdbcType="BIT" property="contact" />
+		<result column="Release" jdbcType="BIT" property="release" />
+		<result column="Refresh" jdbcType="BIT" property="refresh" />
+		<result column="Quick" jdbcType="CHAR" property="quick" />
+		<result column="Watermark" jdbcType="BIT" property="watermark" />
+		<result column="Transparency" jdbcType="REAL" property="transparency" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, EmpID, Old, Repeat, Days, Top, DesignSketch, Mentality, Dynamic,
+		Contact, Release,
+		Refresh, Quick, Watermark, Transparency, Remark
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassEmpSet
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from MassEmpSet
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassEmpSet">
+		insert into MassEmpSet (ID, EmpID, Old, Repeat,
+		Days, Top, DesignSketch, Mentality,
+		Dynamic, Contact, Release, Refresh,
+		Quick, Watermark, Transparency,
+		Remark)
+		values (#{id,jdbcType=CHAR}, #{empid,jdbcType=CHAR}, #{old,jdbcType=BIT},
+		#{repeat,jdbcType=CHAR},
+		#{days,jdbcType=INTEGER}, #{top,jdbcType=BIT}, #{designsketch,jdbcType=BIT},
+		#{mentality,jdbcType=BIT},
+		#{dynamic,jdbcType=BIT}, #{contact,jdbcType=BIT}, #{release,jdbcType=BIT},
+		#{refresh,jdbcType=BIT},
+		#{quick,jdbcType=CHAR}, #{watermark,jdbcType=BIT}, #{transparency,jdbcType=REAL},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassEmpSet">
+		insert into MassEmpSet
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="old != null">
+				Old,
+			</if>
+			<if test="repeat != null">
+				Repeat,
+			</if>
+			<if test="days != null">
+				Days,
+			</if>
+			<if test="top != null">
+				Top,
+			</if>
+			<if test="designsketch != null">
+				DesignSketch,
+			</if>
+			<if test="mentality != null">
+				Mentality,
+			</if>
+			<if test="dynamic != null">
+				Dynamic,
+			</if>
+			<if test="contact != null">
+				Contact,
+			</if>
+			<if test="release != null">
+				Release,
+			</if>
+			<if test="refresh != null">
+				Refresh,
+			</if>
+			<if test="quick != null">
+				Quick,
+			</if>
+			<if test="watermark != null">
+				Watermark,
+			</if>
+			<if test="transparency != null">
+				Transparency,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="old != null">
+				#{old,jdbcType=BIT},
+			</if>
+			<if test="repeat != null">
+				#{repeat,jdbcType=CHAR},
+			</if>
+			<if test="days != null">
+				#{days,jdbcType=INTEGER},
+			</if>
+			<if test="top != null">
+				#{top,jdbcType=BIT},
+			</if>
+			<if test="designsketch != null">
+				#{designsketch,jdbcType=BIT},
+			</if>
+			<if test="mentality != null">
+				#{mentality,jdbcType=BIT},
+			</if>
+			<if test="dynamic != null">
+				#{dynamic,jdbcType=BIT},
+			</if>
+			<if test="contact != null">
+				#{contact,jdbcType=BIT},
+			</if>
+			<if test="release != null">
+				#{release,jdbcType=BIT},
+			</if>
+			<if test="refresh != null">
+				#{refresh,jdbcType=BIT},
+			</if>
+			<if test="quick != null">
+				#{quick,jdbcType=CHAR},
+			</if>
+			<if test="watermark != null">
+				#{watermark,jdbcType=BIT},
+			</if>
+			<if test="transparency != null">
+				#{transparency,jdbcType=REAL},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassEmpSet">
+		update MassEmpSet
+		<set>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="old != null">
+				Old = #{old,jdbcType=BIT},
+			</if>
+			<if test="repeat != null">
+				Repeat = #{repeat,jdbcType=CHAR},
+			</if>
+			<if test="days != null">
+				Days = #{days,jdbcType=INTEGER},
+			</if>
+			<if test="top != null">
+				Top = #{top,jdbcType=BIT},
+			</if>
+			<if test="designsketch != null">
+				DesignSketch = #{designsketch,jdbcType=BIT},
+			</if>
+			<if test="mentality != null">
+				Mentality = #{mentality,jdbcType=BIT},
+			</if>
+			<if test="dynamic != null">
+				Dynamic = #{dynamic,jdbcType=BIT},
+			</if>
+			<if test="contact != null">
+				Contact = #{contact,jdbcType=BIT},
+			</if>
+			<if test="release != null">
+				Release = #{release,jdbcType=BIT},
+			</if>
+			<if test="refresh != null">
+				Refresh = #{refresh,jdbcType=BIT},
+			</if>
+			<if test="quick != null">
+				Quick = #{quick,jdbcType=CHAR},
+			</if>
+			<if test="watermark != null">
+				Watermark = #{watermark,jdbcType=BIT},
+			</if>
+			<if test="transparency != null">
+				Transparency = #{transparency,jdbcType=REAL},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassEmpSet">
+		update MassEmpSet
+		set EmpID = #{empid,jdbcType=CHAR},
+		Old = #{old,jdbcType=BIT},
+		Repeat = #{repeat,jdbcType=CHAR},
+		Days = #{days,jdbcType=INTEGER},
+		Top = #{top,jdbcType=BIT},
+		DesignSketch = #{designsketch,jdbcType=BIT},
+		Mentality = #{mentality,jdbcType=BIT},
+		Dynamic = #{dynamic,jdbcType=BIT},
+		Contact = #{contact,jdbcType=BIT},
+		Release = #{release,jdbcType=BIT},
+		Refresh = #{refresh,jdbcType=BIT},
+		Quick = #{quick,jdbcType=CHAR},
+		Watermark = #{watermark,jdbcType=BIT},
+		Transparency = #{transparency,jdbcType=REAL},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

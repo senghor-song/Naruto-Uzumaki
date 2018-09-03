@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>后台管理系统</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="static/css/site.css" rel="stylesheet">
+</head>
+
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom" id="topSidebar"></nav>
+        <aside class="main-sidebar sidebar-dark-primary elevation-4" id="leftSidebar" data-selectindex="8"></aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper pt-3">
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card card-secondary">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <div class="row">
+                                            <div class="col-lg-4 btncaozuo">
+                                                <button class="btn btn-primary btn-sm mr-2" id="bigData">大数据</button>
+                                                <!--<button class="btn btn-primary btn-sm mr-2" id="export">发现</button>-->
+                                                <button class="btn btn-primary btn-sm mr-2" id="create">创建</button>
+                                            </div>
+                                        </div>
+                                    </h3>
+                                    <!--<div class="card-tools">
+                                        <div class="input-group input-group-sm" style="width: 350px;">
+                                            <select class="form-control float-right" id="selectType">
+                                                <option value="0">小区</option>
+                                            </select>
+                                            <input class="form-control float-right" id="keyword" name="table_search" type="text" placeholder>
+
+                                            <div class="input-group-append">
+                                                <button class="btn btn-default" id="btnSearch" type="submit">
+                                                    <i class="fa fa-search"></i> 搜索
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>-->
+                                </div>
+
+                                <div class="card-body table-responsive p-0">
+                                    <table id="tableList"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.row -->
+
+                </div>
+                <!-- /.container-fluid -->
+            </section>
+            <!-- /.content -->
+        </div>
+
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+    <script src="static/plugins/jquery/jquery.min.js"></script>
+    <script src="static/js/layout.js"></script>
+    <script src="static/plugins/jQueryUI/jquery-ui.min.js"></script>
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+    <script src="static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/raphael-min.js"></script>
+    <script src="static/plugins/morris/morris.min.js"></script>
+    <script src="static/plugins/sparkline/jquery.sparkline.min.js"></script>
+    <script src="static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="static/plugins/knob/jquery.knob.js"></script>
+    <script src="static/plugins/moment/moment.min.js"></script>
+    <script src="static/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="static/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <script src="static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="static/plugins/fastclick/fastclick.js"></script>
+    <script src="static/plugins/js/pages/dashboard.js"></script>
+    <script src="static/plugins/js/demo.js"></script>
+    <script src="static/js/echarts.min.js"></script>
+    <script src="static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+    <script src="static/plugins/layui/layui.all.js"></script>
+    <script src="static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+    <script src="static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="static/js/jq-ext.js"></script>
+    <script>
+        $(function () {
+            var tableObj = {
+                obj: null,
+                init: function () {
+                    var self = this;
+                    self.tableList();
+                    self.search();
+                },
+                search: function () {
+                    var self = this;
+                    $("#btnSearch").unbind().on("click", function () {
+                        $.reload(self.obj);
+                    });
+                },
+                tableList: function () {
+                    var self = this;
+                    self.obj = $.tableObject({
+                        tableId: 'tableList',
+                        tableOption: {
+                            url: 'data/data.html',
+                            page: true,
+                            height: $(window).height() - 145,
+                            where: {
+                                selectType: function () {
+                                    return $("#selectType").val()
+                                },
+                                keyword: function () {
+                                    return $("#keyword").val()
+                                }
+                            },
+                            cols: [
+                                [
+                                    { field: 'kk', title: '城市', sort: true },
+                                    { field: 'aa', title: '小区', sort: true },
+                                    { field: 'bb', title: '经纬', sort: true },
+                                    { field: 'cc', title: '展示图', sort: true },
+                                    { field: 'dd', title: '后台图', sort: true },
+                                    { field: 'ee', title: '仓库图', sort: true },
+                                    { field: 'ff', title: '租售', sort: true },
+                                    { field: 'ii', title: '归属商户', sort: true },
+                                    { field: 'll', title: '信息纠错', sort: true },
+                                    { field: 'jj', title: '第三方匹配', sort: true },
+                                ]
+                            ]
+                        },
+                        menuItem: {
+                            item1: {
+                                name: "查看", callback: function (key, opt) {
+                                    $.showContentMenu(key, opt, 405);
+                                }
+                            },
+                            item2: {
+                                name: "编辑", callback: function (key, opt) {
+                                    $.showContentMenu(key, opt, 515)
+                                }
+                            },
+                            item3: {
+                                name: "小区图", callback: function (key, opt) {
+                                    $.showContentMenu(key, opt, $(window).height())
+                                    $.tableObject({
+                                        tableId: 'tableimg',
+                                        tableOption: {
+                                            url: 'data/data.html',
+                                            page: false,
+                                            where: {},
+                                            height: 250,
+                                            cols: [
+                                                [
+                                                    { field: 'id', title: '选中', type: 'checkbox', sort: true },
+                                                    { field: 'aa', title: '添加时间', sort: true },
+                                                    { field: 'bb', title: '来源', sort: true },
+                                                    { field: 'cc', title: '城市', sort: true },
+                                                    { field: 'dd', title: '小区', sort: true },
+                                                    { field: 'ee', title: '路径', sort: true },
+                                                ]
+                                            ]
+                                        }
+                                    });
+                                }
+                            },
+                            item4: {
+                                name: "纠错处理", callback: function (key, opt) {
+                                    $.showContentMenu(key, opt, 600)
+
+                                    $.tableObject({
+                                        tableId: 'tablejc',
+                                        tableOption: {
+                                            url: 'data/data.html',
+                                            page: true,
+                                            where: {},
+                                            height: $("#tablejc").parents(".layui-layer-content").height() - 90,
+                                            cols: [
+                                                [
+                                                    { field: 'aa', title: '编号', sort: true },
+                                                    { field: 'bb', title: '来源', sort: true },
+                                                    { field: 'cc', title: '常驻', sort: true },
+                                                    { field: 'dd', title: '类型', sort: true },
+                                                    { field: 'ee', title: '纠错时间', sort: true },
+                                                    { field: 'ee', title: '资料项', sort: true },
+                                                    { field: 'ee', title: '提示值', sort: true },
+                                                    { field: 'ee', title: '处理备注', sort: true },
+                                                    { field: 'ee', title: '备注时间', sort: true },
+                                                ]
+                                            ]
+                                        }
+                                    });
+                                }
+                            },
+                            item5: {
+                                name: "日志", callback: function (key, opt) {
+                                    $.showContentMenu(key, opt, 600)
+                                    $.tableObject({
+                                        tableId: 'tablelog',
+                                        tableOption: {
+                                            url: 'data/data.html',
+                                            page: true,
+                                            height: $("#tablelog").parents(".layui-layer-content").height() - 40,
+                                            where: {},
+                                            cols: [
+                                                [
+                                                    { field: 'aa', title: '时间', sort: true },
+                                                    { field: 'bb', title: '操作人', sort: true },
+                                                    { field: 'cc', title: '小区', sort: true },
+                                                    { field: 'dd', title: '项', sort: true },
+                                                    { field: 'dd', title: '内容', sort: true },
+                                                ]
+                                            ]
+                                        }
+                                    });
+                                }
+                            },
+                            item6: {
+                                name: "小区关联", callback: function (key, opt) {
+                                    $.showContentMenu(key, opt, 250)
+                                    /*$.tableObject({
+                                        tableId: 'tablelog',
+                                        tableOption: {
+                                            url: 'data/data.html',
+                                            page: true,
+                                            height: $("#tablelog").parents(".layui-layer-content").height() - 40,
+                                            where: {},
+                                            cols: [
+                                                [
+                                                    { field: 'aa', title: '时间', sort: true },
+                                                    { field: 'bb', title: '操作人', sort: true },
+                                                    { field: 'cc', title: '小区', sort: true },
+                                                    { field: 'dd', title: '项', sort: true },
+                                                    { field: 'dd', title: '内容', sort: true },
+                                                ]
+                                            ]
+                                        }
+                                    });*/
+                                }
+                            },
+                            item7: {
+                                name: "第三方匹配", callback: function (key, opt) {
+                                    $.showContentMenu(key, opt, 450)
+                                    $.tableObject({
+                                        tableId: 'third',
+                                        tableOption: {
+                                            url: 'data/data.html',
+                                            page: false,
+                                            height: $("#third").parents(".layui-layer-content").height() - 86,
+                                            where: {},
+                                            cols: [
+                                                [
+                                                    { field: 'aa', title: '编号', sort: true },
+                                                    { field: 'bb', title: '网站', sort: true },
+                                                    { field: 'cc', title: '匹配值', sort: true },
+                                                ]
+                                            ]
+                                        }
+                                    });
+                                }
+                            },
+                        }
+                    });
+                }
+            }
+            tableObj.init();
+
+            $("#bigData").on("click", function () {
+                var obj = $("#dataContent");
+                obj.removeClass("hide");
+                layer.open({
+                    type: 1,
+                    area: [$(document).width() + 'px', '600px'],
+                    offset: 'b',
+                    title: '大数据',
+                    resize: true,
+                    anim: 1,
+                    maxmin: true,
+                    content: obj,
+                    cancel: function (index, layero) {
+                        $(".contextMenuDialog").addClass("hide");
+                    }
+                });
+
+                var tab0 = function () {
+                    $.tableObject({
+                        tableId: 'tableexport1',
+                        tableOption: {
+                            url: 'data/data.html',
+                            page: false,
+                            where: {},
+                            height: 380,
+                            cols: [
+                                [
+                                    { field: 'id', title: '选中', type: 'checkbox', sort: true },
+                                    { field: 'aa', title: '城市', sort: true },
+                                    { field: 'bb', title: '县区', sort: true },
+                                    { field: 'cc', title: '片区', sort: true },
+                                    { field: 'dd', title: '小区', sort: true },
+                                    { field: 'ee', title: '可填空', sort: true },
+                                ]
+                            ]
+                        }
+                    });
+
+                };
+                var tab1 = function () {
+                    $.tableObject({
+                        tableId: 'tableexport2',
+                        tableOption: {
+                            url: 'data/data.html',
+                            page: false,
+                            where: {}, height: 380,
+                            cols: [
+                                [
+                                    { field: 'id', title: '选中', type: 'checkbox', sort: true },
+                                    { field: 'aa', title: '城市', sort: true },
+                                    { field: 'bb', title: '县区', sort: true },
+                                    { field: 'cc', title: '片区', sort: true },
+                                    { field: 'dd', title: '小区', sort: true },
+                                    { field: 'ee', title: '可填空', sort: true },
+                                ]
+                            ]
+                        }
+                    });
+
+                };
+                var tab2 = function () {
+                    $.tableObject({
+                        tableId: 'tableexport3',
+                        tableOption: {
+                            url: 'data/data.html',
+                            page: false,
+                            where: {}, height: 380,
+                            cols: [
+                                [
+                                    { field: 'id', title: '选中', type: 'checkbox', sort: true },
+                                    { field: 'aa', title: '城市', sort: true },
+                                    { field: 'bb', title: '小区', sort: true },
+                                    { field: 'cc', title: '新的小区图（新路径）', sort: true },
+                                    { field: 'dd', title: '状态', sort: true },
+                                ]
+                            ]
+                        }
+                    });
+
+                };
+
+                element.on('tab(filter)', function (data) {
+                    if (data.index == 0) {
+                        tab0();
+                    } else if (data.index == 1) {
+                        tab1();
+                    } else if (data.index == 2) {
+                        tab2();
+                    }
+                });
+                tab0();
+            });
+
+            $("#export").on("click", function () {
+                var obj = $("#exportContent");
+                obj.removeClass("hide");
+                layer.open({
+                    type: 1,
+                    area: [$(document).width() + 'px', '400px'],
+                    offset: 'b',
+                    title: '发现',
+                    resize: true,
+                    anim: 1,
+                    maxmin: true,
+                    content: obj,
+                    cancel: function (index, layero) {
+                        $(".contextMenuDialog").addClass("hide");
+                    }
+                });
+
+                $.tableObject({
+                    tableId: 'tableexport4',
+                    tableOption: {
+                        url: 'data/data.html',
+                        page: true,
+                        where: {},
+                        height: 269,
+                        cols: [
+                            [
+                                { field: 'aa', title: '创建时间', sort: true },
+                                { field: 'bb', title: '小区', sort: true },
+                                { field: 'cc', title: '经纪人', sort: true },
+                                { field: 'dd', title: '经纪人电话', sort: true },
+                                { field: 'ee', title: '备注', sort: true },
+                            ]
+                        ]
+                    }
+                });
+            });
+
+            $("#create").on("click", function () {
+                var obj = $("#createcontent");
+                obj.removeClass("hide");
+                layer.open({
+                    type: 1,
+                    area: [$(document).width() + 'px', '516px'],
+                    offset: 'b',
+                    title: '创建',
+                    resize: true,
+                    anim: 1,
+                    maxmin: true,
+                    content: obj,
+                    cancel: function (index, layero) {
+                        $(".contextMenuDialog").addClass("hide");
+                    }
+                });
+            });
+
+            $("#showImg .img .show").on("click", function () {
+                var src = $(this).parent().find("img").attr("src");
+                $("#showImgDiv").attr("src", src).removeClass("hide");
+            });
+
+            $("#showImgDiv").on("click", function () {
+                $("#showImgDiv").addClass("hide");
+            });
+        });
+    </script>
+    <div style="position: absolute; top: 0px; text-align: center; z-index: 9999999999; text-align: center; width: 100%;">
+        <img id="showImgDiv" class="hide" src="" title="点击我关闭" style="margin: auto; cursor: pointer;">
+    </div>
+    <div class="contextMenuDialog hide" id="dataContent">
+        <div class="card-body form-control">
+            <div class="row">
+                <div class="input-group col-lg-3">
+                    <div class="custom-file">
+                        <input class="custom-file-input" id="exampleInputFile" type="file">
+                        <label class="custom-file-label" for="exampleInputFile">选择Excel文件</label>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <input class="btn btn-primary" type="button" value="开始">
+                </div>
+                <div class="col-lg-6 text-right pr-2">
+                    <input class="btn btn-primary" type="button" value="Excel规范模板下载">
+                    <span style="width: 22px;height: 22px; display: inline-block; border-radius: 22px; background: #0c0;">&nbsp;</span>
+                    <span>EXCEL</span>
+                    <span style="width: 22px;height: 22px; display: inline-block; border-radius: 22px; background: #000;">&nbsp;</span>
+                    <span>本地</span>
+                </div>
+                <div class="row w-100">
+                    <div class="col-lg-12">
+                        <div class="layui-tab m-2 p-2" lay-filter="filter" style="border: 1px solid #ccc; border-radius: 5px;">
+                            <ul class="layui-tab-title">
+                                <li class="layui-this">发现小区</li>
+                                <li>小区信息填空</li>
+                                <li>小区图</li>
+                            </ul>
+                            <div class="layui-tab-content">
+                                <div class="layui-tab-item layui-show">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <table id="tableexport1"></table>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">小区</div>
+                                                        <div class="col-lg-8">
+                                                            星河盛世花园
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">户数</div>
+                                                        <div class="col-lg-8">
+                                                            910</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">物业类型</div>
+                                                        <div class="col-lg-8">
+                                                            住宅</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">建筑年代</div>
+                                                        <div class="col-lg-8">
+                                                            2004年</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">物业费</div>
+                                                        <div class="col-lg-8">
+                                                            0.88元/平米</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">总户数</div>
+                                                        <div class="col-lg-8">
+                                                            2000</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">建筑类型</div>
+                                                        <div class="col-lg-8">
+                                                            多层，板楼</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">停车位</div>
+                                                        <div class="col-lg-8">
+                                                            523</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">物业电话</div>
+                                                        <div class="col-lg-8">
+                                                            0755-28776262</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">开发商</div>
+                                                        <div class="col-lg-8">
+                                                            星河盛世花园</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-2 nametl">物业公司</div>
+                                                        <div class="col-lg-10">
+                                                            星河盛世花园</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-2 nametl">小区描述</div>
+                                                        <div class="col-lg-10">
+                                                            皓月花园深圳市宝安区龙华民治路与民康路交汇处，离梅林关仅3分钟车程，交通便利。是融合现代景观规划要素及欧式园林精华的5万平方米绿色水景园林，精心营造高尚绿色园林社区
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-2 nametl"></div>
+                                                        <div class="col-lg-10">
+                                                            <button class="form-control btn btn-primary w-25">添加小区</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-tab-item">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <table id="tableexport2"></table>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">小区</div>
+                                                        <div class="col-lg-8">
+                                                            星河盛世花园
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">户数</div>
+                                                        <div class="col-lg-8">
+                                                            910</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">物业费</div>
+                                                        <div class="col-lg-8">
+                                                            住宅</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">建筑年代</div>
+                                                        <div class="col-lg-8">
+                                                            2004年</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">物业费</div>
+                                                        <div class="col-lg-8">
+                                                            0.88元/平米</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">总户数</div>
+                                                        <div class="col-lg-8">
+                                                            2000</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">建筑类型</div>
+                                                        <div class="col-lg-8">
+                                                            多层，板楼</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">停车位</div>
+                                                        <div class="col-lg-8">
+                                                            523</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">物业电话</div>
+                                                        <div class="col-lg-8">
+                                                            0755-28776262</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">开发商</div>
+                                                        <div class="col-lg-8">
+                                                            星河盛世花园</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-2 nametl">物业公司</div>
+                                                        <div class="col-lg-10">
+                                                            星河盛世花园</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-2 nametl">小区描述</div>
+                                                        <div class="col-lg-10">
+                                                            皓月花园深圳市宝安区龙华民治路与民康路交汇处，离梅林关仅3分钟车程，交通便利。是融合现代景观规划要素及欧式园林精华的5万平方米绿色水景园林，精心营造高尚绿色园林社区
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-2 nametl"></div>
+                                                        <div class="col-lg-10">
+                                                            <button class="form-control btn btn-primary w-25">全部空白填补</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-tab-item">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <table id="tableexport3"></table>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">小区</div>
+                                                        <div class="col-lg-8">
+                                                            星河盛世花园
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">户数</div>
+                                                        <div class="col-lg-8">
+                                                            910</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">物业费</div>
+                                                        <div class="col-lg-8">
+                                                            住宅</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">建筑年代</div>
+                                                        <div class="col-lg-8">
+                                                            2004年</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">物业费</div>
+                                                        <div class="col-lg-8">
+                                                            0.88元/平米</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">总户数</div>
+                                                        <div class="col-lg-8">
+                                                            2000</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">建筑类型</div>
+                                                        <div class="col-lg-8">
+                                                            多层，板楼</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">停车位</div>
+                                                        <div class="col-lg-8">
+                                                            523</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">物业电话</div>
+                                                        <div class="col-lg-8">
+                                                            0755-28776262</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 nametl">开发商</div>
+                                                        <div class="col-lg-8">
+                                                            星河盛世花园</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-2 nametl">物业公司</div>
+                                                        <div class="col-lg-10">
+                                                            星河盛世花园</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-2 nametl">小区描述</div>
+                                                        <div class="col-lg-10">
+                                                            皓月花园深圳市宝安区龙华民治路与民康路交汇处，离梅林关仅3分钟车程，交通便利。是融合现代景观规划要素及欧式园林精华的5万平方米绿色水景园林，精心营造高尚绿色园林社区
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-2 nametl"></div>
+                                                        <div class="col-lg-10">
+                                                            <button class="form-control btn btn-primary w-25">加入库存</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row w-100 p-2">
+                    <textarea name="" class="form-control m-2" id="" cols="30" rows="10">2018-09-08 09:08:07 张三丰 深圳 温馨家园 户数：1000 变更为 2000</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="contextMenuDialog hide" id="exportContent">
+        <div class="card-body form-control">
+            <div class="row">
+                <div class="col-lg-6">
+                    <img src="static/image/u3.jpg" style="width: 100%; height: 308px;" alt="">
+                </div>
+                <div class="col-lg-6">
+                    <div class="row">
+                        <input type="text" class="form-control w-25" placeholder="备注信息">
+                        <button class="form-control btn btn-primary ml-1" style="width: 80px;">保存</button>
+                        <input type="checkbox" class="mt-3 ml-2">
+                        <span style="margin-top: 10px;">已备注</span>
+                        <span class="ml-5" style="margin-top: 10px;">100</span>
+                    </div>
+                    <div class="row mt-2">
+                        <table id="tableexport4"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="contextMenuDialog hide" id="createcontent">
+        <div class="card-body form-control">
+            <div class="row">
+                <div class="col-lg-6">
+                    <img src="static/image/u3.jpg" style="width: 100%; height: 430px;" alt="">
+                </div>
+                <div class="col-lg-6">
+                    <div class="row mt-2">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-4 nametl">小区</div>
+                                <div class="col-lg-8">
+                                    <input class="form-control" type="text" class="w-100" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-4 nametl">户数</div>
+                                <div class="col-lg-8">
+                                    <input class="form-control" type="text" class="w-100" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-4 nametl">物业费</div>
+                                <div class="col-lg-8">
+                                    <select name="" class="form-control" id="">
+                                        <option value="">住宅</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-4 nametl">建筑年代</div>
+                                <div class="col-lg-8">
+                                    <select name="" class="form-control" id="">
+                                        <option value="">2014年</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-4 nametl">物业费</div>
+                                <div class="col-lg-8">
+                                    <input class="form-control" type="text" class="w-100" placeholder="元/平米">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-4 nametl">总户数</div>
+                                <div class="col-lg-8">
+                                    <input class="form-control" type="text" class="w-100" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-4 nametl">建筑类型</div>
+                                <div class="col-lg-8">
+                                    <select name="" class="form-control" id="">
+                                        <option value="">多层，板楼</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-4 nametl">停车位</div>
+                                <div class="col-lg-8">
+                                    <input class="form-control" type="text" class="w-100" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-4 nametl">物业电话</div>
+                                <div class="col-lg-8">
+                                    <input class="form-control" type="text" class="w-100" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-4 nametl">开发商</div>
+                                <div class="col-lg-8">
+                                    <input class="form-control" type="text" class="w-100" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-2 nametl">物业公司</div>
+                                <div class="col-lg-10">
+                                    <input class="form-control" type="text" class="w-100" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-2 nametl">小区描述</div>
+                                <div class="col-lg-10">
+                                    <textarea name="" class="form-control" id="" cols="30" rows="5"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 mt-2">
+                            <div class="row">
+                                <div class="col-lg-2 nametl"></div>
+                                <div class="col-lg-10">
+                                    <button class="form-control btn btn-primary w-25">创建</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="contextMenuDialog hide" id="item1">
+        <div class="card-body form-control">
+            <div class="row">
+                <div class="col-lg-6">
+                    <img src="static/image/u3.jpg" style="width: 100%; height: 100%;" alt="">
+                </div>
+                <div class="col-lg-6">
+                    <div class="row mt-2">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">小区</div>
+                                    <div class="col-lg-8">
+                                        星河盛世花园
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">户数</div>
+                                    <div class="col-lg-8">
+                                        910</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">物业类型</div>
+                                    <div class="col-lg-8">
+                                        住宅</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">建筑年代</div>
+                                    <div class="col-lg-8">
+                                        2004年</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">物业费</div>
+                                    <div class="col-lg-8">
+                                        0.88元/平米</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">总户数</div>
+                                    <div class="col-lg-8">
+                                        2000</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">建筑类型</div>
+                                    <div class="col-lg-8">
+                                        多层，板楼</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">停车位</div>
+                                    <div class="col-lg-8">
+                                        523</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">物业电话</div>
+                                    <div class="col-lg-8">
+                                        0755-28776262</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">开发商</div>
+                                    <div class="col-lg-8">
+                                        星河盛世花园</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="row">
+                                    <div class="col-lg-2 nametl">物业公司</div>
+                                    <div class="col-lg-10">
+                                        星河盛世花园</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="row">
+                                    <div class="col-lg-2 nametl">小区描述</div>
+                                    <div class="col-lg-10">
+                                        皓月花园深圳市宝安区龙华民治路与民康路交汇处，离梅林关仅3分钟车程，交通便利。是融合现代景观规划要素及欧式园林精华的5万平方米绿色水景园林，精心营造高尚绿色园林社区
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="contextMenuDialog hide" id="item2">
+        <div class="card-body form-control">
+            <div class="row">
+                <div class="col-lg-6">
+                    <img src="static/image/u3.jpg" style="width: 100%; height: 100%;" alt="">
+                </div>
+                <div class="col-lg-6">
+                    <div class="row mt-2">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">小区</div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" type="text" class="w-100" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">户数</div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" type="text" class="w-100" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">物业费</div>
+                                    <div class="col-lg-8">
+                                        <select name="" class="form-control" id="">
+                                            <option value="">住宅</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">建筑年代</div>
+                                    <div class="col-lg-8">
+                                        <select name="" class="form-control" id="">
+                                            <option value="">2014年</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">物业费</div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" type="text" class="w-100" placeholder="元/平米">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">总户数</div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" type="text" class="w-100" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">建筑类型</div>
+                                    <div class="col-lg-8">
+                                        <select name="" class="form-control" id="">
+                                            <option value="">多层，板楼</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">停车位</div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" type="text" class="w-100" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">物业电话</div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" type="text" class="w-100" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl">开发商</div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" type="text" class="w-100" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="row">
+                                    <div class="col-lg-2 nametl">物业公司</div>
+                                    <div class="col-lg-10">
+                                        <input class="form-control" type="text" class="w-100" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="row">
+                                    <div class="col-lg-2 nametl">小区描述</div>
+                                    <div class="col-lg-10">
+                                        <textarea name="" class="form-control" id="" cols="30" rows="5"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="row mt-2">
+                                    <div class="col-lg-2 nametl"></div>
+                                    <div class="col-lg-10">
+                                        <button class="form-control btn btn-primary w-25">保存</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="contextMenuDialog hide" id="item3">
+        <div class="card-body">
+            <div class="row">
+
+                <div id="showImg" style="max-height: 600px; overflow: auto;">
+                    <div class="img">
+                        <div class="img1">
+                            <img src="static/image/u6894.jpg" alt="">
+                            <div class="show">展示</div>
+                            <div class="setfm">封面</div>
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                    <div class="img">
+                        <div>
+                            <img src="static/image/u6894.jpg" alt="">
+                        </div>
+                        <div>2018-09-08 09:07:06　张晓晓</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <button class="form-control btn btn-primary mr-2" style="width: 120px;">设为封面</button>
+                <button class="form-control btn btn-primary mr-2" style="width: 120px;">上传</button>
+                <button class="form-control btn btn-primary mr-2" style="width: 120px;">删除</button>
+                <button class="form-control btn btn-primary mr-2" style="width: 120px;">刷新</button>
+                <button class="form-control btn btn-primary mr-2" style="width: 120px;">返回</button>
+                <button class="form-control btn btn-primary mr-2" style="width: 120px;">从库存导入</button>
+            </div>
+            <div class="row mt-2">
+                <table id="tableimg"></table>
+            </div>
+        </div>
+    </div>
+    <div class="contextMenuDialog hide" id="item4">
+        <div class="card-body">
+            <div class="row">
+                <span class="mr-2 lh-38">处理备注</span>
+                <input class="form-control" type="text" style="width: 180px;" placeholder="">
+                <button class="form-control btn btn-primary mr-2" style="width: 80px; margin-left: 8px;">保存</button>
+
+                <span class="lh-38 ml-5">
+                    <input type="checkbox">
+                    <span>已处理</span>
+                </span>
+                <span class="lh-38 ml-5">
+                    2
+                </span>
+            </div>
+            <div class="row mt-2">
+                <table id="tablejc"></table>
+            </div>
+        </div>
+    </div>
+    <div class="contextMenuDialog hide" id="item5">
+        <div class="card-body">
+            <div class="row">
+                <table id="tablelog"></table>
+            </div>
+        </div>
+    </div>
+    <div class="contextMenuDialog hide" id="item6">
+        <div class="card-body form-control">
+            <div class="row">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-8">
+                    <div class="row mt-2 mb-2">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl text-right pt-2">赶集网：</div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" type="text" class="w-100" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl text-right pt-2">百姓网：</div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" type="text" class="w-100" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl text-right pt-2">58：</div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" type="text" class="w-100" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl text-right pt-2">深房信：</div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" type="text" class="w-100" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl text-right pt-2">房天下：</div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" type="text" class="w-100" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-4 nametl text-right pt-2">新浪：</div>
+                                    <div class="col-lg-8">
+                                        <input class="form-control" type="text" class="w-100" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="row mt-2">
+                                    <div class="col-lg-2 nametl"></div>
+                                    <div class="col-lg-10">
+                                        <button class="form-control btn btn-primary w-25">保存</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="contextMenuDialog hide" id="item7">
+        <div class="card-body">
+            <div class="row">
+                <div class="input-group col-lg-12">
+                    <div class="row w-100 mb-2">
+                        <div class="col-lg-3 text-right pt-2">
+                            <span class="ncon">美丽365花园</span>
+                        </div>
+                        <div class="col-lg-8 listrow">
+                            <span class="ncon mr-2" style="min-width: 170px;">
+                                <select class="form-control">
+                                    <option selected="">安居客</option>
+                                </select>
+                            </span>
+                            <input class="form-control float-left mr-2 w-50" type="text" placeholder="小区名">
+                            <button class="btn btn-primary float-left mr-2">保存</button>
+                            <button class="btn btn-danger float-left">删除</button>
+                        </div>
+                        <!--<div class="col-lg-3 listrow">
+                            <input class="form-control float-left mr-2 w-50" type="text" placeholder="小区名">
+                            <button class="btn btn-primary float-left">保存</button>
+                        </div>-->
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <table id="third"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

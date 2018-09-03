@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.CustMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Cust">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="Cust" jdbcType="VARCHAR" property="cust" />
+		<result column="CustNo" jdbcType="VARCHAR" property="custno" />
+		<result column="Sex" jdbcType="CHAR" property="sex" />
+		<result column="Mobile" jdbcType="VARCHAR" property="mobile" />
+		<result column="Icon" jdbcType="VARCHAR" property="icon" />
+		<result column="Pwd" jdbcType="CHAR" property="pwd" />
+		<result column="Contact" jdbcType="VARCHAR" property="contact" />
+		<result column="RegDate" jdbcType="TIMESTAMP" property="regdate" />
+		<result column="Address" jdbcType="VARCHAR" property="address" />
+		<result column="Country" jdbcType="VARCHAR" property="country" />
+		<result column="Email" jdbcType="VARCHAR" property="email" />
+		<result column="Sign" jdbcType="VARCHAR" property="sign" />
+		<result column="WXOpenID" jdbcType="CHAR" property="wxopenid" />
+		<result column="EmpStoreID" jdbcType="CHAR" property="empstoreid" />
+		<result column="EmpStore" jdbcType="VARCHAR" property="empstore" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Cust, CustNo, Sex, Mobile, Icon, Pwd, Contact, RegDate, Address, Country, Email,
+		Sign, WXOpenID, EmpStoreID, EmpStore, Remark
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Cust
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<select id="login" parameterType="com.xiaoyi.ssm.model.Cust" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Cust
+		where Mobile = #{mobile,jdbcType=VARCHAR} AND Pwd = #{pwd,jdbcType=VARCHAR} LIMIT 1
+	</select>
+	<select id="getPhoneRegister" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Cust
+		where Mobile = #{mobile,jdbcType=VARCHAR} LIMIT 1
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Cust
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Cust">
+		insert into Cust (ID, Cust, CustNo,
+		Sex, Mobile, Icon, Pwd,
+		Contact, RegDate, Address,
+		Country, Email, Sign,
+		WXOpenID, EmpStoreID, EmpStore,
+		Remark)
+		values (#{id,jdbcType=CHAR}, #{cust,jdbcType=VARCHAR}, #{custno,jdbcType=VARCHAR},
+		#{sex,jdbcType=CHAR}, #{mobile,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{pwd,jdbcType=CHAR},
+		#{contact,jdbcType=VARCHAR}, #{regdate,jdbcType=TIMESTAMP}, #{address,jdbcType=VARCHAR},
+		#{country,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{sign,jdbcType=VARCHAR},
+		#{wxopenid,jdbcType=CHAR}, #{empstoreid,jdbcType=CHAR}, #{empstore,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Cust" >
+		insert into Cust
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="cust != null">
+				Cust,
+			</if>
+			<if test="custno != null">
+				CustNo,
+			</if>
+			<if test="sex != null">
+				Sex,
+			</if>
+			<if test="mobile != null">
+				Mobile,
+			</if>
+			<if test="icon != null">
+				Icon,
+			</if>
+			<if test="pwd != null">
+				Pwd,
+			</if>
+			<if test="contact != null">
+				Contact,
+			</if>
+			<if test="regdate != null">
+				RegDate,
+			</if>
+			<if test="address != null">
+				Address,
+			</if>
+			<if test="country != null">
+				Country,
+			</if>
+			<if test="email != null">
+				Email,
+			</if>
+			<if test="sign != null">
+				Sign,
+			</if>
+			<if test="wxopenid != null">
+				WXOpenID,
+			</if>
+			<if test="empstoreid != null">
+				EmpStoreID,
+			</if>
+			<if test="empstore != null">
+				EmpStore,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="cust != null">
+				#{cust,jdbcType=VARCHAR},
+			</if>
+			<if test="custno != null">
+				#{custno,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=CHAR},
+			</if>
+			<if test="mobile != null">
+				#{mobile,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				#{icon,jdbcType=VARCHAR},
+			</if>
+			<if test="pwd != null">
+				#{pwd,jdbcType=CHAR},
+			</if>
+			<if test="contact != null">
+				#{contact,jdbcType=VARCHAR},
+			</if>
+			<if test="regdate != null">
+				#{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="country != null">
+				#{country,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				#{email,jdbcType=VARCHAR},
+			</if>
+			<if test="sign != null">
+				#{sign,jdbcType=VARCHAR},
+			</if>
+			<if test="wxopenid != null">
+				#{wxopenid,jdbcType=CHAR},
+			</if>
+			<if test="empstoreid != null">
+				#{empstoreid,jdbcType=CHAR},
+			</if>
+			<if test="empstore != null">
+				#{empstore,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Cust">
+		update Cust
+		<set>
+			<if test="cust != null">
+				Cust = #{cust,jdbcType=VARCHAR},
+			</if>
+			<if test="custno != null">
+				CustNo = #{custno,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				Sex = #{sex,jdbcType=CHAR},
+			</if>
+			<if test="mobile != null">
+				Mobile = #{mobile,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				Icon = #{icon,jdbcType=VARCHAR},
+			</if>
+			<if test="pwd != null">
+				Pwd = #{pwd,jdbcType=CHAR},
+			</if>
+			<if test="contact != null">
+				Contact = #{contact,jdbcType=VARCHAR},
+			</if>
+			<if test="regdate != null">
+				RegDate = #{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="address != null">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="country != null">
+				Country = #{country,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				Email = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="sign != null">
+				Sign = #{sign,jdbcType=VARCHAR},
+			</if>
+			<if test="wxopenid != null">
+				WXOpenID = #{wxopenid,jdbcType=CHAR},
+			</if>
+			<if test="empstoreid != null">
+				EmpStoreID = #{empstoreid,jdbcType=CHAR},
+			</if>
+			<if test="empstore != null">
+				EmpStore = #{empstore,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Cust">
+		update Cust
+		set Cust = #{cust,jdbcType=VARCHAR},
+		CustNo = #{custno,jdbcType=VARCHAR},
+		Sex = #{sex,jdbcType=CHAR},
+		Mobile = #{mobile,jdbcType=VARCHAR},
+		Icon = #{icon,jdbcType=VARCHAR},
+		Pwd = #{pwd,jdbcType=CHAR},
+		Contact = #{contact,jdbcType=VARCHAR},
+		RegDate = #{regdate,jdbcType=TIMESTAMP},
+		Address = #{address,jdbcType=VARCHAR},
+		Country = #{country,jdbcType=VARCHAR},
+		Email = #{email,jdbcType=VARCHAR},
+		Sign = #{sign,jdbcType=VARCHAR},
+		WXOpenID = #{wxopenid,jdbcType=CHAR},
+		EmpStoreID = #{empstoreid,jdbcType=CHAR},
+		EmpStore = #{empstore,jdbcType=VARCHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

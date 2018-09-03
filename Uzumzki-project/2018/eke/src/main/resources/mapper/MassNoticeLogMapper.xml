@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassNoticeLogMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassNoticeLog">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="ModTime" jdbcType="TIMESTAMP" property="modtime" />
+		<result column="MassNoticeID" jdbcType="VARCHAR" property="massnoticeid" />
+		<result column="EditID" jdbcType="VARCHAR" property="editid" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<association property="staff" javaType="com.xiaoyi.ssm.model.Staff">
+			<id property="staffid" column="ID" />
+			<result column="sRName" property="rname" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, ModTime, MassNoticeID, EditID, Remark
+	</sql>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.MassNoticeLog" resultMap="BaseResultMap">
+		SELECT mnl.*, s.`RName` sRName FROM MassNoticeLog mnl LEFT JOIN Staff s ON mnl.`EditID` = s.`StaffID`
+		<where>
+			<if test="massnoticeid != null">
+				mnl.MassNoticeID = ${massnoticeid}
+			</if>
+		</where>
+	</select>
+	
+	<select id="countLogByNotice" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0) from MassNoticeLog where
+		MassNoticeID = #{massNoticeID,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassNoticeLog
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from MassNoticeLog
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassNoticeLog">
+		insert into MassNoticeLog (ID, ModTime, MassNoticeID,
+		EditID, Remark)
+		values (#{id,jdbcType=CHAR}, #{modtime,jdbcType=TIMESTAMP}, #{massnoticeid,jdbcType=VARCHAR},
+		#{editid,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassNoticeLog">
+		insert into MassNoticeLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="modtime != null">
+				ModTime,
+			</if>
+			<if test="massnoticeid != null">
+				MassNoticeID,
+			</if>
+			<if test="editid != null">
+				EditID,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="modtime != null">
+				#{modtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="massnoticeid != null">
+				#{massnoticeid,jdbcType=VARCHAR},
+			</if>
+			<if test="editid != null">
+				#{editid,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassNoticeLog">
+		update MassNoticeLog
+		<set>
+			<if test="modtime != null">
+				ModTime = #{modtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="massnoticeid != null">
+				MassNoticeID = #{massnoticeid,jdbcType=VARCHAR},
+			</if>
+			<if test="editid != null">
+				EditID = #{editid,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassNoticeLog">
+		update MassNoticeLog
+		set ModTime = #{modtime,jdbcType=TIMESTAMP},
+		MassNoticeID = #{massnoticeid,jdbcType=VARCHAR},
+		EditID = #{editid,jdbcType=VARCHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

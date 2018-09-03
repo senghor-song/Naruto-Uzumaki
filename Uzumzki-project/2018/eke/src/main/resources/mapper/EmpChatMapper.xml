@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EmpChatMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EmpChat">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="ChatNO" jdbcType="INTEGER" property="chatno" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="StaffID" jdbcType="CHAR" property="staffid" />
+		<result column="Staff" jdbcType="VARCHAR" property="staff" />
+		<result column="RegDate" jdbcType="TIMESTAMP" property="regdate" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, ChatNO, EmpID, StaffID, Staff, RegDate, Content
+	</sql>
+	<select id="countByEmp" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0) from EmpChat where EmpID = #{id,jdbcType=CHAR}
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EmpChat
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from EmpChat
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EmpChat">
+		insert into EmpChat (ID, ChatNO, EmpID,
+		StaffID, Staff, RegDate,
+		Content)
+		values (#{id,jdbcType=CHAR}, #{chatno,jdbcType=INTEGER}, #{empid,jdbcType=CHAR},
+		#{staffid,jdbcType=CHAR}, #{staff,jdbcType=VARCHAR}, #{regdate,jdbcType=TIMESTAMP},
+		#{content,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EmpChat">
+		insert into EmpChat
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="chatno != null">
+				ChatNO,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="staffid != null">
+				StaffID,
+			</if>
+			<if test="staff != null">
+				Staff,
+			</if>
+			<if test="regdate != null">
+				RegDate,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="chatno != null">
+				#{chatno,jdbcType=INTEGER},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="staffid != null">
+				#{staffid,jdbcType=CHAR},
+			</if>
+			<if test="staff != null">
+				#{staff,jdbcType=VARCHAR},
+			</if>
+			<if test="regdate != null">
+				#{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EmpChat">
+		update EmpChat
+		<set>
+			<if test="chatno != null">
+				ChatNO = #{chatno,jdbcType=INTEGER},
+			</if>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="staffid != null">
+				StaffID = #{staffid,jdbcType=CHAR},
+			</if>
+			<if test="staff != null">
+				Staff = #{staff,jdbcType=VARCHAR},
+			</if>
+			<if test="regdate != null">
+				RegDate = #{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EmpChat">
+		update EmpChat
+		set ChatNO = #{chatno,jdbcType=INTEGER},
+		EmpID = #{empid,jdbcType=CHAR},
+		StaffID = #{staffid,jdbcType=CHAR},
+		Staff = #{staff,jdbcType=VARCHAR},
+		RegDate = #{regdate,jdbcType=TIMESTAMP},
+		Content = #{content,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

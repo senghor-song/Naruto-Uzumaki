@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EmpScoreMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EmpScore">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="Time" jdbcType="TIMESTAMP" property="time" />
+		<result column="Change" jdbcType="INTEGER" property="change" />
+		<result column="Score" jdbcType="INTEGER" property="score" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, EmpID, Time, Change, Score, Remark
+	</sql>
+
+	<select id="selectScoreByEmp" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM EmpScore where EmpID = #{empId,jdbcType=CHAR} ORDER BY `time` DESC
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EmpScore
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from EmpScore
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EmpScore">
+		insert into EmpScore (ID, EmpID, Time,
+		Change, Score, Remark
+		)
+		values (#{id,jdbcType=CHAR}, #{empid,jdbcType=CHAR}, #{time,jdbcType=TIMESTAMP},
+		#{change,jdbcType=INTEGER}, #{score,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EmpScore">
+		insert into EmpScore
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="time != null">
+				Time,
+			</if>
+			<if test="change != null">
+				Change,
+			</if>
+			<if test="score != null">
+				Score,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="time != null">
+				#{time,jdbcType=TIMESTAMP},
+			</if>
+			<if test="change != null">
+				#{change,jdbcType=INTEGER},
+			</if>
+			<if test="score != null">
+				#{score,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EmpScore">
+		update EmpScore
+		<set>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="time != null">
+				Time = #{time,jdbcType=TIMESTAMP},
+			</if>
+			<if test="change != null">
+				Change = #{change,jdbcType=INTEGER},
+			</if>
+			<if test="score != null">
+				Score = #{score,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EmpScore">
+		update EmpScore
+		set EmpID = #{empid,jdbcType=CHAR},
+		Time = #{time,jdbcType=TIMESTAMP},
+		Change = #{change,jdbcType=INTEGER},
+		Score = #{score,jdbcType=INTEGER},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

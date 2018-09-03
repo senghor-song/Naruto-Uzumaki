@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassNoticeEmpMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassNoticeEmp">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="NoticeID" jdbcType="CHAR" property="noticeid" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="StaffID" jdbcType="CHAR" property="staffid" />
+		<result column="State" jdbcType="TINYINT" property="state" />
+		<result column="ReceiveTime" jdbcType="TIMESTAMP" property="receivetime" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<association property="employee" javaType="com.xiaoyi.ssm.model.Employee">
+			<id property="id" column="ID" />
+			<result column="eEmp" property="emp" />
+		</association>
+		<association property="staff" javaType="com.xiaoyi.ssm.model.Staff">
+			<id property="staffid" column="ID" />
+			<result column="sRName" property="rname" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CreateTime, NoticeID, EmpID, StaffID, State, ReceiveTime, Remark
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT mne.*,e.`Emp` eEmp , s.`RName` sRName FROM MassNoticeEmp mne LEFT JOIN Employee e ON mne.`EmpID` = e.`ID` LEFT JOIN Staff s ON mne.`StaffID` = s.`StaffID`
+		where mne.ID = #{id,jdbcType=CHAR}
+	</select>
+
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.MassNoticeEmp" resultMap="BaseResultMap">
+		SELECT mne.*,e.`Emp` eEmp , s.`RName` sRName FROM MassNoticeEmp mne LEFT JOIN Employee e ON mne.`EmpID` = e.`ID` LEFT JOIN Staff s ON mne.`StaffID` = s.`StaffID`
+		<where>
+			<if test="noticeid != null">
+				mne.NoticeID = ${noticeid}
+			</if>
+		</where>
+	</select>
+	
+	<select id="countEmpByNoice" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0) from MassNoticeEmp where NoticeID = #{massNoticeID,jdbcType=CHAR}
+	</select>
+	
+	<select id="countEmpByNoiceRead" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0) from MassNoticeEmp where NoticeID = #{massNoticeID,jdbcType=CHAR} AND state = 1
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from MassNoticeEmp
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassNoticeEmp">
+		insert into MassNoticeEmp (ID, CreateTime, NoticeID,
+		EmpID, StaffID, State, ReceiveTime,
+		Remark)
+		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{noticeid,jdbcType=CHAR},
+		#{empid,jdbcType=CHAR}, #{staffid,jdbcType=CHAR}, #{state,jdbcType=TINYINT}, #{receivetime,jdbcType=TIMESTAMP},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassNoticeEmp">
+		insert into MassNoticeEmp
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="noticeid != null">
+				NoticeID,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="staffid != null">
+				StaffID,
+			</if>
+			<if test="state != null">
+				State,
+			</if>
+			<if test="receivetime != null">
+				ReceiveTime,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="noticeid != null">
+				#{noticeid,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="staffid != null">
+				#{staffid,jdbcType=CHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=TINYINT},
+			</if>
+			<if test="receivetime != null">
+				#{receivetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassNoticeEmp">
+		update MassNoticeEmp
+		<set>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="noticeid != null">
+				NoticeID = #{noticeid,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="staffid != null">
+				StaffID = #{staffid,jdbcType=CHAR},
+			</if>
+			<if test="state != null">
+				State = #{state,jdbcType=TINYINT},
+			</if>
+			<if test="receivetime != null">
+				ReceiveTime = #{receivetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassNoticeEmp">
+		update MassNoticeEmp
+		set CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		NoticeID = #{noticeid,jdbcType=CHAR},
+		EmpID = #{empid,jdbcType=CHAR},
+		StaffID = #{staffid,jdbcType=CHAR},
+		State = #{state,jdbcType=TINYINT},
+		ReceiveTime = #{receivetime,jdbcType=TIMESTAMP},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

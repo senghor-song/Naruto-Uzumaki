@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.TrainMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Train">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="TrainNO" jdbcType="INTEGER" property="trainno" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="ModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
+		<result column="VenueID" jdbcType="VARCHAR" property="venueid" />
+		<result column="ManagerID" jdbcType="VARCHAR" property="managerid" />
+		<result column="Price" jdbcType="DOUBLE" property="price" />
+		<result column="TrainBaseID" jdbcType="VARCHAR" property="trainbaseid" />
+		<result column="Image" jdbcType="VARCHAR" property="image" />
+		<result column="Content" jdbcType="LONGVARCHAR" property="content" />
+		<result column="ContentText" jdbcType="VARCHAR" property="contenttext" />
+		<association property="venue" javaType="com.xiaoyi.ssm.model.Venue">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="vName" jdbcType="VARCHAR" property="name" />
+		</association>
+		<association property="manager" javaType="com.xiaoyi.ssm.model.Manager">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="mName" jdbcType="VARCHAR" property="name" />
+		</association>
+		<association property="city" javaType="com.xiaoyi.ssm.model.City">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="cCity" jdbcType="VARCHAR" property="city" />
+		</association>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		ID, TrainNO, CreateTime, ModifyTime, VenueID, ManagerID, Price, TrainBaseID, Image,
+		Content,ContentText
+	</sql>
+
+	<select id="countAmountByVenue" parameterType="java.lang.String" resultType="Double">
+		SELECT SUM(t.`Price`) FROM Train t INNER JOIN
+		TrainJoin tj ON t.`ID` = tj.`TrainID` WHERE t.`VenueID` = #{venueid} AND tj.`Type` IN (0,2)
+	</select>
+
+	<select id="countByVenue" parameterType="java.lang.String" resultType="Integer">
+		select count(0) from Train where VenueID = #{id}
+	</select>
+
+	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT t.*, v.`Name` vName, m.`Name` mName,
+		c.`City`
+		cCity FROM Train t
+		LEFT JOIN Venue v ON t.`VenueID` = v.`ID`
+		LEFT JOIN Manager m ON t.`ManagerID` = m.`ID`
+		LEFT JOIN City c ON
+		v.`CityID` = c.`ID`
+		where t.VenueID = #{venueid}
+	</select>
+
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Train" resultMap="BaseResultMap">
+		SELECT t.*, v.`Name` vName, m.`Name` mName,
+		c.`City` cCity FROM Train t
+		LEFT JOIN Venue v ON t.`VenueID` = v.`ID`
+		LEFT JOIN Manager
+		m ON t.`ManagerID` = m.`ID`
+		LEFT JOIN City c ON v.`CityID` = c.`ID`
+		<where>
+			<if test="trainno != null">
+				AND t.TrainNO = #{trainno,jdbcType=INTEGER}
+			</if>
+			<if test="createtime != null">
+				AND t.CreateTime = #{createtime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="modifytime != null">
+				AND t.ModifyTime = #{modifytime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="venueid != null">
+				AND t.VenueID = #{venueid,jdbcType=VARCHAR}
+			</if>
+			<if test="managerid != null">
+				AND t.ManagerID = #{managerid,jdbcType=VARCHAR}
+			</if>
+			<if test="price != null">
+				AND t.Price = #{price,jdbcType=DOUBLE}
+			</if>
+			<if test="trainbaseid != null">
+				AND t.TrainBaseID = #{trainbaseid,jdbcType=VARCHAR}
+			</if>
+			<if test="content != null">
+				AND t.Content = #{content,jdbcType=LONGVARCHAR}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Train
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Train
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Train">
+		insert into Train (ID, TrainNO, CreateTime,
+		ModifyTime, VenueID, ManagerID,
+		ContentText,
+		Price, TrainBaseID,
+		Image, Content)
+		values (#{id,jdbcType=CHAR}, #{trainno,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP},
+		#{modifytime,jdbcType=TIMESTAMP}, #{venueid,jdbcType=VARCHAR}, #{managerid,jdbcType=VARCHAR},
+		#{contenttext,jdbcType=VARCHAR},
+		#{price,jdbcType=DOUBLE}, #{trainbaseid,jdbcType=VARCHAR},
+		#{image,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Train">
+		insert into Train
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="trainno != null">
+				TrainNO,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="modifytime != null">
+				ModifyTime,
+			</if>
+			<if test="venueid != null">
+				VenueID,
+			</if>
+			<if test="managerid != null">
+				ManagerID,
+			</if>
+			<if test="contenttext != null">
+				ContentText,
+			</if>
+			<if test="price != null">
+				Price,
+			</if>
+			<if test="trainbaseid != null">
+				TrainBaseID,
+			</if>
+			<if test="image != null">
+				Image,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="trainno != null">
+				#{trainno,jdbcType=INTEGER},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				#{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueid != null">
+				#{venueid,jdbcType=VARCHAR},
+			</if>
+			<if test="managerid != null">
+				#{managerid,jdbcType=VARCHAR},
+			</if>
+			<if test="contenttext != null">
+				#{contenttext,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=DOUBLE},
+			</if>
+			<if test="trainbaseid != null">
+				#{trainbaseid,jdbcType=VARCHAR},
+			</if>
+			<if test="image != null">
+				#{image,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Train">
+		update Train
+		<set>
+			<if test="trainno != null">
+				TrainNO = #{trainno,jdbcType=INTEGER},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueid != null">
+				VenueID = #{venueid,jdbcType=VARCHAR},
+			</if>
+			<if test="managerid != null">
+				ManagerID = #{managerid,jdbcType=VARCHAR},
+			</if>
+			<if test="contenttext != null">
+				ContentText = #{contenttext,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				Price = #{price,jdbcType=DOUBLE},
+			</if>
+			<if test="trainbaseid != null">
+				TrainBaseID = #{trainbaseid,jdbcType=VARCHAR},
+			</if>
+			<if test="image != null">
+				Image = #{image,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.xiaoyi.ssm.model.Train">
+		update Train
+		set TrainNO = #{trainno,jdbcType=INTEGER},
+		CreateTime =
+		#{createtime,jdbcType=TIMESTAMP},
+		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+		VenueID = #{venueid,jdbcType=VARCHAR},
+		ManagerID =
+		#{managerid,jdbcType=VARCHAR},
+		ContentText = #{contenttext,jdbcType=VARCHAR},
+		Price = #{price,jdbcType=DOUBLE},
+		TrainBaseID =
+		#{trainbaseid,jdbcType=VARCHAR},
+		Image = #{image,jdbcType=VARCHAR},
+		Content = #{content,jdbcType=LONGVARCHAR}
+		where ID =
+		#{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Train">
+		update Train
+		set TrainNO = #{trainno,jdbcType=INTEGER},
+		CreateTime =
+		#{createtime,jdbcType=TIMESTAMP},
+		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+		VenueID = #{venueid,jdbcType=VARCHAR},
+		ManagerID =
+		#{managerid,jdbcType=VARCHAR},
+		ContentText = #{contenttext,jdbcType=VARCHAR},
+		Price = #{price,jdbcType=DOUBLE},
+		TrainBaseID =
+		#{trainbaseid,jdbcType=VARCHAR},
+		Image = #{image,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

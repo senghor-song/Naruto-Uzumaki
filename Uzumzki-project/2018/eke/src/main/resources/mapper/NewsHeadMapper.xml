@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.NewsHeadMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.NewsHead">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="NewsHeadNo" jdbcType="INTEGER" property="newsheadno" />
+		<result column="Status" jdbcType="CHAR" property="status" />
+		<result column="Title" jdbcType="VARCHAR" property="title" />
+		<result column="Source" jdbcType="VARCHAR" property="source" />
+		<result column="StaffID" jdbcType="CHAR" property="staffid" />
+		<result column="RegDate" jdbcType="TIMESTAMP" property="regdate" />
+		<result column="ShowDate" jdbcType="TIMESTAMP" property="showdate" />
+		<result column="CoverPath" jdbcType="VARCHAR" property="coverpath" />
+		<result column="FlagTop" jdbcType="TINYINT" property="flagtop" />
+		<result column="ViewCount" jdbcType="INTEGER" property="viewcount" />
+		<result column="ShareCount" jdbcType="INTEGER" property="sharecount" />
+		<result column="FlagDeleted" jdbcType="TINYINT" property="flagdeleted" />
+		<result column="DeletedTime" jdbcType="TIMESTAMP" property="deletedtime" />
+		<result column="Sort" jdbcType="INTEGER" property="sort" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.xiaoyi.ssm.model.NewsHead">
+		<result column="Content" jdbcType="LONGVARCHAR" property="content" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, NewsHeadNo, Status, Title, Source, StaffID, RegDate, ShowDate, CoverPath, FlagTop,
+		ViewCount, ShareCount,
+		FlagDeleted, DeletedTime, Sort, Remark
+	</sql>
+	<sql id="Blob_Column_List">
+		Content
+	</sql>
+
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.NewsHead" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from NewsHead
+		<where>
+			<if test="newsheadno != null">
+				AND NewsHeadNo = #{newsheadno,jdbcType=VARCHAR}
+			</if>
+			<if test="status != null">
+				AND Status = #{status,jdbcType=CHAR}
+			</if>
+			<if test="title != null">
+				AND Title = #{title,jdbcType=VARCHAR}
+			</if>
+			<if test="source != null">
+				AND Source = #{source,jdbcType=VARCHAR}
+			</if>
+			<if test="staffid != null">
+				AND StaffID = #{staffid,jdbcType=CHAR}
+			</if>
+			<if test="regdate != null">
+				AND RegDate = #{regdate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="showdate != null">
+				AND ShowDate = #{showdate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="coverpath != null">
+				AND CoverPath = #{coverpath,jdbcType=VARCHAR}
+			</if>
+			<if test="content != null">
+				AND Content = #{content,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="flagtop != null">
+				AND FlagTop = #{flagtop,jdbcType=TINYINT}
+			</if>
+			<if test="viewcount != null">
+				AND ViewCount = #{viewcount,jdbcType=INTEGER}
+			</if>
+			<if test="sharecount != null">
+				AND ShareCount = #{sharecount,jdbcType=INTEGER}
+			</if>
+			<if test="flagdeleted != null">
+				AND FlagDeleted = #{flagdeleted,jdbcType=TINYINT}
+			</if>
+			<if test="deletedtime != null">
+				AND DeletedTime = #{deletedtime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="remark != null">
+				AND Remark = #{remark,jdbcType=VARCHAR}
+			</if>
+			<if test="sort != null">
+				AND Sort = #{sort,jdbcType=INTEGER}
+			</if>
+		</where>
+		order by NewsHeadNo desc
+	</select>
+	
+	<select id="selectBySearch" parameterType="com.xiaoyi.ssm.dto.AdminNewsHeadDto" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from NewsHead
+		<where>
+			<if test="selectType == 0">
+				AND CAST(NewsHeadNo AS CHAR(10)) LIKE CONCAT('%',CONCAT('${keyword}','%'))
+			</if>
+			<if test="selectType == 1">
+				AND Title like concat('%',concat('${keyword}','%'))
+			</if>
+		</where>
+		order by NewsHeadNo desc
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from NewsHead
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from NewsHead
+		where ID =
+		#{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.NewsHead">
+		insert into NewsHead (ID, NewsHeadNo, Status,
+		Title,
+		Source, StaffID,
+		RegDate, ShowDate,
+		CoverPath,
+		FlagTop, ViewCount, ShareCount,
+		FlagDeleted,
+		DeletedTime, Sort,
+		Remark, Content)
+		values (#{id,jdbcType=CHAR},
+		#{newsheadno,jdbcType=INTEGER},
+		#{status,jdbcType=CHAR},
+		#{title,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR},
+		#{staffid,jdbcType=CHAR},
+		#{regdate,jdbcType=TIMESTAMP}, #{showdate,jdbcType=TIMESTAMP},
+		#{coverpath,jdbcType=VARCHAR},
+		#{flagtop,jdbcType=TINYINT}, #{viewcount,jdbcType=INTEGER},
+		#{sharecount,jdbcType=INTEGER},
+		#{flagdeleted,jdbcType=TINYINT},
+		#{deletedtime,jdbcType=TIMESTAMP},
+		#{sort,jdbcType=INTEGER},
+		#{remark,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.NewsHead">
+		insert into NewsHead
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="newsheadno != null">
+				NewsHeadNo,
+			</if>
+			<if test="status != null">
+				Status,
+			</if>
+			<if test="title != null">
+				Title,
+			</if>
+			<if test="source != null">
+				Source,
+			</if>
+			<if test="staffid != null">
+				StaffID,
+			</if>
+			<if test="regdate != null">
+				RegDate,
+			</if>
+			<if test="showdate != null">
+				ShowDate,
+			</if>
+			<if test="coverpath != null">
+				CoverPath,
+			</if>
+			<if test="flagtop != null">
+				FlagTop,
+			</if>
+			<if test="viewcount != null">
+				ViewCount,
+			</if>
+			<if test="sharecount != null">
+				ShareCount,
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted,
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime,
+			</if>
+			<if test="sort != null">
+				Sort,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="newsheadno != null">
+				#{newsheadno,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=CHAR},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="source != null">
+				#{source,jdbcType=VARCHAR},
+			</if>
+			<if test="staffid != null">
+				#{staffid,jdbcType=CHAR},
+			</if>
+			<if test="regdate != null">
+				#{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="showdate != null">
+				#{showdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="coverpath != null">
+				#{coverpath,jdbcType=VARCHAR},
+			</if>
+			<if test="flagtop != null">
+				#{flagtop,jdbcType=TINYINT},
+			</if>
+			<if test="viewcount != null">
+				#{viewcount,jdbcType=INTEGER},
+			</if>
+			<if test="sharecount != null">
+				#{sharecount,jdbcType=INTEGER},
+			</if>
+			<if test="flagdeleted != null">
+				#{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				#{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sort != null">
+				#{sort,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.NewsHead">
+		update NewsHead
+		<set>
+			<if test="newsheadno != null">
+				NewsHeadNo = #{newsheadno,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				Status = #{status,jdbcType=CHAR},
+			</if>
+			<if test="title != null">
+				Title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="source != null">
+				Source = #{source,jdbcType=VARCHAR},
+			</if>
+			<if test="staffid != null">
+				StaffID = #{staffid,jdbcType=CHAR},
+			</if>
+			<if test="regdate != null">
+				RegDate = #{regdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="showdate != null">
+				ShowDate = #{showdate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="coverpath != null">
+				CoverPath = #{coverpath,jdbcType=VARCHAR},
+			</if>
+			<if test="flagtop != null">
+				FlagTop = #{flagtop,jdbcType=TINYINT},
+			</if>
+			<if test="viewcount != null">
+				ViewCount = #{viewcount,jdbcType=INTEGER},
+			</if>
+			<if test="sharecount != null">
+				ShareCount = #{sharecount,jdbcType=INTEGER},
+			</if>
+			<if test="flagdeleted != null">
+				FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+			</if>
+			<if test="deletedtime != null">
+				DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sort != null">
+				Sort = #{sort,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.xiaoyi.ssm.model.NewsHead">
+		update NewsHead
+		set NewsHeadNo =
+		#{newsheadno,jdbcType=INTEGER},
+		Status = #{status,jdbcType=CHAR},
+		Title = #{title,jdbcType=VARCHAR},
+		Source = #{source,jdbcType=VARCHAR},
+		StaffID =
+		#{staffid,jdbcType=CHAR},
+		RegDate =
+		#{regdate,jdbcType=TIMESTAMP},
+		ShowDate = #{showdate,jdbcType=TIMESTAMP},
+		CoverPath =
+		#{coverpath,jdbcType=VARCHAR},
+		FlagTop = #{flagtop,jdbcType=TINYINT},
+		ViewCount =
+		#{viewcount,jdbcType=INTEGER},
+		ShareCount =
+		#{sharecount,jdbcType=INTEGER},
+		FlagDeleted =
+		#{flagdeleted,jdbcType=TINYINT},
+		DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+		Sort =
+		#{sort,jdbcType=INTEGER},
+		Remark = #{remark,jdbcType=VARCHAR},
+		Content =
+		#{content,jdbcType=LONGVARCHAR}
+		where ID =
+		#{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.NewsHead">
+		update NewsHead
+		set NewsHeadNo =
+		#{newsheadno,jdbcType=INTEGER},
+		Status =
+		#{status,jdbcType=CHAR},
+		Title = #{title,jdbcType=VARCHAR},
+		Source = #{source,jdbcType=VARCHAR},
+		StaffID =
+		#{staffid,jdbcType=CHAR},
+		RegDate =
+		#{regdate,jdbcType=TIMESTAMP},
+		ShowDate = #{showdate,jdbcType=TIMESTAMP},
+		CoverPath =
+		#{coverpath,jdbcType=VARCHAR},
+		FlagTop = #{flagtop,jdbcType=TINYINT},
+		ViewCount =
+		#{viewcount,jdbcType=INTEGER},
+		ShareCount =
+		#{sharecount,jdbcType=INTEGER},
+		FlagDeleted =
+		#{flagdeleted,jdbcType=TINYINT},
+		DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
+		Sort =
+		#{sort,jdbcType=INTEGER},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

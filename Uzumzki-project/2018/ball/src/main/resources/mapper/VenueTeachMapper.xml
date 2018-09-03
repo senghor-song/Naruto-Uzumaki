@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.VenueTeachMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.VenueTeach">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="Setting" jdbcType="INTEGER" property="setting" />
+		<result column="ManagerID" jdbcType="VARCHAR" property="managerid" />
+		<result column="VenueTimeFrame" jdbcType="VARCHAR" property="venuetimeframe" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CreateTime, Content, Setting, ManagerID, VenueTimeFrame
+	</sql>
+	
+	<select id="selectContentByManager" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select DISTINCT Content from VenueTeach where ManagerID = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueTeach
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from VenueTeach
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueTeach">
+		insert into VenueTeach (ID, CreateTime, Content,
+		Setting, ManagerID, VenueTimeFrame
+		)
+		values (#{id,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{content,jdbcType=VARCHAR},
+		#{setting,jdbcType=INTEGER}, #{managerid,jdbcType=VARCHAR}, #{venuetimeframe,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueTeach">
+		insert into VenueTeach
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+			<if test="setting != null">
+				Setting,
+			</if>
+			<if test="managerid != null">
+				ManagerID,
+			</if>
+			<if test="venuetimeframe != null">
+				VenueTimeFrame,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="setting != null">
+				#{setting,jdbcType=INTEGER},
+			</if>
+			<if test="managerid != null">
+				#{managerid,jdbcType=VARCHAR},
+			</if>
+			<if test="venuetimeframe != null">
+				#{venuetimeframe,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.VenueTeach">
+		update VenueTeach
+		<set>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="setting != null">
+				Setting = #{setting,jdbcType=INTEGER},
+			</if>
+			<if test="managerid != null">
+				ManagerID = #{managerid,jdbcType=VARCHAR},
+			</if>
+			<if test="venuetimeframe != null">
+				VenueTimeFrame = #{venuetimeframe,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.VenueTeach">
+		update VenueTeach
+		set CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		Content = #{content,jdbcType=VARCHAR},
+		Setting = #{setting,jdbcType=INTEGER},
+		ManagerID = #{managerid,jdbcType=VARCHAR},
+		VenueTimeFrame = #{venuetimeframe,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

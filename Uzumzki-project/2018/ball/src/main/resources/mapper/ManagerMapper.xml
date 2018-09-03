@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.ManagerMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Manager">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="ModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
+		<result column="Name" jdbcType="VARCHAR" property="name" />
+		<result column="Phone" jdbcType="VARCHAR" property="phone" />
+		<result column="Password" jdbcType="VARCHAR" property="password" />
+		<result column="Type" jdbcType="INTEGER" property="type" />
+		<result column="RealName" jdbcType="INTEGER" property="realname" />
+		<result column="AppAuthToken" jdbcType="VARCHAR" property="appauthtoken" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CreateTime, ModifyTime, Name, Phone, Password, Type, RealName, AppAuthToken
+	</sql>
+
+	<select id="selectByManagerAndVenue" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0) FROM Manager m INNER JOIN
+		ManagerVenue mv ON m.`ID` = mv.`ManagerID`
+		INNER JOIN Venue v ON mv.`VenueID` = v.`ID` WHERE m.`ID` = #{managerid} AND v.`ID` = #{venueid}
+	</select>
+
+	<select id="countByVenue" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0) FROM Manager m INNER JOIN
+		ManagerVenue mv ON m.`ID` = mv.`ManagerID` WHERE mv.`VenueID` = #{id}
+	</select>
+
+	<select id="login" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM Manager WHERE Phone = #{phone} and Password =
+		#{password}
+	</select>
+
+	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT m.* FROM Manager m INNER JOIN
+		ManagerVenue mv
+		ON m.`ID` = mv.`ManagerID` WHERE mv.`VenueID` = #{venueid}
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Manager
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Manager
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Manager">
+		insert into Manager (ID, CreateTime, ModifyTime,
+		Name, Phone, Password,
+		Type, RealName, AppAuthToken
+		)
+		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP},
+		#{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+		#{type,jdbcType=INTEGER}, #{realname,jdbcType=INTEGER}, #{appauthtoken,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Manager">
+		insert into Manager
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="modifytime != null">
+				ModifyTime,
+			</if>
+			<if test="name != null">
+				Name,
+			</if>
+			<if test="phone != null">
+				Phone,
+			</if>
+			<if test="password != null">
+				Password,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="realname != null">
+				RealName,
+			</if>
+			<if test="appauthtoken != null">
+				AppAuthToken,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				#{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				#{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="realname != null">
+				#{realname,jdbcType=INTEGER},
+			</if>
+			<if test="appauthtoken != null">
+				#{appauthtoken,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Manager">
+		update Manager
+		<set>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="name != null">
+				Name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				Phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				Password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="realname != null">
+				RealName = #{realname,jdbcType=INTEGER},
+			</if>
+			<if test="appauthtoken != null">
+				AppAuthToken = #{appauthtoken,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Manager">
+		update Manager
+		set CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+		Name = #{name,jdbcType=VARCHAR},
+		Phone = #{phone,jdbcType=VARCHAR},
+		Password = #{password,jdbcType=VARCHAR},
+		Type = #{type,jdbcType=INTEGER},
+		RealName = #{realname,jdbcType=INTEGER},
+		AppAuthToken = #{appauthtoken,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

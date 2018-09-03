@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.CityLogMapper">
+  <resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.CityLog">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="CityID" jdbcType="CHAR" property="cityid" />
+    <result column="City" jdbcType="VARCHAR" property="city" />
+    <result column="LogTime" jdbcType="TIMESTAMP" property="logtime" />
+    <result column="Content" jdbcType="VARCHAR" property="content" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, CityID, City, LogTime, Content
+  </sql>
+  
+  <select id="selectCityLogByCity" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from CityLog where CityID = #{cityId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="countCityLogByCity" parameterType="java.lang.String" resultType="Integer">
+    select COUNT(0) from CityLog where CityID = #{cityId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from CityLog
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from CityLog
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiaoyi.ssm.model.CityLog">
+    insert into CityLog (ID, CityID, City, 
+      LogTime, Content)
+    values (#{id,jdbcType=VARCHAR}, #{cityid,jdbcType=CHAR}, #{city,jdbcType=VARCHAR}, 
+      #{logtime,jdbcType=TIMESTAMP}, #{content,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.CityLog">
+    insert into CityLog
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="cityid != null">
+        CityID,
+      </if>
+      <if test="city != null">
+        City,
+      </if>
+      <if test="logtime != null">
+        LogTime,
+      </if>
+      <if test="content != null">
+        Content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="cityid != null">
+        #{cityid,jdbcType=CHAR},
+      </if>
+      <if test="city != null">
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="logtime != null">
+        #{logtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.CityLog">
+    update CityLog
+    <set>
+      <if test="cityid != null">
+        CityID = #{cityid,jdbcType=CHAR},
+      </if>
+      <if test="city != null">
+        City = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="logtime != null">
+        LogTime = #{logtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null">
+        Content = #{content,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.CityLog">
+    update CityLog
+    set CityID = #{cityid,jdbcType=CHAR},
+      City = #{city,jdbcType=VARCHAR},
+      LogTime = #{logtime,jdbcType=TIMESTAMP},
+      Content = #{content,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

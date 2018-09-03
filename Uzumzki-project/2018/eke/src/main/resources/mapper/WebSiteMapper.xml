@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.WebSiteMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.WebSite">
+		<id column="wsID" jdbcType="VARCHAR" property="id" />
+		<result column="wsWebName" jdbcType="VARCHAR" property="webname" />
+		<result column="wsLogoUrl" jdbcType="VARCHAR" property="logourl" />
+		<result column="wsLoginUrl" jdbcType="VARCHAR" property="loginurl" />
+		<result column="wsRegisterUrl" jdbcType="VARCHAR" property="registerurl" />
+		<result column="wsRefresh" jdbcType="INTEGER" property="refresh" />
+		<result column="wsRelease" jdbcType="INTEGER" property="release" />
+		<result column="wsCharge" jdbcType="INTEGER" property="charge" />
+		<result column="wsSort" jdbcType="INTEGER" property="sort" />
+		<result column="wsCreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="wsModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
+		<collection property="massBinds" ofType="MassBind" column="ID" javaType="java.util.ArrayList">
+			<id column="mbID" jdbcType="CHAR" property="id" />
+			<result column="mbEmpID" jdbcType="CHAR" property="empid" />
+			<result column="mbPlatform" jdbcType="CHAR" property="platform" />
+			<result column="mbAccount" jdbcType="VARCHAR" property="account" />
+			<result column="mbPwd" jdbcType="VARCHAR" property="pwd" />
+			<result column="mbAccountMes" jdbcType="VARCHAR" property="accountmes" />
+			<result column="mbCheckAvailable" jdbcType="TINYINT" property="checkavailable" />
+			<result column="mbCheckMes" jdbcType="VARCHAR" property="checkmes" />
+		</collection>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		ws.ID wsID, ws.WebName wsWebName, ws.LogoUrl wsLogoUrl, ws.LoginUrl
+		wsLoginUrl, ws.RegisterUrl wsRegisterUrl, ws.`Sort` wsSort,
+		ws.Refresh wsRefresh, ws.Release wsRelease, ws.Charge wsCharge, ws.CreateTime
+		wsCreateTime, ws.ModifyTime wsModifyTime
+	</sql>
+	<sql id="MassBind_Column_List">
+		mb.ID mbID, mb.EmpID mbEmpID, mb.Platform mbPlatform, mb.Account mbAccount,
+		mb.Pwd mbPwd,
+		mb.AccountMes mbAccountMes, mb.CheckAvailable mbCheckAvailable, mb.CheckMes
+		mbCheckMes
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="MassBind_Column_List" />
+		FROM WebSite ws LEFT JOIN
+		(SELECT * FROM MassBind WHERE EmpId = #{empid,jdbcType=VARCHAR}) mb
+		ON ws.ID = mb.Platform WHERE ID = #{id}
+	</select>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.WebSite" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		FROM WebSite ws 
+		<where>
+			<if test="webname != null">
+				AND WebName = #{webname,jdbcType=VARCHAR}
+			</if>
+			<if test="logourl != null">
+				AND LogoUrl = #{logourl,jdbcType=VARCHAR}
+			</if>
+			<if test="loginurl != null">
+				AND LoginUrl = #{loginurl,jdbcType=VARCHAR}
+			</if>
+			<if test="registerurl != null">
+				AND RegisterUrl = #{registerurl,jdbcType=VARCHAR}
+			</if>
+			<if test="refresh != null">
+				AND Refresh = #{refresh,jdbcType=INTEGER}
+			</if>
+			<if test="release != null">
+				AND Release = #{release,jdbcType=INTEGER}
+			</if>
+			<if test="charge != null">
+				AND Charge = #{charge,jdbcType=INTEGER}
+			</if>
+			<if test="sort != null">
+				AND `Sort` = #{sort,jdbcType=INTEGER}
+			</if>
+			<if test="createtime != null">
+				AND CreateTime = #{createtime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="modifytime != null">
+				AND ModifyTime = #{modifytime,jdbcType=TIMESTAMP}
+			</if>
+		</where>
+	</select>
+	<select id="selectByEmpAll" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="MassBind_Column_List" />
+		FROM WebSite ws LEFT JOIN
+		(SELECT * FROM MassBind WHERE EmpId = #{empid,jdbcType=VARCHAR}) mb
+		ON ws.ID = mb.Platform ORDER BY ws.`Sort`
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from WebSite
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.WebSite">
+		insert into WebSite (ID, WebName, LogoUrl,
+		LoginUrl, RegisterUrl, Refresh,
+		Release, Charge, `Sort`,
+		CreateTime, ModifyTime)
+		values (#{id,jdbcType=VARCHAR}, #{webname,jdbcType=VARCHAR},
+		#{logourl,jdbcType=VARCHAR},
+		#{loginurl,jdbcType=VARCHAR}, #{registerurl,jdbcType=VARCHAR}, #{refresh,jdbcType=INTEGER},
+		#{release,jdbcType=INTEGER}, #{charge,jdbcType=INTEGER},
+		#{sort,jdbcType=INTEGER},
+		#{createtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.WebSite">
+		insert into WebSite
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="webname != null">
+				WebName,
+			</if>
+			<if test="logourl != null">
+				LogoUrl,
+			</if>
+			<if test="loginurl != null">
+				LoginUrl,
+			</if>
+			<if test="registerurl != null">
+				RegisterUrl,
+			</if>
+			<if test="refresh != null">
+				Refresh,
+			</if>
+			<if test="release != null">
+				Release,
+			</if>
+			<if test="charge != null">
+				Charge,
+			</if>
+			<if test="sort != null">
+				`Sort`,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="modifytime != null">
+				ModifyTime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="webname != null">
+				#{webname,jdbcType=VARCHAR},
+			</if>
+			<if test="logourl != null">
+				#{logourl,jdbcType=VARCHAR},
+			</if>
+			<if test="loginurl != null">
+				#{loginurl,jdbcType=VARCHAR},
+			</if>
+			<if test="registerurl != null">
+				#{registerurl,jdbcType=VARCHAR},
+			</if>
+			<if test="refresh != null">
+				#{refresh,jdbcType=INTEGER},
+			</if>
+			<if test="release != null">
+				#{release,jdbcType=INTEGER},
+			</if>
+			<if test="charge != null">
+				#{charge,jdbcType=INTEGER},
+			</if>
+			<if test="sort != null">
+				#{sort,jdbcType=INTEGER},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				#{modifytime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.WebSite">
+		update WebSite
+		<set>
+			<if test="webname != null">
+				WebName = #{webname,jdbcType=VARCHAR},
+			</if>
+			<if test="logourl != null">
+				LogoUrl = #{logourl,jdbcType=VARCHAR},
+			</if>
+			<if test="loginurl != null">
+				LoginUrl = #{loginurl,jdbcType=VARCHAR},
+			</if>
+			<if test="registerurl != null">
+				RegisterUrl = #{registerurl,jdbcType=VARCHAR},
+			</if>
+			<if test="refresh != null">
+				Refresh = #{refresh,jdbcType=INTEGER},
+			</if>
+			<if test="release != null">
+				Release = #{release,jdbcType=INTEGER},
+			</if>
+			<if test="charge != null">
+				Charge = #{charge,jdbcType=INTEGER},
+			</if>
+			<if test="sort != null">
+				`Sort` = #{sort,jdbcType=INTEGER},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.WebSite">
+		update WebSite
+		set WebName = #{webname,jdbcType=VARCHAR},
+		LogoUrl = #{logourl,jdbcType=VARCHAR},
+		LoginUrl = #{loginurl,jdbcType=VARCHAR},
+		RegisterUrl = #{registerurl,jdbcType=VARCHAR},
+		Refresh = #{refresh,jdbcType=INTEGER},
+		Release = #{release,jdbcType=INTEGER},
+		Charge = #{charge,jdbcType=INTEGER},
+		`Sort` = #{sort,jdbcType=INTEGER},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		ModifyTime = #{modifytime,jdbcType=TIMESTAMP}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

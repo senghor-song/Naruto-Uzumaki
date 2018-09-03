@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EstateCorrectMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EstateCorrect">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="EstateID" jdbcType="CHAR" property="estateid" />
+		<result column="EstateName" jdbcType="VARCHAR" property="estatename" />
+		<result column="Item" jdbcType="VARCHAR" property="item" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="Presenter" jdbcType="VARCHAR" property="presenter" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CreateTime, EstateID, EstateName, Item, Content, Presenter
+	</sql>
+
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.EstateCorrect" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" /> FROM EstateCorrect WHERE EstateID = #{estateid}
+	</select>
+	<select id="selectByEstateCount" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0)
+		FROM
+		EstateCorrect WHERE EstateID = #{estateid}
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EstateCorrect
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from EstateCorrect
+		where ID =
+		#{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EstateCorrect">
+		insert into EstateCorrect (ID, CreateTime, EstateID,
+		EstateName, Item, Content,
+		Presenter)
+		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP},
+		#{estateid,jdbcType=CHAR},
+		#{estatename,jdbcType=VARCHAR}, #{item,jdbcType=VARCHAR},
+		#{content,jdbcType=VARCHAR},
+		#{presenter,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EstateCorrect">
+		insert into EstateCorrect
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="estateid != null">
+				EstateID,
+			</if>
+			<if test="estatename != null">
+				EstateName,
+			</if>
+			<if test="item != null">
+				Item,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+			<if test="presenter != null">
+				Presenter,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="estateid != null">
+				#{estateid,jdbcType=CHAR},
+			</if>
+			<if test="estatename != null">
+				#{estatename,jdbcType=VARCHAR},
+			</if>
+			<if test="item != null">
+				#{item,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="presenter != null">
+				#{presenter,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EstateCorrect">
+		update EstateCorrect
+		<set>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="estateid != null">
+				EstateID = #{estateid,jdbcType=CHAR},
+			</if>
+			<if test="estatename != null">
+				EstateName = #{estatename,jdbcType=VARCHAR},
+			</if>
+			<if test="item != null">
+				Item = #{item,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="presenter != null">
+				Presenter = #{presenter,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EstateCorrect">
+		update EstateCorrect
+		set CreateTime =
+		#{createtime,jdbcType=TIMESTAMP},
+		EstateID = #{estateid,jdbcType=CHAR},
+		EstateName =
+		#{estatename,jdbcType=VARCHAR},
+		Item = #{item,jdbcType=VARCHAR},
+		Content =
+		#{content,jdbcType=VARCHAR},
+		Presenter = #{presenter,jdbcType=VARCHAR}
+		where ID =
+		#{id,jdbcType=CHAR}
+	</update>
+</mapper>

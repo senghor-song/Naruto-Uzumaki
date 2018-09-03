@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>后台管理系统</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="static/css/site.css" rel="stylesheet">
+</head>
+
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom" id="topSidebar"></nav>
+    <aside class="main-sidebar sidebar-dark-primary elevation-4" id="leftSidebar" data-selectindex="30"></aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper pt-3">
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card card-secondary">
+                            <!-- /.card-header -->
+                            <div class="card-body table-responsive p-0">
+                                <table id="tableList">
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+            </div>
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
+</div>
+
+<!-- jQuery -->
+<script src="static/plugins/jquery/jquery.min.js"></script>
+<script src="static/js/layout.js"></script>
+<script src="static/plugins/jQueryUI/jquery-ui.min.js"></script>
+<script>
+    $.widget.bridge('uibutton', $.ui.button)
+</script>
+<script src="static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="static/js/raphael-min.js"></script>
+<script src="static/plugins/morris/morris.min.js"></script>
+<script src="static/plugins/sparkline/jquery.sparkline.min.js"></script>
+<script src="static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+<script src="static/plugins/knob/jquery.knob.js"></script>
+<script src="static/plugins/moment/moment.min.js"></script>
+<script src="static/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="static/plugins/datepicker/bootstrap-datepicker.js"></script>
+<script src="static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<script src="static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<script src="static/plugins/fastclick/fastclick.js"></script>
+<script src="static/plugins/js/pages/dashboard.js"></script>
+<script src="static/plugins/js/demo.js"></script>
+<script src="static/js/echarts.min.js"></script>
+<script src="static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+<script src="static/plugins/layui/layui.all.js"></script>
+<script src="static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+<script src="static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="static/js/jq-ext.js"></script>
+<script>
+    $(function () {
+
+        var tableObj = {
+            obj: null,
+            init: function () {
+                var self = this;
+                self.tableList();
+                self.search();
+            },
+            search: function () {
+                var self = this;
+                $("#btnSearch").unbind().on("click", function () {
+                    $.reload(self.obj);
+                });
+            },
+            tableList: function () {
+                var self = this;
+                self.obj = $.tableObject({
+                    tableId: 'tableList',
+                    tableOption: {
+                        url: 'data/data.html',
+                        page: true,
+                        height: $(window).height() - 145,
+                        where: {
+                            selectType: function () {
+                                return $("#selectType").val()
+                            },
+                            keyword: function () {
+                                return $("#keyword").val()
+                            }
+                        },
+                        cols: [
+                            [
+                                {field: 'aa', title: '约看时间', sort: true},
+                                {field: 'bb', title: '客户', sort: true},
+                                {field: 'nn', title: '城市', sort: false},
+                                {field: 'cc', title: '小区', sort: true},
+                                {field: 'dd', title: '商户', sort: true},
+                                {field: 'ff', title: '经纪人', sort: true},
+                                {field: 'hh', title: '响应', sort: false},
+                                {field: 'ii', title: '响应时间', sort: true},
+                            ]
+                        ]
+                    },
+                    menuItem: {
+                        item1: {
+                            name: "查看", callback: function (key, opt) {
+                                $.showContentMenu(key, opt);
+                                $("#item1Img").removeClass("hide");
+                                $.tableObject({
+                                    tableId: 'tableview',
+                                    tableOption: {
+                                        url: 'data/data.html',
+                                        page: true,
+                                        height: $("#tableview").parents(".layui-layer-content").height() - 100,
+                                        where: {},
+                                        cols: [
+                                            [
+                                                {field: 'aa', title: '经纪人', sort: true},
+                                                {field: 'bb', title: '编号', sort: true},
+                                                {field: 'cc', title: '门店职务', sort: true},
+                                                {field: 'dd', title: '组', sort: true},
+                                                {field: 'ee', title: '电话', sort: true},
+                                            ]
+                                        ]
+                                    }
+                                });
+                            }
+                        },
+                        item2: {
+                            name: "商洽记录", callback: function (key, opt) {
+                                $.showContentMenu(key, opt)
+                                $.tableObject({
+                                    tableId: 'tablelog',
+                                    tableOption: {
+                                        url: 'data/data.html',
+                                        page: true,
+                                        height: $("#tablelog").parents(".layui-layer-content").height() - 100,
+                                        where: {},
+                                        cols: [
+                                            [
+                                                {field: 'aa', title: '时间', sort: true},
+                                                {field: 'bb', title: '类别', sort: true},
+                                                {field: 'cc', title: '内容', sort: true},
+                                            ]
+                                        ]
+                                    }
+                                });
+                            }
+                        },
+                        item3: {
+                            name: "续期认证", callback: function (key, opt) {
+                                $.showContentMenu(key, opt, 785)
+
+                                $.tableObject({
+                                    tableId: 'tableyz1',
+                                    tableOption: {
+                                        url: 'data/data.html',
+                                        page: true,
+                                        height: 250,
+                                        where: {},
+                                        cols: [
+                                            [
+                                                {field: 'aa', title: '订单时间', sort: true},
+                                                {field: 'bb', title: '金额', sort: true},
+                                                {field: 'cc', title: '类别', sort: true},
+                                                {field: 'dd', title: '经纪人', sort: true},
+                                                {field: 'ee', title: '备注', sort: true},
+                                            ]
+                                        ]
+                                    }
+                                });
+
+                                $.tableObject({
+                                    tableId: 'tableyz2',
+                                    tableOption: {
+                                        url: 'data/data.html',
+                                        page: true,
+                                        height: 250,
+                                        where: {},
+                                        cols: [
+                                            [
+                                                {field: 'aa', title: '认证日期', sort: true},
+                                                {field: 'bb', title: '类别', sort: true},
+                                                {field: 'cc', title: '城市', sort: true},
+                                                {field: 'dd', title: '商户', sort: true},
+                                                {field: 'ee', title: '位置', sort: true},
+                                                {field: 'ff', title: '常驻小区', sort: true},
+                                                {field: 'gg', title: '商洽', sort: true},
+                                                {field: 'hh', title: '门店码', sort: true},
+                                            ]
+                                        ]
+                                    }
+                                });
+                            }
+                        },
+                        item4: {
+                            name: "耗材订单", callback: function (key, opt) {
+                                $.showContentMenu(key, opt, 500)
+                                $.tableObject({
+                                    tableId: 'tablehc1',
+                                    tableOption: {
+                                        url: 'data/data.html',
+                                        page: true,
+                                        height: 290,
+                                        where: {},
+                                        cols: [
+                                            [
+                                                {field: 'aa', title: '下单时间', sort: true},
+                                                {field: 'bb', title: '状态', sort: true},
+                                                {field: 'cc', title: '金额', sort: true},
+                                                {field: 'dd', title: '商户经纪', sort: true},
+                                                {field: 'ee', title: '耗材', sort: true},
+                                                {field: 'ff', title: '收货地址', sort: true},
+                                            ]
+                                        ]
+                                    }
+                                });
+                                $.tableObject({
+                                    tableId: 'tablehc2',
+                                    tableOption: {
+                                        url: 'data/data.html',
+                                        page: true,
+                                        height: 290,
+                                        where: {},
+                                        cols: [
+                                            [
+                                                {field: 'aa', title: '时间', sort: true},
+                                                {field: 'bb', title: '内容', sort: true},
+                                            ]
+                                        ]
+                                    }
+                                });
+                            }
+                        },
+                        item5: {
+                            name: "线下交易", callback: function (key, opt) {
+                                $.showContentMenu(key, opt)
+                                $.tableObject({
+                                    tableId: 'tabletrade',
+                                    tableOption: {
+                                        url: 'data/data.html',
+                                        page: true,
+                                        height: $("#tabletrade").parents(".layui-layer-content").height() - 140,
+                                        where: {},
+                                        cols: [
+                                            [
+                                                {field: 'aa', title: '登记时间', sort: true},
+                                                {field: 'bb', title: '登记伙伴', sort: true},
+                                                {field: 'cc', title: '经纪', sort: true},
+                                                {field: 'dd', title: '经纪描述', sort: true},
+                                                {field: 'ee', title: '客户', sort: true},
+                                                {field: 'ff', title: '客户电话', sort: true},
+                                                {field: 'gg', title: '客户描述', sort: true},
+                                                {field: 'hh', title: '伙伴描述', sort: true},
+                                                {field: 'ii', title: '审核', sort: true},
+                                                {field: 'jj', title: '审核意见', sort: true},
+                                                {field: 'kk', title: '审核时间', sort: true},
+                                            ]
+                                        ]
+                                    }
+                                });
+                            }
+                        },
+                    }
+                });
+            }
+        }
+        tableObj.init();
+
+        $("#importData").on("click", function () {
+            var obj = $("#dataContent");
+            obj.removeClass("hide");
+            layer.open({
+                type: 1,
+                area: [$(document).width() + 'px', '600px'],
+                offset: 'b',
+                title: '申请合作',
+                resize: true,
+                anim: 1,
+                maxmin: true,
+                content: obj,
+                cancel: function (index, layero) {
+                    $(".contextMenuDialog").addClass("hide");
+                }
+            });
+
+            $.tableObject({
+                tableId: 'tablehz',
+                tableOption: {
+                    url: 'data/data.html',
+                    page: true,
+                    height: $("#tablehz").parents(".layui-layer-content").height() - 150,
+                    where: {},
+                    cols: [
+                        [
+                            {field: 'aa', title: '申请时间', sort: true},
+                            {field: 'bb', title: '城市', sort: true},
+                            {field: 'cc', title: '商户', sort: true},
+                            {field: 'dd', title: '申请人', sort: true},
+                            {field: 'ee', title: '申请人电话', sort: true},
+                            {field: 'ff', title: '备注', sort: true},
+                        ]
+                    ]
+                }
+            });
+        });
+    });
+</script>
+
+<div class="contextMenuDialog hide" id="dataContent">
+    <div class="card-body">
+        <div class="row">
+            <div class="input-group col-lg-6">
+                <div class="row">
+                    <div class="col-lg-4 listrow">
+                        <span class="nti">商户名：</span>
+                        <span class="ncon">数据</span>
+                    </div>
+                    <div class="col-lg-4 listrow">
+                        <span class="nti">店长：</span>
+                        <span class="ncon">数据</span>
+                    </div>
+                    <div class="col-lg-4 listrow">
+                        <span class="nti">店长电话：</span>
+                        <span class="ncon">数据</span>
+                    </div>
+                    <div class="col-lg-4 listrow">
+                        <span class="nti">人数规模：</span>
+                        <span class="ncon">数据</span>
+                    </div>
+                    <div class="col-lg-4 listrow">
+                        <span class="nti">申请人：</span>
+                        <span class="ncon">数据</span>
+                    </div>
+                    <div class="col-lg-4 listrow">
+                        <span class="nti">申请人电话：</span>
+                        <span class="ncon">数据</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="row text-left clearfix">
+                    <input class="form-control float-left mr-2 w-50" type="text" placeholder="备注信息">
+                    <button class="btn btn-primary float-left">保存</button>
+                </div>
+                <br>
+                <div class="row text-right">
+                    <select class="form-control w-50">
+                        <option>待审</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="row">
+                    <table id="tablehz"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="item1Img" class="otherDialog hide"
+     style="position: absolute; top: 0px; z-index: 99999999; right: 0px; padding: 3px;">
+    <img src="static/image/u40251.png" alt="" class="img-thumbnail" style="height: 400px;">
+</div>
+<div class="contextMenuDialog hide" id="item1">
+    <div class="card-body">
+        <div class="row">
+            <div class="input-group col-lg-12">
+                <div class="row w-100">
+                    <div class="col-lg-3 listrow">
+                        <span class="nti">商户：</span>
+                        <span class="ncon">数据</span>
+                    </div>
+                    <div class="col-lg-3 listrow">
+                        <span class="nti">累计审核：</span>
+                        <span class="ncon">数据</span>
+                    </div>
+                    <div class="col-lg-3 listrow">
+                        <span class="nti">状态：</span>
+                        <span class="ncon">
+                                <select class="form-control">
+                                    <option selected="">待审</option>
+                                </select>
+                            </span>
+                    </div>
+                    <div class="col-lg-3 listrow">
+                        <input class="form-control float-left mr-2 w-50" type="text" placeholder="备注信息">
+                        <button class="btn btn-primary float-left">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="row">
+                    <table id="tableview"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="contextMenuDialog hide" id="item2">
+    <div class="card-body">
+        <div class="row form-inline">
+            <span class="">类别：</span>
+            <select class="form-control mr-2">
+                <option selected="">后台去电</option>
+            </select>
+            <input class="form-control mr-2" type="text" placeholder>
+            <button class="btn btn-primary">搜索</button>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="row">
+                    <table id="tablelog"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="contextMenuDialog hide" id="item3">
+    <div class="card-body">
+        <div class="row form-inline">
+            <input class="form-control mr-2" type="text" placeholder="客户可见信息">
+            <select class="form-control mr-2">
+                <option>需期</option>
+                <option>退回</option>
+                <option>返回</option>
+            </select>
+            <input class="form-control mr-2" type="text" placeholder="内部备注信息">
+            <button class="btn btn-primary">搜索</button>
+        </div>
+        <br>
+        <div class="row w-100">
+            <div class="card card-secondary w-100">
+                <div class="card-header">
+                    <h3 class="card-title">交易历史</h3>
+                </div>
+                <div class="card-body p-0">
+                    <table id="tableyz1"></table>
+                </div>
+
+            </div>
+
+        </div>
+
+        <br>
+        <div class="row w-100">
+            <div class="card card-secondary w-100">
+                <div class="card-header">
+                    <h3 class="card-title">认证历史</h3>
+                </div>
+                <div class="card-body p-0">
+                    <table id="tableyz2"></table>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="contextMenuDialog hide" id="item4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-3 lh-38 form-inline">
+                <span class="">订单状态：</span>
+                <select class="form-control mr-2">
+                    <option selected="">已发货</option>
+                    <option selected="">待发货</option>
+                    <option selected="">关闭</option>
+                </select>
+                <button class="btn btn-primary">保存</button>
+            </div>
+            <div class="col-lg-7 form-inline">
+                <span class="">发货状态：</span>
+                <select class="form-control mr-2">
+                    <option selected="">已完成</option>
+                </select>
+                <span class="">快递公司：</span>
+                <label class="mr-2">
+                    <input name="optionsRadiosinline" type="radio" value="option1"> 顺丰
+                    <input name="optionsRadiosinline" type="radio" value="option1"> 中通
+                    <input name="optionsRadiosinline" type="radio" value="option1"> 其他
+                </label>
+                <span class="">快递单号：</span>
+                <input class="form-control mr-2" type="text" placeholder>
+                <button class="btn btn-primary">保存</button>
+            </div>
+            <div class="col-lg-2 form-inline mt-2">
+                <input class="form-control mr-2 w-50" type="text" placeholder="备注信息">
+                <button class="btn btn-primary">添加备注</button>
+            </div>
+
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="row">
+                    <div class="card card-secondary w-100">
+                        <div class="card-header">
+                            <h3 class="card-title">订单</h3>
+                        </div>
+                        <div class="card-body p-0">
+
+                            <table id="tablehc1"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="row ml-1">
+                    <div class="card card-secondary w-100">
+                        <div class="card-header">
+                            <h3 class="card-title">日志</h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <table id="tablehc2"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="contextMenuDialog hide" id="item5">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-2">
+                商户：第一置业
+            </div>
+            <div class="col-lg-10">
+                <div class="row w-100">
+                    <div class="col-lg-3">
+                        <div>客户描述</div>
+                        <textarea class="form-control" id="remark" name="remark" placeholder="内容"></textarea>
+                    </div>
+                    <div class="col-lg-3">
+                        <div>经纪人描述</div>
+                        <textarea class="form-control" id="remark" name="remark" placeholder="内容"></textarea>
+                    </div>
+                    <div class="col-lg-3">
+                        <div>伙伴记录</div>
+                        <textarea class="form-control" id="remark" name="remark" placeholder="内容"></textarea>
+                    </div>
+                    <div class="col-lg-3">
+                        <div>复核意见</div>
+                        <textarea class="form-control" id="remark" name="remark" placeholder="内容"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <table id="tabletrade"></table>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

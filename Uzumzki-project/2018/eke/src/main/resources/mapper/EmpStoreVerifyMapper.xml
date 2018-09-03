@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.EmpStoreVerifyMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.EmpStoreVerify">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="VerifyTime" jdbcType="TIMESTAMP" property="verifytime" />
+		<result column="Type" jdbcType="CHAR" property="type" />
+		<result column="EmpStoreID" jdbcType="CHAR" property="empstoreid" />
+		<result column="EmpStore" jdbcType="VARCHAR" property="empstore" />
+		<result column="Latitude" jdbcType="DOUBLE" property="latitude" />
+		<result column="Longitude" jdbcType="DOUBLE" property="longitude" />
+		<result column="Address" jdbcType="VARCHAR" property="address" />
+		<result column="Status" jdbcType="CHAR" property="status" />
+		<result column="Path" jdbcType="VARCHAR" property="path" />
+		<result column="StaffID" jdbcType="CHAR" property="staffid" />
+		<result column="StaffTime" jdbcType="TIMESTAMP" property="stafftime" />
+		<result column="StaffNote" jdbcType="VARCHAR" property="staffnote" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, VerifyTime, Type, EmpStoreID, EmpStore, Latitude, Longitude, Address, Status,
+		Path, StaffID, StaffTime, StaffNote, Remark
+	</sql>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.EmpStoreVerify" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EmpStoreVerify
+		<where>
+			<if test="verifytime != null">
+				AND VerifyTime = #{verifytime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="type != null">
+				AND Type = #{type,jdbcType=CHAR}
+			</if>
+			<if test="empstoreid != null">
+				AND EmpStoreID = #{empstoreid,jdbcType=CHAR}
+			</if>
+			<if test="empstore != null">
+				AND EmpStore = #{empstore,jdbcType=VARCHAR}
+			</if>
+			<if test="latitude != null">
+				AND Latitude = #{latitude,jdbcType=DOUBLE}
+			</if>
+			<if test="longitude != null">
+				AND Longitude = #{longitude,jdbcType=DOUBLE}
+			</if>
+			<if test="address != null">
+				AND Address = #{address,jdbcType=VARCHAR}
+			</if>
+			<if test="status != null">
+				AND Status = #{status,jdbcType=CHAR}
+			</if>
+			<if test="path != null">
+				AND Path = #{path,jdbcType=VARCHAR}
+			</if>
+			<if test="staffid != null">
+				AND StaffID = #{staffid,jdbcType=CHAR}
+			</if>
+			<if test="stafftime != null">
+				AND StaffTime = #{stafftime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="staffnote != null">
+				AND StaffNote = #{staffnote,jdbcType=VARCHAR}
+			</if>
+			<if test="remark != null">
+				AND Remark = #{remark,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+
+	<select id="countByNoDispose" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0)
+		from EmpStoreVerify where Status = '待检'
+	</select>
+	
+	<select id="selectVerifyByStore" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EmpStoreVerify where EmpStoreID = #{id,jdbcType=CHAR} AND Status = '待检' LIMIT 1
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from EmpStoreVerify
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from EmpStoreVerify
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EmpStoreVerify">
+		insert into EmpStoreVerify (ID, VerifyTime, Type,
+		EmpStoreID, EmpStore, Latitude,
+		Longitude, Address, Status,
+		Path, StaffID, StaffTime,
+		StaffNote, Remark)
+		values (#{id,jdbcType=CHAR}, #{verifytime,jdbcType=TIMESTAMP}, #{type,jdbcType=CHAR},
+		#{empstoreid,jdbcType=CHAR}, #{empstore,jdbcType=VARCHAR}, #{latitude,jdbcType=DOUBLE},
+		#{longitude,jdbcType=DOUBLE}, #{address,jdbcType=VARCHAR}, #{status,jdbcType=CHAR},
+		#{path,jdbcType=VARCHAR}, #{staffid,jdbcType=CHAR}, #{stafftime,jdbcType=TIMESTAMP},
+		#{staffnote,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EmpStoreVerify">
+		insert into EmpStoreVerify
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="verifytime != null">
+				VerifyTime,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="empstoreid != null">
+				EmpStoreID,
+			</if>
+			<if test="empstore != null">
+				EmpStore,
+			</if>
+			<if test="latitude != null">
+				Latitude,
+			</if>
+			<if test="longitude != null">
+				Longitude,
+			</if>
+			<if test="address != null">
+				Address,
+			</if>
+			<if test="status != null">
+				Status,
+			</if>
+			<if test="path != null">
+				Path,
+			</if>
+			<if test="staffid != null">
+				StaffID,
+			</if>
+			<if test="stafftime != null">
+				StaffTime,
+			</if>
+			<if test="staffnote != null">
+				StaffNote,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="verifytime != null">
+				#{verifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=CHAR},
+			</if>
+			<if test="empstoreid != null">
+				#{empstoreid,jdbcType=CHAR},
+			</if>
+			<if test="empstore != null">
+				#{empstore,jdbcType=VARCHAR},
+			</if>
+			<if test="latitude != null">
+				#{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="longitude != null">
+				#{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=CHAR},
+			</if>
+			<if test="path != null">
+				#{path,jdbcType=VARCHAR},
+			</if>
+			<if test="staffid != null">
+				#{staffid,jdbcType=CHAR},
+			</if>
+			<if test="stafftime != null">
+				#{stafftime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="staffnote != null">
+				#{staffnote,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.EmpStoreVerify">
+		update EmpStoreVerify
+		<set>
+			<if test="verifytime != null">
+				VerifyTime = #{verifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=CHAR},
+			</if>
+			<if test="empstoreid != null">
+				EmpStoreID = #{empstoreid,jdbcType=CHAR},
+			</if>
+			<if test="empstore != null">
+				EmpStore = #{empstore,jdbcType=VARCHAR},
+			</if>
+			<if test="latitude != null">
+				Latitude = #{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="longitude != null">
+				Longitude = #{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="address != null">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				Status = #{status,jdbcType=CHAR},
+			</if>
+			<if test="path != null">
+				Path = #{path,jdbcType=VARCHAR},
+			</if>
+			<if test="staffid != null">
+				StaffID = #{staffid,jdbcType=CHAR},
+			</if>
+			<if test="stafftime != null">
+				StaffTime = #{stafftime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="staffnote != null">
+				StaffNote = #{staffnote,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EmpStoreVerify">
+		update EmpStoreVerify
+		set VerifyTime = #{verifytime,jdbcType=TIMESTAMP},
+		Type = #{type,jdbcType=CHAR},
+		EmpStoreID = #{empstoreid,jdbcType=CHAR},
+		EmpStore = #{empstore,jdbcType=VARCHAR},
+		Latitude = #{latitude,jdbcType=DOUBLE},
+		Longitude = #{longitude,jdbcType=DOUBLE},
+		Address = #{address,jdbcType=VARCHAR},
+		Status = #{status,jdbcType=CHAR},
+		Path = #{path,jdbcType=VARCHAR},
+		StaffID = #{staffid,jdbcType=CHAR},
+		StaffTime = #{stafftime,jdbcType=TIMESTAMP},
+		StaffNote = #{staffnote,jdbcType=VARCHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.CityMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.City">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="City" jdbcType="VARCHAR" property="city" />
+		<result column="Province" jdbcType="CHAR" property="province" />
+		<result column="ShortPY" jdbcType="VARCHAR" property="shortpy" />
+		<result column="FlagMap" jdbcType="BIT" property="flagmap" />
+		<result column="CityNo" jdbcType="INTEGER" property="cityno" />
+		<result column="ChannelSale" jdbcType="BIT" property="channelsale" />
+		<result column="ChannelRent" jdbcType="BIT" property="channelrent" />
+		<result column="ChannelTown" jdbcType="BIT" property="channeltown" />
+		<result column="TotalRent" jdbcType="INTEGER" property="totalrent" />
+		<result column="TotalSale" jdbcType="INTEGER" property="totalsale" />
+		<result column="TotalTown" jdbcType="INTEGER" property="totaltown" />
+		<result column="TotalRefresh" jdbcType="TIMESTAMP" property="totalrefresh" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, City, Province, ShortPY, FlagMap, CityNo, ChannelSale, ChannelRent,
+		ChannelTown,
+		TotalRent, TotalSale, TotalTown, TotalRefresh
+	</sql>
+	
+	<select id="selectByCityName" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM City WHERE City = #{name} limit 1
+	</select>
+
+	<select id="avgEmpScoreByCity" resultType="Double">
+		SELECT IFNULL(AVG(score),0) FROM Employee where
+		CityId = #{id}
+	</select>
+	
+	<select id="selectByCityAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from City
+	</select>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.City" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> from City
+		<where>
+			<if test="city != null">
+				AND City = #{city,jdbcType=VARCHAR}
+			</if>
+			<if test="province != null">
+				AND Province = #{province,jdbcType=CHAR}
+			</if>
+			<if test="shortpy != null">
+				AND ShortPY = #{shortpy,jdbcType=VARCHAR}
+			</if>
+			<if test="flagmap != null">
+				AND FlagMap = #{flagmap,jdbcType=BIT}
+			</if>
+			<if test="cityno != null">
+				AND CityNo = #{cityno,jdbcType=INTEGER}
+			</if>
+			<if test="channelsale != null">
+				AND ChannelSale = #{channelsale,jdbcType=BIT}
+			</if>
+			<if test="channelrent != null">
+				AND ChannelRent = #{channelrent,jdbcType=BIT}
+			</if>
+			<if test="channeltown != null">
+				AND ChannelTown = #{channeltown,jdbcType=BIT}
+			</if>
+			<if test="totalrent != null">
+				AND TotalRent = #{totalrent,jdbcType=INTEGER}
+			</if>
+			<if test="totalsale != null">
+				AND TotalSale = #{totalsale,jdbcType=INTEGER}
+			</if>
+			<if test="totaltown != null">
+				AND TotalTown = #{totaltown,jdbcType=INTEGER}
+			</if>
+			<if test="totalrefresh != null">
+				AND TotalRefresh = #{totalrefresh,jdbcType=TIMESTAMP}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from City
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from City
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.City">
+		insert into City (ID, City, Province,
+		ShortPY, FlagMap,
+		CityNo,
+		ChannelSale, ChannelRent, ChannelTown,
+		TotalRent, TotalSale, TotalTown,
+		TotalRefresh)
+		values
+		(#{id,jdbcType=CHAR}, #{city,jdbcType=VARCHAR},
+		#{province,jdbcType=CHAR},
+		#{shortpy,jdbcType=VARCHAR}, #{flagmap,jdbcType=BIT}, #{cityno,jdbcType=INTEGER},
+		#{channelsale,jdbcType=BIT}, #{channelrent,jdbcType=BIT},
+		#{channeltown,jdbcType=BIT},
+		#{totalrent,jdbcType=INTEGER}, #{totalsale,jdbcType=INTEGER}, #{totaltown,jdbcType=INTEGER},
+		#{totalrefresh,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.City">
+		insert into City
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="city != null">
+				City,
+			</if>
+			<if test="province != null">
+				Province,
+			</if>
+			<if test="shortpy != null">
+				ShortPY,
+			</if>
+			<if test="flagmap != null">
+				FlagMap,
+			</if>
+			<if test="cityno != null">
+				CityNo,
+			</if>
+			<if test="channelsale != null">
+				ChannelSale,
+			</if>
+			<if test="channelrent != null">
+				ChannelRent,
+			</if>
+			<if test="channeltown != null">
+				ChannelTown,
+			</if>
+			<if test="totalrent != null">
+				TotalRent,
+			</if>
+			<if test="totalsale != null">
+				TotalSale,
+			</if>
+			<if test="totaltown != null">
+				TotalTown,
+			</if>
+			<if test="totalrefresh != null">
+				TotalRefresh,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="city != null">
+				#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="province != null">
+				#{province,jdbcType=CHAR},
+			</if>
+			<if test="shortpy != null">
+				#{shortpy,jdbcType=VARCHAR},
+			</if>
+			<if test="flagmap != null">
+				#{flagmap,jdbcType=BIT},
+			</if>
+			<if test="cityno != null">
+				#{cityno,jdbcType=INTEGER},
+			</if>
+			<if test="channelsale != null">
+				#{channelsale,jdbcType=BIT},
+			</if>
+			<if test="channelrent != null">
+				#{channelrent,jdbcType=BIT},
+			</if>
+			<if test="channeltown != null">
+				#{channeltown,jdbcType=BIT},
+			</if>
+			<if test="totalrent != null">
+				#{totalrent,jdbcType=INTEGER},
+			</if>
+			<if test="totalsale != null">
+				#{totalsale,jdbcType=INTEGER},
+			</if>
+			<if test="totaltown != null">
+				#{totaltown,jdbcType=INTEGER},
+			</if>
+			<if test="totalrefresh != null">
+				#{totalrefresh,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.City">
+		update City
+		<set>
+			<if test="city != null">
+				City = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="province != null">
+				Province = #{province,jdbcType=CHAR},
+			</if>
+			<if test="shortpy != null">
+				ShortPY = #{shortpy,jdbcType=VARCHAR},
+			</if>
+			<if test="flagmap != null">
+				FlagMap = #{flagmap,jdbcType=BIT},
+			</if>
+			<if test="cityno != null">
+				CityNo = #{cityno,jdbcType=INTEGER},
+			</if>
+			<if test="channelsale != null">
+				ChannelSale = #{channelsale,jdbcType=BIT},
+			</if>
+			<if test="channelrent != null">
+				ChannelRent = #{channelrent,jdbcType=BIT},
+			</if>
+			<if test="channeltown != null">
+				ChannelTown = #{channeltown,jdbcType=BIT},
+			</if>
+			<if test="totalrent != null">
+				TotalRent = #{totalrent,jdbcType=INTEGER},
+			</if>
+			<if test="totalsale != null">
+				TotalSale = #{totalsale,jdbcType=INTEGER},
+			</if>
+			<if test="totaltown != null">
+				TotalTown = #{totaltown,jdbcType=INTEGER},
+			</if>
+			<if test="totalrefresh != null">
+				TotalRefresh = #{totalrefresh,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.City">
+		update City
+		set City =
+		#{city,jdbcType=VARCHAR},
+		Province = #{province,jdbcType=CHAR},
+		ShortPY =
+		#{shortpy,jdbcType=VARCHAR},
+		FlagMap = #{flagmap,jdbcType=BIT},
+		CityNo = #{cityno,jdbcType=INTEGER},
+		ChannelSale = #{channelsale,jdbcType=BIT},
+		ChannelRent = #{channelrent,jdbcType=BIT},
+		ChannelTown =
+		#{channeltown,jdbcType=BIT},
+		TotalRent = #{totalrent,jdbcType=INTEGER},
+		TotalSale =
+		#{totalsale,jdbcType=INTEGER},
+		TotalTown = #{totaltown,jdbcType=INTEGER},
+		TotalRefresh =
+		#{totalrefresh,jdbcType=TIMESTAMP}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

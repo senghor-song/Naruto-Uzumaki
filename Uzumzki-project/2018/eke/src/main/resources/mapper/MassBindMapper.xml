@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassBindMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassBind">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="Platform" jdbcType="CHAR" property="platform" />
+		<result column="Account" jdbcType="VARCHAR" property="account" />
+		<result column="Pwd" jdbcType="VARCHAR" property="pwd" />
+		<result column="AccountMes" jdbcType="VARCHAR" property="accountmes" />
+		<result column="CheckAvailable" jdbcType="TINYINT" property="checkavailable" />
+		<result column="CheckMes" jdbcType="VARCHAR" property="checkmes" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<association property="webSite" javaType="com.xiaoyi.ssm.model.WebSite">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="WebName" jdbcType="VARCHAR" property="webname" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, EmpID, Platform, Account, Pwd, AccountMes,
+		CheckAvailable, CheckMes,
+		Remark
+	</sql>
+	<select id="countMassBindByEmp" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0)
+		bindWebSum FROM MassBind WHERE EmpID = #{empId}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT mb.*,ws.`WebName` WebName FROM MassBind mb LEFT JOIN WebSite ws ON mb.`Platform` = ws.`ID`
+		where mb.ID = #{id,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByEmp" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT mb.*,ws.`WebName` WebName FROM MassBind mb LEFT JOIN WebSite ws ON mb.`Platform` = ws.`ID`
+		where mb.EmpId = #{empid,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByEmpPlatform" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassBind
+		where EmpId = #{empid,jdbcType=CHAR} and Platform =
+		#{platform,jdbcType=CHAR}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from
+		MassBind
+		where ID =
+		#{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassBind">
+		insert into MassBind (ID,
+		EmpID, Platform, Account,
+		Pwd,
+		AccountMes, CheckAvailable,
+		CheckMes,
+		Remark)
+		values (#{id,jdbcType=CHAR}, #{empid,jdbcType=CHAR},
+		#{platform,jdbcType=CHAR}, #{account,jdbcType=VARCHAR},
+		#{pwd,jdbcType=VARCHAR},
+		#{accountmes,jdbcType=VARCHAR},
+		#{checkavailable,jdbcType=TINYINT},
+		#{checkmes,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassBind">
+		insert into MassBind
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="platform != null">
+				Platform,
+			</if>
+			<if test="account != null">
+				Account,
+			</if>
+			<if test="pwd != null">
+				Pwd,
+			</if>
+			<if test="accountmes != null">
+				AccountMes,
+			</if>
+			<if test="checkavailable != null">
+				CheckAvailable,
+			</if>
+			<if test="checkmes != null">
+				CheckMes,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="platform != null">
+				#{platform,jdbcType=CHAR},
+			</if>
+			<if test="account != null">
+				#{account,jdbcType=VARCHAR},
+			</if>
+			<if test="pwd != null">
+				#{pwd,jdbcType=VARCHAR},
+			</if>
+			<if test="accountmes != null">
+				#{accountmes,jdbcType=VARCHAR},
+			</if>
+			<if test="checkavailable != null">
+				#{checkavailable,jdbcType=TINYINT},
+			</if>
+			<if test="checkmes != null">
+				#{checkmes,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassBind">
+		update MassBind
+		<set>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="platform != null">
+				Platform = #{platform,jdbcType=CHAR},
+			</if>
+			<if test="account != null">
+				Account = #{account,jdbcType=VARCHAR},
+			</if>
+			<if test="pwd != null">
+				Pwd = #{pwd,jdbcType=VARCHAR},
+			</if>
+			<if test="accountmes != null">
+				AccountMes = #{accountmes,jdbcType=VARCHAR},
+			</if>
+			<if test="checkavailable != null">
+				CheckAvailable = #{checkavailable,jdbcType=TINYINT},
+			</if>
+			<if test="checkmes != null">
+				CheckMes = #{checkmes,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassBind">
+		update MassBind
+		set EmpID =
+		#{empid,jdbcType=CHAR},
+		Platform =
+		#{platform,jdbcType=CHAR},
+		Account = #{account,jdbcType=VARCHAR},
+		Pwd =
+		#{pwd,jdbcType=VARCHAR},
+		AccountMes = #{accountmes,jdbcType=VARCHAR},
+		CheckAvailable =
+		#{checkavailable,jdbcType=TINYINT},
+		CheckMes =
+		#{checkmes,jdbcType=VARCHAR},
+		Remark =
+		#{remark,jdbcType=VARCHAR}
+		where
+		ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

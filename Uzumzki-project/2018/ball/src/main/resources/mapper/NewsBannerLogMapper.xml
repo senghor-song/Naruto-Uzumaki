@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.NewsBannerLogMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.NewsBannerLog">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="NewsBannerID" jdbcType="CHAR" property="newsbannerid" />
+		<result column="LogTime" jdbcType="TIMESTAMP" property="logtime" />
+		<result column="EditID" jdbcType="CHAR" property="editid" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<association property="staff" javaType="com.xiaoyi.ssm.model.Staff">
+			<id property="staffid" column="ID" />
+			<result column="sRName" property="rname" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, NewsBannerID, LogTime, EditID, Content
+	</sql>
+
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.NewsBannerLog" resultMap="BaseResultMap">
+		select nbl.*,s.RName sRName from NewsBannerLog nbl LEFT JOIN Staff s ON nbl.`EditID` = s.`StaffID`
+		<where>
+			<if test="newsbannerid != null">
+				AND nbl.NewsBannerID = #{newsbannerid,jdbcType=CHAR}
+			</if>
+			<if test="logtime != null">
+				AND nbl.LogTime = #{logtime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="editid != null">
+				AND nbl.EditID = #{editid,jdbcType=CHAR}
+			</if>
+			<if test="content != null">
+				AND nbl.Content = #{content,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select nbl.*,s.RName sRName from NewsBannerLog
+		nbl LEFT JOIN Staff s ON nbl.`EditID` = s.`StaffID`
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+
+	<select id="countByBanner" parameterType="java.lang.String" resultType="Integer">
+		select COUNT(0) from NewsBannerLog where
+		NewsBannerID = #{id,jdbcType=CHAR}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from NewsBannerLog
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.NewsBannerLog">
+		insert into NewsBannerLog (ID, NewsBannerID, LogTime,
+		EditID, Content)
+		values
+		(#{id,jdbcType=CHAR}, #{newsbannerid,jdbcType=CHAR}, #{logtime,jdbcType=TIMESTAMP},
+		#{editid,jdbcType=CHAR},
+		#{content,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.NewsBannerLog">
+		insert into NewsBannerLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="newsbannerid != null">
+				NewsBannerID,
+			</if>
+			<if test="logtime != null">
+				LogTime,
+			</if>
+			<if test="editid != null">
+				EditID,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="newsbannerid != null">
+				#{newsbannerid,jdbcType=CHAR},
+			</if>
+			<if test="logtime != null">
+				#{logtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="editid != null">
+				#{editid,jdbcType=CHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.NewsBannerLog">
+		update NewsBannerLog
+		<set>
+			<if test="newsbannerid != null">
+				NewsBannerID = #{newsbannerid,jdbcType=CHAR},
+			</if>
+			<if test="logtime != null">
+				LogTime = #{logtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="editid != null">
+				EditID = #{editid,jdbcType=CHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.NewsBannerLog">
+		update NewsBannerLog
+		set NewsBannerID = #{newsbannerid,jdbcType=CHAR},
+		LogTime = #{logtime,jdbcType=TIMESTAMP},
+		EditID = #{editid,jdbcType=CHAR},
+		Content = #{content,jdbcType=VARCHAR}
+		where ID =
+		#{id,jdbcType=CHAR}
+	</update>
+</mapper>

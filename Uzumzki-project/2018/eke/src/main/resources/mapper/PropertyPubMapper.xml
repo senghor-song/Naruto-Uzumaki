@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.PropertyPubMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.PropertyPub">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="PubTime" jdbcType="TIMESTAMP" property="pubtime" />
+		<result column="PropertyPreID" jdbcType="CHAR" property="propertypreid" />
+		<result column="PubType" jdbcType="TINYINT" property="pubtype" />
+		<result column="EmpID" jdbcType="CHAR" property="empid" />
+		<result column="EmpClaimTime" jdbcType="TIMESTAMP" property="empclaimtime" />
+		<result column="EmpClaimFlag" jdbcType="TINYINT" property="empclaimflag" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<association property="employee" javaType="com.xiaoyi.ssm.model.Employee">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="eEmp" jdbcType="TIMESTAMP" property="emp" />
+			<association property="empStore" javaType="com.xiaoyi.ssm.model.EmpStore">
+				<id column="ID" jdbcType="CHAR" property="id" />
+				<result column="esEmpStore" jdbcType="TIMESTAMP" property="empstore" />
+			</association>
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, PubTime, PropertyPreID, PubType, EmpID, EmpClaimTime, EmpClaimFlag, Remark
+	</sql>
+	
+	<select id="selectByPropertyPre" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT pp.*,e.`Emp` eEmp, es.`EmpStore` esEmpStore FROM PropertyPub pp LEFT JOIN Employee e ON pp.`EmpID` = e.`ID` LEFT JOIN EmpStore es ON e.`StoreID` = es.`ID` 
+		where PropertyPreID = #{id}
+	</select>
+	
+	<select id="selectByAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from PropertyPub
+	</select>
+	
+	<select id="countPubByPropertypre" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0) FROM PropertyPub WHERE PropertyPub.`PropertyPreID` = #{propertyPreId}
+	</select>
+	
+	<select id="countClaimByPropertypre" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0) FROM PropertyPub WHERE PropertyPub.`PropertyPreID` = #{propertyPreId} AND EmpClaimFlag = 1
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from PropertyPub
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from PropertyPub
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.PropertyPub">
+		insert into PropertyPub (ID, PubTime, PropertyPreID,
+		PubType, EmpID, EmpClaimTime,
+		EmpClaimFlag, Remark)
+		values (#{id,jdbcType=CHAR}, #{pubtime,jdbcType=TIMESTAMP}, #{propertypreid,jdbcType=CHAR},
+		#{pubtype,jdbcType=TINYINT}, #{empid,jdbcType=CHAR}, #{empclaimtime,jdbcType=TIMESTAMP},
+		#{empclaimflag,jdbcType=TINYINT}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.PropertyPub">
+		insert into PropertyPub
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="pubtime != null">
+				PubTime,
+			</if>
+			<if test="propertypreid != null">
+				PropertyPreID,
+			</if>
+			<if test="pubtype != null">
+				PubType,
+			</if>
+			<if test="empid != null">
+				EmpID,
+			</if>
+			<if test="empclaimtime != null">
+				EmpClaimTime,
+			</if>
+			<if test="empclaimflag != null">
+				EmpClaimFlag,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="pubtime != null">
+				#{pubtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="propertypreid != null">
+				#{propertypreid,jdbcType=CHAR},
+			</if>
+			<if test="pubtype != null">
+				#{pubtype,jdbcType=TINYINT},
+			</if>
+			<if test="empid != null">
+				#{empid,jdbcType=CHAR},
+			</if>
+			<if test="empclaimtime != null">
+				#{empclaimtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="empclaimflag != null">
+				#{empclaimflag,jdbcType=TINYINT},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.PropertyPub">
+		update PropertyPub
+		<set>
+			<if test="pubtime != null">
+				PubTime = #{pubtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="propertypreid != null">
+				PropertyPreID = #{propertypreid,jdbcType=CHAR},
+			</if>
+			<if test="pubtype != null">
+				PubType = #{pubtype,jdbcType=TINYINT},
+			</if>
+			<if test="empid != null">
+				EmpID = #{empid,jdbcType=CHAR},
+			</if>
+			<if test="empclaimtime != null">
+				EmpClaimTime = #{empclaimtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="empclaimflag != null">
+				EmpClaimFlag = #{empclaimflag,jdbcType=TINYINT},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.PropertyPub">
+		update PropertyPub
+		set PubTime = #{pubtime,jdbcType=TIMESTAMP},
+		PropertyPreID = #{propertypreid,jdbcType=CHAR},
+		PubType = #{pubtype,jdbcType=TINYINT},
+		EmpID = #{empid,jdbcType=CHAR},
+		EmpClaimTime = #{empclaimtime,jdbcType=TIMESTAMP},
+		EmpClaimFlag = #{empclaimflag,jdbcType=TINYINT},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

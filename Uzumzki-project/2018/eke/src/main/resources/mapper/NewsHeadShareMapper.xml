@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.NewsHeadShareMapper">
+  <resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.NewsHeadShare">
+    <id column="ID" jdbcType="CHAR" property="id" />
+    <result column="NewsHeadID" jdbcType="CHAR" property="newsheadid" />
+    <result column="NewsHead" jdbcType="VARCHAR" property="newshead" />
+    <result column="ShareTime" jdbcType="TIMESTAMP" property="sharetime" />
+    <result column="ShareTo" jdbcType="VARCHAR" property="shareto" />
+    <result column="Way" jdbcType="CHAR" property="way" />
+    <result column="UserID" jdbcType="CHAR" property="userid" />
+    <result column="PropertyID" jdbcType="CHAR" property="propertyid" />
+    <result column="Remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, NewsHeadID, NewsHead, ShareTime, ShareTo, Way, UserID, PropertyID, Remark
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from NewsHeadShare
+    where ID = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from NewsHeadShare
+    where ID = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xiaoyi.ssm.model.NewsHeadShare">
+    insert into NewsHeadShare (ID, NewsHeadID, NewsHead, 
+      ShareTime, ShareTo, Way, 
+      UserID, PropertyID, Remark
+      )
+    values (#{id,jdbcType=CHAR}, #{newsheadid,jdbcType=CHAR}, #{newshead,jdbcType=VARCHAR}, 
+      #{sharetime,jdbcType=TIMESTAMP}, #{shareto,jdbcType=VARCHAR}, #{way,jdbcType=CHAR}, 
+      #{userid,jdbcType=CHAR}, #{propertyid,jdbcType=CHAR}, #{remark,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.NewsHeadShare">
+    insert into NewsHeadShare
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="newsheadid != null">
+        NewsHeadID,
+      </if>
+      <if test="newshead != null">
+        NewsHead,
+      </if>
+      <if test="sharetime != null">
+        ShareTime,
+      </if>
+      <if test="shareto != null">
+        ShareTo,
+      </if>
+      <if test="way != null">
+        Way,
+      </if>
+      <if test="userid != null">
+        UserID,
+      </if>
+      <if test="propertyid != null">
+        PropertyID,
+      </if>
+      <if test="remark != null">
+        Remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="newsheadid != null">
+        #{newsheadid,jdbcType=CHAR},
+      </if>
+      <if test="newshead != null">
+        #{newshead,jdbcType=VARCHAR},
+      </if>
+      <if test="sharetime != null">
+        #{sharetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shareto != null">
+        #{shareto,jdbcType=VARCHAR},
+      </if>
+      <if test="way != null">
+        #{way,jdbcType=CHAR},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=CHAR},
+      </if>
+      <if test="propertyid != null">
+        #{propertyid,jdbcType=CHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.NewsHeadShare">
+    update NewsHeadShare
+    <set>
+      <if test="newsheadid != null">
+        NewsHeadID = #{newsheadid,jdbcType=CHAR},
+      </if>
+      <if test="newshead != null">
+        NewsHead = #{newshead,jdbcType=VARCHAR},
+      </if>
+      <if test="sharetime != null">
+        ShareTime = #{sharetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shareto != null">
+        ShareTo = #{shareto,jdbcType=VARCHAR},
+      </if>
+      <if test="way != null">
+        Way = #{way,jdbcType=CHAR},
+      </if>
+      <if test="userid != null">
+        UserID = #{userid,jdbcType=CHAR},
+      </if>
+      <if test="propertyid != null">
+        PropertyID = #{propertyid,jdbcType=CHAR},
+      </if>
+      <if test="remark != null">
+        Remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.NewsHeadShare">
+    update NewsHeadShare
+    set NewsHeadID = #{newsheadid,jdbcType=CHAR},
+      NewsHead = #{newshead,jdbcType=VARCHAR},
+      ShareTime = #{sharetime,jdbcType=TIMESTAMP},
+      ShareTo = #{shareto,jdbcType=VARCHAR},
+      Way = #{way,jdbcType=CHAR},
+      UserID = #{userid,jdbcType=CHAR},
+      PropertyID = #{propertyid,jdbcType=CHAR},
+      Remark = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

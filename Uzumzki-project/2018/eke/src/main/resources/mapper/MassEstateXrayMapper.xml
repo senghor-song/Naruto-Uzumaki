@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MassEstateXrayMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MassEstateXray">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Site" jdbcType="CHAR" property="site" />
+		<result column="PropertyNo" jdbcType="VARCHAR" property="propertyno" />
+		<result column="Room" jdbcType="VARCHAR" property="room" />
+		<result column="Floor" jdbcType="VARCHAR" property="floor" />
+		<result column="Square" jdbcType="VARCHAR" property="square" />
+		<result column="Register" jdbcType="VARCHAR" property="register" />
+		<result column="PropertyUrl" jdbcType="VARCHAR" property="propertyurl" />
+		<result column="Company" jdbcType="VARCHAR" property="company" />
+		<result column="Emp" jdbcType="VARCHAR" property="emp" />
+		<result column="Title" jdbcType="VARCHAR" property="title" />
+		<result column="Category" jdbcType="VARCHAR" property="category" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Site, PropertyNo, Room, Floor, Square, Register, PropertyUrl,
+		Company, Emp, Title,
+		Category, Remark
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MassEstateXray
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from MassEstateXray
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MassEstateXray">
+		insert into MassEstateXray (ID, Site, PropertyNo,
+		Room, Floor, Square,
+		Register, PropertyUrl, Company,
+		Emp, Title, Category,
+		Remark)
+		values (#{id,jdbcType=VARCHAR}, #{site,jdbcType=CHAR},
+		#{propertyno,jdbcType=VARCHAR},
+		#{room,jdbcType=VARCHAR}, #{floor,jdbcType=VARCHAR}, #{square,jdbcType=VARCHAR},
+		#{register,jdbcType=VARCHAR}, #{propertyurl,jdbcType=VARCHAR},
+		#{company,jdbcType=VARCHAR},
+		#{emp,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MassEstateXray">
+		insert into MassEstateXray
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="site != null">
+				Site,
+			</if>
+			<if test="propertyno != null">
+				PropertyNo,
+			</if>
+			<if test="room != null">
+				Room,
+			</if>
+			<if test="floor != null">
+				Floor,
+			</if>
+			<if test="square != null">
+				Square,
+			</if>
+			<if test="register != null">
+				Register,
+			</if>
+			<if test="propertyurl != null">
+				PropertyUrl,
+			</if>
+			<if test="company != null">
+				Company,
+			</if>
+			<if test="emp != null">
+				Emp,
+			</if>
+			<if test="title != null">
+				Title,
+			</if>
+			<if test="category != null">
+				Category,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="site != null">
+				#{site,jdbcType=CHAR},
+			</if>
+			<if test="propertyno != null">
+				#{propertyno,jdbcType=VARCHAR},
+			</if>
+			<if test="room != null">
+				#{room,jdbcType=VARCHAR},
+			</if>
+			<if test="floor != null">
+				#{floor,jdbcType=VARCHAR},
+			</if>
+			<if test="square != null">
+				#{square,jdbcType=VARCHAR},
+			</if>
+			<if test="register != null">
+				#{register,jdbcType=VARCHAR},
+			</if>
+			<if test="propertyurl != null">
+				#{propertyurl,jdbcType=VARCHAR},
+			</if>
+			<if test="company != null">
+				#{company,jdbcType=VARCHAR},
+			</if>
+			<if test="emp != null">
+				#{emp,jdbcType=VARCHAR},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="category != null">
+				#{category,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MassEstateXray">
+		update MassEstateXray
+		<set>
+			<if test="site != null">
+				Site = #{site,jdbcType=CHAR},
+			</if>
+			<if test="propertyno != null">
+				PropertyNo = #{propertyno,jdbcType=VARCHAR},
+			</if>
+			<if test="room != null">
+				Room = #{room,jdbcType=VARCHAR},
+			</if>
+			<if test="floor != null">
+				Floor = #{floor,jdbcType=VARCHAR},
+			</if>
+			<if test="square != null">
+				Square = #{square,jdbcType=VARCHAR},
+			</if>
+			<if test="register != null">
+				Register = #{register,jdbcType=VARCHAR},
+			</if>
+			<if test="propertyurl != null">
+				PropertyUrl = #{propertyurl,jdbcType=VARCHAR},
+			</if>
+			<if test="company != null">
+				Company = #{company,jdbcType=VARCHAR},
+			</if>
+			<if test="emp != null">
+				Emp = #{emp,jdbcType=VARCHAR},
+			</if>
+			<if test="title != null">
+				Title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="category != null">
+				Category = #{category,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MassEstateXray">
+		update MassEstateXray
+		set Site = #{site,jdbcType=CHAR},
+		PropertyNo = #{propertyno,jdbcType=VARCHAR},
+		Room = #{room,jdbcType=VARCHAR},
+		Floor = #{floor,jdbcType=VARCHAR},
+		Square = #{square,jdbcType=VARCHAR},
+		Register = #{register,jdbcType=VARCHAR},
+		PropertyUrl = #{propertyurl,jdbcType=VARCHAR},
+		Company = #{company,jdbcType=VARCHAR},
+		Emp = #{emp,jdbcType=VARCHAR},
+		Title = #{title,jdbcType=VARCHAR},
+		Category = #{category,jdbcType=VARCHAR},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>
