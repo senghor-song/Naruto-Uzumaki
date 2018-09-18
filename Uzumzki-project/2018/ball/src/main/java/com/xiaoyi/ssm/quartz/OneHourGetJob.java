@@ -3,6 +3,8 @@ package com.xiaoyi.ssm.quartz;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,8 +14,6 @@ import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.HttpUtils;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.wxPay.WXConfig;
-
-import net.sf.json.JSONObject;
 
 @Service
 public class OneHourGetJob {
@@ -29,6 +29,9 @@ public class OneHourGetJob {
 		// 获取微信公众号的access_token
 		String accessTokenDate = HttpUtils.sendGet("https://api.weixin.qq.com/cgi-bin/token",
 				"grant_type=client_credential&appid=" + WXConfig.appid + "&secret=" + WXConfig.appSecret);
+		// 获取微信小程序的access_token
+		String accessTokenDate1 = HttpUtils.sendGet("https://api.weixin.qq.com/cgi-bin/token",
+				"grant_type=client_credential&appid=" + WXConfig.wxAppAppid + "&secret=" + WXConfig.wxAppApp_secret);
 		try {
 			JSONObject accessTokenJson = JSONObject.fromObject(accessTokenDate);
 			logger.info("access_token:" + accessTokenJson.toString());
@@ -44,8 +47,18 @@ public class OneHourGetJob {
 			String jsapi_ticket = (String) jsonObject.get("ticket");
 			map.put("jsapi_ticket", jsapi_ticket);
 
-			logger.info("access_token和jsapi_ticket获取成功并放入缓存");
+			logger.info("微信公众号的access_token和jsapi_ticket获取成功并放入缓存");
 			RedisUtil.addRedis(Global.REDIS_ACCESS_TOKEN, WXConfig.appid, map);
+			
+			JSONObject accessTokenJson1 = JSONObject.fromObject(accessTokenDate);
+			logger.info("access_token:" + accessTokenJson1.toString());
+			Map<String, Object> map1 = new HashMap<>();
+			String access_token1 = (String) accessTokenJson1.get("access_token");
+			map1.put("access_token", access_token1);
+			
+			logger.info("微信小程序的access_token获取成功并放入缓存");
+			RedisUtil.addRedis(Global.REDIS_ACCESS_TOKEN, WXConfig.wxAppAppid, map1);
+			
 		} catch (Exception e) {
 			logger.error("", e);
 		}

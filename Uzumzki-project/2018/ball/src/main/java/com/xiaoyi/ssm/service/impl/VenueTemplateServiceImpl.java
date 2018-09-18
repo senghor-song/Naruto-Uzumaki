@@ -45,4 +45,16 @@ public class VenueTemplateServiceImpl extends AbstractService<VenueTemplate,Stri
 		return venueTemplateMapper.selectByVenue(venueid);
 	}
 
+	/**  
+	 * @Description: 将场馆下的模板都设置成非默认模板
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年9月15日 下午2:31:32 
+	 */ 
+	@Override
+	public Integer updateNoDefaultVenue(String id) {
+		return venueTemplateMapper.updateNoDefaultVenue(id);
+	}
+
 }

@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,8 +45,11 @@ public class ApiVenueTemplateController {
 	 */ 
 	@RequestMapping(value = "/list")
 	@ResponseBody
-	public ApiMessage list(String token) {
-		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, token);
+	public ApiMessage list(HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
+		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, openid);
 
 		Venue venue = venueService.selectByManager(manager.getId());
 
@@ -121,6 +127,11 @@ public class ApiVenueTemplateController {
 	@RequestMapping(value = "/deleteTmplate")
 	@ResponseBody
 	public ApiMessage deleteTmplate(String id) {
+		VenueTemplate venueTemplate = venueTemplateService.selectByPrimaryKey(id);
+		if (venueTemplate.getDefaultflag() == 1) {
+			return new ApiMessage(400, "默认模板不能删除,请先设置其他模板为默认模板");
+		}
+		
 		int flag = venueTemplateService.deleteByPrimaryKey(id);
 		if (flag > 0 ) {
 			return new ApiMessage(200, "删除成功");
@@ -135,14 +146,22 @@ public class ApiVenueTemplateController {
 	 */ 
 	@RequestMapping(value = "/saveTmplate")
 	@ResponseBody
-	public ApiMessage saveTmplate(String pricestr, String name, String token) {
+	public ApiMessage saveTmplate(String pricestr, String name, Integer defaultFlag, HttpServletRequest request) {
 		
-		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, token);
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
+		
+		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, openid);
 
 		Venue venue = venueService.selectByManager(manager.getId());
 
 		if (venue == null) {
 			return new ApiMessage(400, "请先新建场馆");
+		}
+		
+		if (defaultFlag == 1) {
+			//将所有模板设置为非默认
+			venueTemplateService.updateNoDefaultVenue(venue.getId());
 		}
 		
 		VenueTemplate venueTemplate = new VenueTemplate();
@@ -152,11 +171,50 @@ public class ApiVenueTemplateController {
 		venueTemplate.setCreatetime(new Date());
 		venueTemplate.setModifytime(new Date());
 		venueTemplate.setVenueid(venue.getId());
+		venueTemplate.setDefaultflag(defaultFlag);
 		
-		int flag = venueTemplateService.insert(venueTemplate);
+		int flag = venueTemplateService.insertSelective(venueTemplate);
 		if (flag > 0 ) {
 			return new ApiMessage(200, "添加成功");
 		}
 		return new ApiMessage(400, "添加失败");
 	}
+	
+	/**  
+	 * @Description: 设置默认
+	 * @author 宋高俊  
+	 * @param id
+	 * @param request
+	 * @return 
+	 * @date 2018年9月15日 下午2:26:20 
+	 */ 
+	@RequestMapping(value = "/setDefaultTmplate")
+	@ResponseBody
+	public ApiMessage setDefaultTmplate(String id, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
+		
+		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, openid);
+
+		Venue venue = venueService.selectByManager(manager.getId());
+
+		if (venue == null) {
+			return new ApiMessage(400, "请先新建场馆");
+		}
+		
+		//将所有模板设置为非默认
+		venueTemplateService.updateNoDefaultVenue(venue.getId());
+		
+		//设置唯一默认模板
+		VenueTemplate venueTemplate = venueTemplateService.selectByPrimaryKey(id);
+		venueTemplate.setDefaultflag(1);
+		
+		int flag = venueTemplateService.updateByPrimaryKeySelective(venueTemplate);
+		if (flag > 0 ) {
+			return new ApiMessage(200, "设置成功");
+		}
+		return new ApiMessage(400, "设置失败");
+	}
+	
 }

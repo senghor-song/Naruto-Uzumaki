@@ -8,6 +8,12 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -15,31 +21,37 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.xiaoyi.ssm.dao.CombineMapper;
 import com.xiaoyi.ssm.dao.OrderLogMapper;
+import com.xiaoyi.ssm.dao.VenueLockMapper;
+import com.xiaoyi.ssm.dao.VenueTeachMapper;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.dto.FieldTemplateDto;
 import com.xiaoyi.ssm.dto.OrderDto;
 import com.xiaoyi.ssm.dto.PageBean;
 import com.xiaoyi.ssm.model.Coach;
+import com.xiaoyi.ssm.model.Combine;
 import com.xiaoyi.ssm.model.Field;
 import com.xiaoyi.ssm.model.FieldTemplate;
 import com.xiaoyi.ssm.model.Member;
 import com.xiaoyi.ssm.model.Order;
 import com.xiaoyi.ssm.model.OrderLog;
 import com.xiaoyi.ssm.model.Reserve;
+import com.xiaoyi.ssm.model.Venue;
+import com.xiaoyi.ssm.model.VenueLock;
+import com.xiaoyi.ssm.model.VenueTeach;
 import com.xiaoyi.ssm.service.CoachService;
 import com.xiaoyi.ssm.service.FieldService;
 import com.xiaoyi.ssm.service.FieldTemplateService;
 import com.xiaoyi.ssm.service.OrderService;
 import com.xiaoyi.ssm.service.ReserveService;
+import com.xiaoyi.ssm.service.VenueService;
+import com.xiaoyi.ssm.util.Arith;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  * @Description: 微信订场列表接口
@@ -62,10 +74,66 @@ public class ApiVenueController {
 	private OrderService orderService;
 	@Autowired
 	private OrderLogMapper orderLogMapper;
-	
-	//获取线程池连接
+	@Autowired
+	private VenueLockMapper venueLockMapper;
+	@Autowired
+	private VenueTeachMapper venueTeachMapper;
+	@Autowired
+	private CombineMapper combineMapper;
+	@Autowired
+	private VenueService venueService;
+
+	// 获取线程池连接
 	@Autowired
 	private ThreadPoolTaskExecutor taskExecutor;
+	
+	/**  
+	 * @Description: 常用场馆列表
+	 * @author 宋高俊  
+	 * @param pageBean
+	 * @param cityid
+	 * @param districtid
+	 * @param areaid
+	 * @return 
+	 * @date 2018年9月10日 下午4:00:58 
+	 */ 
+	@RequestMapping(value = "/oftenVenue")
+	@ResponseBody
+	public ApiMessage oftenVenue(HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
+		
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
+		
+		List<Map<String, Object>> listmap = new ArrayList<>();
+		List<Venue> venues = venueService.selectByOftenMember(member.getId());
+		for (Venue venue : venues) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", venue.getId());// id
+			map.put("image", venue.getImage());// 图片
+			map.put("name", venue.getName());// 名称
+			map.put("address", venue.getAddress());// 地址
+			map.put("phone", venue.getTel());// 电话
+			map.put("warmreminder", venue.getWarmreminder());// 温馨提示
+			listmap.add(map);
+		}
+		return new ApiMessage(200, "查询成功", listmap);
+	}
+
+	/**
+	 * @Description: 新增场馆
+	 * @author 宋高俊
+	 * @date 2018年8月22日 下午7:21:28
+	 */
+	@RequestMapping(value = "/saveVenue")
+	@ResponseBody
+	public ApiMessage saveVenue(Venue venue, HttpServletRequest request){
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
+		return venueService.saveVenue(venue, openid);
+	}
 
 	/**
 	 * @Description: 获取日期数据
@@ -102,8 +170,8 @@ public class ApiVenueController {
 		Date date = new Date();
 		String hour = DateUtil.getFormat(date, "HH");
 		String minute = DateUtil.getFormat(date, "mm");
-		//已过期的时段
-		int outtime = (int) (Integer.valueOf(hour)/0.5);
+		// 已过期的时段
+		int outtime = (int) (Integer.valueOf(hour) / 0.5);
 		if (Integer.valueOf(minute) < 30) {
 			outtime--;
 		}
@@ -150,10 +218,10 @@ public class ApiVenueController {
 					} else {
 						map.put("time", time + ":00-" + time + ":30");
 					}
-					//小于或等于过期时段的时段状态则修改为已过期
+					// 小于或等于过期时段的时段状态则修改为已过期
 					if (j <= outtime && !"-1".equals(template[j])) {
 						map.put("price", "-4");
-					}else {
+					} else {
 						map.put("price", template[j]);
 					}
 					map.put("flag", "");
@@ -165,22 +233,22 @@ public class ApiVenueController {
 				fieldTemplateDto.setFieldid(field.getId());
 				fieldTemplateDto.setVenueid(venueid);
 				List<Reserve> reserves = reserveService.selectByFieldTemplateDto(fieldTemplateDto);
-				//修改时段状态
+				// 修改时段状态
 				for (int j = 0; j < reserves.size(); j++) {
 					Reserve reserve = reserves.get(j);
 					// 将已预约成功的时段改为已预约状态
 					String[] timestr = reserves.get(j).getReservetimeframe().split(",");
-					//当前时段状态
+					// 当前时段状态
 					String priceType = "";
 					if (reserve.getOrder().getType() == 1 || reserve.getOrder().getType() == 6) {
-						//已消费和支付待消费都是已预约状态
+						// 已消费和支付待消费都是已预约状态
 						priceType = "-2";
-					}else if (reserve.getOrder().getType() == 0) {
-						//待支付是预约中状态
+					} else if (reserve.getOrder().getType() == 0) {
+						// 待支付是预约中状态
 						priceType = "-3";
 					}
-					
-					//修改时段内的状态
+
+					// 修改时段内的状态
 					for (int k = 0; k < timestr.length; k++) {
 						int flag = Integer.valueOf(timestr[k]) - 1;
 						Map<String, Object> timemap = datelistmap.get(flag);
@@ -189,8 +257,60 @@ public class ApiVenueController {
 						datelistmap.set(flag, timemap);
 					}
 				}
-			} else {
-				continue;
+
+				// 获取当天锁定占用时段=-5
+				List<VenueLock> venueLocks = venueLockMapper.selectByNowDate(fieldTemplateDto);
+				// 修改时段状态
+				for (int j = 0; j < venueLocks.size(); j++) {
+					VenueLock venueLock = venueLocks.get(j);
+					// 已有状态的时间段
+					String[] timestr = venueLock.getVenuetimeframe().split(",");
+
+					// 修改时段内的状态
+					for (int k = 0; k < timestr.length; k++) {
+						int flag = Integer.valueOf(timestr[k]) - 1;
+						Map<String, Object> timemap = datelistmap.get(flag);
+						timemap.put("price", "-5");
+						timemap.put("flag", "user" + j + "-5");
+						datelistmap.set(flag, timemap);
+					}
+				}
+
+				// 获取当天教学占用时段=-6
+				List<VenueTeach> venueTeachs = venueTeachMapper.selectByNowDate(fieldTemplateDto);
+				// 修改时段状态
+				for (int j = 0; j < venueTeachs.size(); j++) {
+					VenueTeach venueTeach = venueTeachs.get(j);
+					// 已有状态的时间段
+					String[] timestr = venueTeach.getVenuetimeframe().split(",");
+
+					// 修改时段内的状态
+					for (int k = 0; k < timestr.length; k++) {
+						int flag = Integer.valueOf(timestr[k]) - 1;
+						Map<String, Object> timemap = datelistmap.get(flag);
+						timemap.put("price", "-6");
+						timemap.put("flag", "user" + j + "-6");
+						datelistmap.set(flag, timemap);
+					}
+				}
+
+				// 获取当天拼场占用时段=-7
+				List<Combine> combines = combineMapper.selectByNowDate(fieldTemplateDto);
+				for (int j = 0; j < combines.size(); j++) {
+					Combine combine = combines.get(j);
+					// 已有状态的时间段
+					String[] timestr = combine.getCombinetimeframe().split(",");
+
+					// 修改时段内的状态
+					for (int k = 0; k < timestr.length; k++) {
+						int flag = Integer.valueOf(timestr[k]) - 1;
+						Map<String, Object> timemap = datelistmap.get(flag);
+						timemap.put("price", "-7");
+						timemap.put("flag", "user" + j + "-7");
+						datelistmap.set(flag, timemap);
+					}
+				}
+
 			}
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", field.getId());
@@ -253,7 +373,7 @@ public class ApiVenueController {
 				for (int j = 0; j < time.length; j++) {
 					// 计算总价格
 					int timeflag = Integer.valueOf(time[j]) - 1;
-					price += Integer.valueOf(template[timeflag]);
+					price = Arith.add(price, Double.valueOf(template[timeflag]));
 				}
 				// 生成预约时段数据
 				datastr = field.getName() + "(" + date + " " + StringUtil.timeToTimestr(time) + ")";
@@ -297,20 +417,23 @@ public class ApiVenueController {
 	 */
 	@RequestMapping(value = "/saveorder")
 	@ResponseBody
-	public ApiMessage saveorder(String token, String date, String timestr, String venueid, String coachid) {
+	public ApiMessage saveorder(String date, String timestr, String venueid, String coachid, HttpServletRequest request){
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
 
 		if (StringUtil.isBank(date, timestr, venueid)) {
 			return new ApiMessage(400, "参数不完整");
 		}
-		//订单开始时间
+		// 订单开始时间
 		Date datetime = new Date();
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
 		if (member == null) {
 			return new ApiMessage(400, "请登录后操作");
 		}
 		// 订单数据
 		Order order = new Order();
-		//订单ID
+		// 订单ID
 		final String orderid = Utils.getUUID();
 		order.setId(orderid);
 		order.setCreatetime(datetime);
@@ -353,7 +476,7 @@ public class ApiVenueController {
 			for (int j = 0; j < timesums.length; j++) {
 				timetoint[j] = Integer.valueOf(timesums[j]);
 			}
-			//订单查询条件
+			// 订单查询条件
 			OrderDto orderDto = new OrderDto();
 			orderDto.setDate(DateUtil.getParse(date, "yyyy-MM-dd"));
 			orderDto.setFieldid(field.getId());
@@ -370,7 +493,7 @@ public class ApiVenueController {
 					}
 					// 计算总价格
 					int timeflag = Integer.valueOf(time[j]) - 1;
-					reserveamount += Integer.valueOf(template[timeflag]);
+					reserveamount = Arith.add(reserveamount, Double.valueOf(template[timeflag]));
 				}
 				// 生成预约时段数据
 				datastr = field.getName() + "(" + date + " " + StringUtil.timeToTimestr(time) + ")";
@@ -385,7 +508,7 @@ public class ApiVenueController {
 				reserve.setReserveamount(reserveamount);
 				reserveService.insertSelective(reserve);
 				// 计算总价格
-				price += reserveamount;
+				price = Arith.add(price, reserveamount);
 				// 计算总小时数
 				timesum += time.length * 0.5;
 			}
@@ -395,13 +518,14 @@ public class ApiVenueController {
 			if (coach != null) {
 				order.setCoachid(coach.getId());
 				order.setCoachamount(coach.getPrice() * timesum);
+				price = Arith.add(price, coach.getPrice() * timesum);
 			}
 		}
 		order.setPrice(price);
 		order.setTimesum(timesum);
-		//保存订单数据
+		// 保存订单数据
 		orderService.insertSelective(order);
-		//记录订单日志
+		// 记录订单日志
 		OrderLog orderLog = new OrderLog();
 		orderLog.setId(Utils.getUUID());
 		orderLog.setCreatetime(datetime);
@@ -409,34 +533,35 @@ public class ApiVenueController {
 		orderLog.setType(0);
 		orderLog.setContent("创建订单,等待支付");
 		orderLogMapper.insert(orderLog);
-		
-		
-		//开启线程处理延时任务
+
+		// 开启线程处理延时任务
 		new Timer(order.getId() + "订单支付超时，已关闭").schedule(new TimerTask() {
-            @Override
-            public void run() {
-            	Order order = orderService.selectByPrimaryKey(orderid);
-        		OrderLog orderLog = new OrderLog();
-                if (order.getType() == 1 || order.getType() == 4) {
-					//记录日志
-            		orderLog.setId(Utils.getUUID());
-            		orderLog.setCreatetime(new Date());
+			@Override
+			public void run() {
+				Order order = orderService.selectByPrimaryKey(orderid);
+				OrderLog orderLog = new OrderLog();
+				orderLog.setOrderid(orderid);
+				orderLog.setType(0);
+				if (order.getType() == 1 || order.getType() == 4) {
+					// 记录日志
+					orderLog.setId(Utils.getUUID());
+					orderLog.setCreatetime(new Date());
 					orderLog.setContent("订单支付时间结束，检查订单已支付成功");
-					orderLogMapper.insert(orderLog);
-				}else {
+					orderLogMapper.insertSelective(orderLog);
+				} else {
 					Order neworder = new Order();
 					neworder.setId(orderid);
 					neworder.setModifytime(new Date());
 					neworder.setType(3);
 					orderService.updateByPrimaryKeySelective(neworder);
-					//记录日志
+					// 记录日志
 					orderLog.setId(Utils.getUUID());
-            		orderLog.setCreatetime(new Date());
+					orderLog.setCreatetime(new Date());
 					orderLog.setContent("订单支付时间结束，检查订单未支付成功，处理为支付超时");
-					orderLogMapper.insert(orderLog);
+					orderLogMapper.insertSelective(orderLog);
 				}
-            }
-        }, 300000);
+			}
+		}, 300000);
 //		taskExecutor.execute(new Runnable() {
 //			@Override
 //			public void run() {

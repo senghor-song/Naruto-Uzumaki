@@ -8,17 +8,17 @@
 		<result column="VenueID" jdbcType="VARCHAR" property="venueid" />
 		<result column="Name" jdbcType="VARCHAR" property="name" />
 		<result column="Image" jdbcType="VARCHAR" property="image" />
-		<result column="Price" jdbcType="INTEGER" property="price" />
+		<result column="Price" jdbcType="DOUBLE" property="price" />
 		<result column="Introduce" jdbcType="VARCHAR" property="introduce" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		ID, CreateTime, ModifyTime, VenueID, Name, Image, Price, Introduce
 	</sql>
-	
+
 	<select id="countByVenue" parameterType="java.lang.String" resultType="Integer">
 		select count(0) from Coach where VenueID = #{id}
 	</select>
-	
+
 	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Coach" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -47,7 +47,7 @@
 			</if>
 		</where>
 	</select>
-	
+
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -63,9 +63,8 @@
 		VenueID, Name, Image,
 		Price, Introduce)
 		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP},
-		#{venueid,jdbcType=VARCHAR},
-		#{name,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR},
-		#{price,jdbcType=INTEGER}, #{introduce,jdbcType=VARCHAR})
+		#{venueid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR},
+		#{price,jdbcType=DOUBLE}, #{introduce,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Coach">
 		insert into Coach
@@ -115,7 +114,7 @@
 				#{image,jdbcType=VARCHAR},
 			</if>
 			<if test="price != null">
-				#{price,jdbcType=INTEGER},
+				#{price,jdbcType=DOUBLE},
 			</if>
 			<if test="introduce != null">
 				#{introduce,jdbcType=VARCHAR},
@@ -141,7 +140,7 @@
 				Image = #{image,jdbcType=VARCHAR},
 			</if>
 			<if test="price != null">
-				Price = #{price,jdbcType=INTEGER},
+				Price = #{price,jdbcType=DOUBLE},
 			</if>
 			<if test="introduce != null">
 				Introduce = #{introduce,jdbcType=VARCHAR},
@@ -152,15 +151,12 @@
 	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Coach">
 		update Coach
 		set CreateTime = #{createtime,jdbcType=TIMESTAMP},
-		ModifyTime =
-		#{modifytime,jdbcType=TIMESTAMP},
+		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
 		VenueID = #{venueid,jdbcType=VARCHAR},
 		Name = #{name,jdbcType=VARCHAR},
-		Image =
-		#{image,jdbcType=VARCHAR},
-		Price = #{price,jdbcType=INTEGER},
+		Image = #{image,jdbcType=VARCHAR},
+		Price = #{price,jdbcType=DOUBLE},
 		Introduce = #{introduce,jdbcType=VARCHAR}
-		where ID =
-		#{id,jdbcType=CHAR}
+		where ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

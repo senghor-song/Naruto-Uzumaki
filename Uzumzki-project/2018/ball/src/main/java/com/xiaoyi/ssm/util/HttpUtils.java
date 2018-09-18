@@ -8,9 +8,6 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class HttpUtils {
 	
     /**
@@ -41,7 +38,7 @@ public class HttpUtils {
             // 建立实际的连接
             connection.connect();
             // 获取所有响应头字段
-            Map<String, List<String>> map = connection.getHeaderFields();
+//            Map<String, List<String>> map = connection.getHeaderFields();
             // 遍历所有的响应头字段
 //            for (String key : map.keySet()) {
 //                System.out.println(key + "--->" + map.get(key));
@@ -54,7 +51,6 @@ public class HttpUtils {
                 result += line;
             }
         } catch (Exception e) {
-            System.out.println("发送GET请求出现异常！" + e);
             e.printStackTrace();
         }
         // 使用finally块来关闭输入流
@@ -128,4 +124,5 @@ public class HttpUtils {
         }
         return result;
     }    
+    
 }

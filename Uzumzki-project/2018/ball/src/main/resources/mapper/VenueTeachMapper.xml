@@ -4,17 +4,29 @@
 	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.VenueTeach">
 		<id column="ID" jdbcType="VARCHAR" property="id" />
 		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="TeachDate" jdbcType="DATE" property="teachdate" />
+		<result column="VenueID" jdbcType="VARCHAR" property="venueid" />
+		<result column="FieldID" jdbcType="VARCHAR" property="fieldid" />
 		<result column="Content" jdbcType="VARCHAR" property="content" />
 		<result column="Setting" jdbcType="INTEGER" property="setting" />
 		<result column="ManagerID" jdbcType="VARCHAR" property="managerid" />
 		<result column="VenueTimeFrame" jdbcType="VARCHAR" property="venuetimeframe" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, CreateTime, Content, Setting, ManagerID, VenueTimeFrame
+		ID, CreateTime, TeachDate, VenueID, FieldID, Content, Setting, ManagerID, VenueTimeFrame
 	</sql>
 	
-	<select id="selectContentByManager" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select DISTINCT Content from VenueTeach where ManagerID = #{id,jdbcType=VARCHAR}
+	<select id="selectContentByManager" parameterType="java.lang.String" resultType="java.lang.String">
+		select DISTINCT Content from VenueTeach where ManagerID = #{id,jdbcType=VARCHAR} ORDER BY CreateTime DESC
+	</select>
+	
+	<select id="selectIsVenueTeach" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0) FROM VenueTeach WHERE
+        ManagerID = #{id} AND `VenueTimeFrame`  LIKE CONCAT('%',CONCAT('${time}','%'))
+	</select>
+	
+	<select id="selectByNowDate" parameterType="com.xiaoyi.ssm.dto.FieldTemplateDto" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List" /> FROM VenueTeach WHERE TeachDate = #{date} AND VenueID = #{venueid} AND FieldID = #{fieldid} AND Setting = 1
 	</select>
 	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -28,10 +40,12 @@
 		where ID = #{id,jdbcType=VARCHAR}
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueTeach">
-		insert into VenueTeach (ID, CreateTime, Content,
+		insert into VenueTeach (ID, CreateTime, TeachDate,
+		VenueID, FieldID, Content,
 		Setting, ManagerID, VenueTimeFrame
 		)
-		values (#{id,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{content,jdbcType=VARCHAR},
+		values (#{id,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{teachdate,jdbcType=DATE},
+		#{venueid,jdbcType=VARCHAR}, #{fieldid,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
 		#{setting,jdbcType=INTEGER}, #{managerid,jdbcType=VARCHAR}, #{venuetimeframe,jdbcType=VARCHAR}
 		)
 	</insert>
@@ -43,6 +57,15 @@
 			</if>
 			<if test="createtime != null">
 				CreateTime,
+			</if>
+			<if test="teachdate != null">
+				TeachDate,
+			</if>
+			<if test="venueid != null">
+				VenueID,
+			</if>
+			<if test="fieldid != null">
+				FieldID,
 			</if>
 			<if test="content != null">
 				Content,
@@ -64,6 +87,15 @@
 			<if test="createtime != null">
 				#{createtime,jdbcType=TIMESTAMP},
 			</if>
+			<if test="teachdate != null">
+				#{teachdate,jdbcType=DATE},
+			</if>
+			<if test="venueid != null">
+				#{venueid,jdbcType=VARCHAR},
+			</if>
+			<if test="fieldid != null">
+				#{fieldid,jdbcType=VARCHAR},
+			</if>
 			<if test="content != null">
 				#{content,jdbcType=VARCHAR},
 			</if>
@@ -84,6 +116,15 @@
 			<if test="createtime != null">
 				CreateTime = #{createtime,jdbcType=TIMESTAMP},
 			</if>
+			<if test="teachdate != null">
+				TeachDate = #{teachdate,jdbcType=DATE},
+			</if>
+			<if test="venueid != null">
+				VenueID = #{venueid,jdbcType=VARCHAR},
+			</if>
+			<if test="fieldid != null">
+				FieldID = #{fieldid,jdbcType=VARCHAR},
+			</if>
 			<if test="content != null">
 				Content = #{content,jdbcType=VARCHAR},
 			</if>
@@ -102,6 +143,9 @@
 	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.VenueTeach">
 		update VenueTeach
 		set CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		TeachDate = #{teachdate,jdbcType=DATE},
+		VenueID = #{venueid,jdbcType=VARCHAR},
+		FieldID = #{fieldid,jdbcType=VARCHAR},
 		Content = #{content,jdbcType=VARCHAR},
 		Setting = #{setting,jdbcType=INTEGER},
 		ManagerID = #{managerid,jdbcType=VARCHAR},

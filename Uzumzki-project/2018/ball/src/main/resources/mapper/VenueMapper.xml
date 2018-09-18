@@ -40,6 +40,11 @@
 		BallSum, Image, WarmReminder,
 		AmountBank, AmountAccount, AmountAccountNumber, Amount, Balance, FreezeAmount, OrderVerify
 	</sql>
+	
+	<select id="selectByOftenMember" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT v.* FROM Venue v INNER JOIN 
+		(SELECT DISTINCT `VenueID` FROM `Order` WHERE `MemberID` = #{id} ORDER BY `CreateTime` DESC LIMIT 2 )  b ON v.id= b.VenueID
+	</select>
 
 	<select id="selectByManager" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT v.* FROM Venue v INNER JOIN ManagerVenue mv

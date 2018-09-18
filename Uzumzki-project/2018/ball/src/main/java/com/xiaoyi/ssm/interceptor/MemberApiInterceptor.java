@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -13,8 +15,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.xiaoyi.ssm.model.Member;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.RedisUtil;
-
-import net.sf.json.JSONObject;
 
 /**
  * @Description: 微信端拦截器
@@ -28,23 +28,30 @@ public class MemberApiInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
+		//记录此次拦截的url
 		String requestUri = request.getRequestURI();
 		String contextPath = request.getContextPath();
 		String url = requestUri.substring(contextPath.length());
-
+		
+		log.info("session:" + request.getSession().getId());
+		log.info("openid:" + (String) request.getSession().getAttribute("openid"));
+		String openid = (String) request.getSession().getAttribute("openid");
+		
 		if ("/WebBackAPI/api/common/member/login".equals(requestUri)) {
 			return true;
 		}
-		String token = request.getParameter("token");
-		if (token != null) {
-			Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		
+		if (openid != null) {
+			Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
 			if (member != null) {
 				return true;
 			}
 		}
+
 		log.info("requestUri:" + requestUri);
 		log.info("contextPath:" + contextPath);
 		log.info("url:" + url);
+//		response.sendRedirect("https://ball.ekeae.com:8443/dist/login");
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json; charset=utf-8");
 		PrintWriter out = null;
@@ -53,6 +60,33 @@ public class MemberApiInterceptor extends HandlerInterceptorAdapter {
 		json.put("msg", "请登录后操作");
 		out = response.getWriter();
 		out.append(json.toString());
+//
+//			//设置服务器端以UTF-8编码进行输出
+//		response.setCharacterEncoding("UTF-8");
+//		//设置浏览器以UTF-8编码进行接收,解决中文乱码问题
+//		response.setContentType("text/html;charset=UTF-8");
+//		PrintWriter out = response.getWriter();
+		//获取浏览器访问访问服务器时传递过来的cookie数组
+//		Cookie[] cookies = request.getCookies();
+//		//如果用户是第一次访问，那么得到的cookies将是null
+//		if (cookies!=null) {
+//		    out.write("您上次访问的时间是：");
+//		    for (int i = 0; i < cookies.length; i++) {
+//		        Cookie cookie = cookies[i];
+//		        if (cookie.getName().equals("lastAccessTime")) {
+//		            Long lastAccessTime =Long.parseLong(cookie.getValue());
+//		            Date date = new Date(lastAccessTime);
+//		            out.write(date.toLocaleString());
+//		        }
+//		    }
+//		}else {
+//		    out.write("这是您第一次访问本站！");
+//		}
+		
+//		//用户访问过之后重新设置用户的访问时间，存储到cookie中，然后发送到客户端浏览器
+//		Cookie cookie = new Cookie("lastAccessTime", System.currentTimeMillis()+"");//创建一个cookie，cookie的名字是lastAccessTime
+//		//将cookie对象添加到response对象中，这样服务器在输出response对象中的内容时就会把cookie也输出到客户端浏览器
+//		response.addCookie(cookie);
 		return false;
 	}
 

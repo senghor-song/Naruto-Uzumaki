@@ -2,6 +2,7 @@ package com.xiaoyi.ssm.service;
 
 import java.util.List;
 
+import com.xiaoyi.ssm.dto.WebsiteSearchMapDto;
 import com.xiaoyi.ssm.model.Estate;
 /**  
  * @Description: 小区业务逻辑接口
@@ -44,4 +45,13 @@ public interface EstateService extends BaseService<Estate, String> {
 	 * @date 2018年8月15日 下午2:37:29 
 	 */ 
 	List<Estate> selectByArea(String id);
+
+	/**  
+	 * @Description: 根据经纬度查询小区
+	 * @author 宋高俊  
+	 * @param websitePropertyDto
+	 * @return 
+	 * @date 2018年9月6日 上午9:41:18 
+	 */ 
+	List<Estate> selectBySearchArea(WebsiteSearchMapDto websitePropertyDto);
 }

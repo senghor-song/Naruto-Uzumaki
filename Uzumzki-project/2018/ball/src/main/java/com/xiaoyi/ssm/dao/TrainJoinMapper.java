@@ -19,4 +19,13 @@ public interface TrainJoinMapper extends BaseMapper<TrainJoin, String>{
 	 */ 
 	List<TrainJoin> selectByAmount(String amountid);
 
+	/**  
+	 * @Description: 根据场馆ID查询
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年9月5日 下午4:06:57 
+	 */ 
+	List<TrainJoin> selectByVenue(String id);
+
 }

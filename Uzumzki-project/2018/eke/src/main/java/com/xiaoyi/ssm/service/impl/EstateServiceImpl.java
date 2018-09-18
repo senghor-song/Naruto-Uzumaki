@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.xiaoyi.ssm.dao.EstateMapper;
+import com.xiaoyi.ssm.dto.WebsiteSearchMapDto;
 import com.xiaoyi.ssm.model.Estate;
 import com.xiaoyi.ssm.service.EstateService;
 
@@ -48,6 +49,11 @@ public class EstateServiceImpl extends AbstractService<Estate,String> implements
 	@Override
 	public List<Estate> selectByArea(String id) {
 		return estateMapper.selectByArea(id);
+	}
+
+	@Override
+	public List<Estate> selectBySearchArea(WebsiteSearchMapDto websitePropertyDto) {
+		return estateMapper.selectBySearchArea(websitePropertyDto);
 	}
 	
 }

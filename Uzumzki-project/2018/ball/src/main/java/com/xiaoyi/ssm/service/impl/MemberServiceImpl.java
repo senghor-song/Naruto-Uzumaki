@@ -53,4 +53,26 @@ public class MemberServiceImpl extends AbstractService<Member,String> implements
 		return memberMapper.updateByPhone(phone, password);
 	}
 
+	/**  
+	 * @Description: 根据openid查询用户
+	 * @author 宋高俊  
+	 * @param openid
+	 * @return 
+	 * @date 2018年9月10日 下午8:40:45 
+	 */ 
+	@Override
+	public Member selectByOpenid(String openid) {
+		return memberMapper.selectByOpenid(openid);
+	}
+
+	/**  
+	 * @Description: 根据Unionid查询用户
+	 * @author 宋高俊  
+	 * @date 2018年9月13日 上午11:36:49 
+	 */ 
+	@Override
+	public Member selectByUnionid(String unionid) {
+		return memberMapper.selectByUnionid(unionid);
+	}
+	
 }

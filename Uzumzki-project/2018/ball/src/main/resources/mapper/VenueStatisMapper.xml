@@ -4,28 +4,40 @@
 	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.VenueStatis">
 		<id column="ID" jdbcType="CHAR" property="id" />
 		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
-		<result column="ModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
+		<result column="StatisDate" jdbcType="DATE" property="statisdate" />
 		<result column="VenueID" jdbcType="CHAR" property="venueid" />
-		<result column="Score" jdbcType="INTEGER" property="score" />
+		<result column="Score" jdbcType="DOUBLE" property="score" />
+		<result column="Amount" jdbcType="DOUBLE" property="amount" />
+		<result column="Template" jdbcType="VARCHAR" property="template" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, CreateTime, ModifyTime, VenueID, Score
+		ID, CreateTime, StatisDate, VenueID, Score, Amount, Template
 	</sql>
+	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from VenueStatis
 		where ID = #{id,jdbcType=CHAR}
 	</select>
+	
+	<select id="selectByVenue"  resultMap="BaseResultMap">
+		SELECT * FROM VenueStatis WHERE VenueID = #{venueid,jdbcType=CHAR}  
+		AND StatisDate &gt; #{startDate,jdbcType=TIMESTAMP} AND StatisDate &lt; #{endDate,jdbcType=TIMESTAMP}
+		ORDER BY `StatisDate`
+	</select>
+	
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
 		delete from VenueStatis
 		where ID = #{id,jdbcType=CHAR}
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueStatis">
-		insert into VenueStatis (ID, CreateTime, ModifyTime,
-		VenueID, Score)
-		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP},
-		#{venueid,jdbcType=CHAR}, #{score,jdbcType=INTEGER})
+		insert into VenueStatis (ID, CreateTime, StatisDate,
+		VenueID, Score, Amount,
+		Template)
+		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{statisdate,jdbcType=DATE},
+		#{venueid,jdbcType=CHAR}, #{score,jdbcType=DOUBLE}, #{amount,jdbcType=DOUBLE},
+		#{template,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueStatis">
 		insert into VenueStatis
@@ -36,14 +48,20 @@
 			<if test="createtime != null">
 				CreateTime,
 			</if>
-			<if test="modifytime != null">
-				ModifyTime,
+			<if test="statisdate != null">
+				StatisDate,
 			</if>
 			<if test="venueid != null">
 				VenueID,
 			</if>
 			<if test="score != null">
 				Score,
+			</if>
+			<if test="amount != null">
+				Amount,
+			</if>
+			<if test="template != null">
+				Template,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -53,14 +71,20 @@
 			<if test="createtime != null">
 				#{createtime,jdbcType=TIMESTAMP},
 			</if>
-			<if test="modifytime != null">
-				#{modifytime,jdbcType=TIMESTAMP},
+			<if test="statisdate != null">
+				#{statisdate,jdbcType=DATE},
 			</if>
 			<if test="venueid != null">
 				#{venueid,jdbcType=CHAR},
 			</if>
 			<if test="score != null">
-				#{score,jdbcType=INTEGER},
+				#{score,jdbcType=DOUBLE},
+			</if>
+			<if test="amount != null">
+				#{amount,jdbcType=DOUBLE},
+			</if>
+			<if test="template != null">
+				#{template,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -70,14 +94,20 @@
 			<if test="createtime != null">
 				CreateTime = #{createtime,jdbcType=TIMESTAMP},
 			</if>
-			<if test="modifytime != null">
-				ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+			<if test="statisdate != null">
+				StatisDate = #{statisdate,jdbcType=DATE},
 			</if>
 			<if test="venueid != null">
 				VenueID = #{venueid,jdbcType=CHAR},
 			</if>
 			<if test="score != null">
-				Score = #{score,jdbcType=INTEGER},
+				Score = #{score,jdbcType=DOUBLE},
+			</if>
+			<if test="amount != null">
+				Amount = #{amount,jdbcType=DOUBLE},
+			</if>
+			<if test="template != null">
+				Template = #{template,jdbcType=VARCHAR},
 			</if>
 		</set>
 		where ID = #{id,jdbcType=CHAR}
@@ -85,9 +115,11 @@
 	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.VenueStatis">
 		update VenueStatis
 		set CreateTime = #{createtime,jdbcType=TIMESTAMP},
-		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+		StatisDate = #{statisdate,jdbcType=DATE},
 		VenueID = #{venueid,jdbcType=CHAR},
-		Score = #{score,jdbcType=INTEGER}
+		Score = #{score,jdbcType=DOUBLE},
+		Amount = #{amount,jdbcType=DOUBLE},
+		Template = #{template,jdbcType=VARCHAR}
 		where ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

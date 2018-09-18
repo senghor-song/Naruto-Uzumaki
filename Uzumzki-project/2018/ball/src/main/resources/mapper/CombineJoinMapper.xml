@@ -20,8 +20,12 @@
 	</sql>
 
 	<select id="countByCombine" parameterType="java.lang.String" resultType="Integer">
-		select COUNT(0) from CombineJoin where CombineID =
-		#{id,jdbcType=CHAR}
+		select COUNT(0) from CombineJoin where CombineID = #{id,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByCombine" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT cj.*,m.`Name` mName FROM CombineJoin cj LEFT JOIN `Member` m ON cj.`MemberID` = m.`ID` 
+		INNER JOIN Combine c ON c.`ID` = cj.`CombineID` WHERE cj.CombineID = #{id,jdbcType=CHAR} AND c.`Type` = 0
 	</select>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.InviteImageMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.InviteImage">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Invite_id" jdbcType="VARCHAR" property="inviteId" />
+		<result column="Url" jdbcType="VARCHAR" property="url" />
+		<result column="Head_image" jdbcType="INTEGER" property="headImage" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Invite_id, Url, Head_image
+	</sql>
+	
+	<select id="selectByHeadID" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from InviteImage
+		where Invite_id = #{id,jdbcType=VARCHAR} and Head_image = 1 limit 1
+	</select>
+	
+	<select id="selectByInviteBallId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from InviteImage
+		where Invite_id = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="deleteByInviteBall" parameterType="java.lang.String">
+		delete from InviteImage where Invite_id = #{id,jdbcType=VARCHAR}
+	</delete>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from InviteImage
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from InviteImage
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.InviteImage">
+		insert into InviteImage (ID, Create_time, Invite_id,
+		Url, Head_image)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{inviteId,jdbcType=VARCHAR},
+		#{url,jdbcType=VARCHAR}, #{headImage,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.InviteImage">
+		insert into InviteImage
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="inviteId != null">
+				Invite_id,
+			</if>
+			<if test="url != null">
+				Url,
+			</if>
+			<if test="headImage != null">
+				Head_image,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="inviteId != null">
+				#{inviteId,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				#{url,jdbcType=VARCHAR},
+			</if>
+			<if test="headImage != null">
+				#{headImage,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.InviteImage">
+		update InviteImage
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="inviteId != null">
+				Invite_id = #{inviteId,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				Url = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="headImage != null">
+				Head_image = #{headImage,jdbcType=INTEGER},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.InviteImage">
+		update InviteImage
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Invite_id = #{inviteId,jdbcType=VARCHAR},
+		Url = #{url,jdbcType=VARCHAR},
+		Head_image = #{headImage,jdbcType=INTEGER}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

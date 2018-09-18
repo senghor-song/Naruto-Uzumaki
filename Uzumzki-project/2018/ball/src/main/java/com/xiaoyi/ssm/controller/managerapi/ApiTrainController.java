@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,8 +49,11 @@ public class ApiTrainController {
 	 */
 	@RequestMapping(value = "/trainList")
 	@ResponseBody
-	public ApiMessage trainList(String token) {
-		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, token);
+	public ApiMessage trainList(HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
+		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, openid);
 
 		Train t = new Train();
 		t.setManagerid(manager.getId());
@@ -58,10 +64,8 @@ public class ApiTrainController {
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", train.getId());// id
 			map.put("image", train.getImage());// 海报地址
-			map.put("content", train.getContent());// 表格
-			map.put("contentText", train.getContenttext());// 表格内容
+			map.put("content", train.getContent());// 内容
 			map.put("qrcode", "https://ekeae-image.oss-cn-shenzhen.aliyuncs.com/2018/8/23/timg.jpg");// 二维码地址
-			map.put("price", train.getPrice());// 单价
 			listmap.add(map);
 		}
 		return new ApiMessage(200, "查询成功", listmap);
@@ -80,8 +84,6 @@ public class ApiTrainController {
 		map.put("id", t.getId());// id
 		map.put("trainno", t.getTrainno());// 编号
 		map.put("venueid", t.getVenueid());// 场馆ID
-		map.put("contenttext", t.getContenttext());// 培训内容
-		map.put("price", t.getPrice());// 
 		map.put("image", t.getImage());// 
 		return new ApiMessage(200, "查询成功", map);
 	}
@@ -93,8 +95,11 @@ public class ApiTrainController {
 	 */
 	@RequestMapping(value = "/deleteTrain")
 	@ResponseBody
-	public ApiMessage deleteTrain(String token, String trainid) {
-		int flag = trainService.deleteByPrimaryKey(trainid);
+	public ApiMessage deleteTrain(String trainid, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
+		int flag = trainService.deleteByPrimaryKey(openid);
 		if (flag > 0) {
 			return new ApiMessage(200, "删除成功");
 		} else {
@@ -130,10 +135,13 @@ public class ApiTrainController {
 	 */
 	@RequestMapping(value = "/saveTrain")
 	@ResponseBody
-	public ApiMessage saveTrain(String token, String content, String image, String trainBaseId, Double price,
-			String contenttext) {
+	public ApiMessage saveTrain(String content, String image, String trainBaseId, Double price,
+			String contenttext, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
 		// 管理员数据
-		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, token);
+		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, openid);
 		
 		Venue venue = venueService.selectByManager(manager.getId());
 		// 创建培训课程数据
@@ -143,8 +151,6 @@ public class ApiTrainController {
 		train.setCreatetime(new Date());
 		train.setModifytime(new Date());
 //		train.setContent(content);
-		train.setContenttext(contenttext);
-		train.setPrice(price);
 		train.setManagerid(manager.getId());
 		train.setVenueid(venue.getId());
 		train.setImage(image);
@@ -164,15 +170,16 @@ public class ApiTrainController {
 	 */
 	@RequestMapping(value = "/updateTrain")
 	@ResponseBody
-	public ApiMessage updateTrain(String token, String trainid, String content, Double price, String contenttext) {
+	public ApiMessage updateTrain(String trainid, String content, Double price, String contenttext, String image, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
 		// 创建培训课程数据
 		Train train = new Train();
 		train.setId(trainid);
 		train.setModifytime(new Date());
 		train.setContent(content);
-		train.setContenttext(contenttext);
-		train.setPrice(100.00);
-		train.setImage("https://ekeae-image.oss-cn-shenzhen.aliyuncs.com/2018/8/23/timg.jpg");
+		train.setImage(image);
 		int flag = trainService.updateByPrimaryKeyWithBLOBs(train);
 		if (flag > 0) {
 			return new ApiMessage(200, "修改成功");

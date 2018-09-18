@@ -2,10 +2,12 @@ package com.xiaoyi.ssm.service;
 
 import java.util.List;
 
+import com.xiaoyi.ssm.dto.WebsiteSearchMapDto;
 import com.xiaoyi.ssm.model.Area;
 import com.xiaoyi.ssm.model.City;
 import com.xiaoyi.ssm.model.CityLog;
 import com.xiaoyi.ssm.model.District;
+import com.xiaoyi.ssm.model.Estate;
 
 /**
  * @Description: 城市业务逻辑接口
@@ -126,5 +128,24 @@ public interface CityService {
 	 * @date 2018年8月13日 下午3:35:10 
 	 */ 
 	District selectByDistrictName(String name);
+
+	/**  
+	 * @Description: 根据经纬度查询片区
+	 * @author 宋高俊  
+	 * @param websitePropertyDto
+	 * @return 
+	 * @date 2018年9月6日 上午9:41:18 
+	 */ 
+	List<Area> selectBySearchDistrict(WebsiteSearchMapDto websitePropertyDto);
+
+	/**  
+	 * @Description: 根据经纬度查询区县
+	 * @author 宋高俊  
+	 * @param websitePropertyDto
+	 * @return 
+	 * @date 2018年9月6日 上午9:41:18 
+	 */ 
+	List<District> selectBySearchCity(WebsiteSearchMapDto websitePropertyDto);
+
 	
 }

@@ -25,8 +25,8 @@ public class Coach implements Serializable {
     /** 教练图片 */
     private String image;
 
-    /** 每时段单价 */
-    private Integer price;
+    /** 每小时单价 */
+    private Double price;
 
     /** 教练介绍 */
     private String introduce;
@@ -133,18 +133,18 @@ public class Coach implements Serializable {
     }
 
     /**
-     * 每时段单价
-     * @return Price 每时段单价
+     * 每小时单价
+     * @return Price 每小时单价
      */
-    public Integer getPrice() {
+    public Double getPrice() {
         return price;
     }
 
     /**
-     * 每时段单价
-     * @param price 每时段单价
+     * 每小时单价
+     * @param price 每小时单价
      */
-    public void setPrice(Integer price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

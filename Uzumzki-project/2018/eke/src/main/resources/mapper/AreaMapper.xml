@@ -37,6 +37,12 @@
 		select count(*) from Area where CityID = #{cityId,jdbcType=CHAR}
 	</select>
 	
+	<select id="selectBySearchDistrict" parameterType="com.xiaoyi.ssm.dto.WebsiteSearchMapDto" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Area a where a.`Longitude` &gt; #{startLng} AND  a.`Longitude` &lt; #{endLng} AND a.`Latitude` &gt; #{startLat} AND a.`Latitude` &lt; #{endLat}
+	</select>
+	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />

@@ -9,11 +9,21 @@
 		<result column="Sex" jdbcType="INTEGER" property="sex" />
 		<result column="Phone" jdbcType="VARCHAR" property="phone" />
 		<result column="Password" jdbcType="VARCHAR" property="password" />
+		<result column="ManagerID" jdbcType="VARCHAR" property="managerid" />
 		<result column="OpenID" jdbcType="VARCHAR" property="openid" />
+		<result column="AppOpenID" jdbcType="VARCHAR" property="appopenid" />
+		<result column="UnionID" jdbcType="VARCHAR" property="unionid" />
+		<result column="AppNickName" jdbcType="VARCHAR" property="appnickname" />
+		<result column="AppAvatarUrl" jdbcType="VARCHAR" property="appavatarurl" />
+		<result column="AppGender" jdbcType="INTEGER" property="appgender" />
+		<result column="WechatID" jdbcType="VARCHAR" property="wechatid" />
+		<result column="WXPayment" jdbcType="DOUBLE" property="wxpayment" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, CreateTime, ModifyTime, Name, Sex, Phone, Password, OpenID
+		ID, CreateTime, ModifyTime, Name, Sex, Phone, Password, ManagerID, OpenID, AppOpenID,
+		UnionID, AppNickName, AppAvatarUrl, AppGender, WechatID, WXPayment
 	</sql>
+
 	<select id="login" parameterType="com.xiaoyi.ssm.model.Member" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -24,14 +34,26 @@
 	<select id="selectByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from Member where Phone = #{phone,jdbcType=CHAR} limit 1
+		from Member where Phone = #{phone,jdbcType=CHAR}
+	</select>
+
+	<select id="selectByOpenid" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Member where OpenID = #{openid,jdbcType=CHAR}
+	</select>
+
+	<select id="selectByUnionid" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Member where UnionID = #{unionid,jdbcType=CHAR}
 	</select>
 
 	<update id="updateByPhone" parameterType="java.lang.String">
 		update Member
-		set Password = #{password,jdbcType=VARCHAR}
-		where Phone =
-		#{phone,jdbcType=CHAR}
+		set Password =
+		#{password,jdbcType=VARCHAR}
+		where Phone = #{phone,jdbcType=CHAR}
 	</update>
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
@@ -46,10 +68,17 @@
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Member">
 		insert into Member (ID, CreateTime, ModifyTime,
 		Name, Sex, Phone, Password,
-		OpenID)
+		ManagerID, OpenID, AppOpenID,
+		UnionID, AppNickName, AppAvatarUrl,
+		AppGender, WechatID, WXPayment
+		)
 		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=DATE}, #{modifytime,jdbcType=DATE},
-		#{name,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-		#{openid,jdbcType=VARCHAR})
+		#{name,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{managerid,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR}, #{appopenid,jdbcType=VARCHAR},
+		#{unionid,jdbcType=VARCHAR}, #{appnickname,jdbcType=VARCHAR}, #{appavatarurl,jdbcType=VARCHAR},
+		#{appgender,jdbcType=INTEGER}, #{wechatid,jdbcType=VARCHAR}, #{wxpayment,jdbcType=DOUBLE}
+		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Member">
 		insert into Member
@@ -75,8 +104,32 @@
 			<if test="password != null">
 				Password,
 			</if>
+			<if test="managerid != null">
+				ManagerID,
+			</if>
 			<if test="openid != null">
 				OpenID,
+			</if>
+			<if test="appopenid != null">
+				AppOpenID,
+			</if>
+			<if test="unionid != null">
+				UnionID,
+			</if>
+			<if test="appnickname != null">
+				AppNickName,
+			</if>
+			<if test="appavatarurl != null">
+				AppAvatarUrl,
+			</if>
+			<if test="appgender != null">
+				AppGender,
+			</if>
+			<if test="wechatid != null">
+				WechatID,
+			</if>
+			<if test="wxpayment != null">
+				WXPayment,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -101,8 +154,32 @@
 			<if test="password != null">
 				#{password,jdbcType=VARCHAR},
 			</if>
+			<if test="managerid != null">
+				#{managerid,jdbcType=VARCHAR},
+			</if>
 			<if test="openid != null">
 				#{openid,jdbcType=VARCHAR},
+			</if>
+			<if test="appopenid != null">
+				#{appopenid,jdbcType=VARCHAR},
+			</if>
+			<if test="unionid != null">
+				#{unionid,jdbcType=VARCHAR},
+			</if>
+			<if test="appnickname != null">
+				#{appnickname,jdbcType=VARCHAR},
+			</if>
+			<if test="appavatarurl != null">
+				#{appavatarurl,jdbcType=VARCHAR},
+			</if>
+			<if test="appgender != null">
+				#{appgender,jdbcType=INTEGER},
+			</if>
+			<if test="wechatid != null">
+				#{wechatid,jdbcType=VARCHAR},
+			</if>
+			<if test="wxpayment != null">
+				#{wxpayment,jdbcType=DOUBLE},
 			</if>
 		</trim>
 	</insert>
@@ -127,8 +204,32 @@
 			<if test="password != null">
 				Password = #{password,jdbcType=VARCHAR},
 			</if>
+			<if test="managerid != null">
+				ManagerID = #{managerid,jdbcType=VARCHAR},
+			</if>
 			<if test="openid != null">
 				OpenID = #{openid,jdbcType=VARCHAR},
+			</if>
+			<if test="appopenid != null">
+				AppOpenID = #{appopenid,jdbcType=VARCHAR},
+			</if>
+			<if test="unionid != null">
+				UnionID = #{unionid,jdbcType=VARCHAR},
+			</if>
+			<if test="appnickname != null">
+				AppNickName = #{appnickname,jdbcType=VARCHAR},
+			</if>
+			<if test="appavatarurl != null">
+				AppAvatarUrl = #{appavatarurl,jdbcType=VARCHAR},
+			</if>
+			<if test="appgender != null">
+				AppGender = #{appgender,jdbcType=INTEGER},
+			</if>
+			<if test="wechatid != null">
+				WechatID = #{wechatid,jdbcType=VARCHAR},
+			</if>
+			<if test="wxpayment != null">
+				WXPayment = #{wxpayment,jdbcType=DOUBLE},
 			</if>
 		</set>
 		where ID = #{id,jdbcType=CHAR}
@@ -141,7 +242,15 @@
 		Sex = #{sex,jdbcType=INTEGER},
 		Phone = #{phone,jdbcType=VARCHAR},
 		Password = #{password,jdbcType=VARCHAR},
-		OpenID = #{openid,jdbcType=VARCHAR}
+		ManagerID = #{managerid,jdbcType=VARCHAR},
+		OpenID = #{openid,jdbcType=VARCHAR},
+		AppOpenID = #{appopenid,jdbcType=VARCHAR},
+		UnionID = #{unionid,jdbcType=VARCHAR},
+		AppNickName = #{appnickname,jdbcType=VARCHAR},
+		AppAvatarUrl = #{appavatarurl,jdbcType=VARCHAR},
+		AppGender = #{appgender,jdbcType=INTEGER},
+		WechatID = #{wechatid,jdbcType=VARCHAR},
+		WXPayment = #{wxpayment,jdbcType=DOUBLE}
 		where ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

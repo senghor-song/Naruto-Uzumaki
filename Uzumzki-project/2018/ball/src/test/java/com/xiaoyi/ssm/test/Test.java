@@ -1,33 +1,32 @@
 package com.xiaoyi.ssm.test;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.text.DecimalFormat;
 
-import org.aspectj.weaver.ast.And;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import com.xiaoyi.ssm.model.InviteBall;
+import com.xiaoyi.ssm.util.Arith;
 import com.xiaoyi.ssm.util.DateUtil;
-import com.xiaoyi.ssm.util.Global;
-import com.xiaoyi.ssm.util.HttpUtils;
-import com.xiaoyi.ssm.util.RedisUtil;
-import com.xiaoyi.ssm.util.Utils;
-import com.xiaoyi.ssm.wxPay.HttpUtil;
-
-import net.sf.json.JSONObject;
 
 public class Test {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	public static void main(String[] args) {
+//		InviteBall inviteBall = new InviteBall();
+//		inviteBall.setReceiveAmount(new BigDecimal(0.3));
+//		System.out.println(inviteBall.getReceiveAmount().doubleValue());
+		
+		
+		
+		
+		
+		
+		
+		
+		
 //		String fileName = "image/png";
 //		fileName = fileName.replace("/", ".");
 //		
@@ -102,12 +101,40 @@ public class Test {
 //		});
 //		int sum = (new BigDecimal(Double.toString(10.03)).multiply(new BigDecimal("100"))).intValue();
 //		System.out.println(sum);
-		
+
 //		String data = HttpUtils.sendGet("https://api.weixin.qq.com/cgi-bin/token", "grant_type=client_credential&appid=wxa76f9c07c99468b2&secret=3caf90ffa0f40292524eba00588f6e0d");
 //		JSONObject jsonObject = JSONObject.fromObject(data);
 //		System.out.println(jsonObject.get("access_token"));
-		@SuppressWarnings("unchecked")
-		Map<String, Object> map = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, "wxa76f9c07c99468b2"); 
-		System.out.println(map.get("access_token"));
+//		@SuppressWarnings("unchecked")
+//		Map<String, Object> map = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, "wxa76f9c07c99468b2"); 
+//		System.out.println(map.get("access_token"));
+//		try {
+////			long from = DateUtil.getParse("2016-05-01 13:59:58").getTime();
+////			long to = DateUtil.getParse("2016-05-01 14:00:00").getTime();
+////			DecimalFormat df = new DecimalFormat("0.000");
+////			Number d = df.parse(df.format((float) (to - from) / (1000 * 60 * 60)));
+////			System.out.println(d.doubleValue());
+////			
+//			
+//			double a = 1.3; 
+//			double b = 2.1; 
+//			BigDecimal bca = new BigDecimal(a);
+//			BigDecimal bcb = new BigDecimal(b);
+//			System.out.println(bca.add(bcb).doubleValue());
+//			BigDecimal b1 = new BigDecimal(Double.toString(a));  
+//	        BigDecimal b2 = new BigDecimal(Double.toString(b));  
+//			System.out.println(Arith.add(a, b));
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		
+		
+		
+		DecimalFormat df = new DecimalFormat("0.00");//格式化小数  
+		double a = 10;
+		float b = (float)3/100;
+		String s = df.format(b);//返回的是String类型  
+		System.out.println(b);
+		System.out.println(s);
 	}
 }

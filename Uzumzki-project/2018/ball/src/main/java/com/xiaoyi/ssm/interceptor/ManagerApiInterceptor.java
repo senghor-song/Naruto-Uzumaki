@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -13,8 +15,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.xiaoyi.ssm.model.Manager;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.RedisUtil;
-
-import net.sf.json.JSONObject;
 
 /**
  * @Description: 微信端拦截器
@@ -28,16 +28,20 @@ public class ManagerApiInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
+		//记录此次拦截的url
 		String requestUri = request.getRequestURI();
 		String contextPath = request.getContextPath();
 		String url = requestUri.substring(contextPath.length());
 
+		log.info("session:" + request.getSession().getId());
+		log.info("openid:" + (String) request.getSession().getAttribute("openid"));
+		String openid = (String) request.getSession().getAttribute("openid");
+
 		if ("/WebBackAPI/api/common/manager/login".equals(requestUri)) {
 			return true;
 		}
-		String token = request.getParameter("token");
-		if (token != null) {
-			Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, token);
+		if (openid != null) {
+			Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, openid);
 			if (manager != null) {
 				return true;
 			}

@@ -21,14 +21,14 @@
 		<id column="ID" jdbcType="CHAR" property="id" />
 		<result column="Path" jdbcType="VARCHAR" property="path" />
 	</resultMap>
-	
+
 	<sql id="Base_Column_List">
 		ID, EstateID, HouseID, CountF, City, Estate, AddTime, OperatorID,
 		Filename, Size,
-		Path, FlagDeleted, DeletedTime, Remark
+		Path, FlagDeleted, DeletedTime,
+		Remark
 	</sql>
-	<select id="selectByEmpImage" parameterType="com.xiaoyi.ssm.dto.EstateImageDto"
-		resultMap="BaseResultMap">
+	<select id="selectByEmpImage" parameterType="com.xiaoyi.ssm.dto.EstateImageDto" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from EstateImageEmp
@@ -40,14 +40,13 @@
 			AND CountF = #{countf}
 		</if>
 	</select>
-	<select id="selectByEmpEstate" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
-		SELECT DISTINCT EstateID estateid,Estate estate FROM
+	<select id="selectByEmpEstate" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT DISTINCT EstateID estateid,Estate estate
+		FROM
 		EstateImageEmp WHERE
 		OperatorID = #{empid}
 	</select>
-	<select id="selectByImageUrl" parameterType="java.lang.String"
-		resultMap="ImageResultMap">
+	<select id="selectByImageUrl" parameterType="java.lang.String" resultMap="ImageResultMap">
 		SELECT ID,Path FROM
 		EstateImageEmp WHERE
 		OperatorID = #{empid}
@@ -58,14 +57,12 @@
 		delete from
 		EstateImageEmp
 		where ID in
-		<foreach collection="array" item="item" open="(" separator=","
-			close=")">
+		<foreach collection="array" item="item" open="(" separator="," close=")">
 			#{item}
 		</foreach>
 	</delete>
 
-	<select id="selectByPrimaryKey" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from EstateImageEmp
@@ -78,7 +75,8 @@
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.EstateImageEmp">
 		insert into EstateImageEmp (ID, EstateID, HouseID,
 		CountF, City, Estate,
-		AddTime, OperatorID, Filename,
+		AddTime,
+		OperatorID, Filename,
 		Size, Path, FlagDeleted,
 		DeletedTime, Remark)
 		values (#{id,jdbcType=CHAR}, #{estateid,jdbcType=CHAR},
@@ -86,7 +84,8 @@
 		#{countf,jdbcType=INTEGER}, #{city,jdbcType=VARCHAR}, #{estate,jdbcType=VARCHAR},
 		#{addtime,jdbcType=TIMESTAMP}, #{operatorid,jdbcType=CHAR},
 		#{filename,jdbcType=VARCHAR},
-		#{size,jdbcType=INTEGER}, #{path,jdbcType=VARCHAR}, #{flagdeleted,jdbcType=TINYINT},
+		#{size,jdbcType=INTEGER},
+		#{path,jdbcType=VARCHAR}, #{flagdeleted,jdbcType=TINYINT},
 		#{deletedtime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.EstateImageEmp">
@@ -228,18 +227,23 @@
 	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.EstateImageEmp">
 		update EstateImageEmp
 		set EstateID = #{estateid,jdbcType=CHAR},
-		HouseID = #{houseid,jdbcType=CHAR},
+		HouseID =
+		#{houseid,jdbcType=CHAR},
 		CountF = #{countf,jdbcType=INTEGER},
 		City = #{city,jdbcType=VARCHAR},
-		Estate = #{estate,jdbcType=VARCHAR},
+		Estate =
+		#{estate,jdbcType=VARCHAR},
 		AddTime = #{addtime,jdbcType=TIMESTAMP},
 		OperatorID = #{operatorid,jdbcType=CHAR},
-		Filename = #{filename,jdbcType=VARCHAR},
+		Filename =
+		#{filename,jdbcType=VARCHAR},
 		Size = #{size,jdbcType=INTEGER},
 		Path = #{path,jdbcType=VARCHAR},
-		FlagDeleted = #{flagdeleted,jdbcType=TINYINT},
+		FlagDeleted =
+		#{flagdeleted,jdbcType=TINYINT},
 		DeletedTime = #{deletedtime,jdbcType=TIMESTAMP},
 		Remark = #{remark,jdbcType=VARCHAR}
-		where ID = #{id,jdbcType=CHAR}
+		where ID =
+		#{id,jdbcType=CHAR}
 	</update>
 </mapper>

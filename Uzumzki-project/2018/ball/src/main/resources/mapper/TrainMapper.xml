@@ -8,11 +8,9 @@
 		<result column="ModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
 		<result column="VenueID" jdbcType="VARCHAR" property="venueid" />
 		<result column="ManagerID" jdbcType="VARCHAR" property="managerid" />
-		<result column="Price" jdbcType="DOUBLE" property="price" />
 		<result column="TrainBaseID" jdbcType="VARCHAR" property="trainbaseid" />
 		<result column="Image" jdbcType="VARCHAR" property="image" />
 		<result column="Content" jdbcType="LONGVARCHAR" property="content" />
-		<result column="ContentText" jdbcType="VARCHAR" property="contenttext" />
 		<association property="venue" javaType="com.xiaoyi.ssm.model.Venue">
 			<id column="ID" jdbcType="VARCHAR" property="id" />
 			<result column="vName" jdbcType="VARCHAR" property="name" />
@@ -28,13 +26,13 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		ID, TrainNO, CreateTime, ModifyTime, VenueID, ManagerID, Price, TrainBaseID, Image,
-		Content,ContentText
+		ID, TrainNO, CreateTime, ModifyTime, VenueID, ManagerID, TrainBaseID, Image,
+		Content
 	</sql>
 
 	<select id="countAmountByVenue" parameterType="java.lang.String" resultType="Double">
-		SELECT SUM(t.`Price`) FROM Train t INNER JOIN
-		TrainJoin tj ON t.`ID` = tj.`TrainID` WHERE t.`VenueID` = #{venueid} AND tj.`Type` IN (0,2)
+		SELECT SUM(tj.`Price`) FROM Train t INNER JOIN
+		TrainJoin tj ON t.`ID` = tj.`TrainID` WHERE t.`VenueID` = #{venueid} AND tj.`Type` IN (1)
 	</select>
 
 	<select id="countByVenue" parameterType="java.lang.String" resultType="Integer">
@@ -75,9 +73,6 @@
 			<if test="managerid != null">
 				AND t.ManagerID = #{managerid,jdbcType=VARCHAR}
 			</if>
-			<if test="price != null">
-				AND t.Price = #{price,jdbcType=DOUBLE}
-			</if>
 			<if test="trainbaseid != null">
 				AND t.TrainBaseID = #{trainbaseid,jdbcType=VARCHAR}
 			</if>
@@ -99,14 +94,11 @@
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Train">
 		insert into Train (ID, TrainNO, CreateTime,
-		ModifyTime, VenueID, ManagerID,
-		ContentText,
-		Price, TrainBaseID,
+		ModifyTime, VenueID, ManagerID, TrainBaseID,
 		Image, Content)
 		values (#{id,jdbcType=CHAR}, #{trainno,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP},
 		#{modifytime,jdbcType=TIMESTAMP}, #{venueid,jdbcType=VARCHAR}, #{managerid,jdbcType=VARCHAR},
-		#{contenttext,jdbcType=VARCHAR},
-		#{price,jdbcType=DOUBLE}, #{trainbaseid,jdbcType=VARCHAR},
+		#{trainbaseid,jdbcType=VARCHAR},
 		#{image,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Train">
@@ -129,12 +121,6 @@
 			</if>
 			<if test="managerid != null">
 				ManagerID,
-			</if>
-			<if test="contenttext != null">
-				ContentText,
-			</if>
-			<if test="price != null">
-				Price,
 			</if>
 			<if test="trainbaseid != null">
 				TrainBaseID,
@@ -165,12 +151,6 @@
 			<if test="managerid != null">
 				#{managerid,jdbcType=VARCHAR},
 			</if>
-			<if test="contenttext != null">
-				#{contenttext,jdbcType=VARCHAR},
-			</if>
-			<if test="price != null">
-				#{price,jdbcType=DOUBLE},
-			</if>
 			<if test="trainbaseid != null">
 				#{trainbaseid,jdbcType=VARCHAR},
 			</if>
@@ -200,12 +180,6 @@
 			<if test="managerid != null">
 				ManagerID = #{managerid,jdbcType=VARCHAR},
 			</if>
-			<if test="contenttext != null">
-				ContentText = #{contenttext,jdbcType=VARCHAR},
-			</if>
-			<if test="price != null">
-				Price = #{price,jdbcType=DOUBLE},
-			</if>
 			<if test="trainbaseid != null">
 				TrainBaseID = #{trainbaseid,jdbcType=VARCHAR},
 			</if>
@@ -221,34 +195,23 @@
 	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.xiaoyi.ssm.model.Train">
 		update Train
 		set TrainNO = #{trainno,jdbcType=INTEGER},
-		CreateTime =
-		#{createtime,jdbcType=TIMESTAMP},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
 		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
 		VenueID = #{venueid,jdbcType=VARCHAR},
-		ManagerID =
-		#{managerid,jdbcType=VARCHAR},
-		ContentText = #{contenttext,jdbcType=VARCHAR},
-		Price = #{price,jdbcType=DOUBLE},
-		TrainBaseID =
-		#{trainbaseid,jdbcType=VARCHAR},
+		ManagerID = #{managerid,jdbcType=VARCHAR},
+		TrainBaseID = #{trainbaseid,jdbcType=VARCHAR},
 		Image = #{image,jdbcType=VARCHAR},
 		Content = #{content,jdbcType=LONGVARCHAR}
-		where ID =
-		#{id,jdbcType=CHAR}
+		where ID = #{id,jdbcType=CHAR}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Train">
 		update Train
 		set TrainNO = #{trainno,jdbcType=INTEGER},
-		CreateTime =
-		#{createtime,jdbcType=TIMESTAMP},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
 		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
 		VenueID = #{venueid,jdbcType=VARCHAR},
-		ManagerID =
-		#{managerid,jdbcType=VARCHAR},
-		ContentText = #{contenttext,jdbcType=VARCHAR},
-		Price = #{price,jdbcType=DOUBLE},
-		TrainBaseID =
-		#{trainbaseid,jdbcType=VARCHAR},
+		ManagerID = #{managerid,jdbcType=VARCHAR},
+		TrainBaseID = #{trainbaseid,jdbcType=VARCHAR},
 		Image = #{image,jdbcType=VARCHAR}
 		where ID = #{id,jdbcType=CHAR}
 	</update>

@@ -19,25 +19,25 @@
 		TotalSale,
 		TotalTown, TotalRefresh
 	</sql>
-	
+
 	<select id="selectByDistrictName" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT * FROM District WHERE District = #{name} limit 1
+		SELECT * FROM District WHERE District =
+		#{name} limit 1
 	</select>
-	
+
 	<select id="countDistrictByCity" parameterType="java.lang.String" resultType="Integer">
-		select count(*) from District where CityID = #{cityId,jdbcType=CHAR}
+		select count(*) from District where CityID =
+		#{cityId,jdbcType=CHAR}
 	</select>
-	
-	<select id="selectByPrimaryKey" parameterType="com.xiaoyi.ssm.model.District"
-		resultMap="BaseResultMap">
+
+	<select id="selectByPrimaryKey" parameterType="com.xiaoyi.ssm.model.District" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from District
 		where ID = #{id,jdbcType=CHAR}
 	</select>
-	
-	<select id="selectByAll" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
+
+	<select id="selectByAll" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from District
@@ -74,7 +74,13 @@
 			</if>
 		</where>
 	</select>
-	
+
+	<select id="selectBySearchCity" parameterType="com.xiaoyi.ssm.dto.WebsiteSearchMapDto" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from District d where d.`Longitude` &gt; #{startLng} AND  d.`Longitude` &lt; #{endLng} AND d.`Latitude` &gt; #{startLat} AND d.`Latitude` &lt; #{endLat}
+	</select>
+
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
 		delete from District
 		where ID = #{id,jdbcType=CHAR}
@@ -82,14 +88,16 @@
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.District">
 		insert into District (ID, DistrictNo, District,
 		Latitude, Longitude, CityID,
-		City, TotalRent, TotalSale,
+		City,
+		TotalRent, TotalSale,
 		TotalTown, TotalRefresh)
 		values (#{id,jdbcType=CHAR}, #{districtno,jdbcType=INTEGER},
 		#{district,jdbcType=VARCHAR},
 		#{latitude,jdbcType=DOUBLE}, #{longitude,jdbcType=DOUBLE}, #{cityid,jdbcType=CHAR},
 		#{city,jdbcType=VARCHAR}, #{totalrent,jdbcType=INTEGER},
 		#{totalsale,jdbcType=INTEGER},
-		#{totaltown,jdbcType=INTEGER}, #{totalrefresh,jdbcType=TIMESTAMP})
+		#{totaltown,jdbcType=INTEGER},
+		#{totalrefresh,jdbcType=TIMESTAMP})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.District">
 		insert into District
@@ -203,15 +211,19 @@
 	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.District">
 		update District
 		set DistrictNo = #{districtno,jdbcType=INTEGER},
-		District = #{district,jdbcType=VARCHAR},
+		District =
+		#{district,jdbcType=VARCHAR},
 		Latitude = #{latitude,jdbcType=DOUBLE},
 		Longitude = #{longitude,jdbcType=DOUBLE},
-		CityID = #{cityid,jdbcType=CHAR},
+		CityID =
+		#{cityid,jdbcType=CHAR},
 		City = #{city,jdbcType=VARCHAR},
 		TotalRent = #{totalrent,jdbcType=INTEGER},
-		TotalSale = #{totalsale,jdbcType=INTEGER},
+		TotalSale =
+		#{totalsale,jdbcType=INTEGER},
 		TotalTown = #{totaltown,jdbcType=INTEGER},
 		TotalRefresh = #{totalrefresh,jdbcType=TIMESTAMP}
-		where ID = #{id,jdbcType=CHAR}
+		where
+		ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

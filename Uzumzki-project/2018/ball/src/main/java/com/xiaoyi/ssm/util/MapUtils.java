@@ -37,7 +37,7 @@ public class MapUtils {
 		return s * 1000;
 	}
 
-	/*public static void main(String ar[]) {
-		System.out.println(getDistance(115.971357,39.767347, 116.034023,39.76646));
-	}*/
+	public static void main(String ar[]) {
+		System.out.println(getDistance(114.06031,22.72174, 114.05031,22.72174));
+	}
 }

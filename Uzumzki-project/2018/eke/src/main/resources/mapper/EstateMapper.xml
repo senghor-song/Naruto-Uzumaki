@@ -217,6 +217,13 @@
 			</if>
 		</where>
 	</select>
+	
+	<select id="selectBySearchArea" parameterType="com.xiaoyi.ssm.dto.WebsiteSearchMapDto" resultMap="BaseResultMap">
+		select e.*, c.`City` cCity, d.`District` dDistrict, a.`Area` aArea
+		from  Estate e LEFT JOIN City c ON  e.`CityID` = c.`ID` LEFT JOIN District d ON e.`DistrictID` = d.`ID` LEFT JOIN `Area` a ON e.`AreaID` = a.`ID`
+		where e.`Longitude` &gt; #{startLng} AND  e.`Longitude` &lt; #{endLng} AND e.`Latitude` &gt; #{startLat} AND e.`Latitude` &lt; #{endLat}
+	</select>
+	
 	<select id="selectByName" parameterType="com.xiaoyi.ssm.dto.HouseEnterDto"
 		resultMap="BaseResultMap">
 		select e.*, c.`City` cCity, d.`District` dDistrict, a.`Area` aArea

@@ -10,11 +10,12 @@
 		<result column="FieldID" jdbcType="VARCHAR" property="fieldid" />
 		<result column="Title" jdbcType="VARCHAR" property="title" />
 		<result column="ManagerID" jdbcType="VARCHAR" property="managerid" />
-		<result column="Require" jdbcType="VARCHAR" property="require" />
+		<result column="Demand" jdbcType="VARCHAR" property="demand" />
 		<result column="CombineDate" jdbcType="DATE" property="combinedate" />
 		<result column="CombineTimeFrame" jdbcType="VARCHAR" property="combinetimeframe" />
 		<result column="Boy" jdbcType="INTEGER" property="boy" />
-		<result column="Describe" jdbcType="VARCHAR" property="describe" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="Type" jdbcType="INTEGER" property="type" />
 		<result column="AmountSum" jdbcType="DOUBLE" property="amountsum" />
 		<result column="AmountId" jdbcType="VARCHAR" property="amountid" />
 		<result column="AmountType" jdbcType="INTEGER" property="amounttype" />
@@ -52,28 +53,26 @@
 		</collection>
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, CombineNO, CreateTime, ModifyTime, VenueID, FieldID, Title, ManagerID, Require,
-		CombineDate, CombineTimeFrame,
-		Boy,
-		Describe, AmountId, AmountType
+		ID, CombineNO, CreateTime, ModifyTime, VenueID, FieldID, Title, ManagerID, Demand,
+		CombineDate, CombineTimeFrame, Boy,
+		Content, AmountId, AmountType, Type
 	</sql>
 	<sql id="Combine_Column_List">
-		cj.ID cjID, cj.CreateTimeTime cjCreateTimeTime, cj.CombineID cjCombineID, 
-		cj.MemberID cjMemberID, cj.Price cjPrice, cj.Type cjType, cj.PayType cjPayType, cj.PayRemark cjPayRemark
+		cj.ID cjID, cj.CreateTimeTime cjCreateTimeTime, cj.CombineID cjCombineID,
+		cj.MemberID cjMemberID, cj.Price cjPrice,
+		cj.Type cjType, cj.PayType cjPayType, cj.PayRemark cjPayRemark
 	</sql>
-	
+
 	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT ce.*, v.`Name` vName, m.`Name` mName,
-		c.`City`
+		SELECT ce.*, v.`Name` vName, m.`Name` mName, c.`City`
 		cCity FROM Combine ce LEFT JOIN Venue v ON ce.`VenueID` = v.`ID`
 		LEFT JOIN Manager m ON ce.`ManagerID` = m.`ID`
-		LEFT JOIN
-		City c ON v.`CityID` = c.`ID` WHERE ce.`VenueID` = #{venueid}
+		LEFT JOIN City c ON v.`CityID` = c.`ID` WHERE ce.`VenueID` = #{venueid}
 	</select>
 
 	<select id="countAmountByVenue" parameterType="java.lang.String" resultType="Double">
-		SELECT SUM(c.`AmountSum`) FROM Combine c INNER
-		JOIN CombineJoin cj ON c.`ID` = cj.`CombineID` WHERE c.`VenueID` = #{venueid} AND cj.`Type` IN (0,2)
+		SELECT SUM(cj.`Price`) FROM Combine c INNER
+		JOIN CombineJoin cj ON c.`ID` = cj.`CombineID` WHERE c.`VenueID` = #{venueid} AND cj.`Type` IN (1)
 	</select>
 
 	<select id="selectByAll" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -83,23 +82,33 @@
 		LEFT JOIN City c
 		ON v.`CityID` = c.`ID`
 	</select>
-	
+
 	<select id="selectByAmount" parameterType="java.lang.String" resultMap="AmountResultMap">
-		SELECT ce.*, v.`Name` vName, m.`Name` mName, me.`Name` meName, f.`Name` fName,   
+		SELECT ce.*, v.`Name` vName, m.`Name` mName, me.`Name` meName, f.`Name` fName,
 		<include refid="Combine_Column_List" />
 		FROM Combine ce LEFT JOIN Venue v ON ce.`VenueID` = v.`ID`
 		LEFT JOIN Manager m ON ce.`ManagerID` = m.`ID`
-    	LEFT JOIN `Field` f ON ce.`FieldID` = f.`ID`   
+		LEFT JOIN `Field` f ON
+		ce.`FieldID` = f.`ID`
 		INNER JOIN CombineJoin cj ON ce.`ID` = cj.`CombineID`
 		LEFT JOIN Member me ON cj.`MemberID` = me.`ID`
-		WHERE ce.`AmountId` = #{amountid} AND cj.`Type` = 1
+		WHERE
+		ce.`AmountId` = #{amountid}
+		AND cj.`Type` = 1
+	</select>
+
+	<select id="selectByNowDate" parameterType="com.xiaoyi.ssm.dto.FieldTemplateDto" resultMap="BaseResultMap">
+		SELECT * FROM Combine WHERE CombineDate = #{date} AND VenueID = #{venueid} AND FieldID = #{fieldid} AND type = 0
 	</select>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List" />
-		from Combine
-		where ID = #{id,jdbcType=CHAR}
+		SELECT ce.*, v.`Name` vName, m.`Name` mName ,
+		f.`Name` fName
+		FROM Combine ce
+		LEFT JOIN Venue v ON ce.`VenueID` = v.`ID`
+		LEFT JOIN Manager m ON ce.`ManagerID` = m.`ID`
+		LEFT JOIN `Field` f ON ce.`FieldID` = f.`ID`
+		where ce.ID = #{id,jdbcType=CHAR}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
 		delete from Combine
@@ -108,16 +117,16 @@
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Combine">
 		insert into Combine (ID, CombineNO, CreateTime,
 		ModifyTime, VenueID, FieldID,
-		Title, ManagerID, Require,
+		Title, ManagerID, Demand,
 		CombineDate, CombineTimeFrame, Boy,
-		Describe, AmountSum, AmountId,
-		AmountType)
+		Content, AmountSum, Type,
+		AmountId, AmountType)
 		values (#{id,jdbcType=CHAR}, #{combineno,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP},
 		#{modifytime,jdbcType=TIMESTAMP}, #{venueid,jdbcType=VARCHAR}, #{fieldid,jdbcType=VARCHAR},
-		#{title,jdbcType=VARCHAR}, #{managerid,jdbcType=VARCHAR}, #{require,jdbcType=VARCHAR},
+		#{title,jdbcType=VARCHAR}, #{managerid,jdbcType=VARCHAR}, #{demand,jdbcType=VARCHAR},
 		#{combinedate,jdbcType=DATE}, #{combinetimeframe,jdbcType=VARCHAR}, #{boy,jdbcType=INTEGER},
-		#{describe,jdbcType=VARCHAR}, #{amountsum,jdbcType=DOUBLE}, #{amountid,jdbcType=VARCHAR},
-		#{amounttype,jdbcType=INTEGER})
+		#{content,jdbcType=VARCHAR}, #{amountsum,jdbcType=DOUBLE}, #{type,jdbcType=INTEGER},
+		#{amountid,jdbcType=VARCHAR}, #{amounttype,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Combine">
 		insert into Combine
@@ -146,8 +155,8 @@
 			<if test="managerid != null">
 				ManagerID,
 			</if>
-			<if test="require != null">
-				Require,
+			<if test="demand != null">
+				Demand,
 			</if>
 			<if test="combinedate != null">
 				CombineDate,
@@ -158,11 +167,14 @@
 			<if test="boy != null">
 				Boy,
 			</if>
-			<if test="describe != null">
-				Describe,
+			<if test="content != null">
+				Content,
 			</if>
 			<if test="amountsum != null">
 				AmountSum,
+			</if>
+			<if test="type != null">
+				Type,
 			</if>
 			<if test="amountid != null">
 				AmountId,
@@ -196,8 +208,8 @@
 			<if test="managerid != null">
 				#{managerid,jdbcType=VARCHAR},
 			</if>
-			<if test="require != null">
-				#{require,jdbcType=VARCHAR},
+			<if test="demand != null">
+				#{demand,jdbcType=VARCHAR},
 			</if>
 			<if test="combinedate != null">
 				#{combinedate,jdbcType=DATE},
@@ -208,11 +220,14 @@
 			<if test="boy != null">
 				#{boy,jdbcType=INTEGER},
 			</if>
-			<if test="describe != null">
-				#{describe,jdbcType=VARCHAR},
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
 			</if>
 			<if test="amountsum != null">
 				#{amountsum,jdbcType=DOUBLE},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
 			</if>
 			<if test="amountid != null">
 				#{amountid,jdbcType=VARCHAR},
@@ -246,8 +261,8 @@
 			<if test="managerid != null">
 				ManagerID = #{managerid,jdbcType=VARCHAR},
 			</if>
-			<if test="require != null">
-				Require = #{require,jdbcType=VARCHAR},
+			<if test="demand != null">
+				Demand = #{demand,jdbcType=VARCHAR},
 			</if>
 			<if test="combinedate != null">
 				CombineDate = #{combinedate,jdbcType=DATE},
@@ -258,11 +273,14 @@
 			<if test="boy != null">
 				Boy = #{boy,jdbcType=INTEGER},
 			</if>
-			<if test="describe != null">
-				Describe = #{describe,jdbcType=VARCHAR},
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
 			</if>
 			<if test="amountsum != null">
 				AmountSum = #{amountsum,jdbcType=DOUBLE},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=INTEGER},
 			</if>
 			<if test="amountid != null">
 				AmountId = #{amountid,jdbcType=VARCHAR},
@@ -282,12 +300,13 @@
 		FieldID = #{fieldid,jdbcType=VARCHAR},
 		Title = #{title,jdbcType=VARCHAR},
 		ManagerID = #{managerid,jdbcType=VARCHAR},
-		Require = #{require,jdbcType=VARCHAR},
+		Demand = #{demand,jdbcType=VARCHAR},
 		CombineDate = #{combinedate,jdbcType=DATE},
 		CombineTimeFrame = #{combinetimeframe,jdbcType=VARCHAR},
 		Boy = #{boy,jdbcType=INTEGER},
-		Describe = #{describe,jdbcType=VARCHAR},
+		Content = #{content,jdbcType=VARCHAR},
 		AmountSum = #{amountsum,jdbcType=DOUBLE},
+		Type = #{type,jdbcType=INTEGER},
 		AmountId = #{amountid,jdbcType=VARCHAR},
 		AmountType = #{amounttype,jdbcType=INTEGER}
 		where ID = #{id,jdbcType=CHAR}

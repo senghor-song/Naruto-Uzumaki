@@ -51,12 +51,12 @@ public class Global {
 	 */ 
 	/** redis缓存会员表名 */
 	public final static String redis_member = "loginmember";
-	/** redis缓存会员token表名 */
-	public final static String redis_token_member = "tokenmember";
 	/** reids缓存管理员表名 */
 	public final static String redis_manager = "loginmanager";
-	/** redis缓存管理员表名 */
-	public final static String redis_token_manager = "tokenmanager";
+	
+
+	/** 微信小程序的登录信息 */
+	public final static String REDIS_WXAPP_SESSION = "redis_wxapp_session";
 	
 
 	/** 常驻小区缓存 */
@@ -75,6 +75,7 @@ public class Global {
 	public final static String REDIS_DISTRICT_MAP = "redis_district_map";
 	/** 片区数据缓存 */
 	public final static String REDIS_AREA_MAP = "redis_area_map";
+	
 	/** 微信的access_token数据缓存map=access_token,jsapi_ticket */
 	public final static String REDIS_ACCESS_TOKEN = "redis_access_token";
 	
@@ -91,5 +92,6 @@ public class Global {
 	public final static String template_member3 = "aGI3n2dD0cXgin04iEF4IDshCuhQSsZRjTj1WGo_QDc";
 	/** 球友订场等待确认 */
 	public final static String template_manager = "WY4gdGcXVTgP55lE06boDKohEEEhGdYQoKmbAS0F5GA";
+	public static Integer number;
 	
 }

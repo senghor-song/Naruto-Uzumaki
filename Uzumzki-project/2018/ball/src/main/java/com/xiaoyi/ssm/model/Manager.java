@@ -31,8 +31,11 @@ public class Manager implements Serializable {
     /** 实名认证状态(0=否1=是) */
     private Integer realname;
 
-    /** 支付宝app_auth_token */
+    /** 支付宝biz_no */
     private String appauthtoken;
+
+    /** 身份证号 */
+    private String idcard;
 
     /**
      * Manager
@@ -168,18 +171,34 @@ public class Manager implements Serializable {
     }
 
     /**
-     * 支付宝app_auth_token
-     * @return AppAuthToken 支付宝app_auth_token
+     * 支付宝biz_no
+     * @return AppAuthToken 支付宝biz_no
      */
     public String getAppauthtoken() {
         return appauthtoken;
     }
 
     /**
-     * 支付宝app_auth_token
-     * @param appauthtoken 支付宝app_auth_token
+     * 支付宝biz_no
+     * @param appauthtoken 支付宝biz_no
      */
     public void setAppauthtoken(String appauthtoken) {
         this.appauthtoken = appauthtoken == null ? null : appauthtoken.trim();
+    }
+
+    /**
+     * 身份证号
+     * @return IDcard 身份证号
+     */
+    public String getIdcard() {
+        return idcard;
+    }
+
+    /**
+     * 身份证号
+     * @param idcard 身份证号
+     */
+    public void setIdcard(String idcard) {
+        this.idcard = idcard == null ? null : idcard.trim();
     }
 }

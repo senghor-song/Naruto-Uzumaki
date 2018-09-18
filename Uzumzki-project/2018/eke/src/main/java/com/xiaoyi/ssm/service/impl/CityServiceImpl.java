@@ -9,10 +9,12 @@ import com.xiaoyi.ssm.dao.AreaMapper;
 import com.xiaoyi.ssm.dao.CityLogMapper;
 import com.xiaoyi.ssm.dao.CityMapper;
 import com.xiaoyi.ssm.dao.DistrictMapper;
+import com.xiaoyi.ssm.dto.WebsiteSearchMapDto;
 import com.xiaoyi.ssm.model.Area;
 import com.xiaoyi.ssm.model.City;
 import com.xiaoyi.ssm.model.CityLog;
 import com.xiaoyi.ssm.model.District;
+import com.xiaoyi.ssm.model.Estate;
 import com.xiaoyi.ssm.service.CityService;
 
 /**  
@@ -171,6 +173,16 @@ public class CityServiceImpl implements CityService{
 	@Override
 	public List<Area> selectByAreaAll() {
 		return areaMapper.selectByAll(null);
+	}
+
+	@Override
+	public List<Area> selectBySearchDistrict(WebsiteSearchMapDto websitePropertyDto) {
+		return areaMapper.selectBySearchDistrict(websitePropertyDto);
+	}
+
+	@Override
+	public List<District> selectBySearchCity(WebsiteSearchMapDto websitePropertyDto) {
+		return districtMapper.selectBySearchCity(websitePropertyDto);
 	}
 
 }

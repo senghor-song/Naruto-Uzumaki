@@ -11,15 +11,24 @@
 		<result column="Type" jdbcType="INTEGER" property="type" />
 		<result column="RealName" jdbcType="INTEGER" property="realname" />
 		<result column="AppAuthToken" jdbcType="VARCHAR" property="appauthtoken" />
+		<result column="IDcard" jdbcType="VARCHAR" property="idcard" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, CreateTime, ModifyTime, Name, Phone, Password, Type, RealName, AppAuthToken
+		ID, CreateTime, ModifyTime, Name, Phone, Password, Type, RealName, AppAuthToken,
+		IDcard
 	</sql>
+	
+	<select id="selectByBizno" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Manager where AppAuthToken = #{bizno,jdbcType=CHAR}
+	</select>
 
 	<select id="selectByManagerAndVenue" parameterType="java.lang.String" resultType="Integer">
 		SELECT COUNT(0) FROM Manager m INNER JOIN
 		ManagerVenue mv ON m.`ID` = mv.`ManagerID`
-		INNER JOIN Venue v ON mv.`VenueID` = v.`ID` WHERE m.`ID` = #{managerid} AND v.`ID` = #{venueid}
+		INNER JOIN Venue v ON mv.`VenueID` = v.`ID` WHERE m.`ID` = #{managerid} AND v.`ID` =
+		#{venueid}
 	</select>
 
 	<select id="countByVenue" parameterType="java.lang.String" resultType="Integer">
@@ -38,6 +47,10 @@
 		ON m.`ID` = mv.`ManagerID` WHERE mv.`VenueID` = #{venueid}
 	</select>
 
+	<select id="selectByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM Manager WHERE `phone` = #{phone}
+	</select>
+	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -51,12 +64,12 @@
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Manager">
 		insert into Manager (ID, CreateTime, ModifyTime,
 		Name, Phone, Password,
-		Type, RealName, AppAuthToken
-		)
+		Type, RealName, AppAuthToken,
+		IDcard)
 		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP},
 		#{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-		#{type,jdbcType=INTEGER}, #{realname,jdbcType=INTEGER}, #{appauthtoken,jdbcType=VARCHAR}
-		)
+		#{type,jdbcType=INTEGER}, #{realname,jdbcType=INTEGER}, #{appauthtoken,jdbcType=VARCHAR},
+		#{idcard,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Manager">
 		insert into Manager
@@ -88,6 +101,9 @@
 			<if test="appauthtoken != null">
 				AppAuthToken,
 			</if>
+			<if test="idcard != null">
+				IDcard,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -116,6 +132,9 @@
 			</if>
 			<if test="appauthtoken != null">
 				#{appauthtoken,jdbcType=VARCHAR},
+			</if>
+			<if test="idcard != null">
+				#{idcard,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -146,6 +165,9 @@
 			<if test="appauthtoken != null">
 				AppAuthToken = #{appauthtoken,jdbcType=VARCHAR},
 			</if>
+			<if test="idcard != null">
+				IDcard = #{idcard,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where ID = #{id,jdbcType=CHAR}
 	</update>
@@ -158,7 +180,8 @@
 		Password = #{password,jdbcType=VARCHAR},
 		Type = #{type,jdbcType=INTEGER},
 		RealName = #{realname,jdbcType=INTEGER},
-		AppAuthToken = #{appauthtoken,jdbcType=VARCHAR}
+		AppAuthToken = #{appauthtoken,jdbcType=VARCHAR},
+		IDcard = #{idcard,jdbcType=VARCHAR}
 		where ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

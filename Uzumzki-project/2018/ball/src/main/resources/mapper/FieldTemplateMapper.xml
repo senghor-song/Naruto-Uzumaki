@@ -28,6 +28,29 @@
 		WHERE ft.`VenueID` = #{venueid} AND ft.`FieldID` = #{fieldid} AND ft.`FieldTime` = #{date} limit 1
 	</select>
 	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.FieldTemplate" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from FieldTemplate ft
+		<where>
+			<if test="createtime != null">
+				AND CreateTime = #{createtime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="fieldtime != null">
+				AND FieldTime = #{fieldtime,jdbcType=DATE}
+			</if>
+			<if test="venueid != null">
+				AND VenueID = #{venueid,jdbcType=VARCHAR}
+			</if>
+			<if test="fieldid != null">
+				AND FieldID = #{fieldid,jdbcType=VARCHAR}
+			</if>
+			<if test="templateid != null">
+				AND TemplateID = #{templateid,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />

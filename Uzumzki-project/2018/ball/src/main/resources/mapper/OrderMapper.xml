@@ -74,13 +74,13 @@
 
 	<select id="selectByMemberOrder" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT o.*, r.ID rID, r.CreateTime
-		rCreateTime,
-		r.FieldID rFieldID, r.ReserveTimeFrame rReserveTimeFrame,
+		rCreateTime, r.FieldID rFieldID, r.ReserveTimeFrame rReserveTimeFrame,
 		r.ReserveAmount rReserveAmount, r.OrderID rOrderID ,
-		v.`Name` vName, v.`Image` vImage
+		v.`Name` vName, v.`Image` vImage, m.`Name` mName
 		FROM `Order` o INNER JOIN Reserve r ON o.`ID` = r.`OrderID`
-		LEFT JOIN Venue v ON o.`VenueID` =
-		v.`ID` WHERE o.`MemberID` = #{memberid} AND o.`ID` = #{orderid}
+		LEFT JOIN Venue v ON o.`VenueID` = v.`ID` 
+        LEFT JOIN Member m ON m.`ID` = o.`MemberID`
+		WHERE o.`MemberID` = #{memberid} AND o.`ID` = #{orderid}
 	</select>
 
 	<select id="selectByReserve" parameterType="java.lang.String" resultMap="ReserveMap">
@@ -111,6 +111,7 @@
 		<if test="type == 4">
 			ANd o.`Type` in (2,3)
 		</if>
+		order by CreateTime desc
 	</select>
 
 	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Order" resultMap="BaseResultMap">
@@ -180,7 +181,7 @@
 		where ID = #{id,jdbcType=VARCHAR}
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Order">
-		insert into Order (ID, OrderNO, CreateTime,
+		insert into `Order` (ID, OrderNO, CreateTime,
 		ModifyTime, OrderDate, VenueID,
 		MemberID,
 		CoachID, CoachAmount,
@@ -198,7 +199,7 @@
 		#{amounttype,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Order">
-		insert into Order
+		insert into `Order`
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				ID,
@@ -301,7 +302,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Order">
-		update Order
+		update `Order`
 		<set>
 			<if test="orderno != null">
 				OrderNO = #{orderno,jdbcType=INTEGER},
@@ -352,7 +353,7 @@
 		where ID = #{id,jdbcType=VARCHAR}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Order">
-		update Order
+		update `Order`
 		set OrderNO = #{orderno,jdbcType=INTEGER},
 		CreateTime =
 		#{createtime,jdbcType=TIMESTAMP},

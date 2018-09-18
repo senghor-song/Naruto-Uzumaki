@@ -46,4 +46,22 @@ public interface ManagerService extends BaseService<Manager, String> {
 	 */ 
 	Integer selectByManagerAndVenue(String managerid, String venueid);
 
+	/**  
+	 * @Description: 根据bizno获取管理员数据
+	 * @author 宋高俊  
+	 * @param bizno
+	 * @return 
+	 * @date 2018年9月4日 上午11:09:36 
+	 */ 
+	Manager selectByBizno(String bizno);
+
+	/**  
+	 * @Description: 根据手机号查询管理员是否存在
+	 * @author 宋高俊  
+	 * @param phone
+	 * @return 
+	 * @date 2018年9月6日 下午4:28:19 
+	 */ 
+	Manager selectByPhone(String phone);
+
 }

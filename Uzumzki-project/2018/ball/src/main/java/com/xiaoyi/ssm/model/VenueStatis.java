@@ -13,14 +13,20 @@ public class VenueStatis implements Serializable {
     /** 创建时间 */
     private Date createtime;
 
-    /** 修改时间 */
-    private Date modifytime;
+    /** 统计日期 */
+    private Date statisdate;
 
     /** 场馆ID */
     private String venueid;
 
-    /** 使用量 */
-    private Integer score;
+    /** 使用比例 */
+    private Double score;
+
+    /** 营业额 */
+    private Double amount;
+
+    /** 使用模板名称 */
+    private String template;
 
     /**
      * VenueStatis
@@ -60,19 +66,19 @@ public class VenueStatis implements Serializable {
     }
 
     /**
-     * 修改时间
-     * @return ModifyTime 修改时间
+     * 统计日期
+     * @return StatisDate 统计日期
      */
-    public Date getModifytime() {
-        return modifytime;
+    public Date getStatisdate() {
+        return statisdate;
     }
 
     /**
-     * 修改时间
-     * @param modifytime 修改时间
+     * 统计日期
+     * @param statisdate 统计日期
      */
-    public void setModifytime(Date modifytime) {
-        this.modifytime = modifytime;
+    public void setStatisdate(Date statisdate) {
+        this.statisdate = statisdate;
     }
 
     /**
@@ -92,18 +98,50 @@ public class VenueStatis implements Serializable {
     }
 
     /**
-     * 使用量
-     * @return Score 使用量
+     * 使用比例
+     * @return Score 使用比例
      */
-    public Integer getScore() {
+    public Double getScore() {
         return score;
     }
 
     /**
-     * 使用量
-     * @param score 使用量
+     * 使用比例
+     * @param score 使用比例
      */
-    public void setScore(Integer score) {
+    public void setScore(Double score) {
         this.score = score;
+    }
+
+    /**
+     * 营业额
+     * @return Amount 营业额
+     */
+    public Double getAmount() {
+        return amount;
+    }
+
+    /**
+     * 营业额
+     * @param amount 营业额
+     */
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    /**
+     * 使用模板名称
+     * @return Template 使用模板名称
+     */
+    public String getTemplate() {
+        return template;
+    }
+
+    /**
+     * 使用模板名称
+     * @param template 使用模板名称
+     */
+    public void setTemplate(String template) {
+        this.template = template == null ? null : template.trim();
     }
 }

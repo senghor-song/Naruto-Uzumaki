@@ -6,6 +6,18 @@ package com.xiaoyi.ssm.util;
  * @date 2018年7月7日 下午4:43:25 
  */ 
 public class Global {
+	
+	public Integer number = 0;
+
+	public Integer getNumber() {
+		return number;
+	}
+
+
+	public void setNumber(Integer number) {
+		this.number = number;
+	}
+
 
 	/** 官网短信验证码获取代码 */
 	public final static String website_login_SmsCode_ = "website_login_SmsCode_";

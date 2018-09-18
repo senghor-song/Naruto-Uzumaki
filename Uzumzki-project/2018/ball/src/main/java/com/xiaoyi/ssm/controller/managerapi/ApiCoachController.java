@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,8 +49,11 @@ public class ApiCoachController {
 	 */
 	@RequestMapping(value = "/coachlist")
 	@ResponseBody
-	public ApiMessage coachlist(String token) {
-		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, token);
+	public ApiMessage coachlist(HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
+		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, openid);
 
 		Venue venue = venueService.selectByManager(manager.getId());
 		if (venue == null) {
@@ -76,13 +82,16 @@ public class ApiCoachController {
 	 */
 	@RequestMapping(value = "/saveCoach")
 	@ResponseBody
-	public ApiMessage saveCoach(String token, Coach coach) {
+	public ApiMessage saveCoach(Coach coach, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
 
 		if (StringUtil.isBank(coach.getImage(), coach.getPrice() == null ? "" : "0", coach.getIntroduce(),
 				coach.getName())) {
 			return new ApiMessage(400, "缺少参数");
 		}
-		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, token);
+		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, openid);
 		
 		Venue venue = venueService.selectByManager(manager.getId());
 
@@ -104,9 +113,12 @@ public class ApiCoachController {
 	 */
 	@RequestMapping(value = "/editCoach")
 	@ResponseBody
-	public ApiMessage editCoach(String token, String coachid) {
+	public ApiMessage editCoach(String coachid, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
 		Coach coach = coachService.selectByPrimaryKey(coachid);
-		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, token);
+		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, openid);
 		int flag = managerService.selectByManagerAndVenue(manager.getId(), coach.getVenueid());
 		if (flag == 0) {
 			return new ApiMessage(400, "非法操作");
@@ -121,7 +133,7 @@ public class ApiCoachController {
 	 */
 	@RequestMapping(value = "/updateCoach")
 	@ResponseBody
-	public ApiMessage updateCoach(String token, String coachid, String image, Integer price, String introduce, String name) {
+	public ApiMessage updateCoach(String coachid, String image, Double price, String introduce, String name) {
 		Coach coach = new Coach();
 		coach.setId(coachid);
 		coach.setImage(image);
@@ -144,11 +156,14 @@ public class ApiCoachController {
 	 */
 	@RequestMapping(value = "/deleteCoach")
 	@ResponseBody
-	public ApiMessage deleteCoach(String token, String coachid) {
+	public ApiMessage deleteCoach(String coachid, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
 		Coach coach = coachService.selectByPrimaryKey(coachid);
 		if (coach != null) {
 			//判断是否本人管理的教练
-			Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, token);
+			Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, openid);
 			int flag = managerService.selectByManagerAndVenue(manager.getId(), coach.getVenueid());
 			if (flag == 0) {
 				return new ApiMessage(400, "非法操作");

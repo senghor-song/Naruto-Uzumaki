@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.AmountRefundWayMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.AmountRefundWay">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_Time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Modify_Time" jdbcType="TIMESTAMP" property="modifyTime" />
+		<result column="Start_time" jdbcType="INTEGER" property="startTime" />
+		<result column="End_time" jdbcType="INTEGER" property="endTime" />
+		<result column="Type" jdbcType="INTEGER" property="type" />
+		<result column="Rete" jdbcType="INTEGER" property="rete" />
+		<result column="Proposal" jdbcType="INTEGER" property="proposal" />
+		<result column="Venue_id" jdbcType="VARCHAR" property="venueId" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_Time, Modify_Time, Start_time, End_time, Type, Rete, Proposal, Venue_id
+	</sql>
+	
+	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from AmountRefundWay where Venue_id = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="insertInitWay" parameterType="java.lang.String">
+		INSERT INTO AmountRefundWay(ID,Create_Time,Modify_Time,Start_time,End_time,`Type`,Rete,Proposal,Venue_id) VALUES
+		(REPLACE(UUID(),'-',''),NOW(),NOW(),0,1,0,-1,-1,#{id}),
+		(REPLACE(UUID(),'-',''),NOW(),NOW(),1,2,0,-1,-1,#{id}),
+		(REPLACE(UUID(),'-',''),NOW(),NOW(),2,6,0,70,70,#{id}),
+		(REPLACE(UUID(),'-',''),NOW(),NOW(),6,12,0,80,80,#{id}),
+		(REPLACE(UUID(),'-',''),NOW(),NOW(),12,24,0,90,90,#{id}),
+		(REPLACE(UUID(),'-',''),NOW(),NOW(),24,0,0,100,100,#{id}),
+		
+		(REPLACE(UUID(),'-',''),NOW(),NOW(),0,1,1,80,80,#{id}),
+		(REPLACE(UUID(),'-',''),NOW(),NOW(),1,2,1,90,90,#{id}),
+		(REPLACE(UUID(),'-',''),NOW(),NOW(),2,0,1,100,100,#{id}),
+		
+		(REPLACE(UUID(),'-',''),NOW(),NOW(),0,0,2,100,100,#{id}),
+		(REPLACE(UUID(),'-',''),NOW(),NOW(),1,0,2,50,50,#{id});
+
+	</insert>
+	
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from AmountRefundWay
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from AmountRefundWay
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.AmountRefundWay">
+		insert into AmountRefundWay (ID, Create_Time, Modify_Time,
+		Start_time, End_time, Type,
+		Rete, Proposal, Venue_id
+		)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
+		#{startTime,jdbcType=INTEGER}, #{endTime,jdbcType=INTEGER}, #{type,jdbcType=INTEGER},
+		#{rete,jdbcType=INTEGER}, #{proposal,jdbcType=INTEGER}, #{venueId,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.AmountRefundWay">
+		insert into AmountRefundWay
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_Time,
+			</if>
+			<if test="modifyTime != null">
+				Modify_Time,
+			</if>
+			<if test="startTime != null">
+				Start_time,
+			</if>
+			<if test="endTime != null">
+				End_time,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="rete != null">
+				Rete,
+			</if>
+			<if test="proposal != null">
+				Proposal,
+			</if>
+			<if test="venueId != null">
+				Venue_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				#{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="startTime != null">
+				#{startTime,jdbcType=INTEGER},
+			</if>
+			<if test="endTime != null">
+				#{endTime,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="rete != null">
+				#{rete,jdbcType=INTEGER},
+			</if>
+			<if test="proposal != null">
+				#{proposal,jdbcType=INTEGER},
+			</if>
+			<if test="venueId != null">
+				#{venueId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.AmountRefundWay">
+		update AmountRefundWay
+		<set>
+			<if test="createTime != null">
+				Create_Time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				Modify_Time = #{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="startTime != null">
+				Start_time = #{startTime,jdbcType=INTEGER},
+			</if>
+			<if test="endTime != null">
+				End_time = #{endTime,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="rete != null">
+				Rete = #{rete,jdbcType=INTEGER},
+			</if>
+			<if test="proposal != null">
+				Proposal = #{proposal,jdbcType=INTEGER},
+			</if>
+			<if test="venueId != null">
+				Venue_id = #{venueId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.AmountRefundWay">
+		update AmountRefundWay
+		set Create_Time = #{createTime,jdbcType=TIMESTAMP},
+		Modify_Time = #{modifyTime,jdbcType=TIMESTAMP},
+		Start_time = #{startTime,jdbcType=INTEGER},
+		End_time = #{endTime,jdbcType=INTEGER},
+		Type = #{type,jdbcType=INTEGER},
+		Rete = #{rete,jdbcType=INTEGER},
+		Proposal = #{proposal,jdbcType=INTEGER},
+		Venue_id = #{venueId,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

@@ -2,6 +2,7 @@ package com.xiaoyi.ssm.dao;
 
 import java.util.List;
 
+import com.xiaoyi.ssm.dto.FieldTemplateDto;
 import com.xiaoyi.ssm.model.Combine;
 
 public interface CombineMapper extends BaseMapper<Combine, String>{
@@ -26,4 +27,13 @@ public interface CombineMapper extends BaseMapper<Combine, String>{
 	 * @date 2018年8月31日 上午10:58:51 
 	 */ 
 	List<Combine> selectByAmount(String amountid);
+
+	/**  
+	 * @Description: 根据日期和场地ID查询占用时段
+	 * @author 宋高俊  
+	 * @param fieldTemplateDto 
+	 * @return 
+	 * @date 2018年9月4日 下午8:54:30 
+	 */ 
+	List<Combine> selectByNowDate(FieldTemplateDto fieldTemplateDto);
 }

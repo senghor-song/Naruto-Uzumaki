@@ -1,5 +1,8 @@
 package com.xiaoyi.ssm.dao;
 
+import java.util.List;
+
+import com.xiaoyi.ssm.dto.WebsiteSearchMapDto;
 import com.xiaoyi.ssm.model.District;
 
 /**  
@@ -22,4 +25,6 @@ public interface DistrictMapper extends BaseMapper<District, String>{
 	 * @date 2018年8月13日 下午3:35:10 
 	 */ 
 	District selectByDistrictName(String name);
+
+	List<District> selectBySearchCity(WebsiteSearchMapDto websitePropertyDto);
 }

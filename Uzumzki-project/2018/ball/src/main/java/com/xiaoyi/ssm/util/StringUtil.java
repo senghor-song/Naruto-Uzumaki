@@ -2,7 +2,6 @@ package com.xiaoyi.ssm.util;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -102,25 +101,29 @@ public class StringUtil {
 	 * @date 2018年8月18日 上午10:15:04
 	 */
 	public static String timeToTimestr(String[] timestrs) {
-		if (timestrs.length != 0) {
-			String datestr = "";
-			int time = Integer.valueOf(timestrs[0]) - 1;
-			datestr += time / 2 + ":";
-			int flag = time % 2;
-			if (flag == 1) {
-				datestr += "30";
+		try {
+			if (timestrs.length != 0) {
+				String datestr = "";
+				int time = Integer.valueOf(timestrs[0]) - 1;
+				datestr += time / 2 + ":";
+				int flag = time % 2;
+				if (flag == 1) {
+					datestr += "30";
+				} else {
+					datestr += "00";
+				}
+				int time2 = Integer.valueOf(timestrs[timestrs.length - 1]) - 1;
+				int flag2 = time2 % 2;
+				if (flag2 == 1) {
+					datestr += "-" + (time2 / 2 + 1) + ":00";
+				} else {
+					datestr += "-" + time2 / 2 + ":30";
+				}
+				return datestr;
 			} else {
-				datestr += "00";
+				return "";
 			}
-			int time2 = Integer.valueOf(timestrs[timestrs.length - 1]) - 1;
-			int flag2 = time2 % 2;
-			if (flag2 == 1) {
-				datestr += "-" + (time2 / 2 + 1) + ":00";
-			} else {
-				datestr += "-" + time2 / 2 + ":30";
-			}
-			return datestr;
-		} else {
+		} catch (Exception e) {
 			return "";
 		}
 	}
@@ -132,23 +135,27 @@ public class StringUtil {
 	 * @date 2018年8月18日 上午10:15:04
 	 */
 	public static String timeToTimestr(String timestr) {
-		String datestr = "";
-		int time = Integer.valueOf(timestr) - 1;
-		datestr += time / 2 + ":";
-		int flag = time % 2;
-		if (flag == 1) {
-			datestr += "30";
-		} else {
-			datestr += "00";
+		try {
+			String datestr = "";
+			int time = Integer.valueOf(timestr) - 1;
+			datestr += time / 2 + ":";
+			int flag = time % 2;
+			if (flag == 1) {
+				datestr += "30";
+			} else {
+				datestr += "00";
+			}
+			int time2 = Integer.valueOf(timestr) - 1;
+			int flag2 = time2 % 2;
+			if (flag2 == 1) {
+				datestr += "-" + (time2 / 2 + 1) + ":00";
+			} else {
+				datestr += "-" + time2 / 2 + ":30";
+			}
+			return datestr;
+		} catch (Exception e) {
+			return "";
 		}
-		int time2 = Integer.valueOf(timestr) - 1;
-		int flag2 = time2 % 2;
-		if (flag2 == 1) {
-			datestr += "-" + (time2 / 2 + 1) + ":00";
-		} else {
-			datestr += "-" + time2 / 2 + ":30";
-		}
-		return datestr;
 	}
 
 	public static void main(String[] args) {

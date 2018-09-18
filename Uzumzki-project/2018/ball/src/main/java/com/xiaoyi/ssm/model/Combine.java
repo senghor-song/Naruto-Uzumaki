@@ -8,7 +8,6 @@ import java.util.List;
  * 实体
  */
 public class Combine implements Serializable {
-	
 	/** 散拼加入列表 */
 	private List<CombineJoin> combineJoins;
 	/** 城市 */
@@ -19,7 +18,7 @@ public class Combine implements Serializable {
 	private Field field;
 	/** 会员 */
 	private Manager manager;
-	
+
 	public List<CombineJoin> getCombineJoins() {
 		return combineJoins;
 	}
@@ -52,320 +51,373 @@ public class Combine implements Serializable {
 		this.venue = venue;
 	}
 
-    public Manager getManager() {
+	public Manager getManager() {
 		return manager;
 	}
 
 	public void setManager(Manager manager) {
 		this.manager = manager;
 	}
-	
-    /** 散拼 */
-    private String id;
 
-    /** 编号 */
-    private Integer combineno;
+	/** 散拼 */
+	private String id;
 
-    /** 创建时间 */
-    private Date createtime;
+	/** 编号 */
+	private Integer combineno;
 
-    /** 修改时间 */
-    private Date modifytime;
+	/** 创建时间 */
+	private Date createtime;
 
-    /** 场馆ID */
-    private String venueid;
+	/** 修改时间 */
+	private Date modifytime;
 
-    /** 场地ID */
-    private String fieldid;
+	/** 场馆ID */
+	private String venueid;
 
-    /** 活动标题 */
-    private String title;
+	/** 场地ID */
+	private String fieldid;
 
-    /** 管理员ID */
-    private String managerid;
+	/** 活动标题 */
+	private String title;
 
-    /** 要求（如3.0以上） */
-    private String require;
+	/** 管理员ID */
+	private String managerid;
 
-    /** 散拼日期 */
-    private Date combinedate;
+	/** 要求（如3.0以上） */
+	private String demand;
 
-    /** 散拼时段 */
-    private String combinetimeframe;
+	/** 散拼日期 */
+	private Date combinedate;
 
-    /** 人数上限 */
-    private Integer boy;
+	/** 散拼时段 */
+	private String combinetimeframe;
 
-    /** 活动描述 */
-    private String describe;
+	/** 人数上限 */
+	private Integer boy;
 
-    /** 每人费用 */
-    private Double amountsum;
+	/** 活动描述 */
+	private String content;
 
-    /** 提现ID */
-    private String amountid;
+	/** 每人费用 */
+	private Double amountsum;
 
-    /** 提现状态(0=未提现1=正在提现2=已提现) */
-    private Integer amounttype;
+	/** 是否取消(0=否1=是) */
+	private Integer type;
 
-    /**
-     * Combine
-     */
-    private static final long serialVersionUID = 1L;
+	/** 提现ID */
+	private String amountid;
 
-    /**
-     * 散拼
-     * @return ID 散拼
-     */
-    public String getId() {
-        return id;
-    }
+	/** 提现状态(0=未提现1=正在提现2=已提现) */
+	private Integer amounttype;
 
-    /**
-     * 散拼
-     * @param id 散拼
-     */
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
-    }
+	/**
+	 * Combine
+	 */
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * 编号
-     * @return CombineNO 编号
-     */
-    public Integer getCombineno() {
-        return combineno;
-    }
+	/**
+	 * 散拼
+	 * 
+	 * @return ID 散拼
+	 */
+	public String getId() {
+		return id;
+	}
 
-    /**
-     * 编号
-     * @param combineno 编号
-     */
-    public void setCombineno(Integer combineno) {
-        this.combineno = combineno;
-    }
+	/**
+	 * 散拼
+	 * 
+	 * @param id 散拼
+	 */
+	public void setId(String id) {
+		this.id = id == null ? null : id.trim();
+	}
 
-    /**
-     * 创建时间
-     * @return CreateTime 创建时间
-     */
-    public Date getCreatetime() {
-        return createtime;
-    }
+	/**
+	 * 编号
+	 * 
+	 * @return CombineNO 编号
+	 */
+	public Integer getCombineno() {
+		return combineno;
+	}
 
-    /**
-     * 创建时间
-     * @param createtime 创建时间
-     */
-    public void setCreatetime(Date createtime) {
-        this.createtime = createtime;
-    }
+	/**
+	 * 编号
+	 * 
+	 * @param combineno 编号
+	 */
+	public void setCombineno(Integer combineno) {
+		this.combineno = combineno;
+	}
 
-    /**
-     * 修改时间
-     * @return ModifyTime 修改时间
-     */
-    public Date getModifytime() {
-        return modifytime;
-    }
+	/**
+	 * 创建时间
+	 * 
+	 * @return CreateTime 创建时间
+	 */
+	public Date getCreatetime() {
+		return createtime;
+	}
 
-    /**
-     * 修改时间
-     * @param modifytime 修改时间
-     */
-    public void setModifytime(Date modifytime) {
-        this.modifytime = modifytime;
-    }
+	/**
+	 * 创建时间
+	 * 
+	 * @param createtime 创建时间
+	 */
+	public void setCreatetime(Date createtime) {
+		this.createtime = createtime;
+	}
 
-    /**
-     * 场馆ID
-     * @return VenueID 场馆ID
-     */
-    public String getVenueid() {
-        return venueid;
-    }
+	/**
+	 * 修改时间
+	 * 
+	 * @return ModifyTime 修改时间
+	 */
+	public Date getModifytime() {
+		return modifytime;
+	}
 
-    /**
-     * 场馆ID
-     * @param venueid 场馆ID
-     */
-    public void setVenueid(String venueid) {
-        this.venueid = venueid == null ? null : venueid.trim();
-    }
+	/**
+	 * 修改时间
+	 * 
+	 * @param modifytime 修改时间
+	 */
+	public void setModifytime(Date modifytime) {
+		this.modifytime = modifytime;
+	}
 
-    /**
-     * 场地ID
-     * @return FieldID 场地ID
-     */
-    public String getFieldid() {
-        return fieldid;
-    }
+	/**
+	 * 场馆ID
+	 * 
+	 * @return VenueID 场馆ID
+	 */
+	public String getVenueid() {
+		return venueid;
+	}
 
-    /**
-     * 场地ID
-     * @param fieldid 场地ID
-     */
-    public void setFieldid(String fieldid) {
-        this.fieldid = fieldid == null ? null : fieldid.trim();
-    }
+	/**
+	 * 场馆ID
+	 * 
+	 * @param venueid 场馆ID
+	 */
+	public void setVenueid(String venueid) {
+		this.venueid = venueid == null ? null : venueid.trim();
+	}
 
-    /**
-     * 活动标题
-     * @return Title 活动标题
-     */
-    public String getTitle() {
-        return title;
-    }
+	/**
+	 * 场地ID
+	 * 
+	 * @return FieldID 场地ID
+	 */
+	public String getFieldid() {
+		return fieldid;
+	}
 
-    /**
-     * 活动标题
-     * @param title 活动标题
-     */
-    public void setTitle(String title) {
-        this.title = title == null ? null : title.trim();
-    }
+	/**
+	 * 场地ID
+	 * 
+	 * @param fieldid 场地ID
+	 */
+	public void setFieldid(String fieldid) {
+		this.fieldid = fieldid == null ? null : fieldid.trim();
+	}
 
-    /**
-     * 管理员ID
-     * @return ManagerID 管理员ID
-     */
-    public String getManagerid() {
-        return managerid;
-    }
+	/**
+	 * 活动标题
+	 * 
+	 * @return Title 活动标题
+	 */
+	public String getTitle() {
+		return title;
+	}
 
-    /**
-     * 管理员ID
-     * @param managerid 管理员ID
-     */
-    public void setManagerid(String managerid) {
-        this.managerid = managerid == null ? null : managerid.trim();
-    }
+	/**
+	 * 活动标题
+	 * 
+	 * @param title 活动标题
+	 */
+	public void setTitle(String title) {
+		this.title = title == null ? null : title.trim();
+	}
 
-    /**
-     * 要求（如3.0以上）
-     * @return Require 要求（如3.0以上）
-     */
-    public String getRequire() {
-        return require;
-    }
+	/**
+	 * 管理员ID
+	 * 
+	 * @return ManagerID 管理员ID
+	 */
+	public String getManagerid() {
+		return managerid;
+	}
 
-    /**
-     * 要求（如3.0以上）
-     * @param require 要求（如3.0以上）
-     */
-    public void setRequire(String require) {
-        this.require = require == null ? null : require.trim();
-    }
+	/**
+	 * 管理员ID
+	 * 
+	 * @param managerid 管理员ID
+	 */
+	public void setManagerid(String managerid) {
+		this.managerid = managerid == null ? null : managerid.trim();
+	}
 
-    /**
-     * 散拼日期
-     * @return CombineDate 散拼日期
-     */
-    public Date getCombinedate() {
-        return combinedate;
-    }
+	/**
+	 * 要求（如3.0以上）
+	 * 
+	 * @return Demand 要求（如3.0以上）
+	 */
+	public String getDemand() {
+		return demand;
+	}
 
-    /**
-     * 散拼日期
-     * @param combinedate 散拼日期
-     */
-    public void setCombinedate(Date combinedate) {
-        this.combinedate = combinedate;
-    }
+	/**
+	 * 要求（如3.0以上）
+	 * 
+	 * @param demand 要求（如3.0以上）
+	 */
+	public void setDemand(String demand) {
+		this.demand = demand == null ? null : demand.trim();
+	}
 
-    /**
-     * 散拼时段
-     * @return CombineTimeFrame 散拼时段
-     */
-    public String getCombinetimeframe() {
-        return combinetimeframe;
-    }
+	/**
+	 * 散拼日期
+	 * 
+	 * @return CombineDate 散拼日期
+	 */
+	public Date getCombinedate() {
+		return combinedate;
+	}
 
-    /**
-     * 散拼时段
-     * @param combinetimeframe 散拼时段
-     */
-    public void setCombinetimeframe(String combinetimeframe) {
-        this.combinetimeframe = combinetimeframe == null ? null : combinetimeframe.trim();
-    }
+	/**
+	 * 散拼日期
+	 * 
+	 * @param combinedate 散拼日期
+	 */
+	public void setCombinedate(Date combinedate) {
+		this.combinedate = combinedate;
+	}
 
-    /**
-     * 人数上限
-     * @return Boy 人数上限
-     */
-    public Integer getBoy() {
-        return boy;
-    }
+	/**
+	 * 散拼时段
+	 * 
+	 * @return CombineTimeFrame 散拼时段
+	 */
+	public String getCombinetimeframe() {
+		return combinetimeframe;
+	}
 
-    /**
-     * 人数上限
-     * @param boy 人数上限
-     */
-    public void setBoy(Integer boy) {
-        this.boy = boy;
-    }
+	/**
+	 * 散拼时段
+	 * 
+	 * @param combinetimeframe 散拼时段
+	 */
+	public void setCombinetimeframe(String combinetimeframe) {
+		this.combinetimeframe = combinetimeframe == null ? null : combinetimeframe.trim();
+	}
 
-    /**
-     * 活动描述
-     * @return Describe 活动描述
-     */
-    public String getDescribe() {
-        return describe;
-    }
+	/**
+	 * 人数上限
+	 * 
+	 * @return Boy 人数上限
+	 */
+	public Integer getBoy() {
+		return boy;
+	}
 
-    /**
-     * 活动描述
-     * @param describe 活动描述
-     */
-    public void setDescribe(String describe) {
-        this.describe = describe == null ? null : describe.trim();
-    }
+	/**
+	 * 人数上限
+	 * 
+	 * @param boy 人数上限
+	 */
+	public void setBoy(Integer boy) {
+		this.boy = boy;
+	}
 
-    /**
-     * 每人费用
-     * @return AmountSum 每人费用
-     */
-    public Double getAmountsum() {
-        return amountsum;
-    }
+	/**
+	 * 活动描述
+	 * 
+	 * @return Content 活动描述
+	 */
+	public String getContent() {
+		return content;
+	}
 
-    /**
-     * 每人费用
-     * @param amountsum 每人费用
-     */
-    public void setAmountsum(Double amountsum) {
-        this.amountsum = amountsum;
-    }
+	/**
+	 * 活动描述
+	 * 
+	 * @param content 活动描述
+	 */
+	public void setContent(String content) {
+		this.content = content == null ? null : content.trim();
+	}
 
-    /**
-     * 提现ID
-     * @return AmountId 提现ID
-     */
-    public String getAmountid() {
-        return amountid;
-    }
+	/**
+	 * 每人费用
+	 * 
+	 * @return AmountSum 每人费用
+	 */
+	public Double getAmountsum() {
+		return amountsum;
+	}
 
-    /**
-     * 提现ID
-     * @param amountid 提现ID
-     */
-    public void setAmountid(String amountid) {
-        this.amountid = amountid == null ? null : amountid.trim();
-    }
+	/**
+	 * 每人费用
+	 * 
+	 * @param amountsum 每人费用
+	 */
+	public void setAmountsum(Double amountsum) {
+		this.amountsum = amountsum;
+	}
 
-    /**
-     * 提现状态(0=未提现1=正在提现2=已提现)
-     * @return AmountType 提现状态(0=未提现1=正在提现2=已提现)
-     */
-    public Integer getAmounttype() {
-        return amounttype;
-    }
+	/**
+	 * 是否取消(0=否1=是)
+	 * 
+	 * @return Type 是否取消(0=否1=是)
+	 */
+	public Integer getType() {
+		return type;
+	}
 
-    /**
-     * 提现状态(0=未提现1=正在提现2=已提现)
-     * @param amounttype 提现状态(0=未提现1=正在提现2=已提现)
-     */
-    public void setAmounttype(Integer amounttype) {
-        this.amounttype = amounttype;
-    }
+	/**
+	 * 是否取消(0=否1=是)
+	 * 
+	 * @param type 是否取消(0=否1=是)
+	 */
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	/**
+	 * 提现ID
+	 * 
+	 * @return AmountId 提现ID
+	 */
+	public String getAmountid() {
+		return amountid;
+	}
+
+	/**
+	 * 提现ID
+	 * 
+	 * @param amountid 提现ID
+	 */
+	public void setAmountid(String amountid) {
+		this.amountid = amountid == null ? null : amountid.trim();
+	}
+
+	/**
+	 * 提现状态(0=未提现1=正在提现2=已提现)
+	 * 
+	 * @return AmountType 提现状态(0=未提现1=正在提现2=已提现)
+	 */
+	public Integer getAmounttype() {
+		return amounttype;
+	}
+
+	/**
+	 * 提现状态(0=未提现1=正在提现2=已提现)
+	 * 
+	 * @param amounttype 提现状态(0=未提现1=正在提现2=已提现)
+	 */
+	public void setAmounttype(Integer amounttype) {
+		this.amounttype = amounttype;
+	}
 }

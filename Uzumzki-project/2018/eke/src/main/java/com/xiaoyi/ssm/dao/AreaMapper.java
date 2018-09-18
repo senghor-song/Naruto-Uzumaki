@@ -1,5 +1,8 @@
 package com.xiaoyi.ssm.dao;
 
+import java.util.List;
+
+import com.xiaoyi.ssm.dto.WebsiteSearchMapDto;
 import com.xiaoyi.ssm.model.Area;
 
 /**  
@@ -29,4 +32,6 @@ public interface AreaMapper extends BaseMapper<Area, String> {
 	 * @date 2018年8月13日 下午3:35:10 
 	 */ 
 	Area selectByAreaName(String name);
+
+	List<Area> selectBySearchDistrict(WebsiteSearchMapDto websitePropertyDto);
 }

@@ -13,6 +13,15 @@ public class VenueTeach implements Serializable {
     /** 创建时间 */
     private Date createtime;
 
+    /** 教学日期 */
+    private Date teachdate;
+
+    /** 场馆ID */
+    private String venueid;
+
+    /** 场地ID */
+    private String fieldid;
+
     /** 内容 */
     private String content;
 
@@ -60,6 +69,54 @@ public class VenueTeach implements Serializable {
      */
     public void setCreatetime(Date createtime) {
         this.createtime = createtime;
+    }
+
+    /**
+     * 教学日期
+     * @return TeachDate 教学日期
+     */
+    public Date getTeachdate() {
+        return teachdate;
+    }
+
+    /**
+     * 教学日期
+     * @param teachdate 教学日期
+     */
+    public void setTeachdate(Date teachdate) {
+        this.teachdate = teachdate;
+    }
+
+    /**
+     * 场馆ID
+     * @return VenueID 场馆ID
+     */
+    public String getVenueid() {
+        return venueid;
+    }
+
+    /**
+     * 场馆ID
+     * @param venueid 场馆ID
+     */
+    public void setVenueid(String venueid) {
+        this.venueid = venueid == null ? null : venueid.trim();
+    }
+
+    /**
+     * 场地ID
+     * @return FieldID 场地ID
+     */
+    public String getFieldid() {
+        return fieldid;
+    }
+
+    /**
+     * 场地ID
+     * @param fieldid 场地ID
+     */
+    public void setFieldid(String fieldid) {
+        this.fieldid = fieldid == null ? null : fieldid.trim();
     }
 
     /**

@@ -2,6 +2,7 @@ package com.xiaoyi.ssm.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -32,6 +34,9 @@ import com.aliyun.oss.OSSClient;
  * @date 2018年6月29日 上午10:12:21
  */
 public class Utils {
+
+	private static Logger logger = Logger.getLogger(Utils.class.getName());
+	
 	/**
 	 * @Description: 获取UUID
 	 * @author song
@@ -302,7 +307,8 @@ public class Utils {
      * @author song  
      * @date 2018年7月24日 下午5:00:37 
      */ 
-    public static List<Map> readStringXmlOut(String xml) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static List<Map> readStringXmlOut(String xml) {
     	List<Map> list = new ArrayList<>();
         Document doc = null;
         try {
@@ -343,4 +349,15 @@ public class Utils {
         }
         return list;
     }
+    
+    /**  
+     * @Description: 获取价格用分计算的数据
+     * @author 宋高俊  
+     * @return 
+     * @date 2018年9月4日 下午3:29:58 
+     */ 
+    public static int doubleToInt(double price) {
+    	return (new BigDecimal(Double.toString(price)).multiply(new BigDecimal("100"))).intValue();
+	}
+    
 }

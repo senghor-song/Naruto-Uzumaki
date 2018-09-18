@@ -95,7 +95,7 @@
 			</association>
 			<association property="employeeT" javaType="com.xiaoyi.ssm.model.Employee">
 				<id property="id" column="ID" />
-				<result column="eEmp" property="emp" />
+				<result column="empEmp" property="emp" />
 			</association>
 			<association property="empStoreT" javaType="com.xiaoyi.ssm.model.EmpStore">
 				<id property="id" column="ID" />
@@ -196,8 +196,11 @@
 		(
 		SELECT <include refid="Base_Column_List" />,mp.*,e.`Estate` eEstate,e.`DistrictID` eDistrictID,e.`AreaID` eAreaID ,e.`CityID`
 		eCityID,emp.`Emp` eEmp, es.`EmpStore` esEmpStore
-		FROM Property p, MassProperty mp, Estate e, Employee emp, EmpStore es WHERE mp.`EstateID` = e.`ID` AND mp.`EmpID` =
-		emp.`ID` AND emp.`StoreID` = es.`ID` AND mp.`ID` = p.`MassPropertyID`
+		FROM Property p, MassProperty mp, Estate e, Employee emp, EmpStore es 
+		WHERE mp.`EstateID` = e.`ID` AND mp.`EmpID` = emp.`ID` AND emp.`StoreID` = es.`ID` AND mp.`ID` = p.`MassPropertyID` 
+		<if test="type != null">
+			AND mp.`Trade` = #{type} 
+		</if>
 		<if test="estate != null and estate != '' ">
 			AND e.`Estate` like concat('%',concat('${estate}','%')) 
 		</if>
@@ -205,8 +208,8 @@
 			AND e.`ID` = #{estateid}
 		</if>
 		) pt
-		LEFT JOIN City c ON pt.eCityID = c.`ID` LEFT JOIN District d ON pt.eDistrictID = d.`ID` LEFT JOIN
-		`Area` a ON pt.eAreaID = a.`ID` 
+		LEFT JOIN City c ON pt.eCityID = c.`ID` LEFT JOIN District d ON pt.eDistrictID = d.`ID` LEFT JOIN `Area` a ON pt.eAreaID = a.`ID` 
+		
 	</select>
 	
 	<select id="selectByLngLat" resultMap="BaseResultMap">
@@ -259,7 +262,7 @@
 		SELECT pt.*,d.`District` dDistrict,a.`Area` aArea,c.`City` cCity FROM
 		(
 		SELECT <include refid="Base_Column_List" />,mp.*,e.`Estate` eEstate,e.`DistrictID` eDistrictID,e.`AreaID` eAreaID ,e.`CityID`
-		eCityID,emp.`Emp` eEmp, es.`EmpStore` esEmpStore
+		eCityID,emp.`Emp` empEmp , es.`EmpStore` esEmpStore
 		FROM Property p, MassProperty mp, Estate e, Employee emp, EmpStore es WHERE mp.`EstateID` = e.`ID` AND mp.`EmpID` =
 		emp.`ID` AND emp.`StoreID` = es.`ID` AND mp.`ID` = p.`MassPropertyID` AND p.`ID` = #{id,jdbcType=CHAR} 
 		) pt

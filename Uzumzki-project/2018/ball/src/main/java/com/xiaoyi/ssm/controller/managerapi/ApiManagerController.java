@@ -1,5 +1,8 @@
 package com.xiaoyi.ssm.controller.managerapi;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,8 +32,11 @@ public class ApiManagerController {
 	 */
 	@RequestMapping(value = "/loginout")
 	@ResponseBody
-	public ApiMessage loginout(String token) {
-		RedisUtil.delRedis(Global.redis_manager, token);
+	public ApiMessage loginout(HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
+		RedisUtil.delRedis(Global.redis_manager, openid);
 		return new ApiMessage(200, "退出成功");
 	}
 

@@ -25,11 +25,9 @@
 			<result column="tModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
 			<result column="tVenueID" jdbcType="VARCHAR" property="venueid" />
 			<result column="tManagerID" jdbcType="VARCHAR" property="managerid" />
-			<result column="tPrice" jdbcType="DOUBLE" property="price" />
 			<result column="tTrainBaseID" jdbcType="VARCHAR" property="trainbaseid" />
 			<result column="tImage" jdbcType="VARCHAR" property="image" />
 			<result column="tContent" jdbcType="LONGVARCHAR" property="content" />
-			<result column="tContentText" jdbcType="VARCHAR" property="contenttext" />
 		</association>
 		
 	</resultMap>
@@ -38,7 +36,7 @@
 	</sql>
 	<sql id="Train_Column_List">
 		  t.ID tID, t.TrainNO tTrainNO, t.CreateTime tCreateTime, t.ModifyTime tModifyTime, t.VenueID tVenueID, 
-		  t.ManagerID tManagerID, t.Price tPrice, t.TrainBaseID tTrainBaseID, t.Image tImage, t.Content tContent, t.ContentText tContentText
+		  t.ManagerID tManagerID, t.TrainBaseID tTrainBaseID, t.Image tImage, t.Content tContent
 	</sql>
 
 	<select id="countByTrain" parameterType="java.lang.String" resultType="Integer">
@@ -50,6 +48,12 @@
 		SELECT tj.*, <include refid="Train_Column_List" /> , m.`Name` mName
 		FROM TrainJoin tj INNER JOIN Train t ON tj.`TrainID` = t.`ID` LEFT JOIN Member m ON m.`ID` = tj.`MemberID`
 		WHERE tj.`AmountID` = #{amountid}
+	</select>
+	
+	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tj.*, <include refid="Train_Column_List" /> , m.`Name` mName
+		FROM TrainJoin tj INNER JOIN Train t ON tj.`TrainID` = t.`ID` LEFT JOIN Member m ON m.`ID` = tj.`MemberID`
+		WHERE tj.`TrainID` = #{id}
 	</select>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">

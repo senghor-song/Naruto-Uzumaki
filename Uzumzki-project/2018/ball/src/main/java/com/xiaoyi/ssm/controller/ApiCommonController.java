@@ -19,6 +19,9 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import net.sf.json.JSONObject;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -36,11 +39,15 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayOpenAuthTokenAppRequest;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
+import com.alipay.api.request.ZhimaCustomerCertificationCertifyRequest;
+import com.alipay.api.request.ZhimaCustomerCertificationInitializeRequest;
 import com.alipay.api.response.AlipayOpenAuthTokenAppResponse;
+import com.alipay.api.response.ZhimaCustomerCertificationInitializeResponse;
 import com.github.pagehelper.PageHelper;
 import com.xiaoyi.ssm.dao.OrderLogMapper;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.dto.PageBean;
+import com.xiaoyi.ssm.exception.MyException;
 import com.xiaoyi.ssm.model.Area;
 import com.xiaoyi.ssm.model.City;
 import com.xiaoyi.ssm.model.District;
@@ -62,16 +69,18 @@ import com.xiaoyi.ssm.util.CheckUtil;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.HttpUtils;
+import com.xiaoyi.ssm.util.IDCard;
+import com.xiaoyi.ssm.util.MoblieMessageUtil;
+import com.xiaoyi.ssm.util.PropertiesUtil;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
+import com.xiaoyi.ssm.wxPay.HttpUtil;
 import com.xiaoyi.ssm.wxPay.MsgXMLUtil;
 import com.xiaoyi.ssm.wxPay.ReplyTextMsg;
 import com.xiaoyi.ssm.wxPay.WXConfig;
 import com.xiaoyi.ssm.wxPay.WechatMessageUtil;
 import com.xiaoyi.ssm.zfhPay.AlipayConfig;
-
-import net.sf.json.JSONObject;
 
 /**
  * @Description: 微信公共接口
@@ -101,6 +110,24 @@ public class ApiCommonController {
 	private OrderService orderService;
 	@Autowired
 	private OrderLogMapper orderMapper;
+	
+	/**
+	 * @Description: 用于验证身份证号是否正确
+	 * @author 宋高俊
+	 * @param idcard
+	 * @return
+	 * @date 2018年9月4日 上午11:40:35
+	 */
+	@RequestMapping(value = "/idcard")
+	@ResponseBody
+	public ApiMessage idcard(String idcard) {
+
+		if (IDCard.IDCardValidate(idcard)) {
+			return new ApiMessage(200, "验证通过");
+		} else {
+			return new ApiMessage(400, "验证不通过");
+		}
+	}
 
 	/**
 	 * @Description: 会员登录接口
@@ -109,25 +136,45 @@ public class ApiCommonController {
 	 */
 	@RequestMapping(value = "/member/login")
 	@ResponseBody
-	public ApiMessage memberlogin(String phone, String password) {
+	public ApiMessage memberlogin(String phone, String password, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
+		String unionid = (String) session.getAttribute("unionid");
+
 		Member member = new Member();
 		member.setPhone(phone);
 		member.setPassword(password);
 		Member loginmember = memberService.login(member);
+
 		if (loginmember != null) {
+
+			Member member2 = memberService.selectByOpenid(openid);
+			if (member2 != null) {
+				member2.setOpenid(Utils.getUUID());
+				member2.setUnionid(Utils.getUUID());
+				memberService.updateByPrimaryKeySelective(member2);
+			}
+
+			loginmember.setOpenid(openid);
+			loginmember.setUnionid(unionid);
+			memberService.updateByPrimaryKeySelective(loginmember);
+
 			Map<String, Object> map = new HashMap<>();
 			// 获取上一次登录的token
-			String token = (String) RedisUtil.getRedisOne(Global.redis_token_member, loginmember.getId());
-			if (!StringUtil.isBank(token)) {
-				RedisUtil.delRedis(Global.redis_member, token);
-			}
+			// String token = (String)
+			// RedisUtil.getRedisOne(Global.redis_token_member,
+			// loginmember.getId());
+			// if (!StringUtil.isBank(token)) {
+			// RedisUtil.delRedis(Global.redis_member, token);
+			// }
 			// 本次登录使用的token
-//			String loginToken = SHA1.encode(UUID.randomUUID().toString());
+			// String loginToken = SHA1.encode(UUID.randomUUID().toString());
 			String loginToken = loginmember.getId();
-			RedisUtil.addRedis(Global.redis_token_member, loginmember.getId(), loginToken);
-			RedisUtil.addRedis(Global.redis_member, loginToken, loginmember);
+			// RedisUtil.addRedis(Global.redis_token_member,
+			// loginmember.getId(), loginToken);
+			RedisUtil.addRedis(Global.redis_member, openid, loginmember);
 			map.put("token", loginToken);
-			map.put("isopenid", loginmember.getOpenid() != null ? 1 : 0);
+			// map.put("isopenid", loginmember.getOpenid() != null ? 1 : 0);
 
 			return new ApiMessage(200, "登录成功", map);
 		} else {
@@ -142,25 +189,21 @@ public class ApiCommonController {
 	 */
 	@RequestMapping(value = "/manager/login")
 	@ResponseBody
-	public ApiMessage managerlogin(String phone, String password) {
-		Manager loginmanager = managerService.login(phone, password);
+	public ApiMessage managerlogin(String token) {
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		if (member == null) {
+			return new ApiMessage(400, "请先登录会员账号");
+		}
+		Manager loginmanager = managerService.selectByPhone(member.getPhone());
 		if (loginmanager != null) {
 			Map<String, Object> map = new HashMap<>();
-			// 获取上一次登录的token
-			String token = (String) RedisUtil.getRedisOne(Global.redis_token_manager, loginmanager.getId());
-			if (!StringUtil.isBank(token)) {
-				RedisUtil.delRedis(Global.redis_manager, token);
-			}
 			// 本次登录使用的token
-//			String loginToken = SHA1.encode(SHA1.encode(UUID.randomUUID().toString()));
 			String loginToken = loginmanager.getId();
-			RedisUtil.addRedis(Global.redis_token_manager, loginmanager.getId(), loginToken);
 			RedisUtil.addRedis(Global.redis_manager, loginToken, loginmanager);
 			map.put("token", loginToken);
-			map.put("isopenid", 1);
 			return new ApiMessage(200, "登录成功", map);
 		} else {
-			return new ApiMessage(400, "账号或密码错误");
+			return new ApiMessage(400, "登录失败");
 		}
 	}
 
@@ -172,8 +215,7 @@ public class ApiCommonController {
 	@RequestMapping(value = "/member/register")
 	@ResponseBody
 	public ApiMessage register(HttpServletRequest request, Member member, String smsCode) {
-		if (!StringUtil.toCompare(RedisUtil.getRedis(Global.api_member_register_SmsCode_ + member.getPhone()),
-				smsCode)) {
+		if (!StringUtil.toCompare(RedisUtil.getRedis(Global.api_member_register_SmsCode_ + member.getPhone()), smsCode)) {
 			return new ApiMessage(400, "短信验证码不正确");
 		}
 		// 验证成功则将验证码提前删除
@@ -223,38 +265,39 @@ public class ApiCommonController {
 	/**
 	 * @Description: 后台注册获取验证码
 	 * @author 宋高俊
-	 * @param type = 0 注册验证码 1 = 找回密码验证码
+	 * @param type
+	 *            = 0 注册验证码 1 = 找回密码验证码
 	 * @date 2018年7月25日 下午1:43:06
 	 */
 	@RequestMapping(value = "/member/getSMSCode")
 	@ResponseBody
 	public ApiMessage getSMSCode(String phone, HttpServletRequest request, String type) {
-//		if (Utils.getPhone(phone)) {
-		Member oldmember = memberService.selectByPhone(phone);
-		String smsCode = Utils.getCode();
-		try {
-			if ("0".equals(type)) {
-				if (oldmember != null) {
-					return new ApiMessage(400, "该手机号码已被注册");
+		if (Utils.getPhone(phone)) {
+			Member oldmember = memberService.selectByPhone(phone);
+			String smsCode = Utils.getCode();
+			try {
+				if ("0".equals(type)) {
+					if (oldmember != null) {
+						return new ApiMessage(400, "该手机号码已被注册");
+					}
+					MoblieMessageUtil.sendIdentifyingCode(phone, smsCode);
+					RedisUtil.setRedis(Global.api_member_register_SmsCode_ + phone, smsCode, 120);
+				} else if ("1".equals(type)) {
+					if (oldmember == null) {
+						return new ApiMessage(400, "该手机号码未注册");
+					}
+					MoblieMessageUtil.sendIdentifyingCode(phone, smsCode);
+					RedisUtil.setRedis(Global.api_member_findPassword_SmsCode_ + phone, smsCode, 120);
+				} else {
+					return new ApiMessage(400, "参数错误");
 				}
-//					MoblieMessageUtil.sendIdentifyingCode(phone, smsCode);
-				RedisUtil.setRedis(Global.api_member_register_SmsCode_ + phone, "123456", 120);
-			} else if ("1".equals(type)) {
-				if (oldmember == null) {
-					return new ApiMessage(400, "该手机号码未注册");
-				}
-//					MoblieMessageUtil.sendIdentifyingCode(phone, smsCode);
-				RedisUtil.setRedis(Global.api_member_findPassword_SmsCode_ + phone, "123456", 120);
-			} else {
-				return new ApiMessage(400, "参数错误");
+				return new ApiMessage(200, "发送成功");
+			} catch (Exception e) {
+				return ApiMessage.error("发送次数已达上限,请次日使用验证功能");
 			}
-			return new ApiMessage(200, "发送成功");
-		} catch (Exception e) {
-			return ApiMessage.error("发送次数已达上限,请次日使用验证功能");
+		} else {
+			return new ApiMessage(400, "请输入正确的手机号码");
 		}
-//		} else {
-//			return new ApiMessage(400, "请输入正确的手机号码");
-//		}
 	}
 
 	/**
@@ -325,8 +368,7 @@ public class ApiCommonController {
 	 */
 	@RequestMapping(value = "/venue/list")
 	@ResponseBody
-	public ApiMessage list(PageBean pageBean, HttpServletRequest request, String cityid, String districtid,
-			String areaid) {
+	public ApiMessage list(PageBean pageBean, HttpServletRequest request, String cityid, String districtid, String areaid) {
 		Venue oldvenue = new Venue();
 		oldvenue.setCityid(cityid);
 		oldvenue.setDistrictid(districtid);
@@ -341,6 +383,7 @@ public class ApiCommonController {
 			map.put("name", venue.getName());// 名称
 			map.put("address", venue.getAddress());// 地址
 			map.put("phone", venue.getTel());// 电话
+			map.put("warmreminder", venue.getWarmreminder());// 温馨提示
 			listmap.add(map);
 		}
 		return new ApiMessage(200, "查询成功", listmap);
@@ -454,56 +497,72 @@ public class ApiCommonController {
 		return ApiMessage.succeed(listmap);
 	}
 
+	@RequestMapping(value = "/infologin")
+	@ResponseBody
+	public ApiMessage infologin() {
+		return ApiMessage.succeed();
+	}
+
 	/**
-	 * @Description: 获取微信的Banner图
+	 * @Description: 获取微信的openid
 	 * @author 宋高俊
 	 * @date 2018年8月24日 下午5:47:21
 	 */
 	@RequestMapping(value = "/weixinLogin")
-	public void weixinLogin(HttpServletRequest request, HttpServletResponse response, String state) throws Exception {
-		Member member = memberService.selectByPrimaryKey(state);
+	public void weixinLogin(HttpServletRequest request, HttpServletResponse response, String state) {
+		logger.info("开始执行从微信获取openid的回调");
 
-		logger.info("开始执行微信回调");
-		Map<String, String[]> params = request.getParameterMap();// 针对get获取get参数
-		String[] codes = params.get("code");// 拿到的code的值
-		String code = codes[0];// code
-		logger.info("开始执行用微信回调的Code获取openid");
-		// 这一步就是拼写微信api请求地址并 通过微信的appid 和 微信公众号的AppSecret 以及我们获取到的针对用户授权回调的code 拿到 这个用户的
-		// openid和access_token
-		String requestUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=APPSECRET&code=CODE&grant_type=authorization_code"
-				.replace("APPID", WXConfig.appid).replace("APPSECRET", WXConfig.appSecret).replace("CODE", code);
-		String requestResult = HttpUtils.sendGet(requestUrl, null);// 我们需要自己写或者在网上找一个 doGet 方法 发送doGet请求
-		JSONObject getCodeResultJson = JSONObject.fromObject(requestResult);// 把请求成功后的结果转换成JSON对象
-		if (getCodeResultJson == null || getCodeResultJson.get("errcode") != null
-				|| getCodeResultJson.getString("openid") == null) {
-			throw new Exception("获取回调异常");
+		String openid = "";
+		String unionid = "";
+		try {
+			Map<String, String[]> params = request.getParameterMap();// 针对get获取get参数
+			String[] codes = params.get("code");// 拿到的code的值
+			String code = codes[0];// code
+			logger.info("开始执行用微信回调的Code获取openid");
+			// 这一步就是拼写微信api请求地址并 通过微信的appid 和 微信公众号的AppSecret
+			// 以及我们获取到的针对用户授权回调的code 拿到 这个用户的
+			// openid和access_token
+			String requestUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=APPSECRET&code=CODE&grant_type=authorization_code"
+					.replace("APPID", WXConfig.appid).replace("APPSECRET", WXConfig.appSecret).replace("CODE", code);
+
+			String requestResult = HttpUtils.sendGet(requestUrl, null);// 我们需要自己写或者在网上找一个doGet方法发送doGet请求
+			JSONObject getCodeResultJson = JSONObject.fromObject(requestResult);// 把请求成功后的结果转换成JSON对象
+			if (getCodeResultJson == null || getCodeResultJson.get("errcode") != null || getCodeResultJson.getString("openid") == null) {
+				logger.error("", new Exception("获取回调异常"));
+			}
+
+			openid = getCodeResultJson.getString("openid");// 拿到openid
+			unionid = getCodeResultJson.getString("unionid");// 拿到unionid
+			logger.info("openid:" + openid);
+			logger.info("unionid:" + unionid);
+			logger.info("getCodeResultJson:" + getCodeResultJson.toString());
+
+		} catch (Exception e) {
+			logger.error("", e);
 		}
-		String openid = getCodeResultJson.getString("openid");// 拿到openid
-		logger.info("openid:" + openid);
-		logger.info("getCodeResultJson:" + getCodeResultJson.toString());
-		member.setOpenid(openid);
-		member.setModifytime(new Date());
-		memberService.updateByPrimaryKeySelective(member);
-//		// 获取微信的ACCESS_TOKEN
-//		String wxgzhToken = (String) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, WXConfig.appid);
-//
-//		// 这里是获取用户在我们公众里面的信息 如果没有关注公众号那么就没有办法获取详细信息 参数需要 微信公众号通用token 和 用户openid
-//		String requestUrl1 = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN"
-//				.replace("ACCESS_TOKEN", wxgzhToken).replace("OPENID", openid);
-//		String requestResult1 = HttpUtils.sendGet(requestUrl1, null);
-//		JSONObject user = JSONObject.fromObject(requestResult1);
-//		if (user == null || user.get("errcode") != null) {
-//		}
-//
-//		Integer subscribe = user.getInt("subscribe");// 是否有关注我们公众号
-//		if (subscribe == 0) {// 没有关注我们公众号
-//			response.sendRedirect(
-//					"https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIyNTc1MDQ2Mw==&scene=110#wechat_redirect");// 跳到我们公众号关注页面
-//																															// url地址需要你么你自己去截取
-//		} else {// 关注了
-//		}
+		try {
+			// 设置session数据
+			request.getSession().setAttribute("openid", openid);
+			request.getSession().setAttribute("unionid", unionid);
+			// 设置有效期
+			request.getSession().setMaxInactiveInterval(12 * 60 * 60);
+			Member member = memberService.selectByOpenid(openid);
+			// 判断用户是否存在
+			if (member != null) {
+				// 存在则将用户信息存入缓存
+				RedisUtil.addRedis(Global.redis_member, openid, member);
+				// 判断用户是否管理员
+				Manager manager = managerService.selectByPhone(member.getPhone());
+				if (manager != null) {
+					// 是管理员则将管理员信息存入缓存
+					RedisUtil.addRedis(Global.redis_manager, openid, manager);
+				}
+			}
+			response.sendRedirect(state);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-//		return "redirect:http://ball.ekeae.com/Ball/dist/#/";
 	}
 
 	/**
@@ -565,72 +624,121 @@ public class ApiCommonController {
 		logger.info("开始处理消息");
 		Document document = MsgXMLUtil.readString2XML(message);
 		Element root = document.getRootElement();
+		
 		String MsgType = MsgXMLUtil.readNode(root, "MsgType");
+		
+		// 回复给微信所需的参数
+		ReplyTextMsg textMsg = new ReplyTextMsg();
+		textMsg.setFromUserName(MsgXMLUtil.readNode(root, "ToUserName"));
+		textMsg.setToUserName(MsgXMLUtil.readNode(root, "FromUserName"));
+		textMsg.setCreateTime();
+		textMsg.setMsgType(WechatMessageUtil.MESSAGE_TEXT);
+		
 		if (MsgType.equals(WechatMessageUtil.MESSAGE_TEXT)) {
 			logger.info("判断消息类型是否为文本类型");
-			ReplyTextMsg textMsg = new ReplyTextMsg();
-			textMsg.setFromUserName(MsgXMLUtil.readNode(root, "ToUserName"));
-			textMsg.setToUserName(MsgXMLUtil.readNode(root, "FromUserName"));
-			textMsg.setCreateTime();
-			// 将XML消息的参数都转化内容回复给微信
-			MsgXMLUtil.content = "";
-			String nodeString = MsgXMLUtil.readNodes(root);
-			textMsg.setContent(nodeString);
-			textMsg.setMsgType(WechatMessageUtil.MESSAGE_TEXT);
-			try {
-				// 将对象转化为XML
-				String replyMsg = textMsg.Msg2Xml();
-				out.println(replyMsg);
-				out.close();
-			} catch (Exception e) {
-				e.printStackTrace();
+//			MsgXMLUtil.content = "";
+//			String nodeString = MsgXMLUtil.readNodes(root);
+			textMsg.setContent("请点击下方菜单操作");
+		}else if (MsgType.equals(WechatMessageUtil.MESSAGE_EVENT)) {
+			logger.info("判断消息类型是否为事件推送消息");
+			if ("subscribe".equals(MsgXMLUtil.readNode(root, "Event"))) {
+				// 关注事件
+				String openid = MsgXMLUtil.readNode(root, "FromUserName");
+				logger.info(openid + "用户关注了公众号");
+
+				// 根据openid获取用户的unionid
+				Map<String, Object> access_token = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, WXConfig.appid);
+				String userinfo = HttpUtils.sendGet("https://api.weixin.qq.com/cgi-bin/user/info", "access_token=" + access_token.get("access_token")
+						+ "&openid=" + openid + "&lang=zh_CN");
+				// 判断是否有数据返回
+				if (!StringUtil.isBank(userinfo)) {
+					logger.info("根据openid获取到用户数据" + userinfo);
+					JSONObject jsonObject = JSONObject.fromObject(userinfo);
+					// 更新用户的微信数据
+					Member member = memberService.selectByOpenid(openid);
+
+					// 判断该用户是否是第一次关注
+					if (member != null) {
+						
+						logger.info(openid+"用户再次关注");
+						
+						//非首次关注仅更新头像，性别，昵称
+						member.setAppavatarurl(jsonObject.getString("headimgurl"));
+						member.setAppgender(jsonObject.getInt("sex"));
+						member.setAppnickname(jsonObject.getString("nickname"));
+						
+						// 开发期间更新unionid
+						member.setUnionid(jsonObject.getString("unionid"));
+						memberService.updateByPrimaryKeySelective(member);
+						textMsg.setContent("欢迎再次关注易订场公众号");
+						
+					}else {
+						//首次关注需判断是否已使用过小程序
+						member = memberService.selectByUnionid(jsonObject.getString("unionid"));
+						if (member != null) {
+							logger.info(openid+"已使用过小程序，更新小程序用户的数据");
+							// 已使用过小程序，更新小程序用户的数据
+							member.setOpenid(openid);
+							member.setAppavatarurl(jsonObject.getString("headimgurl"));
+							member.setAppgender(jsonObject.getInt("sex"));
+							member.setAppnickname(jsonObject.getString("nickname"));
+
+							// 开发期间更新unionid
+							member.setUnionid(jsonObject.getString("unionid"));
+							memberService.updateByPrimaryKeySelective(member);
+							
+						}else {
+							logger.info(openid+"未使用过小程序,则创建新用户");
+							// 未使用过小程序,则创建新用户
+							member = new Member();
+							member.setId(Utils.getUUID());
+							member.setOpenid(openid);
+							member.setUnionid(jsonObject.getString("unionid"));
+							member.setAppavatarurl(jsonObject.getString("headimgurl"));
+							member.setAppgender(jsonObject.getInt("sex"));
+							member.setAppnickname(jsonObject.getString("nickname"));
+							memberService.insertSelective(member);
+						}
+						textMsg.setContent("欢迎关注易订场公众号");
+					}
+				}
 			}
+		}else {
+			logger.info("消息类型为{},默认处理",MsgType);
+			textMsg.setContent("请点击下方菜单进行操作");
+		}
+		try {
+			// 将对象转化为XML
+			String replyMsg = textMsg.Msg2Xml();
+			out.println(replyMsg);
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
-//
-//
-//	/**  
-//	 * @Description: 响应用户消息
-//	 * @author 宋高俊  
-//	 * @date 2018年8月27日 上午10:24:56 
-//	 */ 
-//	@RequestMapping(value = "/checkSignature", method = RequestMethod.POST)
-//	public void postCheckSignature(HttpServletRequest req, HttpServletResponse resp) {
-//		try {
-//			// 接受微信服务器发送过来的XML形式的消息
-//			InputStream in = req.getInputStream();
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-//			String sReqData = "";
-//			String itemStr = "";// 作为输出字符串的临时串，用于判断是否读取完毕
-//			while ((itemStr = reader.readLine()) != null) {
-//				sReqData += itemStr;
-//			}
-//			in.close();
-//			reader.close();
-//			logger.info("收到消息：" + sReqData);
-//			// 防止中文乱码
-//			resp.setCharacterEncoding("UTF-8");
-//			this.replyMessage(sReqData, resp.getWriter());
-//		} catch (Exception e) {
-//			logger.info("处理消息失败");
-//		}
-//	}
 
+	/**  
+	 * @Description: 分享需要的验证参数
+	 * @author 宋高俊  
+	 * @param req
+	 * @param resp
+	 * @param url
+	 * @return 
+	 * @date 2018年9月18日 上午10:20:07 
+	 */ 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/share")
 	@ResponseBody
 	public ApiMessage share(HttpServletRequest req, HttpServletResponse resp, String url) {
 
-		Map<String, Object> map = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN,
-				WXConfig.appid);
+		Map<String, Object> map = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, WXConfig.appid);
 		Map<String, Object> ret = new HashMap<>();
 		String nonce_str = create_nonce_str(); // 随机串
 		String timestamp = create_timestamp(); // 时间戳
 		String string1;
 		String signature = "";
 		// 注意这里参数名必须全部小写，且必须有序
-		string1 = "jsapi_ticket=" + map.get("jsapi_ticket") + "&noncestr=" + nonce_str + "&timestamp=" + timestamp
-				+ "&url=" + url;
+		string1 = "jsapi_ticket=" + map.get("jsapi_ticket") + "&noncestr=" + nonce_str + "&timestamp=" + timestamp + "&url=" + url;
 		logger.info("分享内容=" + string1);
 		try {
 			MessageDigest crypt = MessageDigest.getInstance("SHA-1");
@@ -642,18 +750,18 @@ public class ApiCommonController {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-//		signature = SHA1.encode(string1);
+		// signature = SHA1.encode(string1);
 
 		ret.put("url", url);
-//		logger.info("url:" + url);
+		// logger.info("url:" + url);
 		ret.put("jsapi_ticket", map.get("jsapi_ticket"));
-//		logger.info("jsapi_ticket:" + map.get("jsapi_ticket"));
+		// logger.info("jsapi_ticket:" + map.get("jsapi_ticket"));
 		ret.put("nonceStr", nonce_str);
-//		logger.info("nonceStr:" + nonce_str);
+		// logger.info("nonceStr:" + nonce_str);
 		ret.put("timestamp", timestamp);
-//		logger.info("timestamp:" + timestamp);
+		// logger.info("timestamp:" + timestamp);
 		ret.put("signature", signature);
-//		logger.info("signature:" + signature);
+		// logger.info("signature:" + signature);
 		ret.put("appId", WXConfig.appid);
 		return new ApiMessage(200, "获取成功", ret);
 	}
@@ -699,22 +807,23 @@ public class ApiCommonController {
 	 * @date 2018年8月29日 上午10:21:10
 	 */
 	@RequestMapping("/alipay")
-	public void alipay(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String orderId)
-			throws IOException {
+	public void alipay(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String orderId) throws IOException {
 		if (orderId == null) {
 			return;
 		}
 		logger.info("开始支付订单：" + orderId);
 		Order order = orderService.selectByPrimaryKey(orderId);
+		if (order != null) {
+			httpResponse.sendRedirect("https://ball.ekeae.com:8443/dist/home");
+		}
 
-		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.ServiceUrl, AlipayConfig.app_id,
-				AlipayConfig.private_key, "json", AlipayConfig.input_charset, AlipayConfig.zfb_public_key, "RSA2"); // 获得初始化的AlipayClient
+		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.ServiceUrl, AlipayConfig.app_id, AlipayConfig.private_key, "json",
+				AlipayConfig.input_charset, AlipayConfig.zfb_public_key, "RSA2"); // 获得初始化的AlipayClient
 		AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();// 创建API对应的request
 		alipayRequest.setReturnUrl(AlipayConfig.return_url);
 		alipayRequest.setNotifyUrl(AlipayConfig.notify_url);// 在公共参数中设置回跳和通知地址
-		alipayRequest.setBizContent("{" + " \"out_trade_no\":\"" + orderId + "\"," + " \"total_amount\":\""
-				+ order.getPrice() + "\"," + " \"subject\":\"预定场地预付金额\","
-				+ " \"product_code\":\"QUICK_WAP_PAY\",\"timeout_express\":\"5m\"}");// 填充业务参数
+		alipayRequest.setBizContent("{" + " \"out_trade_no\":\"" + orderId + "\"," + " \"total_amount\":\"" + order.getPrice() + "\","
+				+ " \"subject\":\"预定场地预付金额\"," + " \"product_code\":\"QUICK_WAP_PAY\",\"timeout_express\":\"5m\"}");// 填充业务参数
 		String form = "";
 		try {
 			form = alipayClient.pageExecute(alipayRequest).getBody(); // 调用SDK生成表单
@@ -734,8 +843,8 @@ public class ApiCommonController {
 	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping(value = "/aliPayCallBack")
-	public void AlipayTradePayNotify(Map<String, String[]> requestParams, HttpServletResponse response,
-			HttpServletRequest request) throws AlipayApiException, UnsupportedEncodingException {
+	public void AlipayTradePayNotify(Map<String, String[]> requestParams, HttpServletResponse response, HttpServletRequest request) throws AlipayApiException,
+			UnsupportedEncodingException {
 		logger.info("处理支付宝发送的回调");
 		// 获取支付宝POST过来反馈信息
 		Map<String, String> params = new HashMap<String, String>();
@@ -758,7 +867,8 @@ public class ApiCommonController {
 
 		/*
 		 * 实际验证过程建议商户务必添加以下校验： 1、需要验证该通知数据中的out_trade_no是否为商户系统中创建的订单号，
-		 * 2、判断total_amount是否确实为该订单的实际金额（即商户订单创建时的金额）， 3、校验通知中的seller_id（或者seller_email)
+		 * 2、判断total_amount是否确实为该订单的实际金额（即商户订单创建时的金额），
+		 * 3、校验通知中的seller_id（或者seller_email)
 		 * 是否为out_trade_no这笔单据的对应的操作方（有的时候，一个商户可能有多个seller_id/seller_email）
 		 * 4、验证app_id是否为该商户本身。
 		 */
@@ -784,10 +894,25 @@ public class ApiCommonController {
 			logger.info("支付成功：" + out_trade_no);
 			Order order = orderService.selectByPrimaryKey(out_trade_no);
 			order.setModifytime(new Date());
-			order.setType(6);
-			order.setPaytype(0);
-			orderService.updateByPrimaryKey(order);
+			// 获取场馆数据
+			Venue venue = venueService.selectByPrimaryKey(order.getVenueid());
+			if (venue == null) {
+				return;
+			}
+			if (venue.getOrderverify() == 0) {
+				order.setType(5);
+				// 支付宝支付成功给用户发送推送消息
+				Member member = memberService.selectByPrimaryKey(order.getMemberid());
+				String openid = member.getOpenid();
+			} else {
+				order.setType(6);
+				// 支付宝支付成功给用户发送推送消息
 
+			}
+			order.setPaytype(0);
+			orderService.updateByPrimaryKeySelective(order);
+
+			// 记录日志
 			OrderLog orderLog = new OrderLog();
 			orderLog.setId(Utils.getUUID());
 			orderLog.setCreatetime(new Date());
@@ -795,6 +920,7 @@ public class ApiCommonController {
 			orderLog.setType(0);
 			orderLog.setContent("接收到支付宝通知，订单已支付成功");
 			orderMapper.insert(orderLog);
+
 		}
 	}
 
@@ -830,8 +956,8 @@ public class ApiCommonController {
 	 */
 	@RequestMapping("/toAuthPage")
 	public void toMap(String app_auth_code) {
-		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.ServiceUrl, AlipayConfig.app_id,
-				AlipayConfig.private_key, "json", AlipayConfig.input_charset, AlipayConfig.zfb_public_key);
+		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.ServiceUrl, AlipayConfig.app_id, AlipayConfig.private_key, "json",
+				AlipayConfig.input_charset, AlipayConfig.zfb_public_key);
 		AlipayOpenAuthTokenAppRequest request = new AlipayOpenAuthTokenAppRequest();
 		// 如果使用app_auth_code换取token，则为authorization_code，如果使用refresh_token换取新的token，则为refresh_token
 		// 与refresh_token二选一，用户对应用授权后得到，即第一步中开发者获取到的app_auth_code值
@@ -839,9 +965,160 @@ public class ApiCommonController {
 		request.setBizContent("{\"grant_type\":\"authorization_code\",\"code\":\"" + app_auth_code + "\"}");
 		try {
 			AlipayOpenAuthTokenAppResponse response = alipayClient.execute(request);
-			logger.info("本次获取的app_auth_token:{}",response.getAppAuthToken());
+			logger.info("本次获取的app_auth_token:{}", response.getAppAuthToken());
 		} catch (AlipayApiException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * @Description: 用于验证是否通过实名认证
+	 * @author 宋高俊
+	 * @param token
+	 * @return
+	 * @date 2018年9月4日 上午11:46:34
+	 */
+	@RequestMapping(value = "/verifyRealname")
+	@ResponseBody
+	public ApiMessage verifyRealname(String token) {
+		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, token);
+		if (manager == null) {
+			return new ApiMessage(400, "验证不通过");
+		}
+		if (manager.getRealname() == 1) {
+			return new ApiMessage(200, "已验证通过");
+		} else {
+			return new ApiMessage(400, "验证不通过");
+		}
+	}
+
+	/**
+	 * @Description: 支付宝认证页面
+	 * @author 宋高俊
+	 * @param httpRequest
+	 * @param httpResponse
+	 * @param name
+	 *            姓名
+	 * @param idcard
+	 *            身份证号
+	 * @throws AlipayApiException
+	 * @date 2018年9月3日 下午8:20:35
+	 */
+	@RequestMapping("/zhima")
+	public void zhima(String token, HttpServletRequest httpRequest, HttpServletResponse httpResponse, String name, String idcard) throws AlipayApiException {
+		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, token);
+		if (manager == null) {
+			return;
+		}
+		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.ServiceUrl, AlipayConfig.app_id, AlipayConfig.private_key, "json",
+				AlipayConfig.input_charset, AlipayConfig.zfb_public_key, "RSA2");
+		ZhimaCustomerCertificationInitializeRequest request = new ZhimaCustomerCertificationInitializeRequest();
+		request.setBizContent("{" + "\"transaction_id\":\"" + Utils.getUUID() + "\"," + "\"product_code\":\"w1010100000000002978\"," + "\"biz_code\":\"FACE\","
+				+ "\"identity_param\":\"{\\\"identity_type\\\":\\\"CERT_INFO\\\",\\\"cert_type\\\":\\\"IDENTITY_CARD\\\"," + "\\\"cert_name\\\":\\\"" + name
+				+ "\\\",\\\"cert_no\\\":\\\"" + idcard + "\\\"}\"," + "\"merchant_config\":\"{}\"," + "\"ext_biz_param\":\"{}\","
+				+ "\"linked_merchant_id\":\"\"" + "  }");
+		ZhimaCustomerCertificationInitializeResponse response = alipayClient.execute(request);
+		logger.info("BizNo" + response.getBizNo());
+		manager.setAppauthtoken(response.getBizNo());
+		manager.setIdcard(idcard);
+		managerService.updateByPrimaryKeySelective(manager);
+		ZhimaCustomerCertificationCertifyRequest zhiamrequest = new ZhimaCustomerCertificationCertifyRequest();
+		zhiamrequest.setBizContent("{\"biz_no\":\"" + response.getBizNo() + "\"}");
+		zhiamrequest.setReturnUrl("https://ball.ekeae.com/WebBackAPI/api/common/zhimaCallBack");
+		// ZhimaCustomerCertificationCertifyResponse response2 =
+		// alipayClient.pageExecute(request2);
+		String form = "";
+		try {
+			form = alipayClient.pageExecute(zhiamrequest).getBody(); // 调用SDK生成表单
+			httpResponse.setContentType("text/html;charset=" + AlipayConfig.input_charset);
+			httpResponse.getWriter().write(form);// 直接将完整的表单html输出到页面
+			httpResponse.getWriter().flush();
+			httpResponse.getWriter().close();
+		} catch (AlipayApiException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 支付宝支付成功回调
+	 * 
+	 * @throws UnsupportedEncodingException
+	 */
+	@RequestMapping(value = "/zhimaCallBack")
+	public String zhimaCallBack(HttpServletResponse response, HttpServletRequest request) throws AlipayApiException, UnsupportedEncodingException {
+		logger.info("处理支付宝发送的回调");
+		// 获取支付宝POST过来反馈信息
+		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String[]> requestParams1 = request.getParameterMap();
+		for (Iterator<String> iter = requestParams1.keySet().iterator(); iter.hasNext();) {
+			String name = (String) iter.next();
+			String[] values = (String[]) requestParams1.get(name);
+			String valueStr = "";
+			for (int i = 0; i < values.length; i++) {
+				valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
+			}
+			// 乱码解决，这段代码在出现乱码时使用
+			valueStr = new String(valueStr.getBytes("utf-8"));
+			params.put(name, valueStr);
+		}
+		params.get("biz_content");
+		JSONObject jsonObject = JSONObject.fromObject(params.get("biz_content"));
+		logger.info("返回数据:" + params.toString());
+		String signVerified = AlipaySignature.getSignCheckContentV1(params);// 调用SDK验证签名
+		logger.info("签名:" + signVerified);
+		String bizno = jsonObject.get("biz_no").toString();
+		Manager manager = managerService.selectByBizno(bizno);
+
+		if ("true".equals(jsonObject.get("passed").toString())) {
+			// 实名认证通过
+			Manager updateManager = new Manager();
+			updateManager.setId(manager.getId());
+			updateManager.setModifytime(new Date());
+			updateManager.setRealname(1);
+			managerService.updateByPrimaryKeySelective(updateManager);
+		}
+
+		// ——请在这里编写您的程序（以下代码仅作参考）——
+		return "admin/zhima";
+
+	}
+
+	@RequestMapping(value = "/zhimaTest")
+	public String zhimaTest() {
+		return "admin/zhima";
+	}
+
+	@RequestMapping(value = "/sql")
+	@ResponseBody
+	public ApiMessage sql(String sql) {
+		PropertiesUtil.updatePro(Thread.currentThread().getContextClassLoader().getResource("").getPath() + "jdbc.properties", "sqlLogger", sql);
+		return new ApiMessage(200, "修改成功");
+	}
+
+	/**
+	 * @Description: 小程序接口
+	 * @author 宋高俊
+	 * @param number
+	 * @date 2018年9月8日 下午4:27:58
+	 */
+	@RequestMapping(value = "/setNumber")
+	@ResponseBody
+	public ApiMessage setNumber(Integer number, HttpServletRequest request) {
+		Global.number = number;
+		return new ApiMessage(200, "成功", number);
+	}
+
+	/**
+	 * @Description: 小程序接口
+	 * @author 宋高俊
+	 * @param number
+	 * @date 2018年9月8日 下午4:27:58
+	 */
+	@RequestMapping(value = "/getNumber")
+	@ResponseBody
+	public ApiMessage getNumber(Integer number, HttpServletRequest request) {
+		return new ApiMessage(200, "成功", Global.number);
 	}
 }

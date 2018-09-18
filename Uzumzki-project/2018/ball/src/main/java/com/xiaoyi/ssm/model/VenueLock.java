@@ -13,6 +13,15 @@ public class VenueLock implements Serializable {
     /** 创建时间 */
     private Date createtime;
 
+    /** 锁定日期 */
+    private Date lockdate;
+
+    /** 场馆ID */
+    private String venueid;
+
+    /** 场地ID */
+    private String fieldid;
+
     /** 内容 */
     private String content;
 
@@ -60,6 +69,54 @@ public class VenueLock implements Serializable {
      */
     public void setCreatetime(Date createtime) {
         this.createtime = createtime;
+    }
+
+    /**
+     * 锁定日期
+     * @return LockDate 锁定日期
+     */
+    public Date getLockdate() {
+        return lockdate;
+    }
+
+    /**
+     * 锁定日期
+     * @param lockdate 锁定日期
+     */
+    public void setLockdate(Date lockdate) {
+        this.lockdate = lockdate;
+    }
+
+    /**
+     * 场馆ID
+     * @return VenueID 场馆ID
+     */
+    public String getVenueid() {
+        return venueid;
+    }
+
+    /**
+     * 场馆ID
+     * @param venueid 场馆ID
+     */
+    public void setVenueid(String venueid) {
+        this.venueid = venueid == null ? null : venueid.trim();
+    }
+
+    /**
+     * 场地ID
+     * @return FieldID 场地ID
+     */
+    public String getFieldid() {
+        return fieldid;
+    }
+
+    /**
+     * 场地ID
+     * @param fieldid 场地ID
+     */
+    public void setFieldid(String fieldid) {
+        this.fieldid = fieldid == null ? null : fieldid.trim();
     }
 
     /**

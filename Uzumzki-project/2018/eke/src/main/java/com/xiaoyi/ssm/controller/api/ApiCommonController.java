@@ -3,6 +3,9 @@ package com.xiaoyi.ssm.controller.api;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +20,7 @@ import com.xiaoyi.ssm.service.CustService;
 import com.xiaoyi.ssm.service.EmployeeService;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.MoblieMessageUtil;
+import com.xiaoyi.ssm.util.PropertiesUtil;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
@@ -58,7 +62,7 @@ public class ApiCommonController {
 					Employee employee = employeeService.getPhoneRegister(tel);
 					if (employee != null) {
 						return new ApiMessage(400, "该手机号码已被注册");
-					}else {
+					} else {
 						MoblieMessageUtil.sendIdentifyingCode(tel, smsCode);
 						RedisUtil.setRedis(Global.api_employee_updatePassword_SmsCode_ + tel, smsCode, 120);
 					}
@@ -66,7 +70,7 @@ public class ApiCommonController {
 					Cust cust = custService.getPhoneRegister(tel);
 					if (cust != null) {
 						return new ApiMessage(400, "该手机号码已被注册");
-					}else {
+					} else {
 						MoblieMessageUtil.sendIdentifyingCode(tel, smsCode);
 						RedisUtil.setRedis(Global.api_cust_updatePassword_SmsCode_ + tel, smsCode, 120);
 					}
@@ -77,12 +81,12 @@ public class ApiCommonController {
 		} else if (smsType == 0 || smsType == 2) {
 			String smsCode = Utils.getCode();
 			try {
-				//判断是客户还是经济
+				// 判断是客户还是经济
 				if (accountType == 1) {
 					Employee employee = employeeService.getPhoneRegister(tel);
 					if (employee == null) {
 						return new ApiMessage(400, "该手机号码未注册");
-					}else {
+					} else {
 						MoblieMessageUtil.sendIdentifyingCode(tel, smsCode);
 						RedisUtil.setRedis(Global.api_employee_updatePassword_SmsCode_ + tel, smsCode, 120);
 					}
@@ -90,12 +94,12 @@ public class ApiCommonController {
 					Cust cust = custService.getPhoneRegister(tel);
 					if (cust == null) {
 						return new ApiMessage(400, "该手机号码未注册");
-					}else {
+					} else {
 						MoblieMessageUtil.sendIdentifyingCode(tel, smsCode);
-						//判断是登录还是修改密码
+						// 判断是登录还是修改密码
 						if (smsType == 0) {
 							RedisUtil.setRedis(Global.api_cust_login_SmsCode_ + tel, smsCode, 120);
-						}else if (smsType == 2) {
+						} else if (smsType == 2) {
 							RedisUtil.setRedis(Global.api_cust_updatePassword_SmsCode_ + tel, smsCode, 120);
 						}
 					}
@@ -114,7 +118,7 @@ public class ApiCommonController {
 	 */
 	@RequestMapping(value = "/cust/login")
 	@ResponseBody
-	public ApiMessage login(String mobile,String smsCode) {
+	public ApiMessage login(String mobile, String smsCode) {
 		if (!StringUtil.toCompare(RedisUtil.getRedis(Global.api_cust_login_SmsCode_ + mobile), smsCode)) {
 			return new ApiMessage(400, "短信验证码不正确");
 		}
@@ -178,7 +182,8 @@ public class ApiCommonController {
 				|| StringUtils.isBlank(employee.getTel()) || StringUtils.isBlank(employee.getPassword())) {
 			return new ApiMessage(400, "请输入完整信息");
 		}
-		if (!StringUtil.toCompare(RedisUtil.getRedis(Global.api_employee_register_SmsCode_ + employee.getTel()), smsCode)) {
+		if (!StringUtil.toCompare(RedisUtil.getRedis(Global.api_employee_register_SmsCode_ + employee.getTel()),
+				smsCode)) {
 			return new ApiMessage(400, "短信验证码不正确");
 		}
 		employee.setId(Utils.getUUID());
@@ -216,5 +221,40 @@ public class ApiCommonController {
 		} else {
 			return ApiMessage.error();
 		}
+	}
+
+	@RequestMapping(value = "/sql")
+	public void sql(String sql) {
+		PropertiesUtil.updatePro(
+				Thread.currentThread().getContextClassLoader().getResource("").getPath() + "jdbc.properties",
+				"sqlLogger", sql);
+	}
+
+	/**
+	 * @Description: 小程序接口
+	 * @author 宋高俊
+	 * @param number
+	 * @date 2018年9月8日 下午4:27:58
+	 */
+	@RequestMapping(value = "/setNumber")
+	@ResponseBody
+	public ApiMessage setNumber(Integer number, HttpServletRequest request) {
+		Global global = new Global();
+		global.setNumber(number);
+		return new ApiMessage(200, "成功", number);
+	}
+
+	/**
+	 * @Description: 小程序接口
+	 * @author 宋高俊
+	 * @param number
+	 * @date 2018年9月8日 下午4:27:58
+	 */
+	@RequestMapping(value = "/getNumber")
+	@ResponseBody
+	public ApiMessage getNumber(Integer number, HttpServletRequest request) {
+		Global global = new Global();
+		global.getNumber();
+		return new ApiMessage(200, "成功", global.getNumber());
 	}
 }

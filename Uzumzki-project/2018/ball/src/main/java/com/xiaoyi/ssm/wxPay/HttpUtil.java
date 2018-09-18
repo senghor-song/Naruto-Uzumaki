@@ -200,6 +200,7 @@ public class HttpUtil {
 			conn.setReadTimeout(CONNECT_TIMEOUT);
 			if (contentType != null)
 				conn.setRequestProperty("content-type", contentType);
+	        conn.setRequestProperty("Accept-Charset", "UTF-8");
 			OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream(), DEFAULT_ENCODING);
 			if (data == null)
 				data = "";

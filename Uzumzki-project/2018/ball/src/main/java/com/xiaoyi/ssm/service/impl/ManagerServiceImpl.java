@@ -75,5 +75,29 @@ public class ManagerServiceImpl extends AbstractService<Manager, String> impleme
 		return managerMapper.selectByManagerAndVenue(managerid, venueid);
 	}
 
+	/**  
+	 * @Description: 根据bizno获取管理员数据
+	 * @author 宋高俊  
+	 * @param bizno
+	 * @return 
+	 * @date 2018年9月4日 上午11:09:36 
+	 */ 
+	@Override
+	public Manager selectByBizno(String bizno) {
+		return managerMapper.selectByBizno(bizno);
+	}
+
+	/**  
+	 * @Description: 根据手机号查询管理员是否存在
+	 * @author 宋高俊  
+	 * @param phone
+	 * @return 
+	 * @date 2018年9月6日 下午4:28:19 
+	 */ 
+	@Override
+	public Manager selectByPhone(String phone) {
+		return managerMapper.selectByPhone(phone);
+	}
+
 
 }

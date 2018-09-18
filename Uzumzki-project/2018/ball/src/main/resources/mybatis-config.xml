@@ -16,7 +16,7 @@
 	<plugins>
 		<plugin interceptor="com.github.pagehelper.PageInterceptor">
 			<!--分页合理化，没有前一页的时候，赋为1 -->
-			<property name="reasonable" value="true"></property>
+			<property name="reasonable" value="false"></property>
 		</plugin>
 	</plugins>
 </configuration>

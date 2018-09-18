@@ -19,7 +19,39 @@ public class WebsiteSearchMapDto implements Serializable {
 	private Integer level;
 	/** 房源类型 */
 	private Integer type;
+	/** 最小经度 */
+	private double startLng;
+	/** 最小纬度 */
+	private double startLat;
+	/** 最大经度 */
+	private double endLng;
+	/** 最大纬度 */
+	private double endLat;
 	
+	public double getStartLng() {
+		return startLng;
+	}
+	public void setStartLng(double startLng) {
+		this.startLng = startLng;
+	}
+	public double getStartLat() {
+		return startLat;
+	}
+	public void setStartLat(double startLat) {
+		this.startLat = startLat;
+	}
+	public double getEndLng() {
+		return endLng;
+	}
+	public void setEndLng(double endLng) {
+		this.endLng = endLng;
+	}
+	public double getEndLat() {
+		return endLat;
+	}
+	public void setEndLat(double endLat) {
+		this.endLat = endLat;
+	}
 	public String getId() {
 		return id;
 	}
