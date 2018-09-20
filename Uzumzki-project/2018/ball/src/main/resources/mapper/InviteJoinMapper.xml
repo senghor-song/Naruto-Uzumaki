@@ -13,6 +13,7 @@
 		<result column="Content" jdbcType="VARCHAR" property="content" />
 		<result column="Pay_time" jdbcType="TIMESTAMP" property="payTime" />
 		<result column="Pay_type" jdbcType="INTEGER" property="payType" />
+		<result column="Refund_flag" jdbcType="INTEGER" property="refundFlag" />
 		<result column="Refund_content" jdbcType="VARCHAR" property="refundContent" />
 		<result column="Refund_amount" jdbcType="DOUBLE" property="refundAmount" />
 		<result column="Refund_fee" jdbcType="INTEGER" property="refundFee" />
@@ -20,29 +21,40 @@
 			<id column="mID" jdbcType="CHAR" property="id" />
 			<result column="mAppNickName" jdbcType="VARCHAR" property="appnickname" />
 			<result column="mAppAvatarUrl" jdbcType="VARCHAR" property="appavatarurl" />
+			<result column="mOpenID" jdbcType="VARCHAR" property="openid" />
 		</association>
 	</resultMap>
 	<sql id="Base_Column_List">
 		ID, Create_time, Invite_id, Member_id, Amount, Name, WeChat_id, Phone, Content, Pay_time,
-		Pay_type, Refund_content, Refund_amount, Refund_fee
+		Pay_type, Refund_flag, Refund_content, Refund_amount, Refund_fee
 	</sql>
 
 	<select id="selectByJoinMember" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT
-		ij.*,m.`AppAvatarUrl` mAppAvatarUrl,m.`AppNickName` mAppNickName,m.`ID` mID FROM InviteJoin ij
+		SELECT 
+		ij.*,m.`AppAvatarUrl` mAppAvatarUrl,m.`AppNickName` mAppNickName,m.`ID` mID,m.`OpenID` mOpenID
+		FROM InviteJoin ij
 		LEFT JOIN `Member` m ON ij.`Member_id` = m.`ID`
-		where Invite_id = #{id,jdbcType=VARCHAR} AND
-		Pay_type in (1,4)
+		where Invite_id = #{id,jdbcType=VARCHAR} AND Pay_type in (1,4)
 	</select>
 
 	<select id="selectByJoinMemberKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT
-		ij.*,m.`AppAvatarUrl` mAppAvatarUrl,m.`AppNickName` mAppNickName,m.`ID` mID FROM InviteJoin ij
+		ij.*,m.`AppAvatarUrl` mAppAvatarUrl,m.`AppNickName` mAppNickName,m.`ID` mID,m.`OpenID` mOpenID
+		FROM InviteJoin ij
 		LEFT JOIN `Member` m ON ij.`Member_id` = m.`ID`
-		where Invite_id = #{inviteId,jdbcType=VARCHAR} AND
+		where Invite_id =
+		#{inviteId,jdbcType=VARCHAR} AND
 		Member_id = #{memberId,jdbcType=VARCHAR} AND Pay_type in (1,4)
+		limit 1
 	</select>
 
+	<select id="countByJoinBall" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(0)
+		FROM InviteJoin ij
+		LEFT JOIN `Member` m ON ij.`Member_id` = m.`ID`
+		where Invite_id =
+		#{inviteId,jdbcType=VARCHAR} AND Pay_type in (1,4)
+	</select>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
@@ -58,13 +70,15 @@
 		insert into InviteJoin (ID, Create_time, Invite_id,
 		Member_id, Amount, Name,
 		WeChat_id, Phone, Content,
-		Pay_time, Pay_type, Refund_content,
-		Refund_amount, Refund_fee)
+		Pay_time, Pay_type, Refund_flag,
+		Refund_content, Refund_amount, Refund_fee
+		)
 		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{inviteId,jdbcType=VARCHAR},
 		#{memberId,jdbcType=VARCHAR}, #{amount,jdbcType=DOUBLE}, #{name,jdbcType=VARCHAR},
 		#{wechatId,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
-		#{payTime,jdbcType=TIMESTAMP}, #{payType,jdbcType=INTEGER}, #{refundContent,jdbcType=VARCHAR},
-		#{refundAmount,jdbcType=DOUBLE}, #{refundFee,jdbcType=INTEGER})
+		#{payTime,jdbcType=TIMESTAMP}, #{payType,jdbcType=INTEGER}, #{refundFlag,jdbcType=INTEGER},
+		#{refundContent,jdbcType=VARCHAR}, #{refundAmount,jdbcType=DOUBLE}, #{refundFee,jdbcType=INTEGER}
+		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.InviteJoin">
 		insert into InviteJoin
@@ -101,6 +115,9 @@
 			</if>
 			<if test="payType != null">
 				Pay_type,
+			</if>
+			<if test="refundFlag != null">
+				Refund_flag,
 			</if>
 			<if test="refundContent != null">
 				Refund_content,
@@ -146,6 +163,9 @@
 			<if test="payType != null">
 				#{payType,jdbcType=INTEGER},
 			</if>
+			<if test="refundFlag != null">
+				#{refundFlag,jdbcType=INTEGER},
+			</if>
 			<if test="refundContent != null">
 				#{refundContent,jdbcType=VARCHAR},
 			</if>
@@ -190,6 +210,9 @@
 			<if test="payType != null">
 				Pay_type = #{payType,jdbcType=INTEGER},
 			</if>
+			<if test="refundFlag != null">
+				Refund_flag = #{refundFlag,jdbcType=INTEGER},
+			</if>
 			<if test="refundContent != null">
 				Refund_content = #{refundContent,jdbcType=VARCHAR},
 			</if>
@@ -214,6 +237,7 @@
 		Content = #{content,jdbcType=VARCHAR},
 		Pay_time = #{payTime,jdbcType=TIMESTAMP},
 		Pay_type = #{payType,jdbcType=INTEGER},
+		Refund_flag = #{refundFlag,jdbcType=INTEGER},
 		Refund_content = #{refundContent,jdbcType=VARCHAR},
 		Refund_amount = #{refundAmount,jdbcType=DOUBLE},
 		Refund_fee = #{refundFee,jdbcType=INTEGER}

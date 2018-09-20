@@ -26,5 +26,11 @@ public interface InviteJoinMapper extends BaseMapper<InviteJoin, String> {
 	 * @date 2018年9月17日 上午9:46:02 
 	 */ 
 	InviteJoin selectByJoinMemberKey(@Param("inviteId") String inviteId, @Param("memberId") String memberId);
-
+	/**  
+	 * @Description: 统计当前报名人数
+	 * @author 宋高俊  
+	 * @return 
+	 * @date 2018年9月18日 下午3:56:37 
+	 */ 
+	Integer countByJoinBall(@Param("inviteId") String inviteId);
 }

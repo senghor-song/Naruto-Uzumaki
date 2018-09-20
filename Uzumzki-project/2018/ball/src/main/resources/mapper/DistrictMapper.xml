@@ -28,6 +28,10 @@
 		</where>
 	</select>
 	
+	<select id="selectByCityName" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT d.* FROM District d INNER JOIN City c ON d.`CityID` = c.`ID` WHERE c.`City` LIKE '%${name}%'
+	</select>
+	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />

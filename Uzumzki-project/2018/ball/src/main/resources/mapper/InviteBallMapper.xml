@@ -6,6 +6,7 @@
 		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="Modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
 		<result column="End_time" jdbcType="TIMESTAMP" property="endTime" />
+		<result column="Active_time" jdbcType="TIMESTAMP" property="activeTime" />
 		<result column="Title" jdbcType="VARCHAR" property="title" />
 		<result column="Venue_name" jdbcType="VARCHAR" property="venueName" />
 		<result column="Venue_address" jdbcType="VARCHAR" property="venueAddress" />
@@ -29,18 +30,40 @@
 		<result column="Ball_type" jdbcType="INTEGER" property="ballType" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, Create_time, Modify_time, End_time, Title, Venue_name, Venue_address, Longitude,
-		Latitude, Max_boy, Min_boy, To_require, Receive_flag, Receive_amount, Receive_type,
-		Exit_flag, Exit_type, Exit_fee, Nearby_flag, Name_flag, Phone_flag, WeChat_flag,
-		Content, Member_id, Ball_type
+		ID, Create_time, Modify_time, End_time, Active_time, Title, Venue_name, Venue_address,
+		Longitude, Latitude, Max_boy, Min_boy, To_require, Receive_flag, Receive_amount,
+		Receive_type, Exit_flag, Exit_type, Exit_fee, Nearby_flag, Name_flag, Phone_flag,
+		WeChat_flag, Content, Member_id, Ball_type
 	</sql>
 
+	<select id="selectByMyInviteBall" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT ib.* FROM InviteBall ib INNER JOIN InviteJoin ij ON ib.`ID` = ij.`Invite_id` WHERE ij.`Member_id` = #{id} and ij.Pay_type in (1,4)
+		ORDER BY ij.Create_time DESC
+	</select>
+	
+	<select id="selectByJoinKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT ib.* FROM InviteBall ib INNER JOIN InviteJoin ij ON ib.`ID` = ij.`Invite_id` WHERE ij.`ID` = #{joinId} and ij.Pay_type in (1,4)
+	</select>
+	
+	<select id="selectByMyApplyInviteBall" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM InviteBall WHERE Member_id = #{id} ORDER BY Create_time DESC
+	</select>
+	
 	<select id="selectByNearby" parameterType="com.xiaoyi.ssm.dto.InviteDto" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from InviteBall where Longitude &lt;= #{maxlng} and Longitude &gt;= #{minlng} and Latitude &lt;=
 		#{maxlat} and Latitude &gt;= #{minlat}
-		and Nearby_flag = 1 and Ball_type = 0 ORDER BY Create_time DESC
+		and Nearby_flag = 1 and Ball_type = 0 ORDER BY Create_time
+		DESC
+	</select>
+
+	<select id="selectByTimeOut" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from InviteBall where End_time &lt;= #{startDate,jdbcType=TIMESTAMP} and End_time &gt;=
+		#{endDate,jdbcType=TIMESTAMP}
+		AND Ball_type = 0
 	</select>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -55,24 +78,23 @@
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.InviteBall">
 		insert into InviteBall (ID, Create_time, Modify_time,
-		End_time, Title, Venue_name,
-		Venue_address, Longitude, Latitude,
-		Max_boy, Min_boy, To_require,
-		Receive_flag, Receive_amount, Receive_type,
-		Exit_flag, Exit_type, Exit_fee,
-		Nearby_flag, Name_flag, Phone_flag,
-		WeChat_flag, Content, Member_id,
-		Ball_type)
+		End_time, Active_time, Title,
+		Venue_name, Venue_address, Longitude,
+		Latitude, Max_boy, Min_boy,
+		To_require, Receive_flag, Receive_amount,
+		Receive_type, Exit_flag, Exit_type,
+		Exit_fee, Nearby_flag, Name_flag,
+		Phone_flag, WeChat_flag, Content,
+		Member_id, Ball_type)
 		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
-		#{endTime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR}, #{venueName,jdbcType=VARCHAR},
-		#{venueAddress,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE},
-		#{maxBoy,jdbcType=INTEGER}, #{minBoy,jdbcType=INTEGER}, #{toRequire,jdbcType=INTEGER},
-		#{receiveFlag,jdbcType=INTEGER}, #{receiveAmount,jdbcType=DECIMAL},
-		#{receiveType,jdbcType=INTEGER},
-		#{exitFlag,jdbcType=INTEGER}, #{exitType,jdbcType=INTEGER}, #{exitFee,jdbcType=INTEGER},
-		#{nearbyFlag,jdbcType=INTEGER}, #{nameFlag,jdbcType=INTEGER}, #{phoneFlag,jdbcType=INTEGER},
-		#{wechatFlag,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{memberId,jdbcType=VARCHAR},
-		#{ballType,jdbcType=INTEGER})
+		#{endTime,jdbcType=TIMESTAMP}, #{activeTime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR},
+		#{venueName,jdbcType=VARCHAR}, #{venueAddress,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE},
+		#{latitude,jdbcType=DOUBLE}, #{maxBoy,jdbcType=INTEGER}, #{minBoy,jdbcType=INTEGER},
+		#{toRequire,jdbcType=INTEGER}, #{receiveFlag,jdbcType=INTEGER}, #{receiveAmount,jdbcType=DECIMAL},
+		#{receiveType,jdbcType=INTEGER}, #{exitFlag,jdbcType=INTEGER}, #{exitType,jdbcType=INTEGER},
+		#{exitFee,jdbcType=INTEGER}, #{nearbyFlag,jdbcType=INTEGER}, #{nameFlag,jdbcType=INTEGER},
+		#{phoneFlag,jdbcType=INTEGER}, #{wechatFlag,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR},
+		#{memberId,jdbcType=VARCHAR}, #{ballType,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.InviteBall">
 		insert into InviteBall
@@ -88,6 +110,9 @@
 			</if>
 			<if test="endTime != null">
 				End_time,
+			</if>
+			<if test="activeTime != null">
+				Active_time,
 			</if>
 			<if test="title != null">
 				Title,
@@ -166,6 +191,9 @@
 			<if test="endTime != null">
 				#{endTime,jdbcType=TIMESTAMP},
 			</if>
+			<if test="activeTime != null">
+				#{activeTime,jdbcType=TIMESTAMP},
+			</if>
 			<if test="title != null">
 				#{title,jdbcType=VARCHAR},
 			</if>
@@ -243,6 +271,9 @@
 			<if test="endTime != null">
 				End_time = #{endTime,jdbcType=TIMESTAMP},
 			</if>
+			<if test="activeTime != null">
+				Active_time = #{activeTime,jdbcType=TIMESTAMP},
+			</if>
 			<if test="title != null">
 				Title = #{title,jdbcType=VARCHAR},
 			</if>
@@ -314,6 +345,7 @@
 		set Create_time = #{createTime,jdbcType=TIMESTAMP},
 		Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
 		End_time = #{endTime,jdbcType=TIMESTAMP},
+		Active_time = #{activeTime,jdbcType=TIMESTAMP},
 		Title = #{title,jdbcType=VARCHAR},
 		Venue_name = #{venueName,jdbcType=VARCHAR},
 		Venue_address = #{venueAddress,jdbcType=VARCHAR},

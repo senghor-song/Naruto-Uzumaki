@@ -125,6 +125,7 @@ public class ApiMemberController {
 	 * @return
 	 * @date 2018年9月15日 上午11:01:37
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/getUserInfo")
 	@ResponseBody
 	public ApiMessage getUserInfo(HttpServletRequest request) {

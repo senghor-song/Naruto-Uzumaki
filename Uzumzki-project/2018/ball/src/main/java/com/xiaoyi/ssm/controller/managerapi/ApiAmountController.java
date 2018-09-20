@@ -23,7 +23,6 @@ import com.xiaoyi.ssm.dao.TrainJoinMapper;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.dto.PageBean;
 import com.xiaoyi.ssm.model.AmountRefundWay;
-import com.xiaoyi.ssm.model.Coach;
 import com.xiaoyi.ssm.model.Combine;
 import com.xiaoyi.ssm.model.CombineJoin;
 import com.xiaoyi.ssm.model.Manager;
@@ -164,7 +163,7 @@ public class ApiAmountController {
 			reservelist.add(reservemap);
 		}
 		if (order.getCoachid() != null) {
-			Coach coach = coachService.selectByPrimaryKey(order.getCoachid());
+//			Coach coach = coachService.selectByPrimaryKey(order.getCoachid());
 			Map<String, Object> reservemap = new HashMap<>();
 			reservemap.put("timestr", DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + " " + timeSumStr + " 教练");// 时间数据
 
@@ -351,8 +350,8 @@ public class ApiAmountController {
 	@ResponseBody
 	public ApiMessage amountRefundWayUpdate(String id, int rete, HttpServletRequest request) {
 
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
+//		HttpSession session = request.getSession();
+//		String openid = (String) session.getAttribute("openid");
 
 		AmountRefundWay arf = new AmountRefundWay();
 		arf.setId(id);

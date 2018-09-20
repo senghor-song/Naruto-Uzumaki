@@ -23,7 +23,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from InviteImage
-		where Invite_id = #{id,jdbcType=VARCHAR}
+		where Invite_id = #{id,jdbcType=VARCHAR} order by Head_image asc
 	</select>
 	
 	<delete id="deleteByInviteBall" parameterType="java.lang.String">

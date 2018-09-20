@@ -2,6 +2,7 @@ package com.xiaoyi.ssm.test;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,12 +10,13 @@ import org.slf4j.LoggerFactory;
 import com.xiaoyi.ssm.model.InviteBall;
 import com.xiaoyi.ssm.util.Arith;
 import com.xiaoyi.ssm.util.DateUtil;
+import com.xiaoyi.ssm.util.Utils;
 
 public class Test {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ParseException {
 //		InviteBall inviteBall = new InviteBall();
 //		inviteBall.setReceiveAmount(new BigDecimal(0.3));
 //		System.out.println(inviteBall.getReceiveAmount().doubleValue());
@@ -130,11 +132,6 @@ public class Test {
 		
 		
 		
-		DecimalFormat df = new DecimalFormat("0.00");//格式化小数  
-		double a = 10;
-		float b = (float)3/100;
-		String s = df.format(b);//返回的是String类型  
-		System.out.println(b);
-		System.out.println(s);
+		System.out.println(Utils.countFee(5,1));
 	}
 }

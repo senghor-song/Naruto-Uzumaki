@@ -2,11 +2,11 @@ package com.xiaoyi.ssm.wxPay;
 
 import java.security.MessageDigest;
 
-/**  
+/**
  * @Description: 用于微信MD5加密的工具类
- * @author 宋高俊  
- * @date 2018年8月30日 下午7:16:55 
- */ 
+ * @author 宋高俊
+ * @date 2018年8月30日 下午7:16:55
+ */
 public class MD5Util {
 
 	private static String byteArrayToHexString(byte b[]) {
@@ -46,6 +46,14 @@ public class MD5Util {
 		}
 	}
 
+	/**  
+	 * @Description: MD5加密
+	 * @author 宋高俊  
+	 * @param origin
+	 * @param charsetname
+	 * @return 
+	 * @date 2018年9月19日 下午4:52:33 
+	 */ 
 	public static String MD5Encode(String origin, String charsetname) {
 		String resultString = null;
 		try {
@@ -60,7 +68,6 @@ public class MD5Util {
 		return resultString;
 	}
 
-	private static final String hexDigits[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d",
-			"e", "f" };
+	private static final String hexDigits[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
 
 }

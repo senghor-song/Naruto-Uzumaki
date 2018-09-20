@@ -5,11 +5,12 @@
 		<id column="ID" jdbcType="CHAR" property="id" />
 		<result column="CityNo" jdbcType="INTEGER" property="cityno" />
 		<result column="City" jdbcType="VARCHAR" property="city" />
+		<result column="Initial" jdbcType="CHAR" property="initial" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, CityNo, City
+		ID, CityNo, City, Initial
 	</sql>
-	
+
 	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.City" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -21,9 +22,18 @@
 			<if test="city != null and city != ''">
 				AND City = #{city,jdbcType=VARCHAR}
 			</if>
+			<if test="initial != null">
+				AND Initial = #{initial,jdbcType=CHAR}
+			</if>
 		</where>
 	</select>
 	
+	<select id="selectByInitial" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from City order by Initial asc
+	</select>
+
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -35,10 +45,10 @@
 		where ID = #{id,jdbcType=CHAR}
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.City">
-		insert into City (ID, CityNo, City
-		)
-		values (#{id,jdbcType=CHAR}, #{cityno,jdbcType=INTEGER}, #{city,jdbcType=VARCHAR}
-		)
+		insert into City (ID, CityNo, City,
+		Initial)
+		values (#{id,jdbcType=CHAR}, #{cityno,jdbcType=INTEGER}, #{city,jdbcType=VARCHAR},
+		#{initial,jdbcType=CHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.City">
 		insert into City
@@ -52,6 +62,9 @@
 			<if test="city != null">
 				City,
 			</if>
+			<if test="initial != null">
+				Initial,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -62,6 +75,9 @@
 			</if>
 			<if test="city != null">
 				#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="initial != null">
+				#{initial,jdbcType=CHAR},
 			</if>
 		</trim>
 	</insert>
@@ -74,13 +90,17 @@
 			<if test="city != null">
 				City = #{city,jdbcType=VARCHAR},
 			</if>
+			<if test="initial != null">
+				Initial = #{initial,jdbcType=CHAR},
+			</if>
 		</set>
 		where ID = #{id,jdbcType=CHAR}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.City">
 		update City
 		set CityNo = #{cityno,jdbcType=INTEGER},
-		City = #{city,jdbcType=VARCHAR}
+		City = #{city,jdbcType=VARCHAR},
+		Initial = #{initial,jdbcType=CHAR}
 		where ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

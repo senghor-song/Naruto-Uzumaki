@@ -18,7 +18,7 @@ public class InviteJoin implements Serializable {
 		this.member = member;
 	}
 
-	/** ID */
+    /** ID */
     private String id;
 
     /** 创建时间 */
@@ -50,6 +50,9 @@ public class InviteJoin implements Serializable {
 
     /** 支付状态(0=待支付1=支付成功2=已取消3=已退款4=无需支付) */
     private Integer payType;
+
+    /** 退出状态(0=未退出1=退出退费2=退出申请) */
+    private Integer refundFlag;
 
     /** 退费理由 */
     private String refundContent;
@@ -239,6 +242,22 @@ public class InviteJoin implements Serializable {
      */
     public void setPayType(Integer payType) {
         this.payType = payType;
+    }
+
+    /**
+     * 退出状态(0=未退出1=退出退费2=退出申请)
+     * @return Refund_flag 退出状态(0=未退出1=退出退费2=退出申请)
+     */
+    public Integer getRefundFlag() {
+        return refundFlag;
+    }
+
+    /**
+     * 退出状态(0=未退出1=退出退费2=退出申请)
+     * @param refundFlag 退出状态(0=未退出1=退出退费2=退出申请)
+     */
+    public void setRefundFlag(Integer refundFlag) {
+        this.refundFlag = refundFlag;
     }
 
     /**

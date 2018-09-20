@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -19,7 +20,7 @@ import org.xml.sax.InputSource;
 
 
 /**  
- * @Description: 微信工具类
+ * @Description: XML操作工具类
  * @author 宋高俊  
  * @date 2018年8月30日 下午3:56:54 
  */ 
@@ -126,4 +127,31 @@ public class XMLUtil {
 		return sb.toString();
 	}
 
+
+	/**
+	 * @Description: 将请求参数转换为xml格式的string
+	 * @author 宋高俊
+	 * @param parameters
+	 *            排序的map
+	 * @date 2018年8月30日 下午7:06:57
+	 */
+	@SuppressWarnings("rawtypes")
+	public static String mapToXml(SortedMap<Object, Object> parameters) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<xml>");
+		Set es = parameters.entrySet();
+		Iterator it = es.iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			String k = String.valueOf(entry.getKey());
+			String v = String.valueOf(entry.getValue());
+			if ("attach".equalsIgnoreCase(k) || "body".equalsIgnoreCase(k) || "sign".equalsIgnoreCase(k)) {
+				sb.append("<" + k + ">" + "<![CDATA[" + v + "]]></" + k + ">");
+			} else {
+				sb.append("<" + k + ">" + v + "</" + k + ">");
+			}
+		}
+		sb.append("</xml>");
+		return sb.toString();
+	}
 }

@@ -360,4 +360,22 @@ public class Utils {
     	return (new BigDecimal(Double.toString(price)).multiply(new BigDecimal("100"))).intValue();
 	}
     
+    /**  
+     * @Description: 计算扣除手续费后剩余的金额
+     * @author 宋高俊  
+     * @param fee 手续费
+     * @param amount 金额
+     * @return 
+     * @date 2018年9月19日 上午9:35:30 
+     */ 
+    public static double countFee(int feeSum, double amount) {
+    	// 计算手续费率
+    	float fee = (float) feeSum / 100;
+		// 计算金额
+		BigDecimal a = new BigDecimal(String.valueOf(fee));
+		BigDecimal b = new BigDecimal(amount);
+		Double feesum= a.multiply(b).doubleValue();
+		
+		return Arith.sub(amount, (double)Math.round(feesum*100)/100);
+	}
 }

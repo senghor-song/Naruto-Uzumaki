@@ -6,18 +6,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,8 +38,6 @@ import com.xiaoyi.ssm.model.InviteImage;
 import com.xiaoyi.ssm.model.InviteJoin;
 import com.xiaoyi.ssm.model.InviteLog;
 import com.xiaoyi.ssm.model.Member;
-import com.xiaoyi.ssm.model.Order;
-import com.xiaoyi.ssm.model.OrderLog;
 import com.xiaoyi.ssm.service.InviteBallService;
 import com.xiaoyi.ssm.service.InviteImageService;
 import com.xiaoyi.ssm.service.MemberService;
@@ -55,7 +48,6 @@ import com.xiaoyi.ssm.util.MapUtils;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
-import com.xiaoyi.ssm.wxPay.HttpUtil;
 import com.xiaoyi.ssm.wxPay.WXConfig;
 import com.xiaoyi.ssm.wxPay.WXUtil;
 import com.xiaoyi.ssm.wxPay.XMLUtil;
@@ -103,12 +95,12 @@ public class ApiInviteBallController {
 			if(inviteBall.getToRequire() == 0){
 				
 			}
-			
 			inviteBall.setEndTime(DateUtil.getParse(endTimeStr, "yyyy-MM-dd HH:mm"));
 			inviteBall.setId(id);
 			inviteBall.setMemberId(member.getId());
 			inviteBall.setCreateTime(new Date());
 			inviteBall.setModifyTime(new Date());
+			inviteBall.setActiveTime(inviteBall.getEndTime());// 活动时间默认等于报名截止时间
 			inviteBallService.insertSelective(inviteBall);
 
 			if (urls != null) {
@@ -120,10 +112,7 @@ public class ApiInviteBallController {
 					inviteImage.setCreateTime(new Date());
 					inviteImage.setInviteId(id);
 					inviteImage.setUrl(url[i]);
-					// 将第一张图片设置为封面
-					if (i == 0) {
-						inviteImage.setHeadImage(1);
-					}
+					inviteImage.setHeadImage(i+1);
 					inviteImageService.insertSelective(inviteImage);
 				}
 			}
@@ -218,6 +207,11 @@ public class ApiInviteBallController {
 
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 
+		InviteJoin inviteJoin = inviteJoinMapper.selectByJoinMemberKey(id, member.getId());
+		if (inviteJoin == null) {
+			return new ApiMessage(400, "请报名后留言");
+		}
+		
 		// 创建留言数据
 		InviteLog inviteLog = new InviteLog();
 		inviteLog.setId(Utils.getUUID());
@@ -235,16 +229,14 @@ public class ApiInviteBallController {
 		}
 	}
 
-	/**
+	/**  
 	 * @Description: 根据约球ID获取日志
-	 * @author 宋高俊
-	 * @param pageBean
-	 * @param token
-	 * @param lng
-	 * @param lat
-	 * @return
-	 * @date 2018年9月13日 下午6:03:39
-	 */
+	 * @author 宋高俊  
+	 * @param request
+	 * @param id
+	 * @return 
+	 * @date 2018年9月19日 下午2:17:26 
+	 */ 
 	@RequestMapping(value = "/getInviteLog")
 	@ResponseBody
 	public ApiMessage getInviteLog(HttpServletRequest request, String id) {
@@ -303,9 +295,15 @@ public class ApiInviteBallController {
 			if (member != null) {
 				InviteJoin inviteJoin = inviteJoinMapper.selectByJoinMemberKey(id, member.getId());
 				if (inviteJoin != null) {
-					map.put("applyFlag", 1);// 当前用户是否报名
+					if (inviteJoin.getRefundFlag() == 0) {
+						map.put("applyFlag", 1);// 已报名
+					} else if (inviteJoin.getRefundFlag() == 2) {
+						map.put("applyFlag", 2);// 取消报名申请中
+					} else if (inviteJoin.getRefundFlag() == 1) {
+						map.put("applyFlag", 0);// 未报名
+					}
 				}else {
-					map.put("applyFlag", 0);// 当前用户是否报名
+					map.put("applyFlag", 0);// 未报名
 				}
 				// 判断是否是发起人
 				if (member.getId().toString().equals(inviteBall.getMemberId().toString())) {
@@ -338,6 +336,7 @@ public class ApiInviteBallController {
 		map.put("title", inviteBall.getTitle());// 标题
 		map.put("time", DateUtil.getFormat(inviteBall.getEndTime(), "yyyy年M月dd日 HH:mm"));// 活动时间
 		map.put("venuename", inviteBall.getVenueName());// 场馆名称
+		map.put("venuenAddress", inviteBall.getVenueAddress());// 场馆名称
 		map.put("lng", inviteBall.getLongitude());// 经度
 		map.put("lat", inviteBall.getLatitude());// 纬度
 		map.put("endTime", DateUtil.getFormat(inviteBall.getEndTime()));// 结束时间
@@ -350,8 +349,13 @@ public class ApiInviteBallController {
 		map.put("exitFee", inviteBall.getExitFee());// 退出手续费
 		map.put("exitType", inviteBall.getExitType());// 退出类型(1=直接退出2=需发起人同意)
 
-		map.put("minBoy", inviteBall.getMinBoy());// 最小人数
+		if (inviteBall.getMinBoy() != null && joinList.size() > inviteBall.getMinBoy()) {
+			map.put("teamFlag", 1);// 是否成团
+		}else {
+			map.put("teamFlag", 0);// 是否成团
+		}
 		map.put("content", inviteBall.getContent());// 约球详情
+		map.put("ballType", inviteBall.getBallType());// 活动状态0=发起中1=到期截止2=提前截止3=取消活动
 		
 		map.put("id", inviteBall.getId());// id
 
@@ -377,8 +381,15 @@ public class ApiInviteBallController {
 		String token = (String) request.getAttribute("token");
 
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		
 		// 约球数据
 		InviteBall inviteBall = inviteBallService.selectByPrimaryKey(id);
+
+		Integer joinSum = inviteJoinMapper.countByJoinBall(id);
+		
+		if (inviteBall.getMaxBoy() <= joinSum) {
+			return new ApiMessage(400, "报名人数已满");
+		}
 
 		if (inviteBall.getNameFlag() == 1 && StringUtil.isBank(name)) {
 			return new ApiMessage(400, "发起人要求,姓名号必填");
@@ -388,6 +399,11 @@ public class ApiInviteBallController {
 		}
 		if (inviteBall.getPhoneFlag() == 1 && StringUtil.isBank(phone)) {
 			return new ApiMessage(400, "发起人要求,手机号必填");
+		}
+		InviteJoin nowInviteJoin = inviteJoinMapper.selectByJoinMemberKey(id, member.getId());
+		
+		if (nowInviteJoin != null) {
+			return new ApiMessage(400, "不允许重复报名");
 		}
 
 		// 创建预支付订单
@@ -411,7 +427,7 @@ public class ApiInviteBallController {
 		
 		int flag = inviteJoinMapper.insertSelective(inviteJoin);
 		if (flag > 0) {
-			String inviteJoinID = inviteJoin.getId();
+			final String inviteJoinID = inviteJoin.getId();
 			if (inviteBall.getReceiveFlag() == 1) {
 				// 开启线程处理延时任务
 				new Timer(inviteJoinID + "订单支付超时处理中").schedule(new TimerTask() {
@@ -425,6 +441,17 @@ public class ApiInviteBallController {
 						}
 					}
 				}, 300000);
+			}else {
+				// 发送报名成功通知
+				JSONObject datajson = new JSONObject();
+				datajson.put("first", JSONObject.parseObject("{\"value\":\"恭喜您报名成功\"}"));
+				datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + inviteBall.getTitle() + "\"}"));
+				datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + "暂无" + "\"}"));
+				datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteBall.getActiveTime(),"yyyy-MM-dd HH:mm") + "\"}"));
+				datajson.put("keyword4", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueAddress() + "\"}"));
+				datajson.put("keyword5", JSONObject.parseObject("{\"value\":\"" + "暂无" + "\"}"));
+				datajson.put("remark", JSONObject.parseObject("{\"value\":\"请按时参加活动\"}"));
+				logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId1, "/pages/index/index?id="+id, datajson));
 			}
 			return new ApiMessage(200, "报名成功", inviteJoin.getId());
 		} else {
@@ -433,7 +460,7 @@ public class ApiInviteBallController {
 	}
 	
 	/**
-	 * @Description: 小程序获取支付参数
+	 * @Description: 公众号获取支付参数
 	 * @author 宋高俊
 	 * @param token
 	 * @return
@@ -441,6 +468,7 @@ public class ApiInviteBallController {
 	 * @throws JDOMException
 	 * @date 2018年9月14日 上午9:14:40
 	 */
+	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/wx/getPayment", method = RequestMethod.POST)
 	@ResponseBody
 	public ApiMessage wxGetPayment(HttpServletRequest request, String inviteJoinId) throws JDOMException, IOException {
@@ -473,6 +501,7 @@ public class ApiInviteBallController {
 	 * @throws JDOMException
 	 * @date 2018年9月14日 上午9:14:40
 	 */
+	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/wxapp/getPayment", method = RequestMethod.POST)
 	@ResponseBody
 	public ApiMessage wxappGetPayment(HttpServletRequest request, String inviteJoinId) throws JDOMException, IOException {
@@ -493,65 +522,7 @@ public class ApiInviteBallController {
 			return new ApiMessage(400, "订单已完成，不能支付");
 		}
 
-		// 预下单处理
-		SortedMap<Object, Object> packageParams = new TreeMap<Object, Object>();
-		packageParams.put("appid", WXConfig.wxAppAppid);// 小程序ID
-		packageParams.put("mch_id", WXConfig.mch_id);// 商户号
-		packageParams.put("nonce_str", WXUtil.getNonceStr());// 随机字符串
-//		packageParams.put("sign_type", "HMAC-SHA256");// 签名类型
-		packageParams.put("body", "123456");// 商品描述
-		packageParams.put("out_trade_no", inviteJoin.getId());// 商户订单号
-		packageParams.put("total_fee", Utils.doubleToInt(inviteJoin.getAmount()));// 标价金额
-		packageParams.put("spbill_create_ip", request.getRemoteAddr());// 终端IP
-		packageParams.put("time_start", DateUtil.getFormat(new Date(), "yyyyMMddHHmmss"));// 交易起始时间
-		packageParams.put("time_expire", DateUtil.getFormat(DateUtil.getPreTime(new Date(), 1, 5), "yyyyMMddHHmmss"));// 交易结束时间
-		packageParams.put("notify_url", WXConfig.APPNOTIFY_URL);// 通知地址
-		packageParams.put("trade_type", "JSAPI");// 交易类型
-		packageParams.put("openid", member.getAppopenid());// 用户标识
-
-		// 获取签名
-		String sign = WXUtil.createSign(packageParams, WXConfig.paternerKey);
-		logger.info("sign = " + sign);
-		packageParams.put("sign", sign);// 签名
-		// 请求参数封装成xml
-		String requestXML = WXUtil.mapToXml(packageParams);
-		logger.info(requestXML);
-		// 获取微信预支付订单数据
-		String resXml = HttpUtil.postData(WXConfig.url, requestXML);
-		Map xmlMap = XMLUtil.doXMLParse(resXml);
-		logger.info("xmlMap = " + xmlMap);
-
-		// 订单支付异常
-		if (!xmlMap.get("return_code").toString().equals("SUCCESS")) {
-			logger.info("订单交易错误");
-			return new ApiMessage(400, xmlMap.get("return_msg").toString());
-		}
-		if (!xmlMap.get("result_code").toString().equals("SUCCESS")) {
-			logger.info("订单业务结果错误");
-			return new ApiMessage(400, xmlMap.get("err_code_des").toString());
-		}
-
-		// 用于生成支付签名参数的数据
-		SortedMap<Object, Object> paymap = new TreeMap<Object, Object>();
-		long time = new Date().getTime() / 1000;
-		String nonceStr = WXUtil.getNonceStr();
-
-		// 获取预支付交易会话标识
-		String prepay_id = (String) xmlMap.get("prepay_id");
-		logger.info("prepay_id = " + prepay_id);
-
-		paymap.put("appId", WXConfig.wxAppAppid);
-		paymap.put("nonceStr", nonceStr);
-		paymap.put("package", "prepay_id=" + xmlMap.get("prepay_id"));
-		paymap.put("signType", "MD5");
-		paymap.put("timeStamp", time);
-
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("timeStamp", time);
-		map.put("nonceStr", nonceStr);
-		map.put("package", "prepay_id=" + xmlMap.get("prepay_id"));
-		map.put("signType", "MD5");
-		map.put("paySign", WXUtil.createSign(paymap, WXConfig.paternerKey));
+		Map map = WXUtil.wxappToPay("报名活动费用", inviteJoin.getId(), member.getAppopenid(), inviteJoin.getAmount(), request.getRemoteAddr(), WXConfig.APPNOTIFY_URL);
 		
 		return new ApiMessage(200, "获取预支付订单成功", map);
 	}
@@ -565,44 +536,28 @@ public class ApiInviteBallController {
 	 * @throws JDOMException
 	 * @date 2018年9月14日 上午10:43:55
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked"})
 	@RequestMapping(value = "/weixinNotify", method = RequestMethod.POST)
 	public void weixinNotify(HttpServletRequest request, HttpServletResponse response) throws IOException, JDOMException {
 		logger.info("小程序支付回调");
 		// 读取参数
 		InputStream inputStream = request.getInputStream();
 		StringBuffer sb = new StringBuffer();
-		String s;
+		String string;
 		BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-		logger.info("所有参数  = " + in.toString());
-		while ((s = in.readLine()) != null) {
-			sb.append(s);
+		while ((string = in.readLine()) != null) {
+			sb.append(string);
 		}
 		in.close();
 		inputStream.close();
+		logger.info("xml参数 = " + sb.toString());
 		// 解析xml成map
-		Map<String, String> m = new HashMap<String, String>();
-		m = XMLUtil.doXMLParse(sb.toString());
+		Map<String, String> packageParams = new HashMap<String, String>();
+		packageParams = XMLUtil.doXMLParse(sb.toString());
 
-		Iterator it = m.keySet().iterator();
-		logger.info("xml中的参数 = " + it);
-		// 过滤空 设置 TreeMap
-		SortedMap<Object, Object> packageParams = new TreeMap<Object, Object>();
-
-		while (it.hasNext()) {
-			String parameter = (String) it.next();
-			String parameterValue = m.get(parameter);
-
-			String v = "";
-			if (null != parameterValue) {
-				v = parameterValue.trim();
-			}
-			packageParams.put(parameter, v);
-		}
-		// 账号信息
-		String key = WXConfig.paternerKey; // key
 		// 判断签名是否正确
-		if (WXUtil.isTenpaySign("UTF-8", packageParams, key)) {
+		if (WXUtil.isTenpaySign("UTF-8", packageParams, WXConfig.paternerKey)) {
+
 			logger.info("微信支付成功回调");
 			// ------------------------------
 			// 处理业务开始
@@ -611,11 +566,13 @@ public class ApiInviteBallController {
 			if ("SUCCESS".equals((String) packageParams.get("result_code"))) {
 				// 这里是支付成功
 				String orderNo = (String) packageParams.get("out_trade_no");
-				logger.info("微信订单号{}付款成功", orderNo);
+				String total_fee = (String) packageParams.get("total_fee");
+				logger.info("商户订单号{}付款成功,金额{}", orderNo, total_fee);
 				// 这里 根据实际业务场景 做相应的操作
 				// 通知微信.异步确认成功.必写.不然会一直通知后台.八次之后就认为交易失败了.
 				resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>" + "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
 				// 这一步开始就是写公司业务需要的代码了，不用参考我的 没有价值
+
 				// 查询订单
 				InviteJoin inviteJoin = inviteJoinMapper.selectByPrimaryKey(orderNo);
 				if (inviteJoin == null) {
@@ -646,7 +603,7 @@ public class ApiInviteBallController {
 	}
 
 	/**
-	 * @Description: 获取报名名单人
+	 * @Description: 获取报名名单人员
 	 * @author 宋高俊
 	 * @param id
 	 * @return
@@ -666,7 +623,14 @@ public class ApiInviteBallController {
 			map.put("appavatarurl", inviteJoin.getMember().getAppavatarurl());// 头像地址
 			map.put("appnickname", inviteJoin.getMember().getAppnickname());// 昵称
 			map.put("createTime", DateUtil.getFormat(inviteJoin.getCreateTime(), "M月d日 HH:mm"));// 报名时间
+			map.put("appnickname", inviteJoin.getMember().getAppnickname());// 昵称
+			map.put("content", inviteJoin.getContent());// 加入备注
 			map.put("joinsum", "0");// 转发邀请数量
+			if (inviteJoin.getRefundFlag() == 2) {
+				map.put("exitFlag", "1");// 是否有取消报名申请
+			}else {
+				map.put("exitFlag", "0");// 是否有取消报名申请
+			}
 			joinList.add(map);
 		}
 		return new ApiMessage(200, "获取成功", joinList);
@@ -774,19 +738,42 @@ public class ApiInviteBallController {
 			inviteLog.setType(1);
 			inviteLog.setMemberId(member.getId());
 			// 活动取消后需发送微信公众号消息所有已加入的活动的人
-			
-			
+
 			JSONObject datajson = new JSONObject();
-			
-			
-			WXUtil.sendTemplate(member.getUnionid(), "", "", datajson);
-			
-			
-			
-			
-			
-			
-			
+			datajson.put("first", JSONObject.parseObject("{\"value\":\"你报名的活动已经取消\"}"));
+			datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + inviteBall.getTitle() + "\"}"));
+			datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueAddress() + "\"}"));
+			datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteBall.getActiveTime(), "yyyy年MM月dd日 HH:mm") + "\"}"));
+			datajson.put("remark", JSONObject.parseObject("{\"value\":\"活动已取消，欢迎您下次参加活动\"}"));
+
+			// 根据约球ID查询加入人员
+			List<InviteJoin> list = inviteJoinMapper.selectByJoinMember(id);
+			for (int i = 0; i < list.size(); i++) {
+				InviteJoin inviteJoin = list.get(i);
+				if (!StringUtil.isBank(inviteJoin.getMember().getOpenid())) {
+					logger.info(WXUtil.sendWXappTemplate(inviteJoin.getMember().getOpenid(), WXConfig.templateId3, "/pages/index/index?id=" + id, datajson));
+					if (inviteBall.getReceiveFlag() == 1) {
+						// 如果已预收费用则退款
+						inviteJoin.setPayType(3);
+						inviteJoin.setRefundAmount(inviteJoin.getAmount());
+						inviteJoin.setRefundFee(0);
+
+						// 发起人取消活动全额退款
+						WXUtil.weiXinRefund(inviteJoin.getId(), inviteJoin.getAmount(), inviteJoin.getAmount(), "发起人取消活动", 1);
+
+						JSONObject datajson2 = new JSONObject();
+						datajson2.put("first", JSONObject.parseObject("{\"value\":\"您报名的活动已退款\"}"));
+						datajson2.put("keyword1", JSONObject.parseObject("{\"value\":\"" + inviteJoin.getAmount() + "元\"}"));
+						datajson2.put("keyword2", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteJoin.getPayTime(), "yyyy年MM月dd日 HH:mm") + "\"}"));
+						datajson2.put("keyword3", JSONObject.parseObject("{\"value\":\"" + inviteJoin.getId() + "\"}"));
+						datajson2.put("remark", JSONObject.parseObject("{\"value\":\"已完成退款\"}"));
+						logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId2, "/pages/index/index?id=" + id, datajson2));
+					} else {
+						inviteJoin.setPayType(2);
+					}
+					inviteJoinMapper.updateByPrimaryKeySelective(inviteJoin);
+				}
+			}
 			return new ApiMessage(200, "取消成功");
 		} else {
 			return new ApiMessage(400, "取消失败");
@@ -812,6 +799,7 @@ public class ApiInviteBallController {
 		//将活动状态改为取消
 		InviteBall inviteBall = inviteBallService.selectByPrimaryKey(id);
 		inviteBall.setBallType(3);
+		inviteBall.setEndTime(new Date());
 		int flag = inviteBallService.updateByPrimaryKeySelective(inviteBall);
 		if (flag > 0) {
 			// 记录日志
@@ -826,8 +814,7 @@ public class ApiInviteBallController {
 			
 			
 			
-			
-			
+
 			
 			
 			
@@ -864,10 +851,6 @@ public class ApiInviteBallController {
 		
 		
 		
-		
-		
-		
-		
 		return new ApiMessage(200, "群发成功");
 	}
 	
@@ -883,7 +866,7 @@ public class ApiInviteBallController {
 	 */ 
 	@RequestMapping(value = "/member/cancelInviteBall")
 	@ResponseBody
-	public ApiMessage memberCancelInviteBall(HttpServletRequest request, String id) {
+	public ApiMessage memberCancelInviteBall(HttpServletRequest request, String id, String content) {
 
 		String token = (String) request.getAttribute("token");
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
@@ -896,48 +879,197 @@ public class ApiInviteBallController {
 		if (inviteBall.getEndTime().getTime() <= new Date().getTime()) {
 			return new ApiMessage(400, "活动已开始,不允许退出");
 		}
-		
-		if (inviteBall.getExitFlag() == 0) {
-			return new ApiMessage(400, "不允许退出");
-		}
-		
 		InviteJoin inviteJoin = inviteJoinMapper.selectByJoinMemberKey(id, member.getId());
 		if (inviteJoin == null) {
 			return new ApiMessage(400, "您还没有报名");
 		}
+		if (inviteBall.getExitFlag() == 0) {
+			return new ApiMessage(400, "不允许退出");
+		}
 		
 		inviteJoin.setPayTime(new Date());
+		if (inviteBall.getExitType() == 1) {
+			inviteJoin.setRefundFlag(1);
+			//判断是否预收费用
+			if (inviteBall.getReceiveFlag() == 1) {
+				//如果已预收费用则退款
+				inviteJoin.setPayType(3);
+				// 计算手续费
+		    	float fee = (float) inviteBall.getExitFee() / 100;
+				// 计算金额
+				BigDecimal a = new BigDecimal(String.valueOf(fee));
+				BigDecimal b = new BigDecimal(inviteJoin.getAmount());
+				// 手续费金额
+				Double feesum= (double)Math.round(a.multiply(b).doubleValue()*100)/100;
+				// 退费金额
+				double refund_fee = Arith.sub(inviteJoin.getAmount(), feesum);
+				
+				inviteJoin.setRefundAmount(refund_fee);
+				inviteJoin.setRefundFee(inviteBall.getExitFee());
+
+				JSONObject datajson = new JSONObject();
+				datajson.put("first", JSONObject.parseObject("{\"value\":\"您已取消报名活动\"}"));
+				datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + inviteBall.getTitle() + "\"}"));
+				datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueAddress() + "\"}"));
+				datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteBall.getActiveTime(),"yyyy年MM月dd日 HH:mm") + "\"}"));
+				datajson.put("remark", JSONObject.parseObject("{\"value\":\"取消成功，欢迎您下次参加活动\"}"));
+				logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId3, "/pages/index/index?id="+id, datajson));
+				
+				//执行退款代码
+				WXUtil.weiXinRefund(inviteJoin.getId(), inviteJoin.getAmount(), refund_fee, "报名人退出报名", 1);
+				
+				JSONObject datajson2 = new JSONObject();
+				datajson2.put("first", JSONObject.parseObject("{\"value\":\"您报名的活动已退款\"}"));
+				datajson2.put("keyword1", JSONObject.parseObject("{\"value\":\"" + refund_fee + "元(扣除手续费"+feesum+"元)\"}"));
+				datajson2.put("keyword2", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteJoin.getPayTime(),"yyyy年MM月dd日 HH:mm") + "\"}"));
+				datajson2.put("keyword3", JSONObject.parseObject("{\"value\":\"" + inviteJoin.getId() + "\"}"));
+				datajson2.put("remark", JSONObject.parseObject("{\"value\":\"已完成退款\"}"));
+				logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId2, "/pages/index/index?id="+id, datajson2));
+			}else {
+				//如果未收费用则直接修改状态
+				inviteJoin.setPayType(2);
+			}
+			int flag = inviteJoinMapper.updateByPrimaryKeySelective(inviteJoin);
+			if (flag > 0) {
+				return new ApiMessage(200, "取消成功");
+			}else {
+				return new ApiMessage(400, "取消失败");
+			}
+		}else {
+			if(content == null){
+				return new ApiMessage(400, "请填写退出理由");
+			}
+			
+			inviteJoin.setRefundFlag(2);
+			inviteJoin.setRefundContent(content);
+			
+			JSONObject datajson = new JSONObject();
+			datajson.put("first", JSONObject.parseObject("{\"value\":\"您正在申请取消报名活动\"}"));
+			datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + inviteBall.getTitle() + "\"}"));
+			datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueAddress() + "\"}"));
+			datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteBall.getActiveTime(),"yyyy年MM月dd日 HH:mm") + "\"}"));
+			datajson.put("remark", JSONObject.parseObject("{\"value\":\"请关注后续消息\"}"));
+			logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId3, "/pages/index/index?id="+id, datajson));
+			
+			int flag = inviteJoinMapper.updateByPrimaryKeySelective(inviteJoin);
+			if (flag > 0) {
+				return new ApiMessage(200, "退出申请已发送给发起人");
+			}else {
+				return new ApiMessage(400, "退出申请失败");
+			}
+		}
+	}
+	
+	/**  
+	 * @Description: 处理退出请求
+	 * @author 宋高俊  
+	 * @param request 验证身份
+	 * @param id 加入ID
+	 * @param type 0=取消报名资格1=处理退出申请
+	 * @return 
+	 * @date 2018年9月19日 下午2:54:11 
+	 */ 
+	@RequestMapping(value = "/disposeExit")
+	@ResponseBody
+	public ApiMessage disposeExir(HttpServletRequest request,String id, Integer type) {
+
+		InviteBall inviteBall = inviteBallService.selectByJoinKey(id);
+		InviteJoin inviteJoin = inviteJoinMapper.selectByPrimaryKey(id);
+		Member member = memberService.selectByPrimaryKey(inviteJoin.getMemberId());
+
+		inviteJoin.setPayType(2);
+		inviteJoin.setPayTime(new Date());
+		inviteJoin.setRefundFlag(1);
+		if (type == 0) {
+			JSONObject datajson = new JSONObject();
+			datajson.put("first", JSONObject.parseObject("{\"value\":\"您报名的活动已被取消资格\"}"));
+			datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + inviteBall.getTitle() + "\"}"));
+			datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueAddress() + "\"}"));
+			datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteBall.getActiveTime(),"yyyy年MM月dd日 HH:mm") + "\"}"));
+			datajson.put("remark", JSONObject.parseObject("{\"value\":\"如有疑问请联系发起人，欢迎您下次参加活动\"}"));
+			logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId3, "/pages/index/index?id="+id, datajson));
+		}
 		//判断是否预收费用
 		if (inviteBall.getReceiveFlag() == 1) {
 			//如果已预收费用则退款
 			inviteJoin.setPayType(3);
-			float fee = (float) inviteBall.getExitFee() / 100;
-			DecimalFormat df = new DecimalFormat("0.00");// 格式化小数
-			try {
-				Number refundAmount = df.parse(df.format(inviteJoin.getAmount() * fee));
-				inviteJoin.setRefundAmount(refundAmount.doubleValue());
-				inviteJoin.setRefundFee(inviteBall.getExitFee());
-				
+			// 计算手续费
+	    	float fee = (float) inviteBall.getExitFee() / 100;
+			// 计算金额
+			BigDecimal a = new BigDecimal(String.valueOf(fee));
+			BigDecimal b = new BigDecimal(inviteJoin.getAmount());
+			// 手续费金额
+			Double feesum= (double)Math.round(a.multiply(b).doubleValue()*100)/100;
+			// 退费金额
+			double refund_fee = Arith.sub(inviteJoin.getAmount(), feesum);
+			
+			inviteJoin.setRefundAmount(refund_fee);
+			inviteJoin.setRefundFee(inviteBall.getExitFee());
+			
+			if (type == 0) {
+				//发起人取消资格全额退款
+				WXUtil.weiXinRefund(inviteJoin.getId(), inviteJoin.getAmount(), inviteJoin.getAmount(), "发起人取消报名资格", 1);
+			}else {
 				//执行退款代码
-				
-				
-				
-				
-				
-				
-			} catch (ParseException e) {
-				e.printStackTrace();
+				WXUtil.weiXinRefund(inviteJoin.getId(), inviteJoin.getAmount(), refund_fee, "发起人取消报名资格", 1);
 			}
-		}else {
-			//如果未收费用则直接修改状态
-			inviteJoin.setPayType(2);
+			
+			JSONObject datajson2 = new JSONObject();
+			datajson2.put("first", JSONObject.parseObject("{\"value\":\"您报名的活动已退款\"}"));
+			datajson2.put("keyword1", JSONObject.parseObject("{\"value\":\"" + refund_fee + "元(扣除手续费"+feesum+"元)\"}"));
+			datajson2.put("keyword2", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteJoin.getPayTime(),"yyyy年MM月dd日 HH:mm") + "\"}"));
+			datajson2.put("keyword3", JSONObject.parseObject("{\"value\":\"" + inviteJoin.getId() + "\"}"));
+			datajson2.put("remark", JSONObject.parseObject("{\"value\":\"已完成退款\"}"));
+			logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId2, "/pages/index/index?id="+id, datajson2));
 		}
-		int flag = inviteJoinMapper.updateByPrimaryKeySelective(inviteJoin);
+		int flag = inviteJoinMapper.updateByPrimaryKey(inviteJoin);
 		if (flag > 0) {
-			return new ApiMessage(200, "取消成功");
+			return new ApiMessage(200, "操作成功");
 		}else {
-			return new ApiMessage(400, "取消失败");
+			return new ApiMessage(400, "退出申请失败");
 		}
+	}
+	
+
+	/**  
+	 * @Description: 处理退出请求详情
+	 * @author 宋高俊  
+	 * @param request 验证身份
+	 * @param id 加入ID
+	 * @return 
+	 * @date 2018年9月19日 下午2:54:11 
+	 */ 
+	@RequestMapping(value = "/disposeExitDetails")
+	@ResponseBody
+	public ApiMessage disposeExitDetails(HttpServletRequest request,String id) {
+
+		InviteBall inviteBall = inviteBallService.selectByJoinKey(id);
+		InviteJoin inviteJoin = inviteJoinMapper.selectByPrimaryKey(id);
+		Member member = memberService.selectByPrimaryKey(inviteJoin.getMemberId());
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("id", inviteJoin.getId());// 头像URL
+		map.put("appavatarurl", member.getAppavatarurl());// 头像URL
+		map.put("appnickname", member.getAppnickname());// 昵称
+		map.put("time", DateUtil.getFormat(inviteJoin.getPayTime()));// 申请时间
+		map.put("content", inviteJoin.getRefundContent());// 理由
+		
+		if (inviteBall.getReceiveFlag() == 1) {
+			map.put("fee", inviteBall.getExitFee());// 费率
+			
+			// 计算手续费
+			float fee = (float) inviteBall.getExitFee() / 100;
+			// 计算金额
+			BigDecimal a = new BigDecimal(String.valueOf(fee));
+			BigDecimal b = new BigDecimal(inviteJoin.getAmount());
+			// 手续费金额
+			Double feesum= (double)Math.round(a.multiply(b).doubleValue()*100)/100;
+			// 退费金额
+			double refund_fee = Arith.sub(inviteJoin.getAmount(), feesum);
+			
+			map.put("amount", refund_fee);// 最终返回金额
+		}
+		return new ApiMessage(200, "获取成功", map);
 	}
 	
 }

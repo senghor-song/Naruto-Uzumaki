@@ -7,6 +7,7 @@ import java.util.List;
  * @author song  
  * @date 2018年7月18日 下午4:16:59 
  */ 
+@SuppressWarnings("rawtypes")
 public class AdminMessage {
 	/** 状态码 */
 	private int code;

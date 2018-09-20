@@ -1,5 +1,7 @@
 package com.xiaoyi.ssm.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,11 @@ public class DistrictServiceImpl extends AbstractService<District,String> implem
 	@Override
 	public void setBaseMapper() {
 	    super.setBaseMapper(districtMapper);
+	}
+
+	@Override
+	public List<District> selectByCityName(String name) {
+		return districtMapper.selectByCityName(name);
 	}
 
 }

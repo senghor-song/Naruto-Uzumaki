@@ -47,7 +47,6 @@ import com.github.pagehelper.PageHelper;
 import com.xiaoyi.ssm.dao.OrderLogMapper;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.dto.PageBean;
-import com.xiaoyi.ssm.exception.MyException;
 import com.xiaoyi.ssm.model.Area;
 import com.xiaoyi.ssm.model.City;
 import com.xiaoyi.ssm.model.District;
@@ -75,7 +74,6 @@ import com.xiaoyi.ssm.util.PropertiesUtil;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
-import com.xiaoyi.ssm.wxPay.HttpUtil;
 import com.xiaoyi.ssm.wxPay.MsgXMLUtil;
 import com.xiaoyi.ssm.wxPay.ReplyTextMsg;
 import com.xiaoyi.ssm.wxPay.WXConfig;
@@ -148,13 +146,15 @@ public class ApiCommonController {
 
 		if (loginmember != null) {
 
-			Member member2 = memberService.selectByOpenid(openid);
-			if (member2 != null) {
-				member2.setOpenid(Utils.getUUID());
-				member2.setUnionid(Utils.getUUID());
-				memberService.updateByPrimaryKeySelective(member2);
+			Member oldMember = memberService.selectByOpenid(openid);
+			//判断这个openid是否已经被使用过
+			if (!loginmember.getOpenid().toString().equals(openid)) {
+				if (oldMember != null) {
+					oldMember.setOpenid(Utils.getUUID());
+					oldMember.setUnionid(Utils.getUUID());
+					memberService.updateByPrimaryKeySelective(oldMember);
+				}
 			}
-
 			loginmember.setOpenid(openid);
 			loginmember.setUnionid(unionid);
 			memberService.updateByPrimaryKeySelective(loginmember);
@@ -326,36 +326,13 @@ public class ApiCommonController {
 	 */
 	@RequestMapping(value = "/getDistrictList")
 	@ResponseBody
-	public ApiMessage getDistrictList(String id) {
+	public ApiMessage getDistrictList(String name) {
 		List<Map<String, Object>> listmap = new ArrayList<>();
-		District d = new District();
-		d.setCityid(id);
-		List<District> districts = districtService.selectByAll(d);
+		List<District> districts = districtService.selectByCityName(name);
 		for (District district : districts) {
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", district.getId());// ID
 			map.put("name", district.getDistrict());// 区县名称
-			listmap.add(map);
-		}
-		return new ApiMessage(200, "查询成功", listmap);
-	}
-
-	/**
-	 * @Description: 获取所有片区列表
-	 * @author 宋高俊
-	 * @date 2018年8月16日 下午5:45:46
-	 */
-	@RequestMapping(value = "/getAreaList")
-	@ResponseBody
-	public ApiMessage getAreaList(String id) {
-		List<Map<String, Object>> listmap = new ArrayList<>();
-		Area a = new Area();
-		a.setDistrictid(id);
-		List<Area> areas = areaService.selectByAll(a);
-		for (Area area : areas) {
-			Map<String, Object> map = new HashMap<>();
-			map.put("id", area.getId());// ID
-			map.put("name", area.getArea());// 片区名称
 			listmap.add(map);
 		}
 		return new ApiMessage(200, "查询成功", listmap);
@@ -368,11 +345,9 @@ public class ApiCommonController {
 	 */
 	@RequestMapping(value = "/venue/list")
 	@ResponseBody
-	public ApiMessage list(PageBean pageBean, HttpServletRequest request, String cityid, String districtid, String areaid) {
+	public ApiMessage list(PageBean pageBean, HttpServletRequest request, String districtid) {
 		Venue oldvenue = new Venue();
-		oldvenue.setCityid(cityid);
 		oldvenue.setDistrictid(districtid);
-		oldvenue.setAreaid(areaid);
 		PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
 		List<Map<String, Object>> listmap = new ArrayList<>();
 		List<Venue> venues = venueService.selectByAll(oldvenue);
@@ -541,14 +516,21 @@ public class ApiCommonController {
 			logger.error("", e);
 		}
 		try {
-			// 设置session数据
-			request.getSession().setAttribute("openid", openid);
-			request.getSession().setAttribute("unionid", unionid);
-			// 设置有效期
-			request.getSession().setMaxInactiveInterval(12 * 60 * 60);
 			Member member = memberService.selectByOpenid(openid);
 			// 判断用户是否存在
 			if (member != null) {
+				
+				// 设置session数据
+				request.getSession().setAttribute("openid", openid);
+				request.getSession().setAttribute("unionid", unionid);
+				// 设置有效期
+				request.getSession().setMaxInactiveInterval(12 * 60 * 60);
+				
+				//判断这个openid是否已经被使用过
+				member.setOpenid(openid);
+				member.setUnionid(unionid);
+				memberService.updateByPrimaryKeySelective(member);
+				
 				// 存在则将用户信息存入缓存
 				RedisUtil.addRedis(Global.redis_member, openid, member);
 				// 判断用户是否管理员
@@ -557,8 +539,10 @@ public class ApiCommonController {
 					// 是管理员则将管理员信息存入缓存
 					RedisUtil.addRedis(Global.redis_manager, openid, manager);
 				}
+				response.sendRedirect(state);
+			}else {
+				response.sendRedirect("https://ball.ekeae.com:8443/dist/login");
 			}
-			response.sendRedirect(state);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -620,6 +604,7 @@ public class ApiCommonController {
 	 * @author 宋高俊
 	 * @date 2018年8月27日 下午7:08:30
 	 */
+	@SuppressWarnings("unchecked")
 	public void replyMessage(String message, PrintWriter out) {
 		logger.info("开始处理消息");
 		Document document = MsgXMLUtil.readString2XML(message);
@@ -701,6 +686,7 @@ public class ApiCommonController {
 						}
 						textMsg.setContent("欢迎关注易订场公众号");
 					}
+					RedisUtil.addRedis(Global.redis_member, jsonObject.getString("unionid"), member);
 				}
 			}
 		}else {
@@ -876,7 +862,7 @@ public class ApiCommonController {
 		// 商户订单号
 		String out_trade_no = new String(request.getParameter("out_trade_no").getBytes("ISO-8859-1"), "UTF-8");
 		// 支付宝交易号
-		String trade_no = new String(request.getParameter("trade_no").getBytes("ISO-8859-1"), "UTF-8");
+//		String trade_no = new String(request.getParameter("trade_no").getBytes("ISO-8859-1"), "UTF-8");
 
 		// 交易状态
 		String trade_status = new String(request.getParameter("trade_status").getBytes("ISO-8859-1"), "UTF-8");
@@ -902,8 +888,8 @@ public class ApiCommonController {
 			if (venue.getOrderverify() == 0) {
 				order.setType(5);
 				// 支付宝支付成功给用户发送推送消息
-				Member member = memberService.selectByPrimaryKey(order.getMemberid());
-				String openid = member.getOpenid();
+//				Member member = memberService.selectByPrimaryKey(order.getMemberid());
+//				String openid = member.getOpenid();
 			} else {
 				order.setType(6);
 				// 支付宝支付成功给用户发送推送消息

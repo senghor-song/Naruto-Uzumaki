@@ -450,8 +450,8 @@ public class ApiVenueController {
 	@ResponseBody
 	public ApiMessage updateVenueLock(String id, String content, HttpServletRequest request) {
 		
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
+//		HttpSession session = request.getSession();
+//		String openid = (String) session.getAttribute("openid");
 		VenueLock venueLock = new VenueLock();
 		venueLock.setId(id);
 		venueLock.setContent(content);
@@ -554,8 +554,8 @@ public class ApiVenueController {
 	@ResponseBody
 	public ApiMessage updateVenueTeach(String id, String content, HttpServletRequest request) {
 		
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
+//		HttpSession session = request.getSession();
+//		String openid = (String) session.getAttribute("openid");
 		VenueTeach venueTeach = new VenueTeach();
 		venueTeach.setId(id);
 		venueTeach.setContent(content);
@@ -630,8 +630,8 @@ public class ApiVenueController {
 	@ResponseBody
 	public ApiMessage lookCombine(String id, HttpServletRequest request) {
 		
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
+//		HttpSession session = request.getSession();
+//		String openid = (String) session.getAttribute("openid");
 		Combine combine = combineMapper.selectByPrimaryKey(id);
 
 		Map<String, Object> map = new HashMap<>();
@@ -685,10 +685,9 @@ public class ApiVenueController {
 	public ApiMessage updateCombine(String id, String title, String demand, Integer boy, String content,
 			Double amountsum, HttpServletRequest request) {
 		
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-
-		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, openid);
+//		HttpSession session = request.getSession();
+//		String openid = (String) session.getAttribute("openid");
+//		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, openid);
 
 		Combine combine = new Combine();
 		combine.setId(id);
@@ -747,6 +746,7 @@ public class ApiVenueController {
 	 * @return
 	 * @date 2018年9月3日 下午3:23:42
 	 */
+	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/deleteCombine")
 	@ResponseBody
 	public ApiMessage deleteCombine(String id, String content) {
@@ -799,6 +799,7 @@ public class ApiVenueController {
 	 * @return
 	 * @date 2018年9月3日 下午3:23:42
 	 */
+	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/combineRefund")
 	@ResponseBody
 	public ApiMessage combineRefund(String id, String content) {
@@ -873,6 +874,7 @@ public class ApiVenueController {
 	 * @return
 	 * @date 2018年9月7日 下午8:36:15
 	 */
+	@SuppressWarnings("unused")
 	@RequestMapping(value = "/order/details")
 	@ResponseBody
 	public ApiMessage orderdetails(String orderid) {

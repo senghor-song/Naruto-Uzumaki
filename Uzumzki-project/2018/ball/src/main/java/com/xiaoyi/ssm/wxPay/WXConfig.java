@@ -1,13 +1,11 @@
 package com.xiaoyi.ssm.wxPay;
 
 import java.util.Map;
-import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.RedisUtil;
-import com.xiaoyi.ssm.util.Utils;
 
 /**  
  * @Description: 微信的配置参数
@@ -54,6 +52,13 @@ public class WXConfig {
 	public static final String wxAppMch_id = "1390967002";
     
     
+	/** 约球报名成功通知模板 */
+	public static final String templateId1 = "A04m33_InQGNZafKK1wbFDBWSwVJKORS_moY_MjSXdM";
+	/** 退款通知模板 */
+	public static final String templateId2 = "8dfDOqYsBb2vDxEWmp4DZjdm5rgBXmxW3iUqGBRPz1s";
+	/** 活动取消通知模板 */
+	public static final String templateId3 = "nBeb55DKilg5pHld25X4FRRXYpoarFaxcnbft79t63w";
+	
 	// 获取ip
 	public static String getIP(HttpServletRequest request) {
 		String ip = request.getRemoteAddr();

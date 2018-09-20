@@ -20,6 +20,9 @@ public class InviteBall implements Serializable {
     /** 报名截止时间 */
     private Date endTime;
 
+    /** 活动时间 */
+    private Date activeTime;
+
     /** 标题 */
     private String title;
 
@@ -150,6 +153,22 @@ public class InviteBall implements Serializable {
      */
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    /**
+     * 活动时间
+     * @return Active_time 活动时间
+     */
+    public Date getActiveTime() {
+        return activeTime;
+    }
+
+    /**
+     * 活动时间
+     * @param activeTime 活动时间
+     */
+    public void setActiveTime(Date activeTime) {
+        this.activeTime = activeTime;
     }
 
     /**

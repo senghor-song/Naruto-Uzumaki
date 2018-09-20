@@ -46,7 +46,6 @@ import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
-import com.xiaoyi.ssm.wxPay.HttpUtil;
 import com.xiaoyi.ssm.wxPay.WXConfig;
 import com.xiaoyi.ssm.wxPay.WXUtil;
 import com.xiaoyi.ssm.wxPay.XMLUtil;
@@ -362,7 +361,7 @@ public class ApiOrderController {
 		HttpSession session = request.getSession();
 		String openid = (String) session.getAttribute("openid");
 
-		Map map = WXUtil.wxToPay("订场预定金额", Utils.getUUID(), openid, amount, request.getRemoteAddr(), WXConfig.NOTIFY_URL1);
+		Map map = WXUtil.wxToPay("订场预定金额", Utils.getUUID(), openid, amount, request.getRemoteAddr(), "https://ball.ekeae.com/WebBackAPI/memberapi/order/weixinNotifyTest");
 
 		return new ApiMessage(200, "支付参数", map);
 	}

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 金额退款表瀹炰綋
+ * 金额退款表实体
  */
 public class AmountRefund implements Serializable {
     /** 退款ID */

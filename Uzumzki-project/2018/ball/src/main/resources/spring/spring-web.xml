@@ -100,6 +100,7 @@
 			<mvc:mapping path="/wxapp/**" />
 			<mvc:exclude-mapping path="/wxapp/common/**" />
 			<mvc:exclude-mapping path="/wxapp/inviteBall/getInviteBall" />
+			<mvc:exclude-mapping path="/wxapp/inviteBall/weixinNotify" />
 			<bean class="com.xiaoyi.ssm.interceptor.MemberAppApiInterceptor"></bean>
 		</mvc:interceptor>
 		<!-- 当设置多个拦截器时，先按顺序调用preHandle方法，然后逆序调用每个拦截器的postHandle和afterCompletion方法 -->

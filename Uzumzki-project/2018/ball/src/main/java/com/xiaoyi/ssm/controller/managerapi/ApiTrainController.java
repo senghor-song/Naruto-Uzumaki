@@ -172,8 +172,8 @@ public class ApiTrainController {
 	@ResponseBody
 	public ApiMessage updateTrain(String trainid, String content, Double price, String contenttext, String image, HttpServletRequest request) {
 		
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
+//		HttpSession session = request.getSession();
+//		String openid = (String) session.getAttribute("openid");
 		// 创建培训课程数据
 		Train train = new Train();
 		train.setId(trainid);

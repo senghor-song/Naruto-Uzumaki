@@ -15,22 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.xiaoyi.ssm.dao.OrderLogMapper;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.Member;
-import com.xiaoyi.ssm.service.AreaService;
-import com.xiaoyi.ssm.service.CityService;
-import com.xiaoyi.ssm.service.DistrictService;
-import com.xiaoyi.ssm.service.ManagerService;
 import com.xiaoyi.ssm.service.MemberService;
-import com.xiaoyi.ssm.service.NewsBannerService;
-import com.xiaoyi.ssm.service.OrderService;
-import com.xiaoyi.ssm.service.VenueService;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.HttpUtils;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.Utils;
-import com.xiaoyi.ssm.wxPay.SHA1;
 import com.xiaoyi.ssm.wxPay.WXConfig;
 
 /**

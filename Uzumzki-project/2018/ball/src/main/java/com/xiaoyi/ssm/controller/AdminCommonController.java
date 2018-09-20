@@ -123,6 +123,7 @@ public class AdminCommonController {
 	 * @author 宋高俊  
 	 * @date 2018年8月29日 下午7:45:29 
 	 */ 
+	@SuppressWarnings({ "resource", "unused" })
 	@RequestMapping("/htmlToWord")
 	public void htmlToWord(HttpServletRequest request, HttpServletResponse response, String html) throws IOException {
 
