@@ -364,7 +364,6 @@ public class WXUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		@SuppressWarnings("rawtypes")
 		Map map = new HashMap<>();
 		try {
 			logger.info("返回参数：" + result);

@@ -28,8 +28,16 @@
 		</where>
 	</select>
 	
+	<select id="selectByCityId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM District WHERE CityID = #{id}
+	</select>
+	
 	<select id="selectByCityName" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT d.* FROM District d INNER JOIN City c ON d.`CityID` = c.`ID` WHERE c.`City` LIKE '%${name}%'
+		SELECT d.* FROM District d INNER JOIN City c ON d.`CityID` = c.`ID` WHERE c.`City` LIKE concat('%',concat('${cityname}','%'))
+	</select>
+	
+	<select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM District WHERE District = #{name}
 	</select>
 	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">

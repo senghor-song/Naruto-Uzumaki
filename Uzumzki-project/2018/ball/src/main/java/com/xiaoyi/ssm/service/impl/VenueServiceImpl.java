@@ -14,7 +14,6 @@ import com.xiaoyi.ssm.dao.AmountRefundWayMapper;
 import com.xiaoyi.ssm.dao.ManagerVenueMapper;
 import com.xiaoyi.ssm.dao.VenueMapper;
 import com.xiaoyi.ssm.dto.ApiMessage;
-import com.xiaoyi.ssm.model.AmountRefundWay;
 import com.xiaoyi.ssm.model.Field;
 import com.xiaoyi.ssm.model.Manager;
 import com.xiaoyi.ssm.model.ManagerVenue;
@@ -25,7 +24,6 @@ import com.xiaoyi.ssm.service.ManagerService;
 import com.xiaoyi.ssm.service.VenueService;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.RedisUtil;
-import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
 import com.xiaoyi.ssm.wxPay.SHA1;
 
@@ -135,6 +133,18 @@ public class VenueServiceImpl extends AbstractService<Venue,String> implements V
 	@Override
 	public List<Venue> selectByOftenMember(String id) {
 		return venueMapper.selectByOftenMember(id);
+	}
+
+	/**  
+	 * @Description: 根据场馆名查询场馆
+	 * @author 宋高俊  
+	 * @param venuename
+	 * @return 
+	 * @date 2018年9月21日 下午8:58:30 
+	 */ 
+	@Override
+	public Venue selectByVenueName(String venuename) {
+		return venueMapper.selectByVenueName(venuename);
 	}
 
 }

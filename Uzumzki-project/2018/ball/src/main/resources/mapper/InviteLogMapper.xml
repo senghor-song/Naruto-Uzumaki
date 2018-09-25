@@ -20,12 +20,12 @@
 	
 	<select id="selectByInviteAdmin" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT il.*,m.`AppNickName` mAppNickName,m.`AppAvatarUrl` mAppAvatarUrl FROM InviteLog il LEFT JOIN Member m ON il.`Member_id` = m.id
-		WHERE InviteBall_id = #{id}
+		WHERE InviteBall_id = #{id} ORDER BY Create_time DESC
 	</select>
 	
 	<select id="selectByInvite" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT il.*,m.`AppNickName` mAppNickName,m.`AppAvatarUrl` mAppAvatarUrl FROM InviteLog il LEFT JOIN Member m ON il.`Member_id` = m.id
-		WHERE InviteBall_id = #{id} AND TYPE = 0
+		WHERE InviteBall_id = #{id} AND TYPE = 0 ORDER BY Create_time DESC
 	</select>
 	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">

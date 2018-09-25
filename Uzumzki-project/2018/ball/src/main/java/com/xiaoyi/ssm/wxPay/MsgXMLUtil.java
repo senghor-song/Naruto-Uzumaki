@@ -23,7 +23,8 @@ public class MsgXMLUtil {
      * @param node
      * @return
      */
-    public static String readNodes(Element node){
+    @SuppressWarnings("unchecked")
+	public static String readNodes(Element node){
         content+=node.getName()+":"+node.getTextTrim()+"\n";
       //递归遍历当前节点所有的子节点  
         List<Element> listElement=node.elements();//所有一级子节点的list  

@@ -15,6 +15,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.xiaoyi.ssm.dto.AdminMessage;
 import com.xiaoyi.ssm.dto.AdminPage;
+import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.NewsBanner;
 import com.xiaoyi.ssm.model.NewsBannerLog;
 import com.xiaoyi.ssm.service.NewsBannerLogService;
@@ -95,7 +96,34 @@ public class NewsBannerController {
 		}
 		return new AdminMessage(200, list.size(), listMap);
 	}
+
+	/**
+	 * @Description: 图片编辑页面
+	 * @author 宋高俊
+	 * @return
+	 * @date 2018年9月21日 下午2:56:42
+	 */
+	@RequestMapping("/edit")
+	public String edit(Model model, String id) {
+		NewsBanner newsBanner = newsBannerService.selectByPrimaryKey(id);
+		model.addAttribute("id", newsBanner.getId());
+		model.addAttribute("image", newsBanner.getCoverpath());
+		return "admin/newsBanner/edit";
+	}
 	
-	
-	
+	/**
+	 * @Description: 保存图片
+	 * @author 宋高俊
+	 * @return
+	 * @date 2018年9月21日 下午2:56:42
+	 */
+	@RequestMapping(value = "/saveImage")
+	@ResponseBody
+	public ApiMessage saveImage(String id, String url) {
+		NewsBanner newsBanner = newsBannerService.selectByPrimaryKey(id);
+		newsBanner.setCoverpath(url);
+		newsBannerService.updateByPrimaryKeySelective(newsBanner);
+		return ApiMessage.succeed();
+	}
+
 }

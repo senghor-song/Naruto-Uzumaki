@@ -14,7 +14,7 @@
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
     <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom" id="topSidebar"></nav>
-    <aside class="main-sidebar sidebar-dark-primary elevation-4" id="leftSidebar" data-selectindex="3"></aside>
+    <aside class="main-sidebar sidebar-dark-primary elevation-4" id="leftSidebar" data-selectindex="2"></aside>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper pt-3">
@@ -99,7 +99,7 @@
                     tableOption: {
                         url: '/WebBackAPI/admin/order/list',
                         page: true,
-                        height: $(window).height() - 145,
+                        height: $(window).height() - 92,
                         where: {
                             selectType: function () {
                                 return $("#selectType").val()

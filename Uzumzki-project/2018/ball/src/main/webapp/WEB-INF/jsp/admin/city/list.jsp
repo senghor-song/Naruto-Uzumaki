@@ -14,7 +14,7 @@
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
     <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom" id="topSidebar"></nav>
-    <aside class="main-sidebar sidebar-dark-primary elevation-4" id="leftSidebar" data-selectindex="5"></aside>
+    <aside class="main-sidebar sidebar-dark-primary elevation-4" id="leftSidebar" data-selectindex="7"></aside>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper pt-3">
@@ -32,7 +32,6 @@
                     </div>
                 </div>
                 <!-- /.row -->
-
             </div>
             <!-- /.container-fluid -->
         </section>
@@ -97,7 +96,7 @@
                 self.obj = $.tableObject({
                     tableId: 'tableList',
                     tableOption: {
-                        url: '/WebBackAPI/admin/train/list',
+                        url: '/WebBackAPI/admin/city/list',
                         page: true,
                         height: $(window).height() - 92,
                         where: {
@@ -110,13 +109,13 @@
                         },
                         cols: [
                             [
-                                {field: 'createtime', title: '创建时间', sort: true},
-                                {field: 'trainno', title: '编号', sort: true},
+                                {field: 'cityno', title: '编号', sort: true},
+                                {field: 'initial', title: '字母', sort: true},
+                                {field: 'hotflag', title: '热门', sort: true},
                                 {field: 'city', title: '城市', sort: true},
-                                {field: 'venue', title: '场馆', sort: true},
-                                {field: 'manager', title: '创建人', sort: true},
-                                {field: 'trainJoinSum', title: '报名', sort: true},
-                                {field: 'trainLogSum', title: '日志', sort: true},
+                                {field: 'distinct', title: '下属区县', sort: true},
+                                {field: 'venuesum', title: '场馆数', sort: true},
+                                {field: 'cityLogSum', title: '日志', sort: true},
                             ]
                         ]
                     },
@@ -125,17 +124,17 @@
                             name: "日志", callback: function (key, opt) {
                                 $.showContentMenu(key, opt)
                                 $.tableObject({
-                                    tableId: 'tabletrainlog',
+                                    tableId: 'tablecombinelog',
                                     tableOption: {
-                                        url: '/WebBackAPI/admin/train/trainloglist?id='+dataList[$(this).attr('data-index')].id,
+                                        url: '/WebBackAPI/admin/city/cityLog/list?id=' + dataList[$(this).attr('data-index')].id,
                                         page: false,
-                                        height: $("#tabletrainlog").parents(".layui-layer-content").height() - 30,
+                                        height: $("#tablecombinelog").parents(".layui-layer-content").height() - 30,
                                         where: {},
                                         cols: [
                                             [
-                                                { field: 'createtime', title: '时间', sort: true },
-                                                { field: 'type', title: '类别', sort: true },
-                                                { field: 'content', title: '内容', sort: true },
+                                             	{ field: 'cityno', title: '日志时间', sort: true },
+                                                { field: 'initial', title: '操作人', sort: true },
+                                                { field: 'hotflag', title: '内容', sort: true },
                                             ]
                                         ]
                                     }
@@ -154,7 +153,15 @@
 <div class="contextMenuDialog hide" id="item1">
     <div class="card-body">
         <div class="row">
-            <table id="tabletrainlog"></table>
+            <table id="tablecombinelog"></table>
+        </div>
+    </div>
+</div>
+
+<div class="contextMenuDialog hide" id="item2">
+    <div class="card-body">
+        <div class="row">
+            <table id="tableInvitelog"></table>
         </div>
     </div>
 </div>

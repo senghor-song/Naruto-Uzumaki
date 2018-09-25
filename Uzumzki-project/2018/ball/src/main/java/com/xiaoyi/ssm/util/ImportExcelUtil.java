@@ -92,6 +92,7 @@ public class ImportExcelUtil {
 	 * @param cell
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	public  Object getCellValue(Cell cell){
 		Object value = null;
 		if (cell == null) {

@@ -18,6 +18,12 @@ public class City implements Serializable {
     /** 城市名首字母 */
     private String initial;
 
+    /** 是否热门0=否1=是 */
+    private Integer hotflag;
+
+    /** 场馆数 */
+    private Integer venuesum;
+
     /**
      * City
      */
@@ -85,5 +91,37 @@ public class City implements Serializable {
      */
     public void setInitial(String initial) {
         this.initial = initial == null ? null : initial.trim();
+    }
+
+    /**
+     * 是否热门0=否1=是
+     * @return HotFlag 是否热门0=否1=是
+     */
+    public Integer getHotflag() {
+        return hotflag;
+    }
+
+    /**
+     * 是否热门0=否1=是
+     * @param hotflag 是否热门0=否1=是
+     */
+    public void setHotflag(Integer hotflag) {
+        this.hotflag = hotflag;
+    }
+
+    /**
+     * 场馆数
+     * @return VenueSum 场馆数
+     */
+    public Integer getVenuesum() {
+        return venuesum;
+    }
+
+    /**
+     * 场馆数
+     * @param venuesum 场馆数
+     */
+    public void setVenuesum(Integer venuesum) {
+        this.venuesum = venuesum;
     }
 }

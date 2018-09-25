@@ -28,42 +28,58 @@
 		<result column="Content" jdbcType="VARCHAR" property="content" />
 		<result column="Member_id" jdbcType="VARCHAR" property="memberId" />
 		<result column="Ball_type" jdbcType="INTEGER" property="ballType" />
+		<result column="Arrive_time" jdbcType="TIMESTAMP" property="arriveTime" />
+		<result column="Arrive_amount" jdbcType="DOUBLE" property="arriveAmount" />
+		<association property="member" javaType="com.xiaoyi.ssm.model.Member">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="mAppNickName" jdbcType="VARCHAR" property="appnickname" />
+		</association>
 	</resultMap>
 	<sql id="Base_Column_List">
 		ID, Create_time, Modify_time, End_time, Active_time, Title, Venue_name, Venue_address,
 		Longitude, Latitude, Max_boy, Min_boy, To_require, Receive_flag, Receive_amount,
 		Receive_type, Exit_flag, Exit_type, Exit_fee, Nearby_flag, Name_flag, Phone_flag,
-		WeChat_flag, Content, Member_id, Ball_type
+		WeChat_flag, Content, Member_id, Ball_type, Arrive_time, Arrive_amount
 	</sql>
-
-	<select id="selectByMyInviteBall" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT ib.* FROM InviteBall ib INNER JOIN InviteJoin ij ON ib.`ID` = ij.`Invite_id` WHERE ij.`Member_id` = #{id} and ij.Pay_type in (1,4)
-		ORDER BY ij.Create_time DESC
+	
+	<select id="countByMyApplyBall" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM InviteBall WHERE Member_id = #{id} 
 	</select>
 	
+	<select id="selectByMyInviteBall" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT ib.*
+		FROM InviteBall ib INNER JOIN InviteJoin ij ON ib.`ID` = ij.`Invite_id` WHERE ij.`Member_id` =
+		#{id} and ij.Pay_type in (1,4)
+		ORDER BY ij.Create_time DESC
+	</select>
+
 	<select id="selectByJoinKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT ib.* FROM InviteBall ib INNER JOIN InviteJoin ij ON ib.`ID` = ij.`Invite_id` WHERE ij.`ID` = #{joinId} and ij.Pay_type in (1,4)
+		SELECT ib.* FROM
+		InviteBall ib INNER JOIN InviteJoin ij ON ib.`ID` = ij.`Invite_id` WHERE ij.`ID` = #{joinId} and
+		ij.Pay_type in (1,4)
+	</select>
+	
+	<select id="selectDealInvite" resultMap="BaseResultMap">
+		SELECT ib.*,m.`AppNickName` mAppNickName FROM InviteBall ib INNER JOIN Member m ON ib.`Member_id` = m.`ID` WHERE Receive_flag = 1 ORDER BY Create_time DESC
 	</select>
 	
 	<select id="selectByMyApplyInviteBall" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT * FROM InviteBall WHERE Member_id = #{id} ORDER BY Create_time DESC
 	</select>
-	
+
 	<select id="selectByNearby" parameterType="com.xiaoyi.ssm.dto.InviteDto" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List" />
-		from InviteBall where Longitude &lt;= #{maxlng} and Longitude &gt;= #{minlng} and Latitude &lt;=
-		#{maxlat} and Latitude &gt;= #{minlat}
-		and Nearby_flag = 1 and Ball_type = 0 ORDER BY Create_time
-		DESC
+		SELECT *,ABS(ib.`Longitude` - #{lng}) + ABS(ib.`Latitude` - #{lat}) lnglat
+ 		FROM InviteBall ib WHERE Nearby_flag = 1 AND Ball_type = 0 ORDER BY lnglat ASC
 	</select>
 
 	<select id="selectByTimeOut" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from InviteBall where End_time &lt;= #{startDate,jdbcType=TIMESTAMP} and End_time &gt;=
-		#{endDate,jdbcType=TIMESTAMP}
-		AND Ball_type = 0
+		from InviteBall where End_time &lt;= #{endDate,jdbcType=TIMESTAMP} AND Ball_type = 0
+	</select>
+
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.InviteBall" resultMap="BaseResultMap">
+		SELECT ib.*,m.`AppNickName` mAppNickName FROM InviteBall ib INNER JOIN Member m ON ib.`Member_id` = m.`ID`
 	</select>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -85,7 +101,8 @@
 		Receive_type, Exit_flag, Exit_type,
 		Exit_fee, Nearby_flag, Name_flag,
 		Phone_flag, WeChat_flag, Content,
-		Member_id, Ball_type)
+		Member_id, Ball_type, Arrive_time,
+		Arrive_amount)
 		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
 		#{endTime,jdbcType=TIMESTAMP}, #{activeTime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR},
 		#{venueName,jdbcType=VARCHAR}, #{venueAddress,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE},
@@ -94,7 +111,8 @@
 		#{receiveType,jdbcType=INTEGER}, #{exitFlag,jdbcType=INTEGER}, #{exitType,jdbcType=INTEGER},
 		#{exitFee,jdbcType=INTEGER}, #{nearbyFlag,jdbcType=INTEGER}, #{nameFlag,jdbcType=INTEGER},
 		#{phoneFlag,jdbcType=INTEGER}, #{wechatFlag,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR},
-		#{memberId,jdbcType=VARCHAR}, #{ballType,jdbcType=INTEGER})
+		#{memberId,jdbcType=VARCHAR}, #{ballType,jdbcType=INTEGER}, #{arriveTime,jdbcType=TIMESTAMP},
+		#{arriveAmount,jdbcType=DOUBLE})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.InviteBall">
 		insert into InviteBall
@@ -177,6 +195,12 @@
 			<if test="ballType != null">
 				Ball_type,
 			</if>
+			<if test="arriveTime != null">
+				Arrive_time,
+			</if>
+			<if test="arriveAmount != null">
+				Arrive_amount,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -256,6 +280,12 @@
 			</if>
 			<if test="ballType != null">
 				#{ballType,jdbcType=INTEGER},
+			</if>
+			<if test="arriveTime != null">
+				#{arriveTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="arriveAmount != null">
+				#{arriveAmount,jdbcType=DOUBLE},
 			</if>
 		</trim>
 	</insert>
@@ -337,6 +367,12 @@
 			<if test="ballType != null">
 				Ball_type = #{ballType,jdbcType=INTEGER},
 			</if>
+			<if test="arriveTime != null">
+				Arrive_time = #{arriveTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="arriveAmount != null">
+				Arrive_amount = #{arriveAmount,jdbcType=DOUBLE},
+			</if>
 		</set>
 		where ID = #{id,jdbcType=VARCHAR}
 	</update>
@@ -366,7 +402,9 @@
 		WeChat_flag = #{wechatFlag,jdbcType=INTEGER},
 		Content = #{content,jdbcType=VARCHAR},
 		Member_id = #{memberId,jdbcType=VARCHAR},
-		Ball_type = #{ballType,jdbcType=INTEGER}
+		Ball_type = #{ballType,jdbcType=INTEGER},
+		Arrive_time = #{arriveTime,jdbcType=TIMESTAMP},
+		Arrive_amount = #{arriveAmount,jdbcType=DOUBLE}
 		where ID = #{id,jdbcType=VARCHAR}
 	</update>
 </mapper>

@@ -125,7 +125,7 @@
                         tableOption: {
                             url: '/WebBackAPI/admin/staff/list',
                             page: true,
-                            height: $(window).height() - 92,
+                            height: $(window).height() - 150,
                             where: {
                                 selectType: function () {
                                     return $("#selectType").val()

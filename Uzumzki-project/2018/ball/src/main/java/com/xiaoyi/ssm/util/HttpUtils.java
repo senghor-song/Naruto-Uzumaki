@@ -1,10 +1,13 @@
 package com.xiaoyi.ssm.util;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
+
+import net.sf.json.JSONObject;
 
 public class HttpUtils {
 	
@@ -42,8 +45,7 @@ public class HttpUtils {
 //                System.out.println(key + "--->" + map.get(key));
 //            }
             // 定义 BufferedReader输入流来读取URL的响应
-            in = new BufferedReader(new InputStreamReader(
-                    connection.getInputStream()));
+            in = new BufferedReader(new InputStreamReader( connection.getInputStream(),"utf-8"));
             String line;
             while ((line = in.readLine()) != null) {
                 result += line;
@@ -96,8 +98,7 @@ public class HttpUtils {
             // flush输出流的缓冲
             out.flush();
             // 定义BufferedReader输入流来读取URL的响应
-            in = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
+            in = new BufferedReader(new InputStreamReader( conn.getInputStream(),"utf-8"));
             String line;
             while ((line = in.readLine()) != null) {
                 result += line;
@@ -121,6 +122,16 @@ public class HttpUtils {
             }
         }
         return result;
-    }    
+    }
     
+    public static void main(String[] args) {
+    	String jsonString = HttpUtils.sendGet("http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=37.841448998112,112.58027327752&output=json&pois=1&ak="+Global.Baidu_Map_KRY,null);
+    	jsonString = jsonString.replace("renderReverse&&renderReverse(","");
+    	jsonString = jsonString.substring(0, jsonString.length() -1);
+    	JSONObject jsonObject = JSONObject.fromObject(jsonString);
+    	System.out.println(jsonObject.getJSONObject("result"));
+    	System.out.println(jsonObject.getJSONObject("result").getJSONObject("addressComponent").getString("city"));
+    	System.out.println(jsonObject.getJSONObject("result").getJSONObject("addressComponent").getString("district"));
+    	System.out.println(jsonObject.getJSONObject("result").getString("formatted_address"));
+	}
 }

@@ -4,26 +4,39 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
+import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.InviteBall;
+import com.xiaoyi.ssm.model.Member;
 import com.xiaoyi.ssm.util.Arith;
 import com.xiaoyi.ssm.util.DateUtil;
+import com.xiaoyi.ssm.util.Global;
+import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.Utils;
+import com.xiaoyi.ssm.wxPay.AES;
 
 public class Test {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public static void main(String[] args) throws ParseException {
+	public static void main(String[] args) throws Exception {
 //		InviteBall inviteBall = new InviteBall();
 //		inviteBall.setReceiveAmount(new BigDecimal(0.3));
 //		System.out.println(inviteBall.getReceiveAmount().doubleValue());
 		
-		
-		
-		
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, "omKueweB2JSy1iBWKSyqi8XO7EHw");
+		System.out.println(member.getSessionKey());
+
+		String result = AES.decrypt("tCqZoa7GqNv19NE954uN8v7Dc3HZfNAFyNtLnRbtw6XFojmQaa6crBzhiqR3aK/lR3K0r3yS8dq1FiUiy2cWD01wO+6fHzk8Szu9Fh5n7sTnytjA7ymAvG9dnAGQk+5OE411ZsC9aSEeuCAltFDkEbmBwW03peprPRES6fhKeblNGSax0p5xufM+8D6hZdEqpbg3BizAehyHXLSInlaz0Q==", 
+				member.getSessionKey(), "cGd6KrMXiTh5AEUFMG2THA==", "UTF-8");
+		if (null != result && result.length() > 0) {
+			JSONObject json = JSONObject.fromObject(result);
+			System.out.println(json);
+		}
 		
 		
 		

@@ -17,6 +17,20 @@ public class InviteLog implements Serializable {
 		this.member = member;
 	}
 
+	public InviteLog() {
+		super();
+	}
+
+	public InviteLog(String id, Date createTime, String memberId, String inviteballId, String content, Integer type) {
+		super();
+		this.id = id;
+		this.createTime = createTime;
+		this.memberId = memberId;
+		this.inviteballId = inviteballId;
+		this.content = content;
+		this.type = type;
+	}
+
 	/** ID */
     private String id;
 

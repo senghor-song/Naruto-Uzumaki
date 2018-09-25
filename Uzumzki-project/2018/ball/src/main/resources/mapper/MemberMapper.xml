@@ -3,10 +3,10 @@
 <mapper namespace="com.xiaoyi.ssm.dao.MemberMapper">
 	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Member">
 		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="MemberNo" jdbcType="INTEGER" property="memberno" />
 		<result column="CreateTime" jdbcType="DATE" property="createtime" />
 		<result column="ModifyTime" jdbcType="DATE" property="modifytime" />
 		<result column="Name" jdbcType="VARCHAR" property="name" />
-		<result column="Sex" jdbcType="INTEGER" property="sex" />
 		<result column="Phone" jdbcType="VARCHAR" property="phone" />
 		<result column="Password" jdbcType="VARCHAR" property="password" />
 		<result column="ManagerID" jdbcType="VARCHAR" property="managerid" />
@@ -20,8 +20,8 @@
 		<result column="WXPayment" jdbcType="DOUBLE" property="wxpayment" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, CreateTime, ModifyTime, Name, Sex, Phone, Password, ManagerID, OpenID, AppOpenID,
-		UnionID, AppNickName, AppAvatarUrl, AppGender, WechatID, WXPayment
+		ID, MemberNo, CreateTime, ModifyTime, Name, Phone, Password, ManagerID, OpenID,
+		AppOpenID, UnionID, AppNickName, AppAvatarUrl, AppGender, WechatID, WXPayment
 	</sql>
 
 	<select id="login" parameterType="com.xiaoyi.ssm.model.Member" resultMap="BaseResultMap">
@@ -55,6 +55,13 @@
 		#{password,jdbcType=VARCHAR}
 		where Phone = #{phone,jdbcType=CHAR}
 	</update>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Member" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Member 
+	</select>
+	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -66,25 +73,27 @@
 		where ID = #{id,jdbcType=CHAR}
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Member">
-		insert into Member (ID, CreateTime, ModifyTime,
-		Name, Sex, Phone, Password,
-		ManagerID, OpenID, AppOpenID,
-		UnionID, AppNickName, AppAvatarUrl,
-		AppGender, WechatID, WXPayment
-		)
-		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=DATE}, #{modifytime,jdbcType=DATE},
-		#{name,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR},
-		#{password,jdbcType=VARCHAR},
-		#{managerid,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR}, #{appopenid,jdbcType=VARCHAR},
-		#{unionid,jdbcType=VARCHAR}, #{appnickname,jdbcType=VARCHAR}, #{appavatarurl,jdbcType=VARCHAR},
-		#{appgender,jdbcType=INTEGER}, #{wechatid,jdbcType=VARCHAR}, #{wxpayment,jdbcType=DOUBLE}
-		)
+		insert into Member (ID, MemberNo, CreateTime,
+		ModifyTime, Name, 
+		Phone, Password, ManagerID,
+		OpenID, AppOpenID, UnionID,
+		AppNickName, AppAvatarUrl, AppGender,
+		WechatID, WXPayment)
+		values (#{id,jdbcType=CHAR}, #{memberno,jdbcType=INTEGER}, #{createtime,jdbcType=DATE},
+		#{modifytime,jdbcType=DATE}, #{name,jdbcType=VARCHAR}, 
+		#{phone,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{managerid,jdbcType=VARCHAR},
+		#{openid,jdbcType=VARCHAR}, #{appopenid,jdbcType=VARCHAR}, #{unionid,jdbcType=VARCHAR},
+		#{appnickname,jdbcType=VARCHAR}, #{appavatarurl,jdbcType=VARCHAR}, #{appgender,jdbcType=INTEGER},
+		#{wechatid,jdbcType=VARCHAR}, #{wxpayment,jdbcType=DOUBLE})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Member">
 		insert into Member
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				ID,
+			</if>
+			<if test="memberno != null">
+				MemberNo,
 			</if>
 			<if test="createtime != null">
 				CreateTime,
@@ -94,9 +103,6 @@
 			</if>
 			<if test="name != null">
 				Name,
-			</if>
-			<if test="sex != null">
-				Sex,
 			</if>
 			<if test="phone != null">
 				Phone,
@@ -136,6 +142,9 @@
 			<if test="id != null">
 				#{id,jdbcType=CHAR},
 			</if>
+			<if test="memberno != null">
+				#{memberno,jdbcType=INTEGER},
+			</if>
 			<if test="createtime != null">
 				#{createtime,jdbcType=DATE},
 			</if>
@@ -144,9 +153,6 @@
 			</if>
 			<if test="name != null">
 				#{name,jdbcType=VARCHAR},
-			</if>
-			<if test="sex != null">
-				#{sex,jdbcType=INTEGER},
 			</if>
 			<if test="phone != null">
 				#{phone,jdbcType=VARCHAR},
@@ -186,6 +192,9 @@
 	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Member">
 		update Member
 		<set>
+			<if test="memberno != null">
+				MemberNo = #{memberno,jdbcType=INTEGER},
+			</if>
 			<if test="createtime != null">
 				CreateTime = #{createtime,jdbcType=DATE},
 			</if>
@@ -194,9 +203,6 @@
 			</if>
 			<if test="name != null">
 				Name = #{name,jdbcType=VARCHAR},
-			</if>
-			<if test="sex != null">
-				Sex = #{sex,jdbcType=INTEGER},
 			</if>
 			<if test="phone != null">
 				Phone = #{phone,jdbcType=VARCHAR},
@@ -236,10 +242,10 @@
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Member">
 		update Member
-		set CreateTime = #{createtime,jdbcType=DATE},
+		set MemberNo = #{memberno,jdbcType=INTEGER},
+		CreateTime = #{createtime,jdbcType=DATE},
 		ModifyTime = #{modifytime,jdbcType=DATE},
 		Name = #{name,jdbcType=VARCHAR},
-		Sex = #{sex,jdbcType=INTEGER},
 		Phone = #{phone,jdbcType=VARCHAR},
 		Password = #{password,jdbcType=VARCHAR},
 		ManagerID = #{managerid,jdbcType=VARCHAR},

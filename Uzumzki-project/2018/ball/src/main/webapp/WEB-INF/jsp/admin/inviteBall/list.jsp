@@ -14,7 +14,7 @@
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
     <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom" id="topSidebar"></nav>
-    <aside class="main-sidebar sidebar-dark-primary elevation-4" id="leftSidebar" data-selectindex="5"></aside>
+    <aside class="main-sidebar sidebar-dark-primary elevation-4" id="leftSidebar" data-selectindex="1"></aside>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper pt-3">
@@ -32,7 +32,6 @@
                     </div>
                 </div>
                 <!-- /.row -->
-
             </div>
             <!-- /.container-fluid -->
         </section>
@@ -97,7 +96,7 @@
                 self.obj = $.tableObject({
                     tableId: 'tableList',
                     tableOption: {
-                        url: '/WebBackAPI/admin/train/list',
+                        url: '/WebBackAPI/admin/inviteBall/list',
                         page: true,
                         height: $(window).height() - 92,
                         where: {
@@ -110,32 +109,58 @@
                         },
                         cols: [
                             [
-                                {field: 'createtime', title: '创建时间', sort: true},
-                                {field: 'trainno', title: '编号', sort: true},
-                                {field: 'city', title: '城市', sort: true},
-                                {field: 'venue', title: '场馆', sort: true},
-                                {field: 'manager', title: '创建人', sort: true},
-                                {field: 'trainJoinSum', title: '报名', sort: true},
-                                {field: 'trainLogSum', title: '日志', sort: true},
+                                {field: 'id', title: '订单编号', sort: true},
+                                {field: 'appnickname', title: '发起人', sort: true},
+                                {field: 'createTime', title: '发起时间', sort: true},
+                                {field: 'arriveTime', title: '到账时间', sort: true},
+                                {field: 'arriveAmount', title: '到账金额', sort: true},
                             ]
                         ]
                     },
                     menuItem: {
                         item1: {
-                            name: "日志", callback: function (key, opt) {
+                            name: "报名详情", callback: function (key, opt) {
                                 $.showContentMenu(key, opt)
                                 $.tableObject({
-                                    tableId: 'tabletrainlog',
+                                    tableId: 'tablecombinelog',
                                     tableOption: {
-                                        url: '/WebBackAPI/admin/train/trainloglist?id='+dataList[$(this).attr('data-index')].id,
+                                        url: '/WebBackAPI/admin/inviteBall/inviteJoin/list?id=' + dataList[$(this).attr('data-index')].id,
                                         page: false,
-                                        height: $("#tabletrainlog").parents(".layui-layer-content").height() - 30,
+                                        height: $("#tablecombinelog").parents(".layui-layer-content").height() - 30,
                                         where: {},
                                         cols: [
                                             [
-                                                { field: 'createtime', title: '时间', sort: true },
-                                                { field: 'type', title: '类别', sort: true },
+                                             	{ field: 'id', title: '订单编号', sort: true },
+                                                { field: 'createTime', title: '报名时间', sort: true },
+                                                { field: 'appnickname', title: '报名人', sort: true },
+                                                { field: 'amount', title: '支付金额', sort: true },
+                                                { field: 'refundFlag', title: '报名状态', sort: true },
+                                                { field: 'payTime', title: '金额操作时间', sort: true },
+
+                                                { field: 'refundAmount', title: '退费金额', sort: true },
+                                                { field: 'refundFeeamount', title: '退费手续费', sort: true },
+                                            ]
+                                        ]
+                                    }
+                                });
+                            }
+                        },
+                        item2: {
+                            name: "日志", callback: function (key, opt) {
+                                $.showContentMenu(key, opt)
+                                $.tableObject({
+                                    tableId: 'tableInvitelog',
+                                    tableOption: {
+                                        url: '/WebBackAPI/admin/inviteBall/inviteLog/list?id=' + dataList[$(this).attr('data-index')].id,
+                                        page: false,
+                                        height: $("#tableInvitelog").parents(".layui-layer-content").height() - 30,
+                                        where: {},
+                                        cols: [
+                                            [
+                                                { field: 'createTime', title: '创建时间', sort: true },
+                                                { field: 'appnickname', title: '昵称', sort: true },
                                                 { field: 'content', title: '内容', sort: true },
+                                                { field: 'type', title: '日志类型', sort: true },
                                             ]
                                         ]
                                     }
@@ -154,7 +179,15 @@
 <div class="contextMenuDialog hide" id="item1">
     <div class="card-body">
         <div class="row">
-            <table id="tabletrainlog"></table>
+            <table id="tablecombinelog"></table>
+        </div>
+    </div>
+</div>
+
+<div class="contextMenuDialog hide" id="item2">
+    <div class="card-body">
+        <div class="row">
+            <table id="tableInvitelog"></table>
         </div>
     </div>
 </div>

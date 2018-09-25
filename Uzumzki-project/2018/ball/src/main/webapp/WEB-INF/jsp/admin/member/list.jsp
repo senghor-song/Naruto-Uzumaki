@@ -9,12 +9,9 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/WebBackAPI/admin/static/css/site.css" rel="stylesheet">
-	<link rel="stylesheet" href="/WebBackAPI/admin/static/plugins/bootstrap-validator/dist/css/bootstrapValidator.css" />
-	<link rel="stylesheet" href="/WebBackAPI/admin/static/plugins/bootstrap-validator/vendor/bootstrap/css/dataValidator.css" />
-    <link href="/WebBackAPI/admin/static/plugins/webuploader/webuploader.css" rel="stylesheet">
     <style>
         #tblist .layui-table-body .layui-table-cell {
-            height: 150px !important;
+            height: 50px !important;
         }
 
         #tblist .layui-table img {
@@ -27,7 +24,7 @@
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
         <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom" id="topSidebar"></nav>
-        <aside class="main-sidebar sidebar-dark-primary elevation-4" id="leftSidebar" data-selectindex="6"></aside>
+        <aside class="main-sidebar sidebar-dark-primary elevation-4" id="leftSidebar" data-selectindex="3"></aside>
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper pt-3">
@@ -111,10 +108,6 @@
     <script src="/WebBackAPI/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
     <script src="/WebBackAPI/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
     <script src="/WebBackAPI/admin/static/js/jq-ext.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/layer/layer.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/webuploader/webuploader.js"></script>
-	<script type="text/javascript" src="/WebBackAPI/admin/static/plugins/bootstrap-validator/vendor/bootstrap/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="/WebBackAPI/admin/static/plugins/bootstrap-validator/dist/js/bootstrapValidator.js"></script>
     <script>
         $(function () {
             var tableObj = {
@@ -135,7 +128,7 @@
                     self.obj = $.tableObject({
                         tableId: 'tableList',
                         tableOption: {
-                            url: '/WebBackAPI/admin/newsBanner/list',
+                            url: '/WebBackAPI/admin/member/list',
                             page: true,
                             height: $(window).height() - 92,
                             where: {
@@ -148,43 +141,14 @@
                             },
                             cols: [
                                 [
-                                    { field: 'bannerno', title: '编号', sort: true },
-                                    { field: 'coverpath', title: '横幅', align: "center",width: 300, height: 150, templet: '<div><img src="{{d.coverpath}}" alt="" style="width:300px; height:150px;"></div>'},
-                                    { field: 'content', title: '容器', sort: true },
-                                    { field: 'status', title: '类别', sort: true },
-                                    { field: 'newsBannerLogSum', title: '日志', sort: true  },
-                                    { field: 'remark', title: '备注', sort: true },
+	                                 { field: 'createtime', title: '注册时间', sort: true },
+	                                 { field: 'appnickname', title: '微信昵称', sort: true },
+	                                 { field: 'name', title: '真实姓名', sort: true },
+	                                 { field: 'phone', title: '电话', sort: true },
+	                                 { field: 'appavatarurl', title: '头像', align: "center",width: 100, height: 50, templet: '<div><img src="{{d.appavatarurl}}" alt="" style="width:50px; height:50px;"></div>'},
+	                                 { field: 'memberno', title: '用户编号', sort: true },
                                 ]
                             ]
-                        },
-                        menuItem: {
-                            item1: {
-                                name: "编辑", callback: function (key, opt) {
-                                	$.showContentMenuAjax(key, opt, 500, "/WebBackAPI/admin/newsBanner/edit", dataList[$(this).attr('data-index')].id, "look");
-                                }
-                            },
-                            item2: {
-                                name: "修改日志", callback: function (key, opt) {
-                                    $.showContentMenu(key, opt)
-                                    $.tableObject({
-                                        tableId: 'tablelog',
-                                        tableOption: {
-                                            url: '/WebBackAPI/admin/newsBanner/newsBannerLog/list?id=' + dataList[$(this).attr('data-index')].id,
-                                            page: false,
-                                            height: $("#tablelog").parents(".layui-layer-content").height() - 30,
-                                            where: {},
-                                            cols: [
-                                                [
-                                                    { field: 'logtime', title: '时间', sort: true },
-                                                    { field: 'staff', title: '操作人', sort: true },
-                                                    { field: 'content', title: '内容', sort: true },
-                                                ]
-                                            ]
-                                        }
-                                    });
-                                }
-                            },
-
                         }
                     });
                 }
@@ -194,50 +158,6 @@
         });
     </script>
 
-    <script id="titleTpl" type="text/html">
-    <img src="/WebBackAPI/admin/static/image/u78455.jpg" alt="" style="width200px; height:100px;">
-  	</script>
-
-    <div class="contextMenuDialog hide" id="dataContent">
-        <div class="card-body">
-            <div class="row">
-                <div class="input-group clearfix col-lg-5 lh-38">
-                    <div class="float-left mr-1">绑定横幅</div>
-                    <div class="float-left">
-                        <select class="form-control" id name>
-                            <option value="">横幅1</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="input-group clearfix col-lg-5 lh-38">
-                    <div class="float-left mr-1">添加备注</div>
-                    <div class="float-left">
-                        <input class="form-control" type="text">
-                    </div>
-                </div>
-                <div class="col-lg-2 lh-38">
-                    <button class="form-control btn btn-primary">保存</button>
-                </div>
-
-            </div>
-            <br>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="row">
-                        <table id="tabledata"></table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="contextMenuDialog hide" id="item2">
-        <div class="card-body">
-            <div class="row">
-                <table id="tablelog"></table>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>

@@ -84,14 +84,19 @@ public class ApiInviteBallController {
 	 */
 	@RequestMapping(value = "/saveInviteBall")
 	@ResponseBody
-	public ApiMessage saveInviteBall(HttpServletRequest request, InviteBall inviteBall, String urls, String endTimeStr) {
+	public ApiMessage saveInviteBall(HttpServletRequest request, InviteBall inviteBall, String urls, String endTimeStr, String activeTimeStr) {
 		String token = (String) request.getAttribute("token");
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
-
-		// 用于返回给前端的ID
-		String id = Utils.getUUID();
+		
 		
 		if (member != null) {
+			if (inviteBall.getReceiveFlag() == 1 && StringUtil.isBank(member.getPhone())) {
+				return new ApiMessage(401, "手机号未绑定");
+			}
+			
+			// 用于返回给前端的ID
+			String id = Utils.getUUID();
+			// 需要根据条件判断是否允许为空
 			if(inviteBall.getToRequire() == 0){
 				
 			}
@@ -100,7 +105,7 @@ public class ApiInviteBallController {
 			inviteBall.setMemberId(member.getId());
 			inviteBall.setCreateTime(new Date());
 			inviteBall.setModifyTime(new Date());
-			inviteBall.setActiveTime(inviteBall.getEndTime());// 活动时间默认等于报名截止时间
+			inviteBall.setActiveTime(DateUtil.getParse(activeTimeStr, "yyyy-MM-dd HH:mm"));// 活动时间默认等于报名截止时间
 			inviteBallService.insertSelective(inviteBall);
 
 			if (urls != null) {
@@ -116,7 +121,6 @@ public class ApiInviteBallController {
 					inviteImageService.insertSelective(inviteImage);
 				}
 			}
-
 			return new ApiMessage(200, "发起成功", id);
 		}
 		return new ApiMessage(400, "操作超时");
@@ -140,11 +144,14 @@ public class ApiInviteBallController {
 		}
 
 		InviteDto inviteDto = new InviteDto();
-		inviteDto.setMaxlng(Arith.add(lng, 0.5));
-		inviteDto.setMaxlat(Arith.add(lat, 0.5));
-
-		inviteDto.setMinlng(Arith.sub(lng, 0.5));
-		inviteDto.setMinlat(Arith.sub(lat, 0.5));
+//		inviteDto.setMaxlng(Arith.add(lng, 0.5));
+//		inviteDto.setMaxlat(Arith.add(lat, 0.5));
+//
+//		inviteDto.setMinlng(Arith.sub(lng, 0.5));
+//		inviteDto.setMinlat(Arith.sub(lat, 0.5));
+		
+		inviteDto.setLng(lng);
+		inviteDto.setLat(lat);
 
 		// 开始分页
 		PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
@@ -152,25 +159,26 @@ public class ApiInviteBallController {
 		List<Map<String, Object>> listmap = new ArrayList<Map<String, Object>>();
 		Date date = new Date();
 		for (int i = 0; i < list.size(); i++) {
+			InviteBall inviteBall = list.get(i);
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("id", list.get(i).getId());// ID
+			map.put("id", inviteBall.getId());// ID
 
-			map.put("area", (int)MapUtils.getDistance(lng, lat, list.get(i).getLongitude(), list.get(i).getLatitude()));// 距离
-			InviteImage inviteImage = inviteImageService.selectByHeadID(list.get(i).getId());
+			map.put("area", (int)MapUtils.getDistance(lng, lat, inviteBall.getLongitude(), inviteBall.getLatitude()));// 距离
+			InviteImage inviteImage = inviteImageService.selectByHeadID(inviteBall.getId());
 			if (inviteImage != null) {
 				map.put("image", inviteImage.getUrl());// 图片
 			} else {
 				map.put("image", "");// 图片
 			}
-			map.put("title", list.get(i).getTitle());// 标题
+			map.put("title", inviteBall.getTitle());// 标题
 
-			long time = DateUtil.getTimeDifference(date, list.get(i).getEndTime(), 3);
+			long time = DateUtil.getTimeDifference(date, inviteBall.getEndTime(), 3);
 			if (time == 0) {
-				time = DateUtil.getTimeDifference(date, list.get(i).getEndTime(), 2);
+				time = DateUtil.getTimeDifference(date, inviteBall.getEndTime(), 2);
 				if (time == 0) {
-					time = DateUtil.getTimeDifference(date, list.get(i).getEndTime(), 1);
+					time = DateUtil.getTimeDifference(date, inviteBall.getEndTime(), 1);
 					if (time == 0) {
-						time = DateUtil.getTimeDifference(date, list.get(i).getEndTime(), 0);
+						time = DateUtil.getTimeDifference(date, inviteBall.getEndTime(), 0);
 						if (time == 0) {
 							map.put("time", "报名已截止");// 截止时间
 						} else {
@@ -185,6 +193,14 @@ public class ApiInviteBallController {
 			} else {
 				map.put("time", time + "天");// 截止时间
 			}
+			
+			// 根据约球ID查询加入人员
+			List<InviteJoin> inviteJoins = inviteJoinMapper.selectByJoinMember(inviteBall.getId());
+			List<String> joinList = new ArrayList<String>();
+			for (int j = 0; j < inviteJoins.size(); j++) {
+				joinList.add(inviteJoins.get(j).getMember().getAppavatarurl());
+			}
+			map.put("joinMember", joinList);// 已加入人员头像
 			listmap.add(map);
 		}
 
@@ -331,7 +347,8 @@ public class ApiInviteBallController {
 			joinList.add(inviteJoins.get(i).getMember().getAppavatarurl());
 		}
 		map.put("joinMember", joinList);// 已加入人员头像
-		map.put("nowJoinMember", inviteJoins.size() + "/" + inviteBall.getMaxBoy());// 当前报名人数
+		map.put("nowJoinMember", inviteJoins.size());// 当前报名人数
+		map.put("maxJoinMember", inviteBall.getMaxBoy());// 最大报名人数
 
 		map.put("title", inviteBall.getTitle());// 标题
 		map.put("time", DateUtil.getFormat(inviteBall.getEndTime(), "yyyy年M月dd日 HH:mm"));// 活动时间
@@ -349,7 +366,7 @@ public class ApiInviteBallController {
 		map.put("exitFee", inviteBall.getExitFee());// 退出手续费
 		map.put("exitType", inviteBall.getExitType());// 退出类型(1=直接退出2=需发起人同意)
 
-		if (inviteBall.getMinBoy() != null && joinList.size() > inviteBall.getMinBoy()) {
+		if (inviteBall.getMinBoy() != null && joinList.size() >= inviteBall.getMinBoy()) {
 			map.put("teamFlag", 1);// 是否成团
 		}else {
 			map.put("teamFlag", 0);// 是否成团
@@ -448,10 +465,14 @@ public class ApiInviteBallController {
 				datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + inviteBall.getTitle() + "\"}"));
 				datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + "暂无" + "\"}"));
 				datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteBall.getActiveTime(),"yyyy-MM-dd HH:mm") + "\"}"));
-				datajson.put("keyword4", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueAddress() + "\"}"));
+				datajson.put("keyword4", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueName() + "\"}"));
 				datajson.put("keyword5", JSONObject.parseObject("{\"value\":\"" + "暂无" + "\"}"));
 				datajson.put("remark", JSONObject.parseObject("{\"value\":\"请按时参加活动\"}"));
 				logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId1, "/pages/index/index?id="+id, datajson));
+
+				// 创建约球加入日志
+				InviteLog inviteLog = new InviteLog(Utils.getUUID(), new Date(), member.getId(), id, member.getAppnickname() + "加入约球", 1);
+				inviteLogMapper.insertSelective(inviteLog);
 			}
 			return new ApiMessage(200, "报名成功", inviteJoin.getId());
 		} else {
@@ -583,6 +604,26 @@ public class ApiInviteBallController {
 					inviteJoin.setPayTime(new Date());
 					inviteJoin.setPayType(1);
 					inviteJoinMapper.updateByPrimaryKeySelective(inviteJoin);
+
+					// 获取报名人数据
+					Member member = memberService.selectByPrimaryKey(inviteJoin.getMemberId());
+					// 获取约球数据
+					InviteBall inviteBall = inviteBallService.selectByPrimaryKey(inviteJoin.getInviteId());
+					
+					// 发送报名成功通知
+					JSONObject datajson = new JSONObject();
+					datajson.put("first", JSONObject.parseObject("{\"value\":\"恭喜您报名成功\"}"));
+					datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + inviteBall.getTitle() + "\"}"));
+					datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + "暂无" + "\"}"));
+					datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteBall.getActiveTime(),"yyyy-MM-dd HH:mm") + "\"}"));
+					datajson.put("keyword4", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueName() + "\"}"));
+					datajson.put("keyword5", JSONObject.parseObject("{\"value\":\"" + "暂无" + "\"}"));
+					datajson.put("remark", JSONObject.parseObject("{\"value\":\"请按时参加活动\"}"));
+					logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId1, "/pages/index/index?id="+inviteBall.getId(), datajson));
+					
+					// 创建约球加入日志
+					InviteLog inviteLog = new InviteLog(Utils.getUUID(), new Date(),inviteJoin.getMemberId(), inviteJoin.getInviteId(), member.getAppnickname() + "加入约球", 1);
+					inviteLogMapper.insertSelective(inviteLog);
 				}
 
 				logger.info("微信订单号{}付款成功", orderNo);
@@ -696,10 +737,7 @@ public class ApiInviteBallController {
 					inviteImage.setCreateTime(new Date());
 					inviteImage.setInviteId(inviteBall.getId());
 					inviteImage.setUrl(url[i]);
-					// 将第一张图片设置为封面
-					if (i == 0) {
-						inviteImage.setHeadImage(1);
-					}
+					inviteImage.setHeadImage(i + 1);
 					inviteImageService.insertSelective(inviteImage);
 				}
 			}
@@ -742,7 +780,7 @@ public class ApiInviteBallController {
 			JSONObject datajson = new JSONObject();
 			datajson.put("first", JSONObject.parseObject("{\"value\":\"你报名的活动已经取消\"}"));
 			datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + inviteBall.getTitle() + "\"}"));
-			datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueAddress() + "\"}"));
+			datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueName() + "\"}"));
 			datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteBall.getActiveTime(), "yyyy年MM月dd日 HH:mm") + "\"}"));
 			datajson.put("remark", JSONObject.parseObject("{\"value\":\"活动已取消，欢迎您下次参加活动\"}"));
 
@@ -757,6 +795,7 @@ public class ApiInviteBallController {
 						inviteJoin.setPayType(3);
 						inviteJoin.setRefundAmount(inviteJoin.getAmount());
 						inviteJoin.setRefundFee(0);
+						inviteJoin.setRefundFeeamount(0.0);
 
 						// 发起人取消活动全额退款
 						WXUtil.weiXinRefund(inviteJoin.getId(), inviteJoin.getAmount(), inviteJoin.getAmount(), "发起人取消活动", 1);
@@ -767,7 +806,7 @@ public class ApiInviteBallController {
 						datajson2.put("keyword2", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteJoin.getPayTime(), "yyyy年MM月dd日 HH:mm") + "\"}"));
 						datajson2.put("keyword3", JSONObject.parseObject("{\"value\":\"" + inviteJoin.getId() + "\"}"));
 						datajson2.put("remark", JSONObject.parseObject("{\"value\":\"已完成退款\"}"));
-						logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId2, "/pages/index/index?id=" + id, datajson2));
+						logger.info(WXUtil.sendWXappTemplate(inviteJoin.getMember().getOpenid(), WXConfig.templateId2, "/pages/index/index?id=" + id, datajson2));
 					} else {
 						inviteJoin.setPayType(2);
 					}
@@ -906,11 +945,12 @@ public class ApiInviteBallController {
 				
 				inviteJoin.setRefundAmount(refund_fee);
 				inviteJoin.setRefundFee(inviteBall.getExitFee());
+				inviteJoin.setRefundFeeamount(feesum);
 
 				JSONObject datajson = new JSONObject();
 				datajson.put("first", JSONObject.parseObject("{\"value\":\"您已取消报名活动\"}"));
 				datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + inviteBall.getTitle() + "\"}"));
-				datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueAddress() + "\"}"));
+				datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueName() + "\"}"));
 				datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteBall.getActiveTime(),"yyyy年MM月dd日 HH:mm") + "\"}"));
 				datajson.put("remark", JSONObject.parseObject("{\"value\":\"取消成功，欢迎您下次参加活动\"}"));
 				logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId3, "/pages/index/index?id="+id, datajson));
@@ -939,20 +979,22 @@ public class ApiInviteBallController {
 			if(content == null){
 				return new ApiMessage(400, "请填写退出理由");
 			}
-			
 			inviteJoin.setRefundFlag(2);
 			inviteJoin.setRefundContent(content);
 			
 			JSONObject datajson = new JSONObject();
 			datajson.put("first", JSONObject.parseObject("{\"value\":\"您正在申请取消报名活动\"}"));
 			datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + inviteBall.getTitle() + "\"}"));
-			datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueAddress() + "\"}"));
+			datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueName() + "\"}"));
 			datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteBall.getActiveTime(),"yyyy年MM月dd日 HH:mm") + "\"}"));
 			datajson.put("remark", JSONObject.parseObject("{\"value\":\"请关注后续消息\"}"));
 			logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId3, "/pages/index/index?id="+id, datajson));
 			
 			int flag = inviteJoinMapper.updateByPrimaryKeySelective(inviteJoin);
 			if (flag > 0) {
+				// 创建约球退出日志
+				InviteLog inviteLog = new InviteLog(Utils.getUUID(), new Date(),inviteJoin.getMemberId(), inviteJoin.getInviteId(), member.getAppnickname() + "申请退出报名", 1);
+				inviteLogMapper.insertSelective(inviteLog);
 				return new ApiMessage(200, "退出申请已发送给发起人");
 			}else {
 				return new ApiMessage(400, "退出申请失败");
@@ -984,10 +1026,18 @@ public class ApiInviteBallController {
 			JSONObject datajson = new JSONObject();
 			datajson.put("first", JSONObject.parseObject("{\"value\":\"您报名的活动已被取消资格\"}"));
 			datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + inviteBall.getTitle() + "\"}"));
-			datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueAddress() + "\"}"));
+			datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"" + inviteBall.getVenueName() + "\"}"));
 			datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(inviteBall.getActiveTime(),"yyyy年MM月dd日 HH:mm") + "\"}"));
 			datajson.put("remark", JSONObject.parseObject("{\"value\":\"如有疑问请联系发起人，欢迎您下次参加活动\"}"));
 			logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId3, "/pages/index/index?id="+id, datajson));
+			
+			// 创建约球退出日志
+			InviteLog inviteLog = new InviteLog(Utils.getUUID(), new Date(),inviteJoin.getMemberId(), inviteJoin.getInviteId(), member.getAppnickname() + "被取消资格", 1);
+			inviteLogMapper.insertSelective(inviteLog);
+		}else {
+			// 创建约球退出日志
+			InviteLog inviteLog = new InviteLog(Utils.getUUID(), new Date(),inviteJoin.getMemberId(), inviteJoin.getInviteId(), member.getAppnickname() + "申请退出同意", 1);
+			inviteLogMapper.insertSelective(inviteLog);
 		}
 		//判断是否预收费用
 		if (inviteBall.getReceiveFlag() == 1) {
@@ -1005,6 +1055,7 @@ public class ApiInviteBallController {
 			
 			inviteJoin.setRefundAmount(refund_fee);
 			inviteJoin.setRefundFee(inviteBall.getExitFee());
+			inviteJoin.setRefundFeeamount(feesum);
 			
 			if (type == 0) {
 				//发起人取消资格全额退款
@@ -1021,6 +1072,8 @@ public class ApiInviteBallController {
 			datajson2.put("keyword3", JSONObject.parseObject("{\"value\":\"" + inviteJoin.getId() + "\"}"));
 			datajson2.put("remark", JSONObject.parseObject("{\"value\":\"已完成退款\"}"));
 			logger.info(WXUtil.sendWXappTemplate(member.getOpenid(), WXConfig.templateId2, "/pages/index/index?id="+id, datajson2));
+			
+
 		}
 		int flag = inviteJoinMapper.updateByPrimaryKey(inviteJoin);
 		if (flag > 0) {

@@ -27,6 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.ListObjectsRequest;
+import com.aliyun.oss.model.OSSObjectSummary;
+import com.aliyun.oss.model.ObjectListing;
 
 /**
  * @Description: 综合工具类
@@ -193,7 +196,7 @@ public class Utils {
 			OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
 			// 设置上传文件保存目录，按照年月日分文件夹存放
 			Calendar now = Calendar.getInstance();
-			String remoteFilePath = now.get(Calendar.YEAR) + "/" + (now.get(Calendar.MONTH) + 1) + "/" + now.get(Calendar.DAY_OF_MONTH) + "/";
+			String remoteFilePath = "ball/"+now.get(Calendar.YEAR) + "/" + (now.get(Calendar.MONTH) + 1) + "/" + now.get(Calendar.DAY_OF_MONTH) + "/";
 
 			String bucketName = Global.aliyunOssBucketName;
 
@@ -377,5 +380,31 @@ public class Utils {
 		Double feesum= a.multiply(b).doubleValue();
 		
 		return Arith.sub(amount, (double)Math.round(feesum*100)/100);
+	}
+    
+    public static void main(String[] args) {
+	    	// 域名根节点
+			String endpoint = Global.aliyunOssEndpoint;
+			// 账户ID
+			String accessKeyId = Global.aliyunOssAccessKeyId;
+			// 账户密码
+			String accessKeySecret = Global.aliyunOssAccessKeySecret;
+			String bucketName = Global.aliyunOssBucketName;
+			// 创建OSSClient实例。
+			OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+			final int maxKeys = 200;
+			String nextMarker = null;
+			ObjectListing objectListing;
+			do {
+			    objectListing = ossClient.listObjects(new ListObjectsRequest(bucketName).withMarker(nextMarker).withMaxKeys(maxKeys));
+			    objectListing.setPrefix("ball/");
+			    List<OSSObjectSummary> sums = objectListing.getObjectSummaries();
+			    for (OSSObjectSummary s : sums) {
+			        System.out.println("\t" + s.getKey());
+			    }
+			    nextMarker = objectListing.getNextMarker();
+			} while (objectListing.isTruncated());
+			// 关闭OSSClient。
+			ossClient.shutdown();
 	}
 }

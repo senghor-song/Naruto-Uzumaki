@@ -60,6 +60,9 @@ public class InviteJoin implements Serializable {
     /** 退费金额 */
     private Double refundAmount;
 
+    /** 退费手续费金额 */
+    private Double refundFeeamount;
+
     /** 退费手续费率 */
     private Integer refundFee;
 
@@ -290,6 +293,22 @@ public class InviteJoin implements Serializable {
      */
     public void setRefundAmount(Double refundAmount) {
         this.refundAmount = refundAmount;
+    }
+
+    /**
+     * 退费手续费金额
+     * @return Refund_feeAmount 退费手续费金额
+     */
+    public Double getRefundFeeamount() {
+        return refundFeeamount;
+    }
+
+    /**
+     * 退费手续费金额
+     * @param refundFeeamount 退费手续费金额
+     */
+    public void setRefundFeeamount(Double refundFeeamount) {
+        this.refundFeeamount = refundFeeamount;
     }
 
     /**

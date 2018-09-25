@@ -129,7 +129,6 @@ public class ApiVenueController {
 	@RequestMapping(value = "/saveVenue")
 	@ResponseBody
 	public ApiMessage saveVenue(Venue venue, HttpServletRequest request){
-		
 		HttpSession session = request.getSession();
 		String openid = (String) session.getAttribute("openid");
 		return venueService.saveVenue(venue, openid);

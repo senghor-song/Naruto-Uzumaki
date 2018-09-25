@@ -50,7 +50,7 @@ public class OneHourGetJob {
 			logger.info("微信公众号的access_token和jsapi_ticket获取成功并放入缓存");
 			RedisUtil.addRedis(Global.REDIS_ACCESS_TOKEN, WXConfig.appid, map);
 			
-			JSONObject accessTokenJson1 = JSONObject.fromObject(accessTokenDate);
+			JSONObject accessTokenJson1 = JSONObject.fromObject(accessTokenDate1);
 			logger.info("access_token:" + accessTokenJson1.toString());
 			Map<String, Object> map1 = new HashMap<>();
 			String access_token1 = (String) accessTokenJson1.get("access_token");
@@ -63,5 +63,4 @@ public class OneHourGetJob {
 			logger.error("", e);
 		}
 	}
-	
 }

@@ -7,8 +7,22 @@ import java.util.Date;
  * 会员表实体
  */
 public class Member implements Serializable {
-    /** 会员 */
+	
+	private String sessionKey;
+	
+    public String getSessionKey() {
+		return sessionKey;
+	}
+
+	public void setSessionKey(String sessionKey) {
+		this.sessionKey = sessionKey;
+	}
+
+	/** 会员 */
     private String id;
+
+    /** 会员编号 */
+    private Integer memberno;
 
     /** 创建时间 */
     private Date createtime;
@@ -18,9 +32,6 @@ public class Member implements Serializable {
 
     /** 姓名 */
     private String name;
-
-    /** 性别(0=男1=女) */
-    private Integer sex;
 
     /** 手机号 */
     private String phone;
@@ -77,6 +88,22 @@ public class Member implements Serializable {
     }
 
     /**
+     * 会员编号
+     * @return MemberNo 会员编号
+     */
+    public Integer getMemberno() {
+        return memberno;
+    }
+
+    /**
+     * 会员编号
+     * @param memberno 会员编号
+     */
+    public void setMemberno(Integer memberno) {
+        this.memberno = memberno;
+    }
+
+    /**
      * 创建时间
      * @return CreateTime 创建时间
      */
@@ -122,22 +149,6 @@ public class Member implements Serializable {
      */
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
-    }
-
-    /**
-     * 性别(0=男1=女)
-     * @return Sex 性别(0=男1=女)
-     */
-    public Integer getSex() {
-        return sex;
-    }
-
-    /**
-     * 性别(0=男1=女)
-     * @param sex 性别(0=男1=女)
-     */
-    public void setSex(Integer sex) {
-        this.sex = sex;
     }
 
     /**

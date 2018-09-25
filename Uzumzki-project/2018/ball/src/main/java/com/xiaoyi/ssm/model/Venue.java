@@ -11,8 +11,8 @@ public class Venue implements Serializable {
 	private City cityT;
 	private District districtT;
 	private Area areaT;
-	
-    public City getCityT() {
+
+	public City getCityT() {
 		return cityT;
 	}
 
@@ -94,6 +94,15 @@ public class Venue implements Serializable {
 
     /** 订场确认(0=人工确认1=自动确认) */
     private Integer orderverify;
+
+    /** 经度 */
+    private Double longitude;
+
+    /** 纬度 */
+    private Double latitude;
+
+    /** 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场) */
+    private Integer type;
 
     /**
      * Venue
@@ -418,5 +427,53 @@ public class Venue implements Serializable {
      */
     public void setOrderverify(Integer orderverify) {
         this.orderverify = orderverify;
+    }
+
+    /**
+     * 经度
+     * @return Longitude 经度
+     */
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    /**
+     * 经度
+     * @param longitude 经度
+     */
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    /**
+     * 纬度
+     * @return Latitude 纬度
+     */
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    /**
+     * 纬度
+     * @param latitude 纬度
+     */
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    /**
+     * 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场)
+     * @return Type 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场)
+     */
+    public Integer getType() {
+        return type;
+    }
+
+    /**
+     * 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场)
+     * @param type 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场)
+     */
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

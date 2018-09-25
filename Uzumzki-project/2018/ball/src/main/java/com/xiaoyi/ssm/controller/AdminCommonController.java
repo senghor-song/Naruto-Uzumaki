@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
@@ -20,11 +21,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.xiaoyi.ssm.dto.ApiMessage;
+import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.RedisUtil;
+import com.xiaoyi.ssm.util.Utils;
 
 /**
  * @Description: 后台公共页面
@@ -156,5 +160,46 @@ public class AdminCommonController {
 		ostream.close();
 	}
 	
+	
+	/**
+	 * @Description: 上传图片
+	 * @author 宋高俊
+	 * @date 2018年7月31日 下午6:40:17
+	 */
+	@RequestMapping(value = "/uploadImage")
+	@ResponseBody
+	public ApiMessage uploadImage(MultipartFile file, HttpServletRequest request) {
+		try {
+			return ApiMessage.succeed(Utils.getImageUrl(file));
+		} catch (Exception e) {
+			return ApiMessage.error();
+		}
+	}
 
+	/**  
+	 * @Description: 获取上传进度数据
+	 * @author 宋高俊  
+	 * @date 2018年8月14日 上午10:23:30 
+	 */ 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/redisupload", method = RequestMethod.POST)
+	@ResponseBody
+	public ApiMessage redisupload(HttpServletRequest request, String redisname) {
+		Staff staff = (Staff) request.getSession().getAttribute("adminloginuser");
+		Map<String, Object> map = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_SESSION_UPLOAD_MAP, staff.getStaffid() + redisname);
+		return ApiMessage.succeed(map);
+	}
+	
+	/**  
+	 * @Description: 删除上传进度数据
+	 * @author 宋高俊  
+	 * @date 2018年8月14日 上午10:23:30 
+	 */ 
+	@RequestMapping(value = "/deleteRedisupload", method = RequestMethod.POST)
+	@ResponseBody
+	public ApiMessage deleteRedisupload(HttpServletRequest request, String redisname) {
+		Staff staff = (Staff) request.getSession().getAttribute("adminloginuser");
+		RedisUtil.delRedis(Global.REDIS_SESSION_UPLOAD_MAP, staff.getStaffid() + redisname);
+		return ApiMessage.succeed();
+	}
 }

@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.dom4j.Document;
@@ -139,22 +140,23 @@ public class ApiCommonController {
 		String openid = (String) session.getAttribute("openid");
 		String unionid = (String) session.getAttribute("unionid");
 
+		logger.info("openid:"+openid);
+		logger.info("unionid:"+unionid);
+		
 		Member member = new Member();
 		member.setPhone(phone);
 		member.setPassword(password);
 		Member loginmember = memberService.login(member);
 
 		if (loginmember != null) {
-
-			Member oldMember = memberService.selectByOpenid(openid);
 			//判断这个openid是否已经被使用过
-			if (!loginmember.getOpenid().toString().equals(openid)) {
-				if (oldMember != null) {
-					oldMember.setOpenid(Utils.getUUID());
-					oldMember.setUnionid(Utils.getUUID());
-					memberService.updateByPrimaryKeySelective(oldMember);
-				}
+			Member oldMember = memberService.selectByOpenid(openid);
+			if (oldMember != null) {
+				oldMember.setOpenid(Utils.getUUID());
+				oldMember.setUnionid(Utils.getUUID());
+				memberService.updateByPrimaryKeySelective(oldMember);
 			}
+			
 			loginmember.setOpenid(openid);
 			loginmember.setUnionid(unionid);
 			memberService.updateByPrimaryKeySelective(loginmember);
@@ -265,8 +267,7 @@ public class ApiCommonController {
 	/**
 	 * @Description: 后台注册获取验证码
 	 * @author 宋高俊
-	 * @param type
-	 *            = 0 注册验证码 1 = 找回密码验证码
+	 * @param type = 0 注册验证码 1 = 找回密码验证码
 	 * @date 2018年7月25日 下午1:43:06
 	 */
 	@RequestMapping(value = "/member/getSMSCode")
@@ -308,12 +309,34 @@ public class ApiCommonController {
 	@RequestMapping(value = "/getCityList")
 	@ResponseBody
 	public ApiMessage getCityList() {
+		String[] letter = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+		
 		List<Map<String, Object>> listmap = new ArrayList<>();
-		List<City> cities = cityService.selectByAll(null);
-		for (City city : cities) {
+
+		List<City> hotCity = cityService.selectByHotCity();
+		Map<String, Object> hotMap = new HashMap<>();
+		hotMap.put("name", "★热门城市");// 城市字母
+		for (int i = 0; i < letter.length; i++) {
+			JSONArray jsonArray = new JSONArray();
+			for (City city : hotCity) {
+				jsonArray.add(JSONObject.fromObject("{\"name\":\"" + city.getCity() + "\",\"cityid\":\"" + city.getId() + "\"}"));
+			}
+			hotMap.put("cities", jsonArray);// 城市名称
+		}
+		listmap.add(hotMap);
+//		Map<String, Object> map = new HashMap<String, Object>();
+		
+		List<City> cities = cityService.selectByInitial();
+		for (int i = 0; i < letter.length; i++) {
 			Map<String, Object> map = new HashMap<>();
-			map.put("id", city.getId());// ID
-			map.put("name", city.getCity());// 城市名称
+			map.put("name", letter[i]);// 城市字母
+			JSONArray jsonArray = new JSONArray();
+			for (City city : cities) {
+				if (city.getInitial().equals(letter[i])) {
+					jsonArray.add(JSONObject.fromObject("{\"name\":\"" + city.getCity() + "\",\"cityid\":\"" + city.getId() + "\"}"));
+				}
+			}
+			map.put("cities", jsonArray);// 城市名称
 			listmap.add(map);
 		}
 		return new ApiMessage(200, "查询成功", listmap);
@@ -362,6 +385,24 @@ public class ApiCommonController {
 			listmap.add(map);
 		}
 		return new ApiMessage(200, "查询成功", listmap);
+	}
+	
+	/**
+	 * @Description: 场馆详情
+	 * @author 宋高俊
+	 * @date 2018年8月17日 上午11:16:24
+	 */
+	@RequestMapping(value = "/venue/details")
+	@ResponseBody
+	public ApiMessage details(String venueid) {
+		Venue venue = venueService.selectByPrimaryKey(venueid);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("name", venue.getName());// 获取场馆名
+		map.put("address", venue.getAddress());// 获取场馆地址
+		map.put("tel", venue.getTel());// 获取场馆电话
+		map.put("lng", venue.getLongitude());// 获取经度
+		map.put("lat", venue.getLatitude());// 获取纬度
+		return new ApiMessage(200, "查询成功", map);
 	}
 
 	/**
@@ -517,14 +558,14 @@ public class ApiCommonController {
 		}
 		try {
 			Member member = memberService.selectByOpenid(openid);
+			
+			// 设置session数据
+			request.getSession().setAttribute("openid", openid);
+			request.getSession().setAttribute("unionid", unionid);
+			// 设置有效期
+			request.getSession().setMaxInactiveInterval(12 * 60 * 60);
 			// 判断用户是否存在
 			if (member != null) {
-				
-				// 设置session数据
-				request.getSession().setAttribute("openid", openid);
-				request.getSession().setAttribute("unionid", unionid);
-				// 设置有效期
-				request.getSession().setMaxInactiveInterval(12 * 60 * 60);
 				
 				//判断这个openid是否已经被使用过
 				member.setOpenid(openid);
@@ -651,6 +692,7 @@ public class ApiCommonController {
 						member.setAppavatarurl(jsonObject.getString("headimgurl"));
 						member.setAppgender(jsonObject.getInt("sex"));
 						member.setAppnickname(jsonObject.getString("nickname"));
+						member.setModifytime(new Date());
 						
 						// 开发期间更新unionid
 						member.setUnionid(jsonObject.getString("unionid"));
@@ -667,6 +709,7 @@ public class ApiCommonController {
 							member.setAppavatarurl(jsonObject.getString("headimgurl"));
 							member.setAppgender(jsonObject.getInt("sex"));
 							member.setAppnickname(jsonObject.getString("nickname"));
+							member.setModifytime(new Date());
 
 							// 开发期间更新unionid
 							member.setUnionid(jsonObject.getString("unionid"));
@@ -676,11 +719,14 @@ public class ApiCommonController {
 							logger.info(openid+"未使用过小程序,则创建新用户");
 							// 未使用过小程序,则创建新用户
 							member = new Member();
+							member.setCreatetime(new Date());
+							member.setModifytime(new Date());
 							member.setId(Utils.getUUID());
 							member.setOpenid(openid);
 							member.setUnionid(jsonObject.getString("unionid"));
 							member.setAppavatarurl(jsonObject.getString("headimgurl"));
 							member.setAppgender(jsonObject.getInt("sex"));
+							member.setName(jsonObject.getString("nickname"));
 							member.setAppnickname(jsonObject.getString("nickname"));
 							memberService.insertSelective(member);
 						}

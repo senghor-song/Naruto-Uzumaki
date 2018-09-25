@@ -143,6 +143,7 @@
 				AND o.Type = #{type,jdbcType=INTEGER}
 			</if>
 		</where>
+		order by o.CreateTime desc
 	</select>
 
 	<select id="selectIsOrder" parameterType="com.xiaoyi.ssm.dto.OrderDto" resultType="Integer">

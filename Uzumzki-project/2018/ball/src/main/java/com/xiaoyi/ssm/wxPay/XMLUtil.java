@@ -31,6 +31,7 @@ public class XMLUtil {
 	 * @author 宋高俊  
 	 * @date 2018年8月30日 下午4:00:31 
 	 */ 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Map parseXmlToMap(String xml) {
         //  Map retMap = new HashMap();
         SortedMap<String, String> retMap = new TreeMap<>();

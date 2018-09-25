@@ -33,4 +33,22 @@ public interface InviteJoinMapper extends BaseMapper<InviteJoin, String> {
 	 * @date 2018年9月18日 下午3:56:37 
 	 */ 
 	Integer countByJoinBall(@Param("inviteId") String inviteId);
+
+	/**  
+	 * @Description: 用于后台查询该约球的报名情况
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年9月20日 下午7:47:18 
+	 */ 
+	List<InviteJoin> selectByJoinDetails(String id);
+
+	/**  
+	 * @Description: 根据用户ID查询已加入的约球
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年9月21日 上午9:24:32 
+	 */ 
+	Integer countByMyJoinBall(String id);
 }

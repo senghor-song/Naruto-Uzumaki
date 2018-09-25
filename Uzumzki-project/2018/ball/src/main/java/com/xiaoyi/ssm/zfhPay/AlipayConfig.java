@@ -48,7 +48,4 @@ public class AlipayConfig {
 	/** 设置通知结果地址 */
 	public static String notify_url = "https://ball.ekeae.com/WebBackAPI/api/common/aliPayCallBack";
 	
-	public static void main(String[] args) {
-		AlipayClient alipayClient = new DefaultAlipayClient(ServiceUrl,app_id,private_key,"json",input_charset,zfb_public_key);
-	}
 }

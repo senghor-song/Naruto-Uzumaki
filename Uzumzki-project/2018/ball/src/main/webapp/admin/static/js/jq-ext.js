@@ -145,14 +145,13 @@ $(function () {
                 }
             });
         },
-        showContentMenuAjax: function (key, opt, height, url, id, type) {
+        showContentMenuAjax: function (key, opt, height, url, id) {
             var h = height || 500;
             $.ajax({  
                 type : "POST",  //提交方式  
                 url : url,//路径  
                 data : {  
                     "id" : id,
-                    "type" : type
                 },//数据这里使用的是Json格式进行传输  
                 dataType:"html",
                 success : function(result) {//返回数据根据结果进行相应的处理  

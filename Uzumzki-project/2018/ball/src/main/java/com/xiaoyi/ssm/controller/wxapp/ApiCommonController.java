@@ -1,6 +1,8 @@
 package com.xiaoyi.ssm.controller.wxapp;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,8 +22,11 @@ import com.xiaoyi.ssm.model.Member;
 import com.xiaoyi.ssm.service.MemberService;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.HttpUtils;
+import com.xiaoyi.ssm.util.MoblieMessageUtil;
 import com.xiaoyi.ssm.util.RedisUtil;
+import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
+import com.xiaoyi.ssm.wxPay.AES;
 import com.xiaoyi.ssm.wxPay.WXConfig;
 
 /**
@@ -50,7 +55,7 @@ public class ApiCommonController {
 	public ApiMessage code2accessToken(HttpServletRequest request, HttpServletResponse response, String code) {
 		logger.info("开始获取微信小程序openid");
 		JSONObject getCodeResultJson = null;
-		String token = "";
+		Map<String, Object> map = new HashMap<String, Object>();
 		try {
 			logger.info("开始根据code获取微信小程序openid");
 			String requestUrl = "https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code"
@@ -67,17 +72,19 @@ public class ApiCommonController {
 
 			Member member = memberService.selectByUnionid(getCodeResultJson.getString("unionid"));
 
-			//将openid作为key存储登录信息
+			// 将openid作为key存储登录信息
 			RedisUtil.addRedis(Global.REDIS_WXAPP_SESSION, getCodeResultJson.getString("unionid"), getCodeResultJson);
-			
-			token = getCodeResultJson.getString("unionid");
+			map.put("token", getCodeResultJson.getString("unionid"));
 			if (member != null) {
+				map.put("appavatarurl", member.getAppavatarurl());
+				map.put("appnickname", member.getAppnickname());
+				member.setSessionKey(getCodeResultJson.getString("session_key"));// 将session_key存入缓存
 				RedisUtil.addRedis(Global.redis_member, getCodeResultJson.getString("unionid"), member);
 			}
 		} catch (Exception e) {
 			logger.error("", e);
 		}
-		return new ApiMessage(200, "登录成功", token);
+		return new ApiMessage(200, "登录成功", map);
 	}
 
 	/**
@@ -91,11 +98,11 @@ public class ApiCommonController {
 	 */
 	@RequestMapping(value = "/createMember", method = RequestMethod.POST)
 	@ResponseBody
-	public ApiMessage createMember(String token,String nickName, String avatarUrl, Integer gender) {
+	public ApiMessage createMember(String token, String nickName, String avatarUrl, Integer gender) {
 		JSONObject jsonObject = JSONObject.fromObject(RedisUtil.getRedisOne(Global.REDIS_WXAPP_SESSION, token));
-		
+
 		Member member = memberService.selectByUnionid(jsonObject.getString("unionid"));
-		
+
 		if (member != null) {
 			member.setCreatetime(new Date());
 			member.setModifytime(new Date());
@@ -104,7 +111,7 @@ public class ApiCommonController {
 			member.setAppgender(gender);
 			memberService.updateByPrimaryKeySelective(member);
 			return new ApiMessage(200, "修改成功");
-		}else {
+		} else {
 			member = new Member();
 			member.setId(Utils.getUUID());
 			member.setCreatetime(new Date());
@@ -118,5 +125,5 @@ public class ApiCommonController {
 			return new ApiMessage(200, "创建成功");
 		}
 	}
-	
+
 }

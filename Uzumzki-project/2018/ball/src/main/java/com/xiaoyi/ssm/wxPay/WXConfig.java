@@ -65,6 +65,7 @@ public class WXConfig {
 		return ip;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		Map<String, Object> map = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, appid);
 		System.out.println(map.get("access_token"));

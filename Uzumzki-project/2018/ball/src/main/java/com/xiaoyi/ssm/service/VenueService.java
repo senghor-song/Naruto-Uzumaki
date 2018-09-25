@@ -37,4 +37,13 @@ public interface VenueService extends BaseService<Venue, String> {
 	 * @date 2018年9月10日 下午4:19:24 
 	 */ 
 	List<Venue> selectByOftenMember(String id);
+
+	/**  
+	 * @Description: 根据场馆名查询场馆
+	 * @author 宋高俊  
+	 * @param venuename
+	 * @return 
+	 * @date 2018年9月21日 下午8:58:30 
+	 */ 
+	Venue selectByVenueName(String venuename);
 }

@@ -8,6 +8,15 @@ import java.util.Date;
  * 约球表实体
  */
 public class InviteBall implements Serializable {
+	private Member member;
+	
+    public Member getMember() {
+		return member;
+	}
+
+	public void setMember(Member member) {
+		this.member = member;
+	}
     /** ID */
     private String id;
 
@@ -85,6 +94,12 @@ public class InviteBall implements Serializable {
 
     /** 约球状态(0=发起中1=到期截止2=提前截止3=取消活动) */
     private Integer ballType;
+
+    /** 到账时间 */
+    private Date arriveTime;
+
+    /** 到账金额 */
+    private Double arriveAmount;
 
     /**
      * InviteBall
@@ -505,5 +520,37 @@ public class InviteBall implements Serializable {
      */
     public void setBallType(Integer ballType) {
         this.ballType = ballType;
+    }
+
+    /**
+     * 到账时间
+     * @return Arrive_time 到账时间
+     */
+    public Date getArriveTime() {
+        return arriveTime;
+    }
+
+    /**
+     * 到账时间
+     * @param arriveTime 到账时间
+     */
+    public void setArriveTime(Date arriveTime) {
+        this.arriveTime = arriveTime;
+    }
+
+    /**
+     * 到账金额
+     * @return Arrive_amount 到账金额
+     */
+    public Double getArriveAmount() {
+        return arriveAmount;
+    }
+
+    /**
+     * 到账金额
+     * @param arriveAmount 到账金额
+     */
+    public void setArriveAmount(Double arriveAmount) {
+        this.arriveAmount = arriveAmount;
     }
 }

@@ -27,7 +27,7 @@ public interface InviteBallMapper extends BaseMapper<InviteBall, String>{
 	 * @return 
 	 * @date 2018年9月18日 下午4:39:22 
 	 */ 
-	List<InviteBall> selectByTimeOut(@Param("startDate")Date startDate, @Param("endDate")Date endDate);
+	List<InviteBall> selectByTimeOut(@Param("endDate")Date endDate);
 
 	/**  
 	 * @Description: 根据用户ID查询已加入的约球
@@ -55,4 +55,21 @@ public interface InviteBallMapper extends BaseMapper<InviteBall, String>{
 	 * @date 2018年9月19日 下午3:01:46 
 	 */ 
 	InviteBall selectByJoinKey(String joinId);
+
+	/**  
+	 * @Description: 查询有交易的数据
+	 * @author 宋高俊  
+	 * @return 
+	 * @date 2018年9月20日 下午8:01:17 
+	 */ 
+	List<InviteBall> selectDealInvite();
+	
+	/**  
+	 * @Description: 根据用户ID查询已创建的约球
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年9月21日 上午9:25:05 
+	 */ 
+	Integer countByMyApplyBall(String id);
 }

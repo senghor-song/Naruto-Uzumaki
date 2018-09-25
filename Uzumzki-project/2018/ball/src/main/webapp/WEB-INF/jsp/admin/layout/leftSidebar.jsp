@@ -20,57 +20,166 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-item">
                 <a href="/WebBackAPI/admin/common/index" class="nav-link" id="selectindex_0">
-                    <i class="nav-icon fa fa-dashboard"></i>
+                    <i class="nav-icon fa fa-area-chart"></i>
                     <p>控制台</p>
                 </a>
             </li>
-
-            <li class="nav-item has-treeview menu-open">
+            
+            <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
-                    <i class="nav-icon iconfont icon-tuiguang"></i>
-                    <p>订场<i class="fa fa-angle-left right"></i></p>
+                    <i class="fa fa-thumbs-up fa-fw"></i>
+                    <p>产品<i class="fa fa-angle-left right"></i></p>
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/venue/listview" class="nav-link" id="selectindex_1">
-                            <i class="fa fa-circle-o nav-icon"></i>
-                            <p>场馆</p>
+                        <a href="/WebBackAPI/admin/inviteBall/listview" class="nav-link" id="selectindex_1">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>约球</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/amount/listview" class="nav-link" id="selectindex_2">
-                            <i class="fa fa-circle-o nav-icon"></i>
-                            <p>提现</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/WebBackAPI/admin/order/listview" class="nav-link" id="selectindex_3">
-                            <i class="fa fa-circle-o nav-icon"></i>
+                        <a href="/WebBackAPI/admin/order/listview" class="nav-link" id="selectindex_2">
+                            <i class="fa fa-list-alt nav-icon"></i>
                             <p>订场</p>
                         </a>
                     </li>
+                </ul>
+            </li>
+            
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <i class="fa fa-paper-plane fa-fw"></i>
+                    <p>运营<i class="fa fa-angle-left right"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/combine/listview" class="nav-link" id="selectindex_4">
-                            <i class="fa fa-circle-o nav-icon"></i>
-                            <p>散拼</p>
+                        <a href="/WebBackAPI/admin/member/listview" class="nav-link" id="selectindex_3">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>用户</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/train/listview" class="nav-link" id="selectindex_5">
-                            <i class="fa fa-circle-o nav-icon"></i>
-                            <p>培训</p>
+                        <a href="/WebBackAPI/admin/venue/listview" class="nav-link" id="selectindex_4">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>场馆</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <i class="fa fa-users fa-fw"></i>
+                    <p>管理<i class="fa fa-angle-left right"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="/WebBackAPI/admin/venue/listview" class="nav-link" id="selectindex_5">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>管理</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="/WebBackAPI/admin/newsBanner/listview" class="nav-link" id="selectindex_6">
-                            <i class="fa fa-circle-o nav-icon"></i>
+                            <i class="fa fa-list-alt nav-icon"></i>
                             <p>横幅</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/staff/listview" class="nav-link" id="selectindex_7">
-                            <i class="fa fa-circle-o nav-icon"></i>
+                        <a href="/WebBackAPI/admin/city/listview" class="nav-link" id="selectindex_7">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>城市</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/WebBackAPI/admin/venue/listview" class="nav-link" id="selectindex_8">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>合作申请</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/WebBackAPI/admin/venue/listview" class="nav-link" id="selectindex_9">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>场馆信息</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <i class="fa fa-handshake-o fa-fw"></i>
+                    <p>伙伴<i class="fa fa-angle-left right"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="/WebBackAPI/admin/staff/listview" class="nav-link" id="selectindex_10">
+                            <i class="fa fa-list-alt nav-icon"></i>
                             <p>伙伴</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/WebBackAPI/admin/venue/listview" class="nav-link" id="selectindex_11">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>ACL</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                	<i class="fa fa-tasks fa-fw"></i>
+                    <p>财务<i class="fa fa-angle-left right"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="/WebBackAPI/admin/venue/listview" class="nav-link" id="selectindex_12">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>对账</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/WebBackAPI/admin/venue/listview" class="nav-link" id="selectindex_13">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>提现明细</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/WebBackAPI/admin/venue/listview" class="nav-link" id="selectindex_14">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>基本户流水</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/WebBackAPI/admin/venue/listview" class="nav-link" id="selectindex_15">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>运营户流水</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <i class="fa fa-calendar-check-o fa-fw" aria-hidden="true"></i>
+                    <p>订场<i class="fa fa-angle-left right"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="/WebBackAPI/admin/amount/listview" class="nav-link" id="selectindex_17">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>提现</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/WebBackAPI/admin/combine/listview" class="nav-link" id="selectindex_19">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>散拼</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/WebBackAPI/admin/train/listview" class="nav-link" id="selectindex_20">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p>培训</p>
                         </a>
                     </li>
                 </ul>

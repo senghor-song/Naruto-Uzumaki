@@ -14,6 +14,9 @@ public class Global {
 	/** APP客户端修改密码短信验证码获取代码 */
 	public final static String api_member_updatePassword_SmsCode_ = "api_member_updatePassword_SmsCode_";
 
+	/** WX小程序与端短信验证码获取代码 */
+	public final static String wxapp_member_SmsCode_ = "wxapp_member_SmsCode_";
+
 	/**  
 	 * @Description: 阿里云图片服务器
 	 * @author song  
@@ -69,12 +72,20 @@ public class Global {
 	public final static String REDIS_TOP_TAG_MAP = "redis_top_tag_map";
 	/** 进度条加载数据缓存 */
 	public final static String REDIS_SESSION_UPLOAD_MAP = "redis_session_upload_map";
+	// 易租房城市
 	/** 城市数据缓存 */
 	public final static String REDIS_CITY_MAP = "redis_city_map";
 	/** 区县数据缓存 */
 	public final static String REDIS_DISTRICT_MAP = "redis_district_map";
 	/** 片区数据缓存 */
 	public final static String REDIS_AREA_MAP = "redis_area_map";
+	
+	// 易订场城市
+	/** 城市数据缓存 */
+	public final static String REDIS_APP_CITY_MAP = "redis_app_city_map";
+	/** 区县数据缓存 */
+	public final static String REDIS_APP_DISTRICT_MAP = "redis_app_district_map";
+	
 	
 	/** 微信的access_token数据缓存map=access_token,jsapi_ticket */
 	public final static String REDIS_ACCESS_TOKEN = "redis_access_token";
