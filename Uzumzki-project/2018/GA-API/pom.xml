@@ -10,7 +10,6 @@
 	<url>http://maven.apache.org</url>
 	<build>
 		<finalName>GongAnProduct_API</finalName>
-
 		<plugins>
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
