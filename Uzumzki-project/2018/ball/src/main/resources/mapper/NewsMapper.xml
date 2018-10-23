@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.NewsMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.News">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+		<result column="Title" jdbcType="VARCHAR" property="title" />
+		<result column="Head_image" jdbcType="VARCHAR" property="headImage" />
+	</resultMap>
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.xiaoyi.ssm.model.News">
+		<result column="Content" jdbcType="LONGVARCHAR" property="content" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Modify_time, Title, Head_image
+	</sql>
+	<sql id="Blob_Column_List">
+		Content
+	</sql>
+	
+	<select id="selectByAll" resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from News
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from News
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from News
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.News">
+		insert into News (ID, Create_time, Modify_time,
+		Title, Head_image, Content
+		)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
+		#{title,jdbcType=VARCHAR}, #{headImage,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.News">
+		insert into News
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="modifyTime != null">
+				Modify_time,
+			</if>
+			<if test="title != null">
+				Title,
+			</if>
+			<if test="headImage != null">
+				Head_image,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				#{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="headImage != null">
+				#{headImage,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.News">
+		update News
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="title != null">
+				Title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="headImage != null">
+				Head_image = #{headImage,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.xiaoyi.ssm.model.News">
+		update News
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+		Title = #{title,jdbcType=VARCHAR},
+		Head_image = #{headImage,jdbcType=VARCHAR},
+		Content = #{content,jdbcType=LONGVARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.News">
+		update News
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+		Title = #{title,jdbcType=VARCHAR},
+		Head_image = #{headImage,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

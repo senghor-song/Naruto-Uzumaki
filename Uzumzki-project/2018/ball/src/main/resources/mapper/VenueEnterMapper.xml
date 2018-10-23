@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.VenueEnterMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.VenueEnter">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Member_id" jdbcType="VARCHAR" property="memberId" />
+		<result column="Title" jdbcType="VARCHAR" property="title" />
+		<result column="Longitude" jdbcType="DOUBLE" property="longitude" />
+		<result column="Latitude" jdbcType="DOUBLE" property="latitude" />
+		<result column="Address" jdbcType="VARCHAR" property="address" />
+		<result column="Check_flag" jdbcType="INTEGER" property="checkFlag" />
+		<result column="Ball_type" jdbcType="INTEGER" property="ballType" />
+		<result column="Check_time" jdbcType="TIMESTAMP" property="checkTime" />
+		<result column="Check_staff" jdbcType="VARCHAR" property="checkStaff" />
+		<result column="Main_name" jdbcType="VARCHAR" property="mainName" />
+		<result column="Main_phone" jdbcType="VARCHAR" property="mainPhone" />
+		<result column="Ball_sum" jdbcType="VARCHAR" property="ballSum" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="Head_image" jdbcType="VARCHAR" property="headImage" />
+		<result column="City_name" jdbcType="VARCHAR" property="cityName" />
+		<association property="member" javaType="com.xiaoyi.ssm.model.Member">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="mAppNickName" jdbcType="VARCHAR" property="appnickname" />
+			<result column="mPhone" jdbcType="VARCHAR" property="phone" />
+		</association>
+		<association property="staff" javaType="com.xiaoyi.ssm.model.Staff">
+			<id column="ID" jdbcType="CHAR" property="id" />
+			<result column="sName" jdbcType="VARCHAR" property="name" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Member_id, Title, Longitude, Latitude, Address, Check_flag, Ball_type,
+		Check_time, Check_staff, Main_name, Main_phone, Ball_sum, Content, Head_image, City_name
+	</sql>
+
+	<select id="selectByEnterAll" resultMap="BaseResultMap">
+		SELECT ve.*,m.`AppNickName` mAppNickName, m.`Phone`
+		mPhone ,s.`Name` sName FROM VenueEnter ve LEFT JOIN Member m ON
+		ve.`Member_id` = m.`ID` LEFT JOIN Staff s ON ve.`Check_staff` = s.`ID` WHERE Check_flag =
+		#{checkFlag,jdbcType=INTEGER}
+	</select>
+
+	<select id="countEnter" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(0) from
+		VenueEnter where Check_flag = 0
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueEnter
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from VenueEnter
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueEnter">
+		insert into VenueEnter (ID, Create_time, Member_id,
+		Title, Longitude, Latitude,
+		Address, Check_flag, Ball_type,
+		Check_time, Check_staff, Main_name,
+		Main_phone, Ball_sum, Content,
+		Head_image, City_name)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{memberId,jdbcType=VARCHAR},
+		#{title,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE},
+		#{address,jdbcType=VARCHAR}, #{checkFlag,jdbcType=INTEGER}, #{ballType,jdbcType=INTEGER},
+		#{checkTime,jdbcType=TIMESTAMP}, #{checkStaff,jdbcType=VARCHAR}, #{mainName,jdbcType=VARCHAR},
+		#{mainPhone,jdbcType=VARCHAR}, #{ballSum,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+		#{headImage,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueEnter">
+		insert into VenueEnter
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="memberId != null">
+				Member_id,
+			</if>
+			<if test="title != null">
+				Title,
+			</if>
+			<if test="longitude != null">
+				Longitude,
+			</if>
+			<if test="latitude != null">
+				Latitude,
+			</if>
+			<if test="address != null">
+				Address,
+			</if>
+			<if test="checkFlag != null">
+				Check_flag,
+			</if>
+			<if test="ballType != null">
+				Ball_type,
+			</if>
+			<if test="checkTime != null">
+				Check_time,
+			</if>
+			<if test="checkStaff != null">
+				Check_staff,
+			</if>
+			<if test="mainName != null">
+				Main_name,
+			</if>
+			<if test="mainPhone != null">
+				Main_phone,
+			</if>
+			<if test="ballSum != null">
+				Ball_sum,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+			<if test="headImage != null">
+				Head_image,
+			</if>
+			<if test="cityName != null">
+				City_name,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="memberId != null">
+				#{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="longitude != null">
+				#{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="latitude != null">
+				#{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="checkFlag != null">
+				#{checkFlag,jdbcType=INTEGER},
+			</if>
+			<if test="ballType != null">
+				#{ballType,jdbcType=INTEGER},
+			</if>
+			<if test="checkTime != null">
+				#{checkTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="checkStaff != null">
+				#{checkStaff,jdbcType=VARCHAR},
+			</if>
+			<if test="mainName != null">
+				#{mainName,jdbcType=VARCHAR},
+			</if>
+			<if test="mainPhone != null">
+				#{mainPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="ballSum != null">
+				#{ballSum,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="headImage != null">
+				#{headImage,jdbcType=VARCHAR},
+			</if>
+			<if test="cityName != null">
+				#{cityName,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.VenueEnter">
+		update VenueEnter
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="memberId != null">
+				Member_id = #{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="title != null">
+				Title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="longitude != null">
+				Longitude = #{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="latitude != null">
+				Latitude = #{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="address != null">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="checkFlag != null">
+				Check_flag = #{checkFlag,jdbcType=INTEGER},
+			</if>
+			<if test="ballType != null">
+				Ball_type = #{ballType,jdbcType=INTEGER},
+			</if>
+			<if test="checkTime != null">
+				Check_time = #{checkTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="checkStaff != null">
+				Check_staff = #{checkStaff,jdbcType=VARCHAR},
+			</if>
+			<if test="mainName != null">
+				Main_name = #{mainName,jdbcType=VARCHAR},
+			</if>
+			<if test="mainPhone != null">
+				Main_phone = #{mainPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="ballSum != null">
+				Ball_sum = #{ballSum,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="headImage != null">
+				Head_image = #{headImage,jdbcType=VARCHAR},
+			</if>
+			<if test="cityName != null">
+				City_name = #{cityName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.VenueEnter">
+		update VenueEnter
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Member_id = #{memberId,jdbcType=VARCHAR},
+		Title = #{title,jdbcType=VARCHAR},
+		Longitude = #{longitude,jdbcType=DOUBLE},
+		Latitude = #{latitude,jdbcType=DOUBLE},
+		Address = #{address,jdbcType=VARCHAR},
+		Check_flag = #{checkFlag,jdbcType=INTEGER},
+		Ball_type = #{ballType,jdbcType=INTEGER},
+		Check_time = #{checkTime,jdbcType=TIMESTAMP},
+		Check_staff = #{checkStaff,jdbcType=VARCHAR},
+		Main_name = #{mainName,jdbcType=VARCHAR},
+		Main_phone = #{mainPhone,jdbcType=VARCHAR},
+		Ball_sum = #{ballSum,jdbcType=VARCHAR},
+		Content = #{content,jdbcType=VARCHAR},
+		Head_image = #{headImage,jdbcType=VARCHAR},
+		City_name = #{cityName,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

@@ -28,16 +28,23 @@ import com.xiaoyi.ssm.dto.AdminPage;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.City;
 import com.xiaoyi.ssm.model.District;
-import com.xiaoyi.ssm.model.Manager;
 import com.xiaoyi.ssm.model.Staff;
+import com.xiaoyi.ssm.model.TrainCoach;
+import com.xiaoyi.ssm.model.TrainTeam;
+import com.xiaoyi.ssm.model.TrainTeamVenue;
 import com.xiaoyi.ssm.model.Venue;
+import com.xiaoyi.ssm.model.VenueCheck;
+import com.xiaoyi.ssm.model.VenueEnter;
 import com.xiaoyi.ssm.model.VenueLog;
 import com.xiaoyi.ssm.service.CityService;
 import com.xiaoyi.ssm.service.CoachService;
 import com.xiaoyi.ssm.service.DistrictService;
 import com.xiaoyi.ssm.service.FieldService;
-import com.xiaoyi.ssm.service.ManagerService;
-import com.xiaoyi.ssm.service.TrainService;
+import com.xiaoyi.ssm.service.TrainCoachService;
+import com.xiaoyi.ssm.service.TrainTeamService;
+import com.xiaoyi.ssm.service.VenueCheckService;
+import com.xiaoyi.ssm.service.VenueEnterService;
+import com.xiaoyi.ssm.service.VenueErrorService;
 import com.xiaoyi.ssm.service.VenueLogService;
 import com.xiaoyi.ssm.service.VenueService;
 import com.xiaoyi.ssm.service.VenueTemplateService;
@@ -68,17 +75,23 @@ public class VenueController {
 	@Autowired
 	private CoachService coachService;
 	@Autowired
-	private ManagerService managerService;
-	@Autowired
 	private VenueTemplateService venueTemplateService;
 	@Autowired
 	private VenueLogService venueLogService;
 	@Autowired
-	private TrainService trainService;
-	@Autowired
 	private CityService cityService;
 	@Autowired
 	private DistrictService districtService;
+	@Autowired
+	private VenueCheckService venueCheckService;
+	@Autowired
+	private VenueErrorService venueErrorService;
+	@Autowired
+	private VenueEnterService venueEnterService;
+	@Autowired
+	private TrainTeamService trainTeamService;
+	@Autowired
+	private TrainCoachService trainCoachService;
 
 	/**
 	 * @Description: 场馆页面
@@ -109,48 +122,84 @@ public class VenueController {
 			map.put("city", venue.getCityT().getCity());// 城市
 			map.put("district", venue.getDistrictT().getDistrict());// 区县
 			map.put("name", venue.getName());// 场馆
-			map.put("fieldSum", fieldService.countByVenue(venue.getId()));// 场地
-			map.put("coachSum", coachService.countByVenue(venue.getId()));// 教练
-			map.put("managerSum", managerService.countByVenue(venue.getId()));// 管理员
-			map.put("venueTemplateSum", venueTemplateService.countByVenue(venue.getId()));// 模板
-			map.put("venuelogSum", venueLogService.countByVenue(venue.getId()));// 日志
-			map.put("amount", venue.getAmount());// 累计金额
-			map.put("balance", venue.getBalance());// 存余金额
-			map.put("freezeamount", venue.getFreezeamount());// 存余金额
-			map.put("trainSum", trainService.countByVenue(venue.getId()));// 培训课程
 			if (venue.getType() != null) {
 				map.put("type", venue.getType() == 1 ? "网球场" : venue.getType() == 2 ? "足球场" : venue.getType() == 3 ? "羽毛球馆" : venue.getType() == 4 ? "篮球场"
-						: "无");// 培训课程
+						: "无");// 类型
 			} else {
 				map.put("type", "无");
 			}
+			map.put("trainteam", venue.getTrainteam() != null ? "是" : "否"); // 入驻
+			if (venue.getLongitude() != null && venue.getLatitude() != null) {
+				map.put("lnglat", "是"); // 坐标
+			}else {
+				map.put("lnglat", "否"); // 坐标
+			}
+			
+			map.put("tel", venue.getTel() != null ? "是" : "否"); // 电话
+			map.put("venueError", venueErrorService.countByVenue(venue.getId())); // 报错
+			
+			map.put("fieldSum", fieldService.countByVenue(venue.getId()));// 场地
+			map.put("coachSum", coachService.countByVenue(venue.getId()));// 教练
+			map.put("venueTemplateSum", venueTemplateService.countByVenue(venue.getId()));// 模板
+			map.put("venuelogSum", venueLogService.countByVenue(venue.getId()));// 日志
+			map.put("showflag", venue.getShowflag() == 1 ? "正常" : "屏蔽"); // 状态(0=审核中1=正常2=屏蔽)
+			map.put("lng", venue.getLongitude());// 经度
+			map.put("lat", venue.getLatitude());// 维度
 			listMap.add(map);
 		}
 		return new AdminMessage(pageInfo.getTotal(), listMap);
 	}
 
-	/**
-	 * @Description: 管理员数据
-	 * @author 宋高俊
-	 * @date 2018年8月20日 下午2:19:17
-	 */
-	@RequestMapping(value = "/managerlist")
+	/**  
+	 * @Description: 场馆修改页面
+	 * @author 宋高俊  
+	 * @param model
+	 * @param id
+	 * @return 
+	 * @date 2018年10月22日 下午7:51:12 
+	 */ 
+	@RequestMapping(value = "/update/view")
+	public String updateView(Model model, String id) {
+		Venue venue = venueService.selectByPrimaryKey(id);
+		model.addAttribute("venueid", id);
+		model.addAttribute("venueno", venue.getVenueno());
+		model.addAttribute("cityid", venue.getCityid());
+		model.addAttribute("districtid", venue.getDistrictid());
+		model.addAttribute("showflag", venue.getShowflag());
+		model.addAttribute("name", venue.getName());
+		model.addAttribute("tel", venue.getTel());
+		model.addAttribute("image", venue.getImage());
+
+		List<City> list = cityService.selectByAll(null);
+		model.addAttribute("citys", list);
+		
+		return "admin/venue/edit";
+	}
+	
+	/**  
+	 * @Description: 场馆数据修改
+	 * @author 宋高俊  
+	 * @param id
+	 * @param cityid
+	 * @param districtid
+	 * @param showflag
+	 * @param venuename
+	 * @param phone
+	 * @return 
+	 * @date 2018年10月23日 下午3:33:20 
+	 */ 
+	@RequestMapping(value = "/update/venue")
 	@ResponseBody
-	public AdminMessage managerlist(AdminPage adminPage, String venueid) {
-		PageHelper.startPage(adminPage.getPage(), adminPage.getLimit());
-		List<Manager> managers = managerService.selectByVenue(venueid);
-		PageInfo<Manager> pageInfo = new PageInfo<>(managers);
-		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
-		for (int i = 0; i < managers.size(); i++) {
-			Manager manager = managers.get(i);
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("id", manager.getId());// ID
-			map.put("createtime", DateUtil.getFormat(manager.getCreatetime()));// 创建时间
-			map.put("name", manager.getName());// 姓名
-			map.put("realname", manager.getRealname() == 0 ? "否" : "是");// 实名
-			listMap.add(map);
-		}
-		return new AdminMessage(100, pageInfo.getTotal(), listMap);
+	public ApiMessage updateVenue(String id, String cityid, String districtid, Integer showflag, String venueName, String tel, String image) {
+		Venue venue = venueService.selectByPrimaryKey(id);
+		venue.setCityid(cityid);
+		venue.setDistrictid(districtid);
+		venue.setShowflag(showflag);
+		venue.setName(venueName);
+		venue.setTel(tel);
+		venue.setImage(image);
+		venueService.updateByPrimaryKeySelective(venue);
+		return new ApiMessage(200, "修改成功");
 	}
 
 	/**
@@ -168,22 +217,253 @@ public class VenueController {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("id", venueLog.getId());// ID
 			map.put("createtime", DateUtil.getFormat(venueLog.getCreatetime()));// 时间
-			map.put("manager", venueLog.getManager().getName());// 操作人
+			map.put("manager", venueLog.getMember().getAppnickname());//操作人
 			map.put("content", venueLog.getContent());// 内容
 			listMap.add(map);
 		}
 		return new AdminMessage(100, list.size(), listMap);
 	}
+	
+	/**  
+	 * @Description: 场馆日志所有数据
+	 * @author 宋高俊  
+	 * @param selectType
+	 * @param keyword
+	 * @return 
+	 * @date 2018年10月15日 下午4:00:48 
+	 */ 
+	@RequestMapping(value = "/venuelogAllList")
+	@ResponseBody
+	public AdminMessage venuelogAllList(AdminPage adminPage, Integer selectType,String keyword) {
+		PageHelper.startPage(adminPage.getPage(), adminPage.getLimit());
+		
+		List<VenueLog> list = venueLogService.selectBySearch(selectType, keyword);
+		PageInfo<VenueLog> pageInfo = new PageInfo<>(list);
+		
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			VenueLog venueLog = list.get(i);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("id", venueLog.getId());// ID
+			map.put("createtime", DateUtil.getFormat(venueLog.getCreatetime()));// 时间
+			map.put("manager", venueLog.getMember().getAppnickname());// 操作人
+			map.put("name", venueLog.getVenue().getName());// 场馆
+			map.put("venueno", venueLog.getVenue().getVenueno());// 场馆编号
+			map.put("content", venueLog.getContent());// 内容
+			listMap.add(map);
+		}
+		return new AdminMessage(100, pageInfo.getTotal(), listMap);
+	}
+	
+	/**  
+	 * @Description: 场馆审核所有数据
+	 * @author 宋高俊  
+	 * @param selectType
+	 * @param keyword
+	 * @return 
+	 * @date 2018年10月15日 下午4:00:48 
+	 */ 
+	@RequestMapping(value = "/venueCheckList")
+	@ResponseBody
+	public AdminMessage venueCheckList(AdminPage adminPage) {
+		PageHelper.startPage(adminPage.getPage(), adminPage.getLimit());
+		List<VenueCheck> list = venueCheckService.selectByCheck();
+		PageInfo<VenueCheck> pageInfo = new PageInfo<>(list);
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			VenueCheck venueCheck = list.get(i);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("id", venueCheck.getId());// ID
 
+			map.put("lng", venueCheck.getLng());// 经度
+			map.put("lat", venueCheck.getLat());// 纬度
+			
+			map.put("createTime", DateUtil.getFormat(venueCheck.getCreateTime()));// 时间
+			map.put("trainTeam", venueCheck.getTrainTeam().getTitle());// 上传机构
+			map.put("title", venueCheck.getTitle());// 场馆名
+			map.put("type", venueCheck.getBallType() == 1 ? "网球场" : venueCheck.getBallType() == 2 ? "足球场" : venueCheck.getBallType() == 3 ? "羽毛球馆" : "篮球馆" );// 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场)
+			map.put("content", venueCheck.getContent());// 描述
+			listMap.add(map);
+		}
+		return new AdminMessage(100, pageInfo.getTotal(), listMap);
+	}
+	
+	/**  
+	 * @Description: 场馆审核操作接口
+	 * @author 宋高俊  
+	 * @param selectType
+	 * @param keyword
+	 * @return 
+	 * @date 2018年10月15日 下午4:00:48 
+	 */ 
+	@RequestMapping(value = "/venueCheck")
+	@ResponseBody
+	public ApiMessage venueCheck(HttpServletRequest request, String id, Integer check) {
+
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		// 修改审核状态
+		VenueCheck venueCheck = venueCheckService.selectByPrimaryKey(id);
+		venueCheck.setCheckFlag(check);
+		venueCheck.setModifyTime(new Date());
+		venueCheckService.updateByPrimaryKeySelective(venueCheck);
+		
+		Venue venue = new Venue();
+		venue.setId(Utils.getUUID());
+		venue.setCreatetime(new Date());
+		venue.setModifytime(new Date());
+		venue.setName(venueCheck.getTitle());
+		venue.setType(venueCheck.getBallType());
+		venue.setTel(venueCheck.getPhone());
+		venue.setImage(venueCheck.getHeadImage());
+		venue.setLongitude(venueCheck.getLng());
+		venue.setLatitude(venueCheck.getLat());
+		venue.setAddress(venueCheck.getAddress());
+		venueService.insertSelective(venue);
+		
+		TrainTeamVenue trainTeamVenue = new TrainTeamVenue();
+		trainTeamVenue.setId(Utils.getUUID());
+		trainTeamVenue.setTrainVenueId(venue.getId());
+		trainTeamVenue.setTrainTeamId(venueCheck.getTrainTeamId());
+		trainTeamService.saveTrainTeamVenue(trainTeamVenue);
+		return new ApiMessage(200, "审核成功");
+	}
+
+	/**  
+	 * @Description: 场馆认领入驻
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年10月17日 下午4:46:55 
+	 */ 
+	@RequestMapping(value = "/venueEnter/list")
+	@ResponseBody
+	public AdminMessage trainenter(HttpServletRequest request,AdminPage adminPage, Integer checkFlag) {
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		PageHelper.startPage(adminPage.getPage(), adminPage.getLimit());
+		List<VenueEnter> list = venueEnterService.selectByEnterAll(checkFlag);
+		
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			VenueEnter venueEnter = list.get(i);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("id", venueEnter.getId());// ID
+			map.put("createTime", DateUtil.getFormat(venueEnter.getCreateTime()));// 申请时间
+			map.put("appnickname", venueEnter.getMember().getAppnickname());// 申请人
+			map.put("phone", venueEnter.getMember().getPhone());// 绑定
+			map.put("title", venueEnter.getTitle());// 机构名
+			map.put("address", venueEnter.getCityName());// 城市
+			map.put("mainName", venueEnter.getMainName());// 负责人
+			map.put("mainPhone", venueEnter.getMainPhone());// 负责人电话
+			map.put("ballType", venueEnter.getBallType() == 1 ? "网球场" : venueEnter.getBallType() == 1 ? "足球场" : venueEnter.getBallType() == 1 ? "羽毛球场" : "篮球场");// 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场)
+			map.put("checkFlag", venueEnter.getCheckFlag() == 0 ? "待核" : venueEnter.getCheckFlag() == 1 ? "通过" : "无效");// 审核状态0=待审核1=审核通过2=审核拒绝
+			map.put("rname", venueEnter.getStaff().getName());// 审核人 
+			map.put("content", venueEnter.getContent());// 意见
+			map.put("checkTime", DateUtil.getFormat(venueEnter.getCheckTime()));// 审核时间
+			listMap.add(map);
+		}
+		return new AdminMessage(0, listMap);
+	}
+	
+	/**  
+	 * @Description: 审核机构入驻
+	 * @author 宋高俊  
+	 * @param request
+	 * @param check
+	 * @param content
+	 * @param id
+	 * @return 
+	 * @date 2018年10月17日 下午8:44:16 
+	 */ 
+	@RequestMapping(value = "/venueEnter/check")
+	@ResponseBody
+	public ApiMessage venueEnterCheck(HttpServletRequest request,Integer check, String content, String id) {
+		
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		
+		VenueEnter venueEnter = venueEnterService.selectByPrimaryKey(id);
+		venueEnter.setContent(content);
+		venueEnter.setCheckFlag(check);
+		venueEnter.setCheckStaff(staff.getId());
+		venueEnter.setCheckTime(new Date());
+		int flag = venueEnterService.updateByPrimaryKeySelective(venueEnter);
+		if (flag > 0) {
+			if (check == 1) {
+
+				// 生成场馆数据
+				Venue venue = new Venue();
+				venue.setId(Utils.getUUID());
+				venue.setCreatetime(new Date());
+				venue.setModifytime(new Date());
+				venue.setName(venueEnter.getTitle());
+				venue.setType(venueEnter.getBallType());
+				venue.setTel(venueEnter.getMainPhone());
+				venue.setImage(venueEnter.getHeadImage());
+				venue.setLongitude(venueEnter.getLongitude());
+				venue.setLatitude(venueEnter.getLatitude());
+				venue.setAddress(venueEnter.getAddress());
+				venueService.insertSelective(venue);
+				
+				TrainCoach lodTrainCoach = trainCoachService.selectByMemberId(venueEnter.getMemberId());
+				TrainTeam trainTeam = new TrainTeam();
+				if (lodTrainCoach == null) {
+					// 通过审核即创建培训机构
+					trainTeam.setId(Utils.getUUID());
+					trainTeam.setCreateTime(new Date());
+					trainTeam.setModifyTime(new Date());
+					trainTeam.setTitle(venueEnter.getTitle());
+					trainTeam.setLongitude(venueEnter.getLongitude());
+					trainTeam.setLatitude(venueEnter.getLatitude());
+					trainTeam.setTeachClass(venueEnter.getBallType() == 1 ? "网球场" : venueEnter.getBallType() == 1 ? "足球场" : venueEnter.getBallType() == 1 ? "羽毛球场" : "篮球场");
+					trainTeam.setPhone(venueEnter.getMainPhone());
+					// 获取城市数据
+					City city = cityService.selectByName(venueEnter.getCityName());
+					trainTeam.setCityId(city.getId());
+					trainTeam.setAddress(venueEnter.getAddress());
+					trainTeam.setLevel(12);
+					trainTeam.setLevelTime(new Date());
+					trainTeamService.insertSelective(trainTeam);
+					// 生成教练数据
+					TrainCoach trainCoach = new TrainCoach();
+					trainCoach.setId(Utils.getUUID());
+					trainCoach.setCreateTime(new Date());
+					trainCoach.setModifyTime(new Date());
+					trainCoach.setManager(1);
+					trainCoach.setMemberId(venueEnter.getMemberId());
+					trainCoach.setName(venueEnter.getMainName());
+					trainCoach.setType(1);
+					trainCoach.setPhone(venueEnter.getMainPhone());
+					trainCoach.setTrainTeamId(trainTeam.getId());
+					trainCoachService.insertSelective(trainCoach);
+				} else {
+					trainTeam = trainTeamService.selectByPrimaryKey(lodTrainCoach.getTrainTeamId());
+				}
+				
+				// 生成培训机构管理的场馆数据
+				TrainTeamVenue trainTeamVenue = new TrainTeamVenue();
+				trainTeamVenue.setId(Utils.getUUID());
+				trainTeamVenue.setTrainVenueId(venue.getId());
+				trainTeamVenue.setTrainTeamId(trainTeam.getId());
+				trainTeamService.saveTrainTeamVenue(trainTeamVenue);
+				
+			}
+			return new ApiMessage(200, "审核成功");
+		}
+		return new ApiMessage(400, "审核失败");
+	}
+	
+	
 	/**
-	 * @Description: 楼讯导入表格
-	 * @author 宋高俊
-	 * @date 2018年7月25日 下午10:29:51
-	 */
+	 * @Description: 场馆导入表格
+	 * @author 宋高俊  
+	 * @param request
+	 * @param file
+	 * @return 
+	 * @date 2018年9月28日 下午8:58:13 
+	 */ 
 	@RequestMapping("/importExcel")
 	@ResponseBody
-	public ApiMessage importExcel(HttpServletRequest request, MultipartFile file, Model model, AdminPage adminPage) {
-		Staff staff = (Staff) request.getSession().getAttribute("adminloginuser");
+	public ApiMessage importExcel(HttpServletRequest request, MultipartFile file) {
+//		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
 		
 		Map<String, Object> redismap = new HashMap<>();
 		int countLine = 0;
@@ -220,7 +500,7 @@ public class VenueController {
 				String result = numberFormat.format((float) row / (float) (countLine + 1) * 100);
 				redismap.put("current", result);
 				redismap.put("page", (row-1)+"/"+countLine);
-				RedisUtil.addRedis(Global.REDIS_SESSION_UPLOAD_MAP, staff.getStaffid() + "venue", redismap);
+				RedisUtil.addRedis(Global.REDIS_SESSION_UPLOAD_MAP, request.getSession().getId() + "venue", redismap);
 
 				String cityName = excelList.get(0).toString();
 				String districtName = excelList.get(1).toString();
@@ -239,6 +519,12 @@ public class VenueController {
 					errorlist.add("第" + row + "行馆名为空");
 					continue;
 				}
+				if ("无".equals(cityName)) {
+					errorlist.add("第" + row + "行城市为空");
+					continue;
+					
+				}
+				
 
 				Venue nowVenue = new Venue();
 				nowVenue.setId(Utils.getUUID());
@@ -258,7 +544,19 @@ public class VenueController {
 				}
 
 				// 第一个条件，场馆名是否存在
-				Venue oldVenue = venueService.selectByVenueName(venueName);
+				City city = cityService.selectByName(cityName);
+				if (city == null) {
+					city = new City();
+					city.setId(Utils.getUUID());
+					city.setCity(cityName);
+					city.setHotflag(0);
+					city.setInitial(ChineseCharacterUtil.getPinYingLetter(cityName));
+					city.setVenuesum(0);
+					cityService.insertSelective(city);
+				}
+				nowVenue.setCityid(city.getId()); // 城市ID
+				
+				Venue oldVenue = venueService.selectByVenueCity(venueName, city.getId());
 
 				if (oldVenue != null) {
 					errorlist.add("第" + row + "行场馆已存在");
@@ -302,34 +600,21 @@ public class VenueController {
 				if (!"".equals(mapGetCity)) {
 					cityName = mapGetCity;
 				}
-				if (!"无".equals(cityName)) {
-					City city = cityService.selectByName(cityName);
-					if (city == null) {
-						city = new City();
-						city.setId(Utils.getUUID());
-						city.setCity(cityName);
-						city.setHotflag(0);
-						city.setInitial(ChineseCharacterUtil.getPinYingLetter(cityName));
-						city.setVenuesum(0);
-						cityService.insertSelective(city);
-					}
-					nowVenue.setCityid(city.getId()); // 城市ID
 
-					// 第四个条件，区县是否存在
-					if (!"".equals(mapGetDistrict)) {
-						districtName = mapGetDistrict;
+				// 第四个条件，区县是否存在
+				if (!"".equals(mapGetDistrict)) {
+					districtName = mapGetDistrict;
+				}
+				if (!"无".equals(districtName)) {
+					District district = districtService.selectByName(districtName);
+					if (district == null) {
+						district = new District();
+						district.setId(Utils.getUUID());
+						district.setDistrict(districtName);
+						district.setCityid(city.getId());
+						districtService.insertSelective(district);
 					}
-					if (!"无".equals(districtName)) {
-						District district = districtService.selectByName(districtName);
-						if (district == null) {
-							district = new District();
-							district.setId(Utils.getUUID());
-							district.setDistrict(districtName);
-							district.setCityid(city.getId());
-							districtService.insertSelective(district);
-						}
-						nowVenue.setDistrictid(district.getId()); // 区县ID
-					}
+					nowVenue.setDistrictid(district.getId()); // 区县ID
 				}
 
 				nowVenue.setTel(phone);
@@ -359,4 +644,5 @@ public class VenueController {
 		map.put("errorlist", errorlist);// 失败条数
 		return new ApiMessage(200, "导入成功", map);
 	}
+	
 }

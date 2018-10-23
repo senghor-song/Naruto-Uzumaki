@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.StaffMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Staff">
+		<id column="StaffID" jdbcType="CHAR" property="staffid" />
+		<result column="StaffNo" jdbcType="INTEGER" property="staffno" />
+		<result column="EName" jdbcType="VARCHAR" property="ename" />
+		<result column="RName" jdbcType="VARCHAR" property="rname" />
+		<result column="DeptID" jdbcType="CHAR" property="deptid" />
+		<result column="Password" jdbcType="CHAR" property="password" />
+		<result column="Tel" jdbcType="CHAR" property="tel" />
+		<result column="Status" jdbcType="CHAR" property="status" />
+		<result column="Position" jdbcType="CHAR" property="position" />
+		<result column="Power" jdbcType="INTEGER" property="power" />
+		<result column="Sex" jdbcType="CHAR" property="sex" />
+		<result column="IDCard" jdbcType="VARCHAR" property="idcard" />
+		<result column="Address" jdbcType="VARCHAR" property="address" />
+		<result column="EMail" jdbcType="VARCHAR" property="email" />
+		<result column="Referee" jdbcType="VARCHAR" property="referee" />
+		<result column="Icon" jdbcType="VARCHAR" property="icon" />
+		<result column="LoginState" jdbcType="TINYINT" property="loginstate" />
+		<result column="LoginChange" jdbcType="TIMESTAMP" property="loginchange" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		StaffID, StaffNo, EName, RName, DeptID, Password, Tel, Status, Position, Power, Sex,
+		IDCard, Address, EMail, Referee,
+		Icon, LoginState, LoginChange,
+		Remark
+	</sql>
+
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Staff" resultMap="BaseResultMap">
+		select * from Staff
+	</select>
+
+	<select id="login" parameterType="com.xiaoyi.ssm.model.Staff" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Staff
+		where EName = #{ename,jdbcType=CHAR} AND Password = #{password,jdbcType=CHAR} limit 1
+	</select>
+
+	<select id="getPhoneRegister" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Staff where Tel = #{phone,jdbcType=CHAR} limit 1
+	</select>
+
+	<select id="selectByEName" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Staff where EName = #{ename} limit 1
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Staff
+		where StaffID = #{staffid,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Staff
+		where StaffID = #{staffid,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Staff">
+		insert into Staff (StaffID, StaffNo, EName,
+		RName, DeptID, Password,
+		Tel, Status,
+		Position, Power,
+		Sex, IDCard, Address,
+		EMail, Referee,
+		Icon, LoginState,
+		LoginChange, Remark)
+		values (#{staffid,jdbcType=CHAR},
+		#{staffno,jdbcType=INTEGER}, #{ename,jdbcType=VARCHAR},
+		#{rname,jdbcType=VARCHAR}, #{deptid,jdbcType=CHAR},
+		#{password,jdbcType=CHAR},
+		#{tel,jdbcType=CHAR}, #{status,jdbcType=CHAR}, #{position,jdbcType=CHAR},
+		#{power,jdbcType=INTEGER},
+		#{sex,jdbcType=CHAR}, #{idcard,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},
+		#{referee,jdbcType=VARCHAR},
+		#{icon,jdbcType=VARCHAR}, #{loginstate,jdbcType=TINYINT},
+		#{loginchange,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Staff">
+		insert into Staff
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="staffid != null">
+				StaffID,
+			</if>
+			<if test="staffno != null">
+				StaffNo,
+			</if>
+			<if test="ename != null">
+				EName,
+			</if>
+			<if test="rname != null">
+				RName,
+			</if>
+			<if test="deptid != null">
+				DeptID,
+			</if>
+			<if test="password != null">
+				Password,
+			</if>
+			<if test="tel != null">
+				Tel,
+			</if>
+			<if test="status != null">
+				Status,
+			</if>
+			<if test="position != null">
+				Position,
+			</if>
+			<if test="power != null">
+				Power,
+			</if>
+			<if test="sex != null">
+				Sex,
+			</if>
+			<if test="idcard != null">
+				IDCard,
+			</if>
+			<if test="address != null">
+				Address,
+			</if>
+			<if test="email != null">
+				EMail,
+			</if>
+			<if test="referee != null">
+				Referee,
+			</if>
+			<if test="icon != null">
+				Icon,
+			</if>
+			<if test="loginstate != null">
+				LoginState,
+			</if>
+			<if test="loginchange != null">
+				LoginChange,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="staffid != null">
+				#{staffid,jdbcType=CHAR},
+			</if>
+			<if test="staffno != null">
+				#{staffno,jdbcType=INTEGER},
+			</if>
+			<if test="ename != null">
+				#{ename,jdbcType=VARCHAR},
+			</if>
+			<if test="rname != null">
+				#{rname,jdbcType=VARCHAR},
+			</if>
+			<if test="deptid != null">
+				#{deptid,jdbcType=CHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=CHAR},
+			</if>
+			<if test="tel != null">
+				#{tel,jdbcType=CHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=CHAR},
+			</if>
+			<if test="position != null">
+				#{position,jdbcType=CHAR},
+			</if>
+			<if test="power != null">
+				#{power,jdbcType=INTEGER},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=CHAR},
+			</if>
+			<if test="idcard != null">
+				#{idcard,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				#{email,jdbcType=VARCHAR},
+			</if>
+			<if test="referee != null">
+				#{referee,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				#{icon,jdbcType=VARCHAR},
+			</if>
+			<if test="loginstate != null">
+				#{loginstate,jdbcType=TINYINT},
+			</if>
+			<if test="loginchange != null">
+				#{loginchange,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Staff">
+		update Staff
+		<set>
+			<if test="staffno != null">
+				StaffNo = #{staffno,jdbcType=INTEGER},
+			</if>
+			<if test="ename != null">
+				EName = #{ename,jdbcType=VARCHAR},
+			</if>
+			<if test="rname != null">
+				RName = #{rname,jdbcType=VARCHAR},
+			</if>
+			<if test="deptid != null">
+				DeptID = #{deptid,jdbcType=CHAR},
+			</if>
+			<if test="password != null">
+				Password = #{password,jdbcType=CHAR},
+			</if>
+			<if test="tel != null">
+				Tel = #{tel,jdbcType=CHAR},
+			</if>
+			<if test="status != null">
+				Status = #{status,jdbcType=CHAR},
+			</if>
+			<if test="position != null">
+				Position = #{position,jdbcType=CHAR},
+			</if>
+			<if test="power != null">
+				Power = #{power,jdbcType=INTEGER},
+			</if>
+			<if test="sex != null">
+				Sex = #{sex,jdbcType=CHAR},
+			</if>
+			<if test="idcard != null">
+				IDCard = #{idcard,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				EMail = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="referee != null">
+				Referee = #{referee,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				Icon = #{icon,jdbcType=VARCHAR},
+			</if>
+			<if test="loginstate != null">
+				LoginState = #{loginstate,jdbcType=TINYINT},
+			</if>
+			<if test="loginchange != null">
+				LoginChange = #{loginchange,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where StaffID = #{staffid,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Staff">
+		update Staff
+		set StaffNo = #{staffno,jdbcType=INTEGER},
+		EName =
+		#{ename,jdbcType=VARCHAR},
+		RName = #{rname,jdbcType=VARCHAR},
+		DeptID = #{deptid,jdbcType=CHAR},
+		Password =
+		#{password,jdbcType=CHAR},
+		Tel = #{tel,jdbcType=CHAR},
+		Status = #{status,jdbcType=CHAR},
+		Position = #{position,jdbcType=CHAR},
+		Power = #{power,jdbcType=INTEGER},
+		Sex = #{sex,jdbcType=CHAR},
+		IDCard = #{idcard,jdbcType=VARCHAR},
+		Address =
+		#{address,jdbcType=VARCHAR},
+		EMail = #{email,jdbcType=VARCHAR},
+		Referee = #{referee,jdbcType=VARCHAR},
+		Icon =
+		#{icon,jdbcType=VARCHAR},
+		LoginState = #{loginstate,jdbcType=TINYINT},
+		LoginChange = #{loginchange,jdbcType=TIMESTAMP},
+		Remark =
+		#{remark,jdbcType=VARCHAR}
+		where StaffID = #{staffid,jdbcType=CHAR}
+	</update>
+</mapper>

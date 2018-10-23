@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.TrainOrderMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.TrainOrder">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+		<result column="Train_order_no" jdbcType="INTEGER" property="trainOrderNo" />
+		<result column="Train_course_id" jdbcType="VARCHAR" property="trainCourseId" />
+		<result column="Phone" jdbcType="VARCHAR" property="phone" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="Member_id" jdbcType="VARCHAR" property="memberId" />
+		<result column="Class_hour_sum" jdbcType="INTEGER" property="classHourSum" />
+		<result column="Class_hour" jdbcType="INTEGER" property="classHour" />
+		<result column="Amount" jdbcType="DECIMAL" property="amount" />
+		<result column="Pay_time" jdbcType="TIMESTAMP" property="payTime" />
+		<result column="Pay_type" jdbcType="INTEGER" property="payType" />
+		<result column="WXBack_content" jdbcType="VARCHAR" property="wxbackContent" />
+		<association property="member" javaType="com.xiaoyi.ssm.model.Member">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="mAppNickName" jdbcType="VARCHAR" property="appnickname" />
+			<result column="mAppAvatarUrl" jdbcType="VARCHAR" property="appavatarurl" />
+		</association>
+		<association property="trainCourse" javaType="com.xiaoyi.ssm.model.TrainCourse">
+			<id column="tceID" jdbcType="VARCHAR" property="id" />
+			<result column="tceTrain_coach_id" jdbcType="VARCHAR" property="trainCoachId" />
+			<result column="tceBall_type" jdbcType="VARCHAR" property="ballType" />
+			<result column="tceTitle" jdbcType="VARCHAR" property="title" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Modify_time, Train_order_no, Train_course_id, Phone, Content, Member_id,
+		Class_hour_sum, Class_hour, Amount, Pay_time, Pay_type, WXBack_content
+	</sql>
+	
+	<select id="selectByTrainCourseID" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT t.*, m.`AppAvatarUrl` mAppAvatarUrl,m.`AppNickName` mAppNickName FROM TrainOrder t 
+		LEFT JOIN Member m ON t.`Member_id` = m.`ID` WHERE Train_course_id = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectByMember" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tor.*,tce.`ID` tceID,tce.`Ball_type` tceBall_type,tce.`Title` tceTitle FROM TrainCourse tce INNER JOIN TrainOrder tor ON 
+		tce.`ID` = tor.`Train_course_id` WHERE tor.`Member_id` = #{id} ORDER BY tor.`Create_time` DESC
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tor.*,tce.`ID` tceID,tce.`Ball_type` tceBall_type,tce.`Title` tceTitle FROM TrainCourse tce INNER JOIN TrainOrder tor ON
+		tce.`ID` = tor.`Train_course_id` WHERE tor.ID = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="countByMyTrainOrder" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(0) from TrainOrder where Member_id = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectAllAdmin" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tor.*,tce.ID tceID, tce.`Train_coach_id` tceTrain_coach_id,tce.`Ball_type` tceBall_type,tce.`Title` tceTitle, m.`AppNickName` mAppNickName
+ 		FROM TrainOrder tor INNER JOIN TrainCourse tce ON tor.`Train_course_id` = tce.`ID` LEFT JOIN Member m ON tor.`Member_id` = m.`ID`
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from TrainOrder
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.TrainOrder">
+		insert into TrainOrder (ID, Create_time, Modify_time,
+		Train_order_no, Train_course_id, Phone,
+		Content, Member_id, Class_hour_sum,
+		Class_hour, Amount, Pay_time,
+		Pay_type, WXBack_content)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
+		#{trainOrderNo,jdbcType=INTEGER}, #{trainCourseId,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+		#{content,jdbcType=VARCHAR}, #{memberId,jdbcType=VARCHAR}, #{classHourSum,jdbcType=INTEGER},
+		#{classHour,jdbcType=INTEGER}, #{amount,jdbcType=DECIMAL}, #{payTime,jdbcType=TIMESTAMP},
+		#{payType,jdbcType=INTEGER}, #{wxbackContent,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.TrainOrder">
+		insert into TrainOrder
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="modifyTime != null">
+				Modify_time,
+			</if>
+			<if test="trainOrderNo != null">
+				Train_order_no,
+			</if>
+			<if test="trainCourseId != null">
+				Train_course_id,
+			</if>
+			<if test="phone != null">
+				Phone,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+			<if test="memberId != null">
+				Member_id,
+			</if>
+			<if test="classHourSum != null">
+				Class_hour_sum,
+			</if>
+			<if test="classHour != null">
+				Class_hour,
+			</if>
+			<if test="amount != null">
+				Amount,
+			</if>
+			<if test="payTime != null">
+				Pay_time,
+			</if>
+			<if test="payType != null">
+				Pay_type,
+			</if>
+			<if test="wxbackContent != null">
+				WXBack_content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				#{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="trainOrderNo != null">
+				#{trainOrderNo,jdbcType=INTEGER},
+			</if>
+			<if test="trainCourseId != null">
+				#{trainCourseId,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				#{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="memberId != null">
+				#{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="classHourSum != null">
+				#{classHourSum,jdbcType=INTEGER},
+			</if>
+			<if test="classHour != null">
+				#{classHour,jdbcType=INTEGER},
+			</if>
+			<if test="amount != null">
+				#{amount,jdbcType=DECIMAL},
+			</if>
+			<if test="payTime != null">
+				#{payTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="payType != null">
+				#{payType,jdbcType=INTEGER},
+			</if>
+			<if test="wxbackContent != null">
+				#{wxbackContent,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.TrainOrder">
+		update TrainOrder
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="trainOrderNo != null">
+				Train_order_no = #{trainOrderNo,jdbcType=INTEGER},
+			</if>
+			<if test="trainCourseId != null">
+				Train_course_id = #{trainCourseId,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				Phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="memberId != null">
+				Member_id = #{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="classHourSum != null">
+				Class_hour_sum = #{classHourSum,jdbcType=INTEGER},
+			</if>
+			<if test="classHour != null">
+				Class_hour = #{classHour,jdbcType=INTEGER},
+			</if>
+			<if test="amount != null">
+				Amount = #{amount,jdbcType=DECIMAL},
+			</if>
+			<if test="payTime != null">
+				Pay_time = #{payTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="payType != null">
+				Pay_type = #{payType,jdbcType=INTEGER},
+			</if>
+			<if test="wxbackContent != null">
+				WXBack_content = #{wxbackContent,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.TrainOrder">
+		update TrainOrder
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+		Train_order_no = #{trainOrderNo,jdbcType=INTEGER},
+		Train_course_id = #{trainCourseId,jdbcType=VARCHAR},
+		Phone = #{phone,jdbcType=VARCHAR},
+		Content = #{content,jdbcType=VARCHAR},
+		Member_id = #{memberId,jdbcType=VARCHAR},
+		Class_hour_sum = #{classHourSum,jdbcType=INTEGER},
+		Class_hour = #{classHour,jdbcType=INTEGER},
+		Amount = #{amount,jdbcType=DECIMAL},
+		Pay_time = #{payTime,jdbcType=TIMESTAMP},
+		Pay_type = #{payType,jdbcType=INTEGER},
+		WXBack_content = #{wxbackContent,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

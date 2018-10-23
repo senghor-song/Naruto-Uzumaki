@@ -6,7 +6,30 @@ var dataList = null;
 var dataList2 = null;
 var dataList3 = null;
 
+function redisRefresh(){
+	$.ajax({  
+        type : "POST",  //提交方式  
+        url : "/WebBackAPI/admin/common/countTop",//路径  
+        data : {},//数据，这里使用的是Json格式进行传输  
+        dataType:"json",
+        success : function(result) {//返回数据根据结果进行相应的处理  
+            if ( result.code == 200 ) {  
+            	$('#venueCheckSum').html(result.data.venueCheck);
+            	$('#venueEnterSum').html(result.data.venueEnter);
+            	$('#trainEnterSum').html(result.data.trainEnter);
+            } else {  
+            	$('#venueCheckSum').html("0");
+            	$('#venueEnterSum').html("0");
+            	$('#trainEnterSum').html("0");
+            }  
+        }  
+    }); 
+}
+
 $(function () {
+
+	redisRefresh();
+	window.setInterval(redisRefresh,60000); 
 	
     $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
 
@@ -18,7 +41,16 @@ $(function () {
     });
 
     $("#logout").on("click", function () {
-        var url = $(this).data("href");
+    	$.ajax({  
+            type : "POST",  //提交方式  
+            url : "/WebBackAPI/admin/staff/loginout",//路径  
+            data : {},//数据，这里使用的是Json格式进行传输  
+            dataType:"json",
+            success : function(result) {//返回数据根据结果进行相应的处理  
+            	window.location.href="/WebBackAPI/admin/common/login";
+            }  
+        }); 
+        /*var url = $(this).data("href");
         layer.open({
             title: '确认对话框',
             content: '确定退出系统登录吗？',
@@ -35,7 +67,7 @@ $(function () {
                 }); 
             }
         });
-
+*/
     });
 
     var removeBgRow = function (tableClass) {
@@ -140,7 +172,7 @@ $(function () {
                 cancel: function (index, layero) {
                     hideDiaolog();
                 },
-                end: function (index, layero) {
+                end: function () {
                     hideDiaolog();
                 }
             });
@@ -167,6 +199,39 @@ $(function () {
                         shadeClose: true,
                         cancel: function (index, layero) {
                             hideDiaolog();
+                        },
+                        end: function () {
+                            hideDiaolog();
+                        }
+                    });
+                }  
+            });
+        },
+        showAjaxContent: function (name, height, url, id) {
+            $.ajax({  
+                type : "POST",  //提交方式  
+                url : url,//路径  
+                data : {  
+                    "id" : id,
+                },//数据这里使用的是Json格式进行传输  
+                dataType:"html",
+                success : function(result) {//返回数据根据结果进行相应的处理  
+               		layer.open({
+                        type: 1,
+                        area: [$(document).width() + 'px', height],
+                        offset: 'b',
+                        title: name,
+                        resize: true,
+                        anim: 1,
+      				  	shade: 0,
+                        content: result,
+                        maxmin: false,
+                        shadeClose: true,
+                        cancel: function (index, layero) {
+                            hideDiaolog();
+                        },
+                        end: function () {
+                            hideDiaolog();
                         }
                     });
                 }  
@@ -186,6 +251,9 @@ $(function () {
                 shadeClose: true,
                 cancel: function (index, layero) {
                     hideDiaolog();
+                },
+                end: function () {
+                    hideDiaolog();
                 }
             });
         },
@@ -204,6 +272,9 @@ $(function () {
                 maxmin: false,
                 shadeClose: true,
                 cancel: function (index, layero) {
+                    hideDiaolog();
+                },
+                end: function () {
                     hideDiaolog();
                 }
             });

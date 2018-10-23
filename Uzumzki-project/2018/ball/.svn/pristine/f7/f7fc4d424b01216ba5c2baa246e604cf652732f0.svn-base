@@ -1,0 +1,280 @@
+package com.xiaoyi.ssm.controller;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.xiaoyi.ssm.dto.AdminMessage;
+import com.xiaoyi.ssm.dto.AdminPage;
+import com.xiaoyi.ssm.dto.ApiMessage;
+import com.xiaoyi.ssm.model.City;
+import com.xiaoyi.ssm.model.Staff;
+import com.xiaoyi.ssm.model.TrainCoach;
+import com.xiaoyi.ssm.model.TrainEnter;
+import com.xiaoyi.ssm.model.TrainTeam;
+import com.xiaoyi.ssm.model.TrainTeamFeedback;
+import com.xiaoyi.ssm.model.TrainTeamLog;
+import com.xiaoyi.ssm.service.CityService;
+import com.xiaoyi.ssm.service.TrainCoachService;
+import com.xiaoyi.ssm.service.TrainCourseService;
+import com.xiaoyi.ssm.service.TrainEnterService;
+import com.xiaoyi.ssm.service.TrainOrderCommentService;
+import com.xiaoyi.ssm.service.TrainTeamFeedbackService;
+import com.xiaoyi.ssm.service.TrainTeamLogService;
+import com.xiaoyi.ssm.service.TrainTeamPhoneService;
+import com.xiaoyi.ssm.service.TrainTeamService;
+import com.xiaoyi.ssm.service.VenueService;
+import com.xiaoyi.ssm.util.Arith;
+import com.xiaoyi.ssm.util.DateUtil;
+import com.xiaoyi.ssm.util.Utils;
+
+/**
+ * @Description: 培训机构控制器
+ * @author 宋高俊
+ * @date 2018年10月11日 下午8:10:17
+ */
+@Controller(value = "adminTrainTeamController")
+@RequestMapping(value = "/admin/trainTeam")
+public class TrainTeamController {
+
+	@Autowired
+	private TrainTeamService trainTeamService;
+	@Autowired
+	private TrainCoachService trainCoachService;
+	@Autowired
+	private TrainCourseService trainCourseService;
+	@Autowired
+	private TrainTeamLogService trainTeamLogService;
+	@Autowired
+	private VenueService venueService;
+	@Autowired
+	private CityService cityService;
+	@Autowired
+	private TrainTeamFeedbackService trainTeamFeedbackService;
+	@Autowired
+	private TrainTeamPhoneService trainTeamPhoneService;
+	@Autowired
+	private TrainOrderCommentService trainOrderCommentService;
+	@Autowired
+	private TrainEnterService trainEnterService;
+
+	/**
+	 * @Description: 培训机构页面
+	 * @author 宋高俊
+	 * @return
+	 * @date 2018年10月11日 下午8:16:51
+	 */
+	@RequestMapping(value = "/listview")
+	public String listview() {
+		return "admin/trainTeam/list";
+	}
+
+	/**
+	 * @Description: 培训机构数据
+	 * @author 宋高俊
+	 * @param adminPage
+	 * @return
+	 * @date 2018年10月11日 下午8:17:04
+	 */
+	@RequestMapping(value = "/list")
+	@ResponseBody
+	public AdminMessage list(AdminPage adminPage) {
+		PageHelper.startPage(adminPage.getPage(), adminPage.getLimit());
+		List<TrainTeam> list = trainTeamService.selectAllAdmin();
+		PageInfo<TrainTeam> pageInfo = new PageInfo<>(list);
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			TrainTeam trainTeam = list.get(i);
+
+			City city = cityService.selectByPrimaryKey(trainTeam.getCityId());
+
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("id", trainTeam.getId());// ID
+			map.put("city", city.getCity());// 城市
+			map.put("title", trainTeam.getTitle());// 机构
+			map.put("level", trainTeam.getLevel());// 评级
+			map.put("levelTime", DateUtil.getFormat(trainTeam.getLevelTime()));// 当前评级
+			map.put("teachClass", trainTeam.getTeachClass());// 类型
+			map.put("trainCoachSum", trainCoachService.countByTeam(trainTeam.getId()));// 教练数量
+			map.put("trainCourseSum", trainCourseService.countByTeam(trainTeam.getId()));// 课程数量
+			
+			// 获取两个月前的时间
+			Date date = DateUtil.getPreTime(new Date(), 4, -2);
+			int dayPhoneSum = trainTeamPhoneService.countByTeamId(trainTeam.getId(), date);
+			int dayCommentSum = trainOrderCommentService.countByTeamId(trainTeam.getId(), date);
+			map.put("dayPhoneSum", dayPhoneSum);// 电话接入数量(60天内总数)
+			map.put("trainTeamFeedbackSum", trainTeamFeedbackService.countByTeam(trainTeam.getId()));// 线下报名反馈数量
+			map.put("dayCommentSum", dayCommentSum);// 学员评价数量(60天内总数)
+			map.put("trainTeamLogSum", trainTeamLogService.countByTeam(trainTeam.getId()));// 日志数量
+			map.put("dayUseSum", Arith.div(dayPhoneSum, dayCommentSum, 2));// 平台依赖指数
+			map.put("trainVenueSum", venueService.countByTeam(trainTeam.getId()));// 编外培训场地数量
+			listMap.add(map);
+		}
+		return new AdminMessage(pageInfo.getTotal(), listMap);
+	}
+
+	/**
+	 * @Description: 培训机构日志数据
+	 * @author 宋高俊
+	 * @param adminPage
+	 * @return
+	 * @date 2018年10月11日 下午8:17:04
+	 */
+	@RequestMapping(value = "/log/list")
+	@ResponseBody
+	public AdminMessage loglist(AdminPage adminPage, String id) {
+		PageHelper.startPage(adminPage.getPage(), adminPage.getLimit());
+		List<TrainTeamLog> list = trainTeamLogService.selectByTeam(id);
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			TrainTeamLog trainTeamLog = list.get(i);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("id", trainTeamLog.getId());// ID
+			map.put("createTime", DateUtil.getFormat(trainTeamLog.getCreateTime()));// 时间
+			map.put("name", trainTeamLog.getTrainCoach().getName());// 操作人
+			map.put("content", trainTeamLog.getContent());// 内容
+			listMap.add(map);
+		}
+		return new AdminMessage(0, listMap);
+	}
+
+	/**
+	 * @Description: 待审核场地数据
+	 * @author 宋高俊
+	 * @param adminPage
+	 * @return
+	 * @date 2018年10月11日 下午8:17:04
+	 */
+	@RequestMapping(value = "/feedback/list")
+	@ResponseBody
+	public AdminMessage feedbacklist(AdminPage adminPage, String id) {
+		PageHelper.startPage(adminPage.getPage(), adminPage.getLimit());
+		List<TrainTeamFeedback> list = trainTeamFeedbackService.selectByTeam(id);
+		PageInfo<TrainTeamFeedback> pageInfo = new PageInfo<>(list);
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			TrainTeamFeedback trainTeamFeedback = list.get(i);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("id", trainTeamFeedback.getId());// ID
+			map.put("createTime", DateUtil.getFormat(trainTeamFeedback.getCreateTime()));// 时间
+			map.put("appnickname", trainTeamFeedback.getMember().getAppnickname());// 操作人
+			map.put("content", trainTeamFeedback.getContent());// 内容
+			listMap.add(map);
+		}
+		return new AdminMessage(pageInfo.getTotal(), listMap);
+	}
+	
+	/**  
+	 * @Description: 机构认领入驻
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年10月17日 下午4:46:55 
+	 */ 
+	@RequestMapping(value = "/trainEnter/list")
+	@ResponseBody
+	public AdminMessage trainEnterList(HttpServletRequest request,AdminPage adminPage, Integer checkFlag) {
+		PageHelper.startPage(adminPage.getPage(), adminPage.getLimit());
+		List<TrainEnter> list = trainEnterService.selectByEnterAll(checkFlag);
+		PageInfo<TrainEnter> pageInfo = new PageInfo<>(list);
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			TrainEnter trainEnter = list.get(i);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("id", trainEnter.getId());// ID
+			map.put("lng", trainEnter.getLongitude());// 经度
+			map.put("lat", trainEnter.getLatitude());// 纬度
+			map.put("createTime", DateUtil.getFormat(trainEnter.getCreateTime()));// 申请时间
+			map.put("appnickname", trainEnter.getMember().getAppnickname());// 申请人
+			map.put("phone", trainEnter.getMember().getPhone());// 绑定
+			map.put("title", trainEnter.getTitle());// 机构名
+			map.put("address", trainEnter.getCityName());// 城市
+			map.put("mainName", trainEnter.getMainName());// 负责人
+			map.put("mainPhone", trainEnter.getMainPhone());// 负责人电话
+			map.put("teachClass", trainEnter.getTeachClass());// 培训科目
+			map.put("checkFlag", trainEnter.getCheckFlag() == 0 ? "待核" : trainEnter.getCheckFlag() == 1 ? "通过" : "无效");// 审核状态0=待审核1=审核通过2=审核拒绝
+			map.put("rname", trainEnter.getStaff().getName());// 审核人 
+			map.put("content", trainEnter.getContent());// 审核人 
+			map.put("checkTime", DateUtil.getFormat(trainEnter.getCheckTime()));// 审核时间
+			listMap.add(map);
+		}
+		return new AdminMessage(pageInfo.getTotal(), listMap);
+	}
+	
+	/**  
+	 * @Description: 审核机构入驻
+	 * @author 宋高俊  
+	 * @param request
+	 * @param check
+	 * @param content
+	 * @param id
+	 * @return 
+	 * @date 2018年10月17日 下午8:44:16 
+	 */ 
+	@RequestMapping(value = "/trainEnter/check")
+	@ResponseBody
+	public ApiMessage trainEnterCheck(HttpServletRequest request,Integer check, String content, String id) {
+		
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		
+		TrainEnter trainEnter = trainEnterService.selectByPrimaryKey(id);
+		trainEnter.setContent(content);
+		trainEnter.setCheckFlag(check);
+		trainEnter.setCheckStaff(staff.getId());
+		trainEnter.setCheckTime(new Date());
+		int flag = trainEnterService.updateByPrimaryKeySelective(trainEnter);
+		if (flag > 0) {
+			if (check == 1) {
+				// 通过审核即创建培训机构
+				TrainTeam trainTeam = new TrainTeam();
+				trainTeam.setId(Utils.getUUID());
+				trainTeam.setCreateTime(new Date());
+				trainTeam.setModifyTime(new Date());
+				trainTeam.setTitle(trainEnter.getTitle());
+				trainTeam.setLongitude(trainEnter.getLongitude());
+				trainTeam.setLatitude(trainEnter.getLatitude());
+				trainTeam.setTeachClass(trainEnter.getTeachClass());
+				trainTeam.setPhone(trainEnter.getMainPhone());
+				City city = cityService.selectByName(trainEnter.getCityName());
+				trainTeam.setCityId(city.getId());
+				trainTeam.setAddress(trainEnter.getAddress());
+				trainTeam.setLevel(12);
+				trainTeam.setLevelTime(new Date());
+				trainTeamService.insertSelective(trainTeam);
+				TrainCoach lodTrainCoach = trainCoachService.selectByMemberId(trainEnter.getMemberId());
+				if (lodTrainCoach == null) {
+					// 新建教练数据
+					TrainCoach trainCoach = new TrainCoach();
+					trainCoach.setId(Utils.getUUID());
+					trainCoach.setCreateTime(new Date());
+					trainCoach.setModifyTime(new Date());
+					trainCoach.setManager(1);
+					trainCoach.setMemberId(trainEnter.getMemberId());
+					trainCoach.setName(trainEnter.getMainName());
+					trainCoach.setType(1);
+					trainCoach.setPhone(trainEnter.getMainPhone());
+					trainCoach.setTrainTeamId(trainTeam.getId());
+					trainCoachService.insertSelective(trainCoach);
+				}else {
+					lodTrainCoach.setTrainTeamId(trainTeam.getId());
+					lodTrainCoach.setModifyTime(new Date());
+					trainCoachService.updateByPrimaryKeySelective(lodTrainCoach);
+				}
+			}
+			return new ApiMessage(200, "审核成功");
+		}
+		return new ApiMessage(400, "审核失败");
+	}
+	
+}

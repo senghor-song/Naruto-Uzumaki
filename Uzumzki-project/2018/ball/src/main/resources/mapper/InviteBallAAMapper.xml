@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.InviteBallAAMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.InviteBallAA">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Invite_ball_id" jdbcType="VARCHAR" property="inviteBallId" />
+		<result column="Amount_sum" jdbcType="DECIMAL" property="amountSum" />
+		<result column="Amount_fee" jdbcType="DECIMAL" property="amountFee" />
+		<result column="Amount_out" jdbcType="DECIMAL" property="amountOut" />
+		<result column="Ought_member_refund" jdbcType="DECIMAL" property="oughtMemberRefund" />
+		<result column="Real_member_refund" jdbcType="DECIMAL" property="realMemberRefund" />
+		<result column="Member_refund" jdbcType="DECIMAL" property="memberRefund" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="Repair_flag" jdbcType="INTEGER" property="repairFlag" />
+		<result column="Repair_amount" jdbcType="DECIMAL" property="repairAmount" />
+		<result column="Deal_time" jdbcType="TIMESTAMP" property="dealTime" />
+		<result column="Deal_flag" jdbcType="INTEGER" property="dealFlag" />
+		<result column="WXContent" jdbcType="VARCHAR" property="wxcontent" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Invite_ball_id, Amount_sum, Amount_fee, Amount_out, Ought_member_refund,
+		Real_member_refund, Member_refund, Content, Repair_flag, Repair_amount, Deal_time,
+		Deal_flag, WXContent
+	</sql>
+
+	<select id="selectByInviteBallId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" />
+		from InviteBallAA where Invite_ball_id = #{id,jdbcType=VARCHAR} limit 1
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from InviteBallAA
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from InviteBallAA
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.InviteBallAA">
+		insert into InviteBallAA (ID, Create_time, Invite_ball_id,
+		Amount_sum, Amount_fee, Amount_out,
+		Ought_member_refund, Real_member_refund, Member_refund,
+		Content, Repair_flag, Repair_amount,
+		Deal_time, Deal_flag, WXContent
+		)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{inviteBallId,jdbcType=VARCHAR},
+		#{amountSum,jdbcType=DECIMAL}, #{amountFee,jdbcType=DECIMAL}, #{amountOut,jdbcType=DECIMAL},
+		#{oughtMemberRefund,jdbcType=DECIMAL}, #{realMemberRefund,jdbcType=DECIMAL},
+		#{memberRefund,jdbcType=DECIMAL},
+		#{content,jdbcType=VARCHAR}, #{repairFlag,jdbcType=INTEGER}, #{repairAmount,jdbcType=DECIMAL},
+		#{dealTime,jdbcType=TIMESTAMP}, #{dealFlag,jdbcType=INTEGER}, #{wxcontent,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.InviteBallAA">
+		insert into InviteBallAA
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="inviteBallId != null">
+				Invite_ball_id,
+			</if>
+			<if test="amountSum != null">
+				Amount_sum,
+			</if>
+			<if test="amountFee != null">
+				Amount_fee,
+			</if>
+			<if test="amountOut != null">
+				Amount_out,
+			</if>
+			<if test="oughtMemberRefund != null">
+				Ought_member_refund,
+			</if>
+			<if test="realMemberRefund != null">
+				Real_member_refund,
+			</if>
+			<if test="memberRefund != null">
+				Member_refund,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+			<if test="repairFlag != null">
+				Repair_flag,
+			</if>
+			<if test="repairAmount != null">
+				Repair_amount,
+			</if>
+			<if test="dealTime != null">
+				Deal_time,
+			</if>
+			<if test="dealFlag != null">
+				Deal_flag,
+			</if>
+			<if test="wxcontent != null">
+				WXContent,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="inviteBallId != null">
+				#{inviteBallId,jdbcType=VARCHAR},
+			</if>
+			<if test="amountSum != null">
+				#{amountSum,jdbcType=DECIMAL},
+			</if>
+			<if test="amountFee != null">
+				#{amountFee,jdbcType=DECIMAL},
+			</if>
+			<if test="amountOut != null">
+				#{amountOut,jdbcType=DECIMAL},
+			</if>
+			<if test="oughtMemberRefund != null">
+				#{oughtMemberRefund,jdbcType=DECIMAL},
+			</if>
+			<if test="realMemberRefund != null">
+				#{realMemberRefund,jdbcType=DECIMAL},
+			</if>
+			<if test="memberRefund != null">
+				#{memberRefund,jdbcType=DECIMAL},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="repairFlag != null">
+				#{repairFlag,jdbcType=INTEGER},
+			</if>
+			<if test="repairAmount != null">
+				#{repairAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="dealTime != null">
+				#{dealTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="dealFlag != null">
+				#{dealFlag,jdbcType=INTEGER},
+			</if>
+			<if test="wxcontent != null">
+				#{wxcontent,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.InviteBallAA">
+		update InviteBallAA
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="inviteBallId != null">
+				Invite_ball_id = #{inviteBallId,jdbcType=VARCHAR},
+			</if>
+			<if test="amountSum != null">
+				Amount_sum = #{amountSum,jdbcType=DECIMAL},
+			</if>
+			<if test="amountFee != null">
+				Amount_fee = #{amountFee,jdbcType=DECIMAL},
+			</if>
+			<if test="amountOut != null">
+				Amount_out = #{amountOut,jdbcType=DECIMAL},
+			</if>
+			<if test="oughtMemberRefund != null">
+				Ought_member_refund = #{oughtMemberRefund,jdbcType=DECIMAL},
+			</if>
+			<if test="realMemberRefund != null">
+				Real_member_refund = #{realMemberRefund,jdbcType=DECIMAL},
+			</if>
+			<if test="memberRefund != null">
+				Member_refund = #{memberRefund,jdbcType=DECIMAL},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="repairFlag != null">
+				Repair_flag = #{repairFlag,jdbcType=INTEGER},
+			</if>
+			<if test="repairAmount != null">
+				Repair_amount = #{repairAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="dealTime != null">
+				Deal_time = #{dealTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="dealFlag != null">
+				Deal_flag = #{dealFlag,jdbcType=INTEGER},
+			</if>
+			<if test="wxcontent != null">
+				WXContent = #{wxcontent,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.InviteBallAA">
+		update InviteBallAA
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Invite_ball_id = #{inviteBallId,jdbcType=VARCHAR},
+		Amount_sum = #{amountSum,jdbcType=DECIMAL},
+		Amount_fee = #{amountFee,jdbcType=DECIMAL},
+		Amount_out = #{amountOut,jdbcType=DECIMAL},
+		Ought_member_refund = #{oughtMemberRefund,jdbcType=DECIMAL},
+		Real_member_refund = #{realMemberRefund,jdbcType=DECIMAL},
+		Member_refund = #{memberRefund,jdbcType=DECIMAL},
+		Content = #{content,jdbcType=VARCHAR},
+		Repair_flag = #{repairFlag,jdbcType=INTEGER},
+		Repair_amount = #{repairAmount,jdbcType=DECIMAL},
+		Deal_time = #{dealTime,jdbcType=TIMESTAMP},
+		Deal_flag = #{dealFlag,jdbcType=INTEGER},
+		WXContent = #{wxcontent,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

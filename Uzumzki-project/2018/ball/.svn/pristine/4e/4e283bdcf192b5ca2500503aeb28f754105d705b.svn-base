@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.TrainVenueMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.TrainVenue">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+		<result column="Title" jdbcType="VARCHAR" property="title" />
+		<result column="Address" jdbcType="VARCHAR" property="address" />
+		<result column="longitude" jdbcType="DOUBLE" property="longitude" />
+		<result column="latitude" jdbcType="DOUBLE" property="latitude" />
+		<result column="System_flag" jdbcType="INTEGER" property="systemFlag" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Modify_time, Title, Address, longitude, latitude, System_flag
+	</sql>
+	
+	<select id="selectByTrainTeamID" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tv.* FROM TrainVenue tv INNER JOIN TrainTeamVenue ttv ON tv.`ID` = ttv.`Train_venue_id` WHERE ttv.`Train_team_id` = #{id} LIMIT 1
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from TrainVenue
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from TrainVenue
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.TrainVenue">
+		insert into TrainVenue (ID, Create_time, Modify_time,
+		Title, Address, longitude,
+		latitude, System_flag)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
+		#{title,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE},
+		#{latitude,jdbcType=DOUBLE}, #{systemFlag,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.TrainVenue">
+		insert into TrainVenue
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="modifyTime != null">
+				Modify_time,
+			</if>
+			<if test="title != null">
+				Title,
+			</if>
+			<if test="address != null">
+				Address,
+			</if>
+			<if test="longitude != null">
+				longitude,
+			</if>
+			<if test="latitude != null">
+				latitude,
+			</if>
+			<if test="systemFlag != null">
+				System_flag,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				#{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="longitude != null">
+				#{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="latitude != null">
+				#{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="systemFlag != null">
+				#{systemFlag,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.TrainVenue">
+		update TrainVenue
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="title != null">
+				Title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="longitude != null">
+				longitude = #{longitude,jdbcType=DOUBLE},
+			</if>
+			<if test="latitude != null">
+				latitude = #{latitude,jdbcType=DOUBLE},
+			</if>
+			<if test="systemFlag != null">
+				System_flag = #{systemFlag,jdbcType=INTEGER},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.TrainVenue">
+		update TrainVenue
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+		Title = #{title,jdbcType=VARCHAR},
+		Address = #{address,jdbcType=VARCHAR},
+		longitude = #{longitude,jdbcType=DOUBLE},
+		latitude = #{latitude,jdbcType=DOUBLE},
+		System_flag = #{systemFlag,jdbcType=INTEGER}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>
