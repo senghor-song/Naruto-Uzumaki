@@ -19,4 +19,13 @@ public interface ReserveService extends BaseService<Reserve, String> {
 	 */ 
 	List<Reserve> selectByFieldTemplateDto(FieldTemplateDto fieldTemplateDto);
 
+	/**  
+	 * @Description: 根据订单ID查询预约数据
+	 * @author 宋高俊  
+	 * @param orderid
+	 * @return 
+	 * @date 2018年11月2日 上午11:55:54 
+	 */ 
+	List<Reserve> selectByOrder(String orderid);
+
 }

@@ -43,10 +43,12 @@ public interface TrainTeamService extends BaseService<TrainTeam, String> {
 	/**  
 	 * @Description: 后台查询所有培训机构
 	 * @author 宋高俊  
+	 * @param keyword 
+	 * @param selectType 
 	 * @return 
 	 * @date 2018年10月11日 下午8:24:50 
 	 */ 
-	List<TrainTeam> selectAllAdmin();
+	List<TrainTeam> selectAllAdmin(Integer selectType, String keyword);
 
 	/**  
 	 * @Description: 根据场馆查询驻场的培训机构
@@ -77,4 +79,62 @@ public interface TrainTeamService extends BaseService<TrainTeam, String> {
 	 * @date 2018年10月19日 上午9:38:56 
 	 */ 
 	int saveTrainTeamVenue(TrainTeamVenue trainTeamVenue);
+
+	/**  
+	 * @Description: 查询用户收藏的培训机构
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年10月24日 上午9:10:11 
+	 */ 
+	List<TrainTeam> selectByCollect(String id);
+
+	/**  
+	 * @Description: 查询最低价格
+	 * @author 宋高俊  
+	 * @param trainTeamId
+	 * @return 
+	 * @date 2018年10月26日 上午11:37:54 
+	 */ 
+	Double selectMinAmount(String trainTeamId);
+
+	/**  
+	 * @Description: 查询最低价格
+	 * @author 宋高俊  
+	 * @param trainTeamId
+	 * @return 
+	 * @date 2018年10月26日 上午11:37:54 
+	 */ 
+	Double selectVenueMinAmount(String venueid);
+
+	/**  
+	 * @Description: 根据经纬度筛选机构
+	 * @author 宋高俊  
+	 * @param begLng
+	 * @param endLng
+	 * @param begLat
+	 * @param endLat
+	 * @return 
+	 * @date 2018年10月20日 下午3:25:58 
+	 */ 
+	List<TrainTeam> selectByNearbyMapTrainTeamType(double begLng, double endLng, double begLat, double endLat, Integer ballType);
+
+	/**  
+	 * @Description: 根据用户查询加入的培训机构
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年10月31日 下午4:07:33 
+	 */ 
+	List<TrainTeam> selectByMember(String id);
+
+	/**  
+	 * @Description: 根据用户查询指定身份的培训机构
+	 * @author 宋高俊  
+	 * @param id
+	 * @param i
+	 * @return 
+	 * @date 2018年11月1日 下午8:13:11 
+	 */ 
+	List<TrainTeam> selectByMemberManager(String memberid, int manager);
 }

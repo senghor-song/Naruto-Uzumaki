@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
     <title>Document</title>
 </head>
 <body>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.TrainTeamCoachMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.TrainTeamCoach">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Train_team_id" jdbcType="VARCHAR" property="trainTeamId" />
+		<result column="Train_coach_id" jdbcType="VARCHAR" property="trainCoachId" />
+		<result column="Manager" jdbcType="INTEGER" property="manager" />
+		<result column="Show_flag" jdbcType="INTEGER" property="showFlag" />
+		<result column="Teach_type" jdbcType="INTEGER" property="teachType" />
+		<association property="trainCoach" javaType="com.xiaoyi.ssm.model.TrainCoach">
+			<id column="tcID" jdbcType="CHAR" property="id" />
+			<result column="tcName" jdbcType="VARCHAR" property="name" />
+			<result column="tcHead_image" jdbcType="VARCHAR" property="headImage" />
+		</association>
+		<association property="trainTeam" javaType="com.xiaoyi.ssm.model.TrainTeam">
+			<id column="ttID" jdbcType="CHAR" property="id" />
+			<result column="ttTitle" jdbcType="VARCHAR" property="title" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Train_team_id, Train_coach_id, Manager, Show_flag, Teach_type
+	</sql>
+	
+	<select id="selectByTrainTeamID" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT ttc.*,tc.ID tcID , tc.`Name` tcName FROM TrainTeamCoach ttc LEFT JOIN TrainCoach tc ON ttc.`Train_coach_id` = tc.`ID` 
+		WHERE Train_team_id = #{trainTeamID,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectByCoachTeam" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT ttc.*,tc.ID tcID , tc.`Name` tcName,tc.`Head_image` tcHead_image,tt.`Title` ttTitle,tt.`ID` ttID  FROM TrainTeamCoach ttc 
+		INNER JOIN TrainCoach tc ON ttc.`Train_coach_id` = tc.`ID` INNER JOIN TrainTeam tt ON ttc.`Train_team_id` = tt.`ID`
+		WHERE ttc.Train_team_id = #{trainTeamId,jdbcType=VARCHAR} AND ttc.Train_coach_id = #{trainCoachId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectByMemberTeam" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT ttc.*,tc.ID tcID , tc.`Name` tcName,tc.`Head_image` tcHead_image,tt.`Title` ttTitle,tt.`ID` ttID  FROM TrainTeamCoach ttc 
+		INNER JOIN TrainCoach tc ON ttc.`Train_coach_id` = tc.`ID` INNER JOIN TrainTeam tt ON ttc.`Train_team_id` = tt.`ID`
+		INNER JOIN Member m ON tc.`Member_id` = m.`ID`
+		WHERE ttc.Train_team_id = #{trainTeamId,jdbcType=VARCHAR} AND m.`ID` = #{memberId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from TrainTeamCoach
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from TrainTeamCoach
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.TrainTeamCoach">
+		insert into TrainTeamCoach (ID, Train_team_id, Train_coach_id,
+		Manager, Show_flag, Teach_type
+		)
+		values (#{id,jdbcType=VARCHAR}, #{trainTeamId,jdbcType=VARCHAR}, #{trainCoachId,jdbcType=VARCHAR},
+		#{manager,jdbcType=INTEGER}, #{showFlag,jdbcType=INTEGER}, #{teachType,jdbcType=INTEGER}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.TrainTeamCoach">
+		insert into TrainTeamCoach
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="trainTeamId != null">
+				Train_team_id,
+			</if>
+			<if test="trainCoachId != null">
+				Train_coach_id,
+			</if>
+			<if test="manager != null">
+				Manager,
+			</if>
+			<if test="showFlag != null">
+				Show_flag,
+			</if>
+			<if test="teachType != null">
+				Teach_type,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="trainTeamId != null">
+				#{trainTeamId,jdbcType=VARCHAR},
+			</if>
+			<if test="trainCoachId != null">
+				#{trainCoachId,jdbcType=VARCHAR},
+			</if>
+			<if test="manager != null">
+				#{manager,jdbcType=INTEGER},
+			</if>
+			<if test="showFlag != null">
+				#{showFlag,jdbcType=INTEGER},
+			</if>
+			<if test="teachType != null">
+				#{teachType,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.TrainTeamCoach">
+		update TrainTeamCoach
+		<set>
+			<if test="trainTeamId != null">
+				Train_team_id = #{trainTeamId,jdbcType=VARCHAR},
+			</if>
+			<if test="trainCoachId != null">
+				Train_coach_id = #{trainCoachId,jdbcType=VARCHAR},
+			</if>
+			<if test="manager != null">
+				Manager = #{manager,jdbcType=INTEGER},
+			</if>
+			<if test="showFlag != null">
+				Show_flag = #{showFlag,jdbcType=INTEGER},
+			</if>
+			<if test="teachType != null">
+				Teach_type = #{teachType,jdbcType=INTEGER},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.TrainTeamCoach">
+		update TrainTeamCoach
+		set Train_team_id = #{trainTeamId,jdbcType=VARCHAR},
+		Train_coach_id = #{trainCoachId,jdbcType=VARCHAR},
+		Manager = #{manager,jdbcType=INTEGER},
+		Show_flag = #{showFlag,jdbcType=INTEGER},
+		Teach_type = #{teachType,jdbcType=INTEGER}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

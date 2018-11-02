@@ -7,16 +7,30 @@ import java.util.Date;
  * 培训评价表实体
  */
 public class TrainOrderComment implements Serializable {
-	 private Member member;
-
-    public Member getMember() {
+	private Member member;
+	private TrainCoach trainCoach;
+	private TrainCourse trainCourse;
+   
+	public TrainCourse getTrainCourse() {
+		return trainCourse;
+	}
+	public void setTrainCourse(TrainCourse trainCourse) {
+		this.trainCourse = trainCourse;
+	}
+	public Member getMember() {
         return member;
     }
-
     public void setMember(Member member) {
         this.member = member;
     }
-    /** 培训评价表 */
+    public TrainCoach getTrainCoach() {
+		return trainCoach;
+	}
+	public void setTrainCoach(TrainCoach trainCoach) {
+		this.trainCoach = trainCoach;
+	}
+
+	/** 培训评价表 */
     private String id;
 
     /** 创建时间 */

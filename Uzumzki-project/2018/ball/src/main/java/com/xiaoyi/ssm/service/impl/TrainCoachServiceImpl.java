@@ -36,17 +36,17 @@ public class TrainCoachServiceImpl extends AbstractService<TrainCoach,String> im
 	public List<TrainCoach> selectByTrainTeamID(String id) {
 		return trainCoachMapper.selectByTrainTeamID(id);
 	}
-	
+
 	/**  
-	 * @Description: 根据用户ID查询教练
+	 * @Description: 根据用户查询是否已成为某个培训机构的教练
 	 * @author 宋高俊  
-	 * @param id
+	 * @param memberId
 	 * @return 
-	 * @date 2018年10月8日 下午3:03:31 
-	 */ 
+	 * @date 2018年10月30日 下午7:47:15 
+	 */  
 	@Override
-	public TrainCoach selectByMemberId(String id) {
-		return trainCoachMapper.selectByMemberId(id);
+	public TrainCoach selectByMember(String id) {
+		return trainCoachMapper.selectByMember(id);
 	}
 	
 	/**  

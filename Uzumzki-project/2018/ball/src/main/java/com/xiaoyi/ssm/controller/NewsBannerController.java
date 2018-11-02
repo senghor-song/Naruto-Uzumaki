@@ -14,8 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cn.hutool.http.HttpRequest;
-
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.xiaoyi.ssm.dto.AdminMessage;
@@ -49,7 +47,7 @@ public class NewsBannerController {
 	 * @date 2018年7月25日 下午10:29:51
 	 */
 	@RequestMapping("/listview")
-	public String list() {
+	public String listview() {
 		return "admin/newsBanner/list";
 	}
 

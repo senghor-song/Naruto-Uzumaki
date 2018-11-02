@@ -5,9 +5,10 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>后台管理系统</title>
+    <title>小易运维</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
     <link href="/WebBackAPI/admin/static/css/site.css" rel="stylesheet">
 	<link rel="stylesheet" href="/WebBackAPI/admin/static/plugins/bootstrap-validator/dist/css/bootstrapValidator.css" />
 	<link rel="stylesheet" href="/WebBackAPI/admin/static/plugins/bootstrap-validator/vendor/bootstrap/css/dataValidator.css" />
@@ -161,11 +162,39 @@
                         menuItem: {
                             item1: {
                                 name: "编辑", callback: function (key, opt) {
-                                	$.showContentMenuAjax(key, opt, 500, "/WebBackAPI/admin/newsBanner/edit", $(this).find("td").eq(0).attr('title'), "look");
+                                	 $.ajax({  
+                                         type : "POST",  //提交方式  
+                                         url : "/WebBackAPI/admin/newsBanner/edit",//路径  
+                                         data : {  
+                                             "id" : $(this).find("td").eq(0).attr('title'),
+                                         },//数据这里使用的是Json格式进行传输  
+                                         dataType:"html",
+                                         success : function(result) {//返回数据根据结果进行相应的处理  
+                                        		 layer.open({
+                                                 type: 1,
+                                                 area: [$(document).width() + 'px', '500px'],
+                                                 offset: 'b',
+                                                 title: opt.items[key].name,
+                                                 resize: true,
+                                                 anim: 1,
+                                                 content: result,
+                                                 maxmin: false,
+                                                 shadeClose: true,
+                                                 cancel: function (index, layero) {
+                                                     $(".contextMenuDialog").addClass("hide");
+                                         			 $.reload(tableObj.obj);
+                                                 },
+                                                 end: function () {
+                                                     $(".contextMenuDialog").addClass("hide");
+                                         			 $.reload(tableObj.obj);
+                                                 }
+                                             });
+                                         }  
+                                     });
                                 }
                             },
                             item2: {
-                                name: "修改日志", callback: function (key, opt) {
+                                name: "日志", callback: function (key, opt) {
                                     $.showContentMenu(key, opt)
                                     $.tableObject({
                                         tableId: 'tablelog',

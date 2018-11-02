@@ -1,5 +1,7 @@
 package com.xiaoyi.ssm.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,18 @@ public class VenueErrorServiceImpl extends AbstractService<VenueError,String> im
 	@Override
 	public Integer countByVenue(String id) {
 		return venueErrorMapper.countByVenue(id);
+	}
+
+	/**  
+	 * @Description: 根据场馆查询纠错数据
+	 * @author 宋高俊  
+	 * @param venueid
+	 * @return 
+	 * @date 2018年11月1日 上午10:06:42 
+	 */ 
+	@Override
+	public List<VenueError> selectByVenue(String venueid) {
+		return venueErrorMapper.selectByVenue(venueid);
 	}
 	
 }

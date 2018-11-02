@@ -13,10 +13,10 @@ public interface VenueTemplateMapper extends BaseMapper<VenueTemplate, String>{
 	 * @author 宋高俊  
 	 * @date 2018年8月18日 下午2:03:12 
 	 */ 
-	Integer countByVenue(String id);
+	Integer countByVenue(@Param("id")String id);
 	
 	/**  
-	 * @Description: 根据管理员ID和场馆ID查询
+	 * @Description: 根据场馆ID查询
 	 * @author 宋高俊  
 	 * @date 2018年8月22日 下午7:02:36 
 	 */ 
@@ -29,5 +29,15 @@ public interface VenueTemplateMapper extends BaseMapper<VenueTemplate, String>{
 	 * @return 
 	 * @date 2018年9月15日 下午2:31:32 
 	 */ 
-	Integer updateNoDefaultVenue(String id);
+	Integer updateNoDefaultVenue(@Param("id")String id);
+
+	/**  
+	 * @Description: 根据场馆馆和模板id查询
+	 * @author 宋高俊  
+	 * @param venueid
+	 * @param templateid
+	 * @return 
+	 * @date 2018年11月2日 上午9:17:32 
+	 */ 
+	VenueTemplate selectByVenueTemplate(@Param("venueid")String venueid, @Param("templateid")String templateid);
 }

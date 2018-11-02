@@ -83,6 +83,7 @@
 			<mvc:exclude-mapping path="/pay/aliPayCallBack" />
 			<mvc:exclude-mapping path="/pay/WeiXinPay" />
 			<mvc:exclude-mapping path="/admin/common/login" />
+			<mvc:exclude-mapping path="/admin/common/register" />
 			<mvc:exclude-mapping path="/admin/common/test" />
 			<mvc:exclude-mapping path="/admin/common/authLogin" />
 			<mvc:exclude-mapping path="/admin/common/getSMSCode" />
@@ -108,6 +109,8 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/wxapp/**" />
 			<mvc:exclude-mapping path="/wxapp/common/**" />
+			<mvc:exclude-mapping path="/wxapp/train/course/weixinNotify" />
+			<mvc:exclude-mapping path="/wxapp/news/list" />
 			<mvc:exclude-mapping path="/wxapp/inviteBall/getInviteBall" />
 			<mvc:exclude-mapping path="/wxapp/inviteBall/weixinNotify" />
 			<mvc:exclude-mapping path="/wxapp/inviteBall/weixinAANotify" />

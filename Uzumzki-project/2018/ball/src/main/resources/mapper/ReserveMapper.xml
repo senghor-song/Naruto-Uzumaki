@@ -45,6 +45,13 @@
 		AND o.`OrderDate` = #{date} AND o.`VenueID` = #{venueid} AND r.`FieldID` = #{fieldid}
 	</select>
 
+	<select id="selectByOrder" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Reserve
+		where OrderID = #{id,jdbcType=CHAR}
+	</select>
+	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />

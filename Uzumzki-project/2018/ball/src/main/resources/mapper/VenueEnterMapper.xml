@@ -19,6 +19,10 @@
 		<result column="Content" jdbcType="VARCHAR" property="content" />
 		<result column="Head_image" jdbcType="VARCHAR" property="headImage" />
 		<result column="City_name" jdbcType="VARCHAR" property="cityName" />
+		<result column="Train_team_name" jdbcType="VARCHAR" property="trainTeamName" />
+		<result column="Train_team_id" jdbcType="VARCHAR" property="trainTeamId" />
+		<result column="City_id" jdbcType="VARCHAR" property="cityId" />
+		<result column="District_id" jdbcType="VARCHAR" property="districtId" />
 		<association property="member" javaType="com.xiaoyi.ssm.model.Member">
 			<id column="ID" jdbcType="CHAR" property="id" />
 			<result column="mAppNickName" jdbcType="VARCHAR" property="appnickname" />
@@ -31,13 +35,15 @@
 	</resultMap>
 	<sql id="Base_Column_List">
 		ID, Create_time, Member_id, Title, Longitude, Latitude, Address, Check_flag, Ball_type,
-		Check_time, Check_staff, Main_name, Main_phone, Ball_sum, Content, Head_image, City_name
+		Check_time, Check_staff, Main_name, Main_phone, Ball_sum, Content, Head_image, City_name,
+		Train_team_name, Train_team_id, City_id, District_id
 	</sql>
 
 	<select id="selectByEnterAll" resultMap="BaseResultMap">
 		SELECT ve.*,m.`AppNickName` mAppNickName, m.`Phone`
 		mPhone ,s.`Name` sName FROM VenueEnter ve LEFT JOIN Member m ON
-		ve.`Member_id` = m.`ID` LEFT JOIN Staff s ON ve.`Check_staff` = s.`ID` WHERE Check_flag =
+		ve.`Member_id` = m.`ID` LEFT JOIN
+		Staff s ON ve.`Check_staff` = s.`ID` WHERE Check_flag =
 		#{checkFlag,jdbcType=INTEGER}
 	</select>
 
@@ -62,13 +68,17 @@
 		Address, Check_flag, Ball_type,
 		Check_time, Check_staff, Main_name,
 		Main_phone, Ball_sum, Content,
-		Head_image, City_name)
+		Head_image, City_name, Train_team_name,
+		Train_team_id, City_id, District_id
+		)
 		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{memberId,jdbcType=VARCHAR},
 		#{title,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE},
 		#{address,jdbcType=VARCHAR}, #{checkFlag,jdbcType=INTEGER}, #{ballType,jdbcType=INTEGER},
 		#{checkTime,jdbcType=TIMESTAMP}, #{checkStaff,jdbcType=VARCHAR}, #{mainName,jdbcType=VARCHAR},
 		#{mainPhone,jdbcType=VARCHAR}, #{ballSum,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
-		#{headImage,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR})
+		#{headImage,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR}, #{trainTeamName,jdbcType=VARCHAR},
+		#{trainTeamId,jdbcType=VARCHAR}, #{cityId,jdbcType=VARCHAR}, #{districtId,jdbcType=VARCHAR}
+		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueEnter">
 		insert into VenueEnter
@@ -124,6 +134,18 @@
 			<if test="cityName != null">
 				City_name,
 			</if>
+			<if test="trainTeamName != null">
+				Train_team_name,
+			</if>
+			<if test="trainTeamId != null">
+				Train_team_id,
+			</if>
+			<if test="cityId != null">
+				City_id,
+			</if>
+			<if test="districtId != null">
+				District_id,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -176,6 +198,18 @@
 			</if>
 			<if test="cityName != null">
 				#{cityName,jdbcType=VARCHAR},
+			</if>
+			<if test="trainTeamName != null">
+				#{trainTeamName,jdbcType=VARCHAR},
+			</if>
+			<if test="trainTeamId != null">
+				#{trainTeamId,jdbcType=VARCHAR},
+			</if>
+			<if test="cityId != null">
+				#{cityId,jdbcType=VARCHAR},
+			</if>
+			<if test="districtId != null">
+				#{districtId,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -230,6 +264,18 @@
 			<if test="cityName != null">
 				City_name = #{cityName,jdbcType=VARCHAR},
 			</if>
+			<if test="trainTeamName != null">
+				Train_team_name = #{trainTeamName,jdbcType=VARCHAR},
+			</if>
+			<if test="trainTeamId != null">
+				Train_team_id = #{trainTeamId,jdbcType=VARCHAR},
+			</if>
+			<if test="cityId != null">
+				City_id = #{cityId,jdbcType=VARCHAR},
+			</if>
+			<if test="districtId != null">
+				District_id = #{districtId,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where ID = #{id,jdbcType=VARCHAR}
 	</update>
@@ -250,7 +296,11 @@
 		Ball_sum = #{ballSum,jdbcType=VARCHAR},
 		Content = #{content,jdbcType=VARCHAR},
 		Head_image = #{headImage,jdbcType=VARCHAR},
-		City_name = #{cityName,jdbcType=VARCHAR}
+		City_name = #{cityName,jdbcType=VARCHAR},
+		Train_team_name = #{trainTeamName,jdbcType=VARCHAR},
+		Train_team_id = #{trainTeamId,jdbcType=VARCHAR},
+		City_id = #{cityId,jdbcType=VARCHAR},
+		District_id = #{districtId,jdbcType=VARCHAR}
 		where ID = #{id,jdbcType=VARCHAR}
 	</update>
 </mapper>

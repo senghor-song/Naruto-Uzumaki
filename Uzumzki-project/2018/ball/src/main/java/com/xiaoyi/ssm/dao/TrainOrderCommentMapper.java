@@ -1,11 +1,11 @@
 package com.xiaoyi.ssm.dao;
 
+import java.util.Date;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 import com.xiaoyi.ssm.model.TrainOrderComment;
-
-import java.util.Date;
-import java.util.List;
 
 public interface TrainOrderCommentMapper extends BaseMapper<TrainOrderComment, String>{
 	/**  
@@ -43,4 +43,49 @@ public interface TrainOrderCommentMapper extends BaseMapper<TrainOrderComment, S
 	 * @date 2018年10月15日 上午9:58:33 
 	 */ 
 	Integer countByTeamId(@Param("id")String id, @Param("date")Date date);
+	
+	/**  
+	 * @Description: 根据培训机构ID统计评论总数
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年10月27日 上午9:52:44 
+	 */ 
+	Integer countByTeamAll(@Param("id")String id);
+	
+	/**  
+	 * @Description: 查询培训机构最近10条评价
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年10月27日 上午9:53:23 
+	 */ 
+	List<TrainOrderComment> selectByTeamTen(@Param("id")String id);
+	
+	/**  
+	 * @Description: 查询培训机构评价
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年10月27日 上午9:53:23 
+	 */ 
+	List<TrainOrderComment> selectByTeam(String id);
+
+	/**  
+	 * @Description: 查询课程评价
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年10月27日 上午9:53:23 
+	 */ 
+	List<TrainOrderComment> selectByCourse(String id);
+
+	/**  
+	 * @Description: 查询教练评价
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年10月27日 上午9:53:23 
+	 */ 
+	List<TrainOrderComment> selectByCoach(String id);
 }

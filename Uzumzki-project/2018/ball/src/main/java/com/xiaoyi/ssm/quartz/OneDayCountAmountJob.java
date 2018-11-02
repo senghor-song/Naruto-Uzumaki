@@ -3,7 +3,6 @@ package com.xiaoyi.ssm.quartz;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,7 +20,6 @@ import com.xiaoyi.ssm.util.Arith;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.SpringUtils;
 import com.xiaoyi.ssm.util.Utils;
-import com.xiaoyi.ssm.wxPay.WXPayUtil;
 
 @Service
 public class OneDayCountAmountJob {

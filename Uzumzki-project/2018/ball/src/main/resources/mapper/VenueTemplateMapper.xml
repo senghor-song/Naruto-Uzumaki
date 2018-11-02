@@ -26,6 +26,13 @@
 		where VenueID = #{venueid,jdbcType=CHAR}
 	</select>
 	
+	<select id="selectByVenueTemplate" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueTemplate
+		where VenueID = #{venueid,jdbcType=CHAR} and ID = #{templateid,jdbcType=CHAR}
+	</select>
+	
 	<update id="updateNoDefaultVenue" parameterType="java.lang.String" >
 		update VenueTemplate set DefaultFlag = 0 where VenueID = #{id,jdbcType=CHAR}
 	</update>

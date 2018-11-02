@@ -15,12 +15,11 @@
 	<select id="selectByTrain" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from TrainLog where TrainID = #{id,jdbcType=CHAR}
+		from TrainLog where TrainID = #{id,jdbcType=CHAR} ORDER BY CreateTime DESC
 	</select>
 	
 	<select id="countByTrain" parameterType="java.lang.String" resultType="Integer">
-		select COUNT(0) from TrainLog where TrainID =
-		#{id,jdbcType=CHAR}
+		select COUNT(0) from TrainLog where TrainID = #{id,jdbcType=CHAR}
 	</select>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">

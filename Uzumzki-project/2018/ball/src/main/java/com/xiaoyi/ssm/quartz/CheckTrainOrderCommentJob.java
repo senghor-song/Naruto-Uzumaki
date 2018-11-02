@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.xiaoyi.ssm.model.TrainOrderComment;
-import com.xiaoyi.ssm.model.TrainTeam;
 import com.xiaoyi.ssm.service.TrainOrderCommentService;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.SpringUtils;

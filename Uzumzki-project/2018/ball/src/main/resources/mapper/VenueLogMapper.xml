@@ -26,7 +26,7 @@
 	</select>
 	
 	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT vl.*,m.`AppnickName` mAppnickName FROM VenueLog vl LEFT JOIN Member m ON vl.`ManagerID` = m.`ID` WHERE vl.VenueID = #{venueid}
+		SELECT vl.*,m.`AppnickName` mAppnickName FROM VenueLog vl LEFT JOIN Member m ON vl.`ManagerID` = m.`ID` WHERE vl.VenueID = #{venueid} ORDER BY CreateTime DESC
 	</select>
 	
 	<select id="selectBySearch" resultMap="BaseResultMap">
@@ -44,6 +44,7 @@
 				</if>
 			</if>
 		</where>
+		ORDER BY CreateTime DESC
 	</select>
 	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">

@@ -116,4 +116,14 @@ public interface VenueService extends BaseService<Venue, String> {
 	 * @date 2018年10月20日 下午3:25:58 
 	 */ 
 	List<Venue> selectByNearbyMapVenue(double begLng, double endLng, double begLat, double endLat, Integer ballType);
+
+	/**  
+	 * @Description: 条件查询场馆
+	 * @author 宋高俊  
+	 * @param selectType
+	 * @param keyword
+	 * @return 
+	 * @date 2018年10月30日 上午10:09:42 
+	 */ 
+	List<Venue> selectBySearch(Integer selectType, String keyword);
 }

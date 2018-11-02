@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,16 +29,22 @@ import com.xiaoyi.ssm.dto.AdminPage;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.City;
 import com.xiaoyi.ssm.model.District;
+import com.xiaoyi.ssm.model.Member;
 import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.model.TrainCoach;
 import com.xiaoyi.ssm.model.TrainTeam;
+import com.xiaoyi.ssm.model.TrainTeamCoach;
 import com.xiaoyi.ssm.model.TrainTeamVenue;
 import com.xiaoyi.ssm.model.Venue;
 import com.xiaoyi.ssm.model.VenueCheck;
 import com.xiaoyi.ssm.model.VenueEnter;
+import com.xiaoyi.ssm.model.VenueError;
 import com.xiaoyi.ssm.model.VenueLog;
+import com.xiaoyi.ssm.model.VenueTemplate;
 import com.xiaoyi.ssm.service.CityService;
-import com.xiaoyi.ssm.service.CoachService;
+import com.xiaoyi.ssm.service.MemberService;
+import com.xiaoyi.ssm.service.TrainTeamCoachService;
+import com.xiaoyi.ssm.service.VenueCoachService;
 import com.xiaoyi.ssm.service.DistrictService;
 import com.xiaoyi.ssm.service.FieldService;
 import com.xiaoyi.ssm.service.TrainCoachService;
@@ -73,7 +80,7 @@ public class VenueController {
 	@Autowired
 	private FieldService fieldService;
 	@Autowired
-	private CoachService coachService;
+	private VenueCoachService coachService;
 	@Autowired
 	private VenueTemplateService venueTemplateService;
 	@Autowired
@@ -92,6 +99,10 @@ public class VenueController {
 	private TrainTeamService trainTeamService;
 	@Autowired
 	private TrainCoachService trainCoachService;
+	@Autowired
+	private MemberService memberService;
+	@Autowired
+	private TrainTeamCoachService trainTeamCoachService;
 
 	/**
 	 * @Description: 场馆页面
@@ -102,6 +113,18 @@ public class VenueController {
 	public String listview() {
 		return "admin/venue/list";
 	}
+	
+	/**  
+	 * @Description: 导入场馆页面
+	 * @author 宋高俊  
+	 * @return 
+	 * @date 2018年11月2日 下午2:45:33 
+	 */ 
+	@RequestMapping(value = "/importView")
+	public String importView() {
+		return "admin/venue/importView";
+	}
+
 
 	/**
 	 * @Description: 场馆数据
@@ -110,9 +133,9 @@ public class VenueController {
 	 */
 	@RequestMapping(value = "/list")
 	@ResponseBody
-	public AdminMessage list(AdminPage adminPage) {
+	public AdminMessage list(AdminPage adminPage, Integer selectType, String keyword) {
 		PageHelper.startPage(adminPage.getPage(), adminPage.getLimit());
-		List<Venue> venues = venueService.selectByAll(null);
+		List<Venue> venues = venueService.selectBySearch(selectType, keyword);
 		PageInfo<Venue> pageInfo = new PageInfo<>(venues);
 		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < venues.size(); i++) {
@@ -128,7 +151,6 @@ public class VenueController {
 			} else {
 				map.put("type", "无");
 			}
-			map.put("trainteam", venue.getTrainteam() != null ? "是" : "否"); // 入驻
 			if (venue.getLongitude() != null && venue.getLatitude() != null) {
 				map.put("lnglat", "是"); // 坐标
 			}else {
@@ -138,18 +160,174 @@ public class VenueController {
 			map.put("tel", venue.getTel() != null ? "是" : "否"); // 电话
 			map.put("venueError", venueErrorService.countByVenue(venue.getId())); // 报错
 			
-			map.put("fieldSum", fieldService.countByVenue(venue.getId()));// 场地
-			map.put("coachSum", coachService.countByVenue(venue.getId()));// 教练
-			map.put("venueTemplateSum", venueTemplateService.countByVenue(venue.getId()));// 模板
 			map.put("venuelogSum", venueLogService.countByVenue(venue.getId()));// 日志
 			map.put("showflag", venue.getShowflag() == 1 ? "正常" : "屏蔽"); // 状态(0=审核中1=正常2=屏蔽)
 			map.put("lng", venue.getLongitude());// 经度
 			map.put("lat", venue.getLatitude());// 维度
+			if (StringUtil.isBank(venue.getTrainteam())) {
+				map.put("trainAddFlag", venue.getTrainAddFlag() == 0 ? "空" : "添加" );// 入驻状态0=空1=添加
+			}else {
+				map.put("trainAddFlag", "入驻");// 入驻状态0=空1=添加
+			}
 			listMap.add(map);
 		}
 		return new AdminMessage(pageInfo.getTotal(), listMap);
 	}
+	
+	/**
+	 * @Description: 场馆数据
+	 * @author song
+	 * @date 2018年8月14日 下午7:04:09
+	 */
+	@RequestMapping(value = "/venueList")
+	@ResponseBody
+	public AdminMessage venueList(Integer selectType, String keyword) {
+		List<Venue> venues = venueService.selectBySearch(selectType, keyword);
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < venues.size(); i++) {
+			Venue venue = venues.get(i);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("id", venue.getId());// ID
+			map.put("city", venue.getCityT().getCity());// 城市
+			map.put("name", venue.getName());// 场馆
+			listMap.add(map);
+		}
+		return new AdminMessage(venues.size(), listMap);
+	}
 
+	/**
+	 * @Description: 场馆默认模板页面
+	 * @author song
+	 * @date 2018年8月14日 下午7:02:41
+	 */
+	@RequestMapping(value = "/venueTemplate")
+	public String venueTemplate(Model model, String venueid) {
+		// 由于场馆和模板有主键关联，主键关联的数据即为默认模板
+		VenueTemplate venueTemplate = venueTemplateService.selectByVenueTemplate(venueid, venueid);
+		List<Map<String, Object>> listMaps = new ArrayList<Map<String,Object>>();
+		if (venueTemplate != null) {
+			String[] templates = venueTemplate.getPrice().split(",");
+			for (int i = 0; i < 48; i++) {
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("time", StringUtil.timeToTimestr((i + 1) + ""));
+				if (!"-1".equals(templates[i])) {
+					map.put("price", templates[i]);
+				}
+				listMaps.add(map);
+			}
+		}else {
+			for (int i = 0; i < 48; i++) {
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("time", StringUtil.timeToTimestr((i + 1) + ""));
+				listMaps.add(map);
+			}
+		}
+		model.addAttribute("listMaps", listMaps);// 时间段
+		model.addAttribute("venueid", venueid);// 场馆ID
+		return "admin/venue/template";
+	}
+	
+	/**
+	 * @Description: 场馆默认模板保存设置数据
+	 * @author song
+	 * @date 2018年8月14日 下午7:02:41
+	 */
+	@RequestMapping(value = "/saveVenueTemplate")
+	@ResponseBody
+	public ApiMessage saveVenueTemplate(Model model, String venueid, @RequestParam("priceArr[]") String priceArr[]) {
+		// 由于场馆和模板有主键关联，主键关联的数据即为默认模板
+		VenueTemplate venueTemplate = venueTemplateService.selectByVenueTemplate(venueid, venueid);
+		String template = "";
+		if (priceArr == null) {
+			for (int i = 0; i < 48; i++) {
+				template += "-1,";
+			}
+		}else {
+			for (int i = 0; i < priceArr.length; i++) {
+				if ("".equals(priceArr[i])) {
+					template += "-1,";
+				}else {
+					template += priceArr[i] + ",";
+				}
+			}
+		}
+		venueTemplate.setPrice(template);
+		venueTemplateService.updateByPrimaryKeySelective(venueTemplate);
+		return new ApiMessage(200, "保存成功");
+	}
+	
+	/**  
+	 * @Description: 场馆模板梳理页面
+	 * @author 宋高俊  
+	 * @param model
+	 * @return 
+	 * @date 2018年11月2日 下午2:29:38 
+	 */ 
+	@RequestMapping(value = "/venueTemplateAll")
+	public String venueTemplateAll(Model model) {
+		// 由于场馆和模板有主键关联，主键关联的数据即为默认模板
+		List<Map<String, Object>> listMaps = new ArrayList<Map<String,Object>>();
+		for (int i = 0; i < 48; i++) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("time", StringUtil.timeToTimestr((i + 1) + ""));
+			listMaps.add(map);
+		}
+		model.addAttribute("listMaps", listMaps);// 时间段
+		return "admin/venue/templateAll";
+	}
+	
+	/**
+	 * @Description: 场馆默认模板保存设置数据
+	 * @author song
+	 * @date 2018年8月14日 下午7:02:41
+	 */
+	@RequestMapping(value = "/saveVenueTemplateAll")
+	@ResponseBody
+	public ApiMessage saveVenueTemplateAll(Model model, Integer venueAll, @RequestParam("venues[]") String venues[], @RequestParam("priceArr[]") String priceArr[]
+			, Integer selectType, String keyword) {
+		String returnMsg = "";
+		// 保存系统模板设置
+		String template = "";
+		for (int j = 0; j < priceArr.length; j++) {
+			if ("".equals(priceArr[j])) {
+				template += "-1,";
+			}else {
+				template += priceArr[j] + ",";
+			}
+		}
+		// 是否是全选
+		if (venueAll == 1) {
+			List<Venue> venuelist = venueService.selectBySearch(selectType, keyword);
+			for (int i = 0; i < venuelist.size(); i++) {
+				// 由于场馆和模板有主键关联，主键关联的数据即为默认模板
+				VenueTemplate venueTemplate = venueTemplateService.selectByVenueTemplate(venuelist.get(i).getId(), venuelist.get(i).getId());
+				if (venueTemplate != null) {
+					venueTemplate.setPrice(template);
+					venueTemplateService.updateByPrimaryKeySelective(venueTemplate);
+					returnMsg += venuelist.get(i).getName() + "修改成功";
+				}else {
+					returnMsg += venuelist.get(i).getName() + "修改失败";
+				}
+				returnMsg += "</br>";
+			}
+		}else {
+			for (int i = 0; i < venues.length; i++) {
+				// 由于场馆和模板有主键关联，主键关联的数据即为默认模板
+				VenueTemplate venueTemplate = venueTemplateService.selectByVenueTemplate(venues[i], venues[i]);
+				Venue venue = venueService.selectByPrimaryKey(venues[i]);
+				if (venueTemplate != null) {
+					venueTemplate.setPrice(template);
+					venueTemplateService.updateByPrimaryKeySelective(venueTemplate);
+					returnMsg += venue.getName() + "修改成功";
+				}else {
+					returnMsg += venue.getName() + "修改失败";
+				}
+				returnMsg += "</br>";
+			}
+		}
+		return new ApiMessage(200, "保存成功", returnMsg);
+	}
+	
 	/**  
 	 * @Description: 场馆修改页面
 	 * @author 宋高俊  
@@ -169,6 +347,12 @@ public class VenueController {
 		model.addAttribute("name", venue.getName());
 		model.addAttribute("tel", venue.getTel());
 		model.addAttribute("image", venue.getImage());
+		model.addAttribute("owner", venue.getOwner());
+		if (StringUtil.isBank(venue.getTrainteam())) {
+			model.addAttribute("trainAddFlag", venue.getTrainAddFlag());// 入驻状态0=空1=添加
+		}else {
+			model.addAttribute("trainAddFlag", 2);// 入驻状态2入驻
+		}
 
 		List<City> list = cityService.selectByAll(null);
 		model.addAttribute("citys", list);
@@ -190,7 +374,11 @@ public class VenueController {
 	 */ 
 	@RequestMapping(value = "/update/venue")
 	@ResponseBody
-	public ApiMessage updateVenue(String id, String cityid, String districtid, Integer showflag, String venueName, String tel, String image) {
+	public ApiMessage updateVenue(HttpServletRequest request, String id, String cityid, String districtid, 
+			Integer showflag, String venueName, String tel, String image, String owner) {
+		
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		
 		Venue venue = venueService.selectByPrimaryKey(id);
 		venue.setCityid(cityid);
 		venue.setDistrictid(districtid);
@@ -198,7 +386,16 @@ public class VenueController {
 		venue.setName(venueName);
 		venue.setTel(tel);
 		venue.setImage(image);
+		venue.setOwner(owner);
 		venueService.updateByPrimaryKeySelective(venue);
+		
+		VenueLog venueLog = new VenueLog();
+		venueLog.setId(Utils.getUUID());
+		venueLog.setCreatetime(new Date());
+		venueLog.setVenueid(id);
+		venueLog.setContent(staff.getName()+"在后台修改场馆数据");
+		venueLogService.insertSelective(venueLog);
+		
 		return new ApiMessage(200, "修改成功");
 	}
 
@@ -217,7 +414,7 @@ public class VenueController {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("id", venueLog.getId());// ID
 			map.put("createtime", DateUtil.getFormat(venueLog.getCreatetime()));// 时间
-			map.put("manager", venueLog.getMember().getAppnickname());//操作人
+//			map.put("manager", venueLog.getMember().getAppnickname());//操作人
 			map.put("content", venueLog.getContent());// 内容
 			listMap.add(map);
 		}
@@ -246,10 +443,37 @@ public class VenueController {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("id", venueLog.getId());// ID
 			map.put("createtime", DateUtil.getFormat(venueLog.getCreatetime()));// 时间
-			map.put("manager", venueLog.getMember().getAppnickname());// 操作人
+//			map.put("manager", venueLog.getMember().getAppnickname());// 操作人
 			map.put("name", venueLog.getVenue().getName());// 场馆
 			map.put("venueno", venueLog.getVenue().getVenueno());// 场馆编号
 			map.put("content", venueLog.getContent());// 内容
+			listMap.add(map);
+		}
+		return new AdminMessage(100, pageInfo.getTotal(), listMap);
+	}
+	
+	/**  
+	 * @Description: 场馆纠错数据
+	 * @author 宋高俊  
+	 * @param adminPage
+	 * @return 
+	 * @date 2018年11月1日 上午10:03:27 
+	 */ 
+	@RequestMapping(value = "/venueErrorList")
+	@ResponseBody
+	public AdminMessage venueErrorList(AdminPage adminPage, String venueid) {
+		PageHelper.startPage(adminPage.getPage(), adminPage.getLimit());
+		
+		List<VenueError> list = venueErrorService.selectByVenue(venueid);
+		PageInfo<VenueError> pageInfo = new PageInfo<>(list);
+		
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			VenueError venueError = list.get(i);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("createtime", DateUtil.getFormat(venueError.getCreateTime()));// 时间
+			map.put("member", venueError.getMember().getAppnickname());// 操作人
+			map.put("content", venueError.getContent());// 内容
 			listMap.add(map);
 		}
 		return new AdminMessage(100, pageInfo.getTotal(), listMap);
@@ -325,6 +549,13 @@ public class VenueController {
 		trainTeamVenue.setTrainVenueId(venue.getId());
 		trainTeamVenue.setTrainTeamId(venueCheck.getTrainTeamId());
 		trainTeamService.saveTrainTeamVenue(trainTeamVenue);
+		
+		VenueLog venueLog = new VenueLog();
+		venueLog.setId(Utils.getUUID());
+		venueLog.setCreatetime(new Date());
+		venueLog.setVenueid(venue.getId());
+		venueLog.setContent(staff.getName()+"在后台审核场馆数据");
+		venueLogService.insertSelective(venueLog);
 		return new ApiMessage(200, "审核成功");
 	}
 
@@ -365,7 +596,7 @@ public class VenueController {
 	}
 	
 	/**  
-	 * @Description: 审核机构入驻
+	 * @Description: 审核场馆入驻
 	 * @author 宋高俊  
 	 * @param request
 	 * @param check
@@ -376,7 +607,7 @@ public class VenueController {
 	 */ 
 	@RequestMapping(value = "/venueEnter/check")
 	@ResponseBody
-	public ApiMessage venueEnterCheck(HttpServletRequest request,Integer check, String content, String id) {
+	public ApiMessage venueEnterCheck(HttpServletRequest request,Integer check, String content, String id, String trainTeamId) {
 		
 		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
 		
@@ -386,9 +617,13 @@ public class VenueController {
 		venueEnter.setCheckStaff(staff.getId());
 		venueEnter.setCheckTime(new Date());
 		int flag = venueEnterService.updateByPrimaryKeySelective(venueEnter);
+		// 场馆申请入驻是否修改成功
 		if (flag > 0) {
 			if (check == 1) {
-
+				
+				
+				
+				Member member = memberService.selectByPrimaryKey(venueEnter.getMemberId());
 				// 生成场馆数据
 				Venue venue = new Venue();
 				venue.setId(Utils.getUUID());
@@ -402,15 +637,22 @@ public class VenueController {
 				venue.setLatitude(venueEnter.getLatitude());
 				venue.setAddress(venueEnter.getAddress());
 				venueService.insertSelective(venue);
+
+				VenueLog venueLog = new VenueLog();
+				venueLog.setId(Utils.getUUID());
+				venueLog.setCreatetime(new Date());
+				venueLog.setVenueid(venue.getId());
+				venueLog.setContent(staff.getName()+"在后台审核场馆入驻数据");
+				venueLogService.insertSelective(venueLog);
 				
-				TrainCoach lodTrainCoach = trainCoachService.selectByMemberId(venueEnter.getMemberId());
+				TrainCoach lodTrainCoach = trainCoachService.selectByMember(venueEnter.getMemberId());
 				TrainTeam trainTeam = new TrainTeam();
 				if (lodTrainCoach == null) {
 					// 通过审核即创建培训机构
 					trainTeam.setId(Utils.getUUID());
 					trainTeam.setCreateTime(new Date());
 					trainTeam.setModifyTime(new Date());
-					trainTeam.setTitle(venueEnter.getTitle());
+					trainTeam.setTitle(venueEnter.getTrainTeamName());
 					trainTeam.setLongitude(venueEnter.getLongitude());
 					trainTeam.setLatitude(venueEnter.getLatitude());
 					trainTeam.setTeachClass(venueEnter.getBallType() == 1 ? "网球场" : venueEnter.getBallType() == 1 ? "足球场" : venueEnter.getBallType() == 1 ? "羽毛球场" : "篮球场");
@@ -422,27 +664,35 @@ public class VenueController {
 					trainTeam.setLevel(12);
 					trainTeam.setLevelTime(new Date());
 					trainTeamService.insertSelective(trainTeam);
+					
 					// 生成教练数据
 					TrainCoach trainCoach = new TrainCoach();
 					trainCoach.setId(Utils.getUUID());
 					trainCoach.setCreateTime(new Date());
 					trainCoach.setModifyTime(new Date());
-					trainCoach.setManager(1);
 					trainCoach.setMemberId(venueEnter.getMemberId());
-					trainCoach.setName(venueEnter.getMainName());
-					trainCoach.setType(1);
-					trainCoach.setPhone(venueEnter.getMainPhone());
-					trainCoach.setTrainTeamId(trainTeam.getId());
+					trainCoach.setName(member.getAppnickname());
+					trainCoach.setHeadImage(member.getAppavatarurl());
 					trainCoachService.insertSelective(trainCoach);
-				} else {
-					trainTeam = trainTeamService.selectByPrimaryKey(lodTrainCoach.getTrainTeamId());
+
+					// 添加教练身份
+					TrainTeamCoach trainTeamCoach = new TrainTeamCoach();
+					trainTeamCoach.setId(Utils.getUUID());
+					trainTeamCoach.setManager(1);
+					trainTeamCoach.setShowFlag(1);
+					trainTeamCoach.setTeachType(1);
+					trainTeamCoach.setTrainCoachId(trainCoach.getId());
+					trainTeamCoach.setTrainTeamId(trainTeam.getId());
+					trainTeamCoachService.insertSelective(trainTeamCoach);
+					
+					venueEnter.setTrainTeamId(trainTeam.getId());
 				}
 				
 				// 生成培训机构管理的场馆数据
 				TrainTeamVenue trainTeamVenue = new TrainTeamVenue();
 				trainTeamVenue.setId(Utils.getUUID());
 				trainTeamVenue.setTrainVenueId(venue.getId());
-				trainTeamVenue.setTrainTeamId(trainTeam.getId());
+				trainTeamVenue.setTrainTeamId(venueEnter.getTrainTeamId());
 				trainTeamService.saveTrainTeamVenue(trainTeamVenue);
 				
 			}

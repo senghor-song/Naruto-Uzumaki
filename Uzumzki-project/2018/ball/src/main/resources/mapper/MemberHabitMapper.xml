@@ -18,7 +18,7 @@
 	</select>
 	
 	<select id="countOften" parameterType="java.lang.String" resultType="java.lang.Integer">
-		select count(0) from MemberHabit where MemberID = #{id,jdbcType=VARCHAR}
+		SELECT COUNT(0) FROM Venue v INNER JOIN MemberHabit mh ON v.`ID` = mh.`VenueID` WHERE mh.`MemberID` = #{id,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">

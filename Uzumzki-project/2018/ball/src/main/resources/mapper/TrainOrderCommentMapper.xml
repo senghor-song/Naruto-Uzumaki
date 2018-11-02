@@ -17,6 +17,14 @@
 			<result column="mAppNickName" jdbcType="VARCHAR" property="appnickname" />
 			<result column="mAppAvatarUrl" jdbcType="VARCHAR" property="appavatarurl" />
 		</association>
+		<association property="trainCoach" javaType="com.xiaoyi.ssm.model.TrainCoach">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="tcHead_image" jdbcType="VARCHAR" property="headImage" />
+		</association>
+		<association property="trainCourse" javaType="com.xiaoyi.ssm.model.TrainCourse">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="tcuTitle" jdbcType="VARCHAR" property="title" />
+		</association>
 	</resultMap>
 	<sql id="Base_Column_List">
 		ID, Create_time, Modify_time, Train_order_id, Train_coach_id, Member_id, Class_hour,
@@ -29,11 +37,9 @@
 	</select>
 
 	<select id="selectByOrder" resultMap="BaseResultMap">
-		SELECT toc.*,m.`AppAvatarUrl`
-		mAppAvatarUrl,m.`AppNickName` mAppNickName
-		FROM TrainOrderComment toc LEFT JOIN Member m ON
-		toc.`Member_id` = m.`ID` WHERE
-		Train_order_id = #{id,jdbcType=VARCHAR} ORDER BY Class_hour DESC
+		SELECT toc.*,m.`AppAvatarUrl` mAppAvatarUrl,m.`AppNickName` mAppNickName
+		FROM TrainOrderComment toc LEFT JOIN Member m ON toc.`Member_id` = m.`ID` 
+		WHERE Train_order_id = #{id,jdbcType=VARCHAR} AND toc.State IN (1,2) ORDER BY Class_hour DESC
 	</select>
 
 	<select id="selectByTimeOut" resultMap="BaseResultMap">
@@ -43,10 +49,59 @@
 	</select>
 	
 	<select id="countByTeamId" resultType="java.lang.Integer">
-		SELECT COUNT(0) FROM TrainOrderComment toc LEFT JOIN TrainCoach tc ON toc.`Train_coach_id` = tc.`ID` 
-		WHERE tc.`Train_team_id` = #{id,jdbcType=VARCHAR} and toc.Create_time &gt;= #{date,jdbcType=TIMESTAMP}
+		SELECT COUNT(0) FROM TrainOrderComment toc INNER JOIN TrainCoach tc ON toc.`Train_coach_id` = tc.`ID` INNER JOIN TrainTeamCoach ttc ON tc.`ID` = ttc.`Train_coach_id`
+		WHERE ttc.`Train_team_id` = #{id,jdbcType=VARCHAR} and toc.Create_time &gt;= #{date,jdbcType=TIMESTAMP}
 	</select>
-
+	
+	<select id="countByTeamAll" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM TrainOrderComment toc INNER JOIN TrainCoach tc ON toc.`Train_coach_id` = tc.`ID` INNER JOIN TrainTeamCoach ttc ON tc.`ID` = ttc.`Train_coach_id`
+		WHERE ttc.`Train_team_id` = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectByTeamTen" resultMap="BaseResultMap">
+		SELECT toc.*,m.AppNickName mAppNickName,m.AppAvatarUrl mAppAvatarUrl , tc.Head_image tcHead_image , tcu.Title tcuTitle 
+		FROM TrainOrderComment toc 
+		INNER JOIN TrainCoach tc ON toc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN TrainTeamCoach ttc ON ttc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN Member m ON toc.`Member_id` = m.`id`
+		INNER JOIN TrainOrder tor ON tor.id = toc.`Train_order_id`
+		INNER JOIN TrainCourse tcu ON tcu.id = tor.Train_course_id
+		WHERE ttc.`Train_team_id` = #{id} AND toc.State IN (1,2) ORDER BY toc.`Create_time` DESC LIMIT 10
+	</select>
+	
+	<select id="selectByTeam" resultMap="BaseResultMap">
+		SELECT toc.*,m.AppNickName mAppNickName,m.AppAvatarUrl mAppAvatarUrl , tc.Head_image tcHead_image , tcu.Title tcuTitle 
+		FROM TrainOrderComment toc 
+		INNER JOIN TrainCoach tc ON toc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN TrainTeamCoach ttc ON ttc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN Member m ON toc.`Member_id` = m.`id`
+		INNER JOIN TrainOrder tor ON tor.id = toc.`Train_order_id`
+		INNER JOIN TrainCourse tcu ON tcu.id = tor.Train_course_id
+		WHERE ttc.`Train_team_id` = #{id} AND toc.State IN (1,2) ORDER BY toc.`Create_time` DESC
+	</select>
+	
+	<select id="selectByCourse" resultMap="BaseResultMap">
+		SELECT toc.*,m.AppNickName mAppNickName,m.AppAvatarUrl mAppAvatarUrl , tc.Head_image tcHead_image , tcu.Title tcuTitle 
+		FROM TrainOrderComment toc 
+		INNER JOIN TrainCoach tc ON toc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN TrainTeamCoach ttc ON ttc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN Member m ON toc.`Member_id` = m.`id`
+		INNER JOIN TrainOrder tor ON tor.id = toc.`Train_order_id`
+		INNER JOIN TrainCourse tcu ON tcu.id = tor.Train_course_id
+		WHERE tor.`id` = #{id} AND toc.State IN (1,2) ORDER BY toc.`Create_time` DESC
+	</select>
+	
+	<select id="selectByCoach" resultMap="BaseResultMap">
+		SELECT toc.*,m.AppNickName mAppNickName,m.AppAvatarUrl mAppAvatarUrl , tc.Head_image tcHead_image , tcu.Title tcuTitle 
+		FROM TrainOrderComment toc 
+		INNER JOIN TrainCoach tc ON toc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN TrainTeamCoach ttc ON ttc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN Member m ON toc.`Member_id` = m.`id`
+		INNER JOIN TrainOrder tor ON tor.id = toc.`Train_order_id`
+		INNER JOIN TrainCourse tcu ON tcu.id = tor.Train_course_id
+		WHERE tc.`id` = #{id} AND toc.State IN (1,2) ORDER BY toc.`Create_time` DESC
+	</select>
+	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />

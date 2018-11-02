@@ -20,7 +20,6 @@ import com.xiaoyi.ssm.model.Member;
 import com.xiaoyi.ssm.model.Venue;
 import com.xiaoyi.ssm.model.VenueStatis;
 import com.xiaoyi.ssm.model.VenueTemplate;
-import com.xiaoyi.ssm.service.CoachService;
 import com.xiaoyi.ssm.service.FieldTemplateService;
 import com.xiaoyi.ssm.service.MemberService;
 import com.xiaoyi.ssm.service.VenueService;
@@ -39,8 +38,6 @@ import com.xiaoyi.ssm.util.RedisUtil;
 @RequestMapping("venue/manager/calendar")
 public class ApiCalendarController {
 
-	@Autowired
-	private CoachService coachService;
 	@Autowired
 	private MemberService memberService;
 	@Autowired

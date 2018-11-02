@@ -26,6 +26,7 @@
 			<result column="tceTrain_coach_id" jdbcType="VARCHAR" property="trainCoachId" />
 			<result column="tceBall_type" jdbcType="VARCHAR" property="ballType" />
 			<result column="tceTitle" jdbcType="VARCHAR" property="title" />
+			<result column="tceTrain_team_id" jdbcType="VARCHAR" property="trainTeamId" />
 		</association>
 	</resultMap>
 	<sql id="Base_Column_List">
@@ -54,7 +55,9 @@
 	
 	<select id="selectAllAdmin" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT tor.*,tce.ID tceID, tce.`Train_coach_id` tceTrain_coach_id,tce.`Ball_type` tceBall_type,tce.`Title` tceTitle, m.`AppNickName` mAppNickName
- 		FROM TrainOrder tor INNER JOIN TrainCourse tce ON tor.`Train_course_id` = tce.`ID` LEFT JOIN Member m ON tor.`Member_id` = m.`ID`
+		,tce.`Train_team_id` tceTrain_team_id
+ 		FROM TrainOrder tor INNER JOIN TrainCourse tce ON tor.`Train_course_id` = tce.`ID` LEFT JOIN Member m ON tor.`Member_id` = m.`ID` WHERE
+ 		tor.Pay_type IN (0,1)
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">

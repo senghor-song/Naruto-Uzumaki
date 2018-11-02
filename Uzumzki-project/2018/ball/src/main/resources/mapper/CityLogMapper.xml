@@ -21,7 +21,7 @@
 	</select>
 	
 	<select id="selectByCity" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select cl.*,s.`Name` sName FROM CityLog cl LEFT JOIN Staff s ON cl.`StaffID` = s.`ID` where CityID = #{id}
+		select cl.*,s.`Name` sName FROM CityLog cl LEFT JOIN Staff s ON cl.`StaffID` = s.`ID` where CityID = #{id} ORDER BY CreateTime DESC
 	</select>
 	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">

@@ -86,19 +86,23 @@ public class StaffController {
 	 */ 
 	@RequestMapping(value = "/register")
 	@ResponseBody
-	public ApiMessage register(HttpServletRequest request, StaffApply staffApply, String code) {
+	public ApiMessage register(HttpServletRequest request, StaffApply staffApply, String code, String state) {
 		
 		String smsCode = RedisUtil.getRedis(Global.web_staff_register_SmsCode_ + staffApply.getTel());
 		if (!code.equals(smsCode)) {
 			return new ApiMessage(400, "验证码不正确");
 		}
+
+		String openid = RedisUtil.getRedis(state+"_openid");
+		String unionid = RedisUtil.getRedis(state+"_unionid");
+		String access_token = RedisUtil.getRedis(state+"_access_token");
 		
 		staffApply.setId(Utils.getUUID());
-		staffApply.setOpenid(request.getSession().getAttribute("openid") != null ? request.getSession().getAttribute("openid").toString() : "");
-		staffApply.setUnionid(request.getSession().getAttribute("unionid") != null ? request.getSession().getAttribute("unionid").toString() : "");
+		staffApply.setOpenid(openid != null ? openid : "");
+		staffApply.setUnionid(unionid != null ? unionid : "");
 		// 获取用户信息
 		String userinfo = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID"
-				.replace("ACCESS_TOKEN", request.getSession().getAttribute("access_token").toString()).replace("OPENID", request.getSession().getAttribute("openid").toString());
+				.replace("ACCESS_TOKEN", access_token).replace("OPENID", openid);
 		String userinfoReturn = HttpUtils.sendGet(userinfo, null);// 我们需要自己写或者在网上找一个doGet方法发送doGet请求
 		
 		JSONObject getUserinfoJson = JSONObject.fromObject(userinfoReturn);// 把请求成功后的结果转换成JSON对象
@@ -111,8 +115,12 @@ public class StaffController {
 			staffApply.setNickname(getUserinfoJson.getString("nickname"));
 		}
 
+		staffApply.setApplyTime(new Date());
 		int flag = staffApplyService.insertSelective(staffApply);		
 		if (flag > 0) {
+			RedisUtil.delRedis(state+"_openid");
+			RedisUtil.delRedis(state+"_unionid");
+			RedisUtil.delRedis(state+"_access_token");
 			return new ApiMessage(200, "注册申请成功");
 		} else {
 			return new ApiMessage(400, "注册申请失败");
@@ -187,7 +195,10 @@ public class StaffController {
 					: staff.getPower() == 2 ? "二级"
 							: staff.getPower() == 3 ? "三级"
 									: staff.getPower() == 4 ? "四级"
-											: staff.getPower() == 5 ? "五级" : staff.getPower() == 6 ? "六级" : "七级");// 权级
+											: staff.getPower() == 5 ? "五级" 
+													: staff.getPower() == 6 ? "六级" 
+															: staff.getPower() == 7 ? "七级" 
+																	: staff.getPower() == 8 ? "八级" : "九级");// 权级
 			map.put("statusFlag", staff.getStatusFlag());// 状态
 			map.put("loginchange", DateUtil.getFormat(staff.getLoginChange()));// 最近登录
 			map.put("remark", staff.getRemark());// 备注

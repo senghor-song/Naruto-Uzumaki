@@ -67,6 +67,7 @@
 		SELECT IFNULL(SUM(o.`Price`),0) FROM `Order` o
 		INNER JOIN Venue v ON o.`VenueID` = v.`ID` WHERE v.`ID` = #{venueid} AND o.`Type` IN (1,5,6)
 	</select>
+	
 	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT o.*,m.`Name` mName FROM `Order` o INNER JOIN
 		Venue v ON o.`VenueID` = v.`ID` LEFT JOIN Member m ON o.`MemberID` = m.`ID` WHERE v.`ID` = #{venueid}
@@ -172,8 +173,7 @@
 		r.ReserveAmount rReserveAmount, r.OrderID rOrderID , v.`Name` vName,
 		v.`Image` vImage
 		FROM `Order` o INNER JOIN Reserve r ON o.`ID` = r.`OrderID`
-		LEFT JOIN Venue v ON o.`VenueID` = v.`ID` where o.ID
-		= #{id,jdbcType=VARCHAR}
+		LEFT JOIN Venue v ON o.`VenueID` = v.`ID` where o.ID = #{id,jdbcType=VARCHAR}
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">

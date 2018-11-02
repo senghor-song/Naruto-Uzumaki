@@ -7,7 +7,10 @@ import org.apache.log4j.Logger;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.xiaoyi.ssm.model.Permission;
 import com.xiaoyi.ssm.model.Staff;
+import com.xiaoyi.ssm.service.PermissionService;
+import com.xiaoyi.ssm.util.SpringUtils;
 
 /**  
  * @Description: 后台登录拦截器
@@ -35,12 +38,23 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
 			logger.info("requestUri:" + requestUri);
 			logger.info("contextPath:" + contextPath);
 			logger.info("url:" + url);
-			response.setCharacterEncoding("UTF-8");
 			logger.info("非法请求：跳转到登录页面！");
+			response.setCharacterEncoding("UTF-8");
 			response.sendRedirect("/WebBackAPI/admin/common/login");
 			return false;
-		} else
+		} else {
+			String[] strings = requestUri.split("/");
+			if ("listview".equals(strings[strings.length - 1 ])) {
+				PermissionService permissionService = SpringUtils.getBean("permissionServiceImpl", PermissionService.class);
+				Permission permission = permissionService.selectIsMenu(staff.getPower(), requestUri);
+				if (permission == null) {
+					response.setCharacterEncoding("UTF-8");
+					response.sendRedirect("/WebBackAPI/admin/common/index");
+					return false;
+				}
+			}
 			return true;
+		}
 	}
 
 	/**

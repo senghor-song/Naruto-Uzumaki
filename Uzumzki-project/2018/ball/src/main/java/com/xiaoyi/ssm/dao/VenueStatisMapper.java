@@ -18,4 +18,14 @@ public interface VenueStatisMapper extends BaseMapper<VenueStatis, String> {
 	 */
 	List<VenueStatis> selectByVenue(@Param("venueid") String venueid, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
+	/**  
+	 * @Description: 查询当天是否已经设置过统计
+	 * @author 宋高俊  
+	 * @param venueid
+	 * @param date
+	 * @return 
+	 * @date 2018年10月31日 下午5:22:04 
+	 */ 
+	VenueStatis selectByOldVenueStatis(@Param("venueid")String venueid, @Param("date")Date date);
+
 }

@@ -7,7 +7,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,14 +26,17 @@ import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.xiaoyi.ssm.dto.ApiMessage;
+import com.xiaoyi.ssm.model.Permission;
 import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.model.StaffApply;
+import com.xiaoyi.ssm.service.PermissionService;
 import com.xiaoyi.ssm.service.StaffApplyService;
 import com.xiaoyi.ssm.service.StaffService;
 import com.xiaoyi.ssm.util.DateUtil;
@@ -37,6 +44,7 @@ import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.HttpUtils;
 import com.xiaoyi.ssm.util.MoblieMessageUtil;
 import com.xiaoyi.ssm.util.RedisUtil;
+import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
 import com.xiaoyi.ssm.wxPay.WXConfig;
 
@@ -54,6 +62,8 @@ public class AdminCommonController {
     private StaffService staffService;
     @Autowired
     private StaffApplyService staffApplyService;
+    @Autowired
+    private PermissionService permissionService;
     
     /**
 	 * @Description: 后台登录页面
@@ -61,7 +71,8 @@ public class AdminCommonController {
 	 * @date 2018年7月25日 下午12:15:57
 	 */
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
-	public String testLogin(HttpServletRequest request) {
+	public String testLogin(Model model, HttpServletRequest request) {
+//		Staff staff = staffService.selectByPrimaryKey("72f2571706694e3fa0f10f451be7fad1");
 		Staff staff = staffService.selectByPrimaryKey("1");
 		request.getSession().setAttribute("loginStaffInfo", staff);
 		return "redirect:/admin/common/index";
@@ -77,7 +88,7 @@ public class AdminCommonController {
 		return "admin/WXlogin";
 	}
 	
-	/**  
+	/**
 	 * @Description: 静默登录
 	 * @author 宋高俊  
 	 * @param code
@@ -85,8 +96,8 @@ public class AdminCommonController {
 	 * @return 
 	 * @date 2018年10月19日 下午5:04:12 
 	 */ 
-	@RequestMapping(value = "/authLogin", method = RequestMethod.GET)
-	public String authLogin(String code, HttpServletRequest request) {
+	@RequestMapping(value = "/authLogin")
+	public String authLogin(Model model, String code, String state, HttpServletRequest request) {
 		String requestUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=APPSECRET&code=CODE&grant_type=authorization_code"
 				.replace("APPID", WXConfig.appid_web).replace("APPSECRET", WXConfig.appSecret_web).replace("CODE", code);
 
@@ -94,7 +105,7 @@ public class AdminCommonController {
 		JSONObject getCodeResultJson = JSONObject.fromObject(requestResult);// 把请求成功后的结果转换成JSON对象
 		if (getCodeResultJson == null || getCodeResultJson.get("errcode") != null || getCodeResultJson.getString("openid") == null) {
 			logger.error("", new Exception("获取回调异常"));
-			return "admin/WXlogin";
+			return "redirect:/admin/WXlogin";
 		}
 
 		String openid = getCodeResultJson.getString("openid");// 拿到openid
@@ -105,33 +116,51 @@ public class AdminCommonController {
 		logger.info("unionid:" + unionid);
 		logger.info("getCodeResultJson:" + getCodeResultJson.toString());
 		
-		Staff staff = new Staff();
-		staff.setOpenid(openid);
-		staff.setUnionid(unionid);
-		Staff loginStaff = staffService.login(staff);
-		if (loginStaff != null) {
-			// 获取用户信息
-			String userinfo = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID"
-					.replace("ACCESS_TOKEN", getCodeResultJson.getString("access_token")).replace("OPENID", openid);
-			String userinfoReturn = HttpUtils.sendGet(userinfo, null);// 我们需要自己写或者在网上找一个doGet方法发送doGet请求
+		// 判断是否有state
+		if (StringUtil.isBank(state)) {
+			Staff staff = new Staff();
+			staff.setUnionid(unionid);
+			Staff loginStaff = staffService.login(staff);
 			
-			JSONObject getUserinfoJson = JSONObject.fromObject(userinfoReturn);// 把请求成功后的结果转换成JSON对象
-			if (getUserinfoJson == null || getUserinfoJson.get("errcode") != null || getUserinfoJson.getString("openid") == null) {
-				logger.error("", new Exception("获取回调异常"));
-			}else {
-				loginStaff.setHeadImage(getUserinfoJson.getString("headimgurl"));
-				loginStaff.setSex(getUserinfoJson.getString("sex") == "2" ? "男" : "女");
-				loginStaff.setNickname(getUserinfoJson.getString("nickname"));
+			if (loginStaff != null) {
+				if (!"正常".equals(loginStaff.getStatusFlag())) {
+					model.addAttribute("message", "您的账号处于" + loginStaff.getStatusFlag() + "状态");
+					return "admin/WXlogin";
+				}
+				
+				// 获取用户信息
+				String userinfo = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID"
+						.replace("ACCESS_TOKEN", getCodeResultJson.getString("access_token")).replace("OPENID", openid);
+				String userinfoReturn = HttpUtils.sendGet(userinfo, null);// 我们需要自己写或者在网上找一个doGet方法发送doGet请求
+				
+				JSONObject getUserinfoJson = JSONObject.fromObject(userinfoReturn);// 把请求成功后的结果转换成JSON对象
+				if (getUserinfoJson == null || getUserinfoJson.get("errcode") != null || getUserinfoJson.getString("openid") == null) {
+					logger.error("", new Exception("获取回调异常"));
+				}else {
+					loginStaff.setHeadImage(getUserinfoJson.getString("headimgurl"));
+					loginStaff.setSex(getUserinfoJson.getString("sex") == "2" ? "男" : "女");
+					loginStaff.setNickname(getUserinfoJson.getString("nickname"));
+				}
+				loginStaff.setOpenid(openid);
+				loginStaff.setLoginChange(new Date());
 				staffService.updateByPrimaryKeySelective(loginStaff);
+				// 保存登录信息
+				request.getSession().setAttribute("loginStaffInfo", loginStaff);
+				return "redirect:/admin/common/index";
+			}else {
+				model.addAttribute("message", "您的账号未注册!");
+				return "admin/WXlogin";
 			}
-			// 保存登录信息
-			request.getSession().setAttribute("loginStaffInfo", loginStaff);
-			return "redirect:/admin/common/index";
 		}else {
-			request.getSession().setAttribute("openid", openid);
-			request.getSession().setAttribute("unionid", unionid);
-			request.getSession().setAttribute("access_token", access_token);
-			return "admin/register";
+			// 有state则是注册用户
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("openid", openid);
+			map.put("unionid", unionid);
+			map.put("access_token", access_token);
+			RedisUtil.setRedis(state+"_openid", openid, 300);
+			RedisUtil.setRedis(state+"_unionid", unionid, 300);
+			RedisUtil.setRedis(state+"_access_token", access_token, 300);
+			return "admin/wxcode";
 		}
 	}
 	
@@ -182,7 +211,8 @@ public class AdminCommonController {
 	 * @date 2018年7月25日 下午12:15:57
 	 */
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
-	public String register() {
+	public String register(Model model) {
+		model.addAttribute("state", Utils.getUUID());
 		return "admin/register";
 	}
 
@@ -192,7 +222,22 @@ public class AdminCommonController {
 	 * @date 2018年7月25日 下午1:43:06
 	 */
 	@RequestMapping(value = "/left")
-	public String left() {
+	public String left(Model model, HttpServletRequest request) {
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		// 根据权限查询菜单
+		List<Permission> permissions = permissionService.selectByMenu(staff.getPower());
+		List<Map<String, Object>> listMaps = new ArrayList<Map<String,Object>>();
+		for (int i = 0; i < permissions.size(); i++) {
+			// 没有子菜单则不显示父级菜单
+			if (permissions.get(i).getPermissions().size() > 0) {
+				Map<String, Object> map = new LinkedHashMap<String, Object>();
+				map.put("menuTitle", permissions.get(i).getMenuTitle());
+				map.put("menuIcon", permissions.get(i).getMenuIcon());
+				map.put("menus", permissions.get(i).getPermissions());
+				listMaps.add(map);
+			}
+		}
+		model.addAttribute("permissions", listMaps);
 		return "admin/layout/leftSidebar";
 	}
 

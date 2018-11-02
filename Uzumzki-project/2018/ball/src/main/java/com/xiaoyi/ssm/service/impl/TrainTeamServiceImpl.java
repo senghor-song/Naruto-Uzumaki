@@ -70,8 +70,8 @@ public class TrainTeamServiceImpl extends AbstractService<TrainTeam,String> impl
 	 * @date 2018年10月11日 下午8:24:50 
 	 */ 
 	@Override
-	public List<TrainTeam> selectAllAdmin() {
-		return trainTeamMapper.selectAllAdmin();
+	public List<TrainTeam> selectAllAdmin(Integer selectType, String keyword) {
+		return trainTeamMapper.selectAllAdmin(selectType, keyword);
 	}
 
 	/**  
@@ -111,5 +111,79 @@ public class TrainTeamServiceImpl extends AbstractService<TrainTeam,String> impl
 	@Override
 	public int saveTrainTeamVenue(TrainTeamVenue trainTeamVenue) {
 		return trainTeamMapper.saveTrainTeamVenue(trainTeamVenue);
+	}
+
+	/**  
+	 * @Description: 查询用户收藏的培训机构
+	 * @author 宋高俊  
+	 * @date 2018年10月24日 上午9:13:19 
+	 */ 
+	@Override
+	public List<TrainTeam> selectByCollect(String id) {
+		return trainTeamMapper.selectByCollect(id);
+	}
+
+	/**  
+	 * @Description: 查询最低价格
+	 * @author 宋高俊  
+	 * @param trainTeamId
+	 * @return 
+	 * @date 2018年10月26日 上午11:37:54 
+	 */ 
+	@Override
+	public Double selectMinAmount(String trainTeamId) {
+		return trainTeamMapper.selectMinAmount(trainTeamId);
+	}
+
+	/**  
+	 * @Description: 查询最低价格
+	 * @author 宋高俊  
+	 * @param trainTeamId
+	 * @return 
+	 * @date 2018年10月26日 上午11:37:54 
+	 */ 
+	@Override
+	public Double selectVenueMinAmount(String venueid) {
+		return trainTeamMapper.selectVenueMinAmount(venueid);
+	}
+
+	/**  
+	 * @Description: 根据经纬度筛选机构
+	 * @author 宋高俊  
+	 * @param begLng
+	 * @param endLng
+	 * @param begLat
+	 * @param endLat
+	 * @return 
+	 * @date 2018年10月20日 下午3:25:58 
+	 */ 
+	@Override
+	public List<TrainTeam> selectByNearbyMapTrainTeamType(double begLng, double endLng, double begLat, double endLat, Integer ballType) {
+		return trainTeamMapper.selectByNearbyMapTrainTeamType(begLng, endLng, begLat, endLat, ballType);
+	}
+
+	/**  
+	 * @Description: 根据用户查询加入的培训机构
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年10月31日 下午4:07:33 
+	 */ 
+	@Override
+	public List<TrainTeam> selectByMember(String id) {
+		return trainTeamMapper.selectByMember(id);
+	}
+
+	/**  
+	 * @Description: 根据用户查询指定身份的培训机构
+	 * @author 宋高俊  
+	 * @param id
+	 * @param i
+	 * @return 
+	 * @date 2018年11月1日 下午8:13:11 
+	 */ 
+	@Override
+	public List<TrainTeam> selectByMemberManager(String memberid, int manager) {
+		return trainTeamMapper.selectByMemberManager(memberid, manager);
 	}
 }

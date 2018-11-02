@@ -8,13 +8,13 @@
     <title>注册</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
     <link rel="stylesheet" href="/WebBackAPI/admin/static/css/site.css">
     <style>
         body .login0 { background: #e9ecef; }
         body .login1 {
             width: 431px;
-            margin-top: 12%;
+            margin-top: 7%;
             background: #fff;
             border-radius: 5px;
         }
@@ -30,7 +30,7 @@
         }
         body .login4 {
             width: 431px;
-            padding: 34px 32px;
+            padding: 0px 32px 10px 32px;
         }
         body .login5 {
             line-height: 30px;
@@ -58,6 +58,14 @@
 	        opacity:.65;
 	        box-shadow:0 0 black;
         }
+        .login-wrap{width: 270px;
+	    height: 268px;
+	    margin: 0 auto;
+	    overflow: hidden;
+	    transform: scale(0.88);}
+	    .loginWxQRcode{
+	    width:300px;margin-top: -68px; margin-left: -15px;
+	    }
     </style>
 </head>
 
@@ -66,10 +74,18 @@
         <div class="clearfix login2">
             <div class="text-center login3">后台注册</div>
         </div>
+        <div class="login-wrap">
+	        <div id="wxQRcode" class="loginWxQRcode">
+	        </div>
+        </div>
         <form action="/WebBackAPI/admin/staff/register" method="post" class="login4" >
             <div class="has-feedback clearfix login5">
 				<input type="text" class="form-control login6" placeholder="真实姓名" id="name">
                 <label class="login7">真实姓名</label>
+            </div>
+            <div class="has-feedback clearfix login5">
+                <input type="text" class="form-control login6" placeholder="推荐码" id="pushCode" value="8031">
+                <label class="login7">推荐码</label>
             </div>
             <div class="has-feedback clearfix login5">
                 <input type="text" class="form-control login6" placeholder="手机号码" id="phone">
@@ -79,10 +95,6 @@
                 <input type="text" class="form-control login6" placeholder="验证码" id="code">
                 <input id="btnSendCode1" type="button" class="btn btn-default codeBtn" value="获取验证码" onclick="sendMessage()" />
                 <label class="login7"></label>
-            </div>
-            <div class="has-feedback clearfix login5">
-                <input type="text" class="form-control login6" placeholder="推荐码" id="pushCode" value="8031">
-                <label class="login7">推荐码</label>
             </div>
             <div class="form-group has-feedback clearfix login14">
                 <div class=" login15">
@@ -99,6 +111,7 @@
     <script src="/WebBackAPI/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
     <script src="/WebBackAPI/admin/static/js/jq-ext.js"></script>
     <script src="/WebBackAPI/admin/static/plugins/layer/layer.js"></script>
+    <script src="https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
     <script>
     var phoneReg = /(^1[3|4|5|7|8]\d{9}$)|(^09\d{8}$)/;//手机号正则 
 	var count = 60; //间隔函数，1秒执行
@@ -149,12 +162,24 @@
 		}
 	} 
     $(function(){
+    	
+		var obj = new WxLogin({
+			self_redirect : true,
+			id : "wxQRcode",
+			appid : "wxa6c95fe48935f880",
+			scope : "snsapi_login",
+			redirect_uri : "https://ball.ekeae.com/WebBackAPI/admin/common/authLogin",
+			state : "${state}",
+			style : "black",
+			href : ""
+		});
         
         $("#postBtn").click(function () {
         	var name = $("#name").val();
         	var phone = $("#phone").val();
         	var code = $("#code").val();
         	var pushCode = $("#pushCode").val();
+        	var state = "${state}";
         	if(name == ''){
         		layer.msg("姓名必须填写");
         		return;
@@ -178,13 +203,14 @@
                     "name" : name,
                     "tel" : phone,
                     "code" : code,
-                    "pushCode" : pushCode
+                    "pushCode" : pushCode,
+                    "state" : state
                 },//数据，这里使用的是Json格式进行传输  
                 dataType:"json",
                 success : function(result) {//返回数据根据结果进行相应的处理  
                     if ( result.code == 200 ) {  
-                		layer.msg("登录成功");
-                		window.location.href="/WebBackAPI/admin/common/index";
+                		layer.msg(result.msg);
+                		window.location.href="/WebBackAPI/admin/common/login";
                     } else {  
                 		layer.confirm(result.msg, {
                 			btn: ['确定'] //按钮
@@ -248,41 +274,6 @@
         var b = Math.floor(Math.random() * 256);
         return "rgb(" + r + "," + g + "," + b + ")";
     }
-     
-        /* $(function () {
-            $('#mpanel1').codeVerify({
-
-                //常规验证码type=1， 运算验证码type=2
-                type: 1,
-
-                //验证码宽度
-                width: '80px',
-                codeLength: 4,
-                fontSize: '16px',
-                //验证码高度
-                height: '30px',
-
-                //......更多参数设置请查阅文档
-
-                //提交按钮的id名称
-                btnId: 'postBtn',
-                ready: function() {
-                },
-               	success : function() {
-                    var code = $(".verify-code").text();
-                    console.log(code)
-                },
-                error : function() {
-                    var code = $(".verify-code").text();
-                    console.log(code)
-		    	}
-            });
-
-            $("#postBtn").click(function () {
-                return true;
-            });
-        }); */
-        
         
     </script>
 </body>

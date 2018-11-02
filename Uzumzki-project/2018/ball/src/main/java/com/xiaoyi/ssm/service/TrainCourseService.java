@@ -47,4 +47,23 @@ public interface TrainCourseService extends BaseService<TrainCourse, String> {
 	 */ 
 	int countByTeam(String id);
 
+	/**  
+	 * @Description: 获取我收藏的课程
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年10月24日 上午9:24:44 
+	 */ 
+	List<TrainCourse> selectByCollect(String id);
+
+	/**  
+	 * @Description: 查询该课程是否被用户收藏
+	 * @author 宋高俊  
+	 * @param id
+	 * @param memberid
+	 * @return 
+	 * @date 2018年10月25日 下午2:52:14 
+	 */ 
+	TrainCourse selectByMember(String id, String memberid);
+
 }

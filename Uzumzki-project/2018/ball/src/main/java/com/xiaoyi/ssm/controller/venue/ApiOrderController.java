@@ -27,27 +27,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xiaoyi.ssm.dao.OrderLogMapper;
 import com.xiaoyi.ssm.dto.ApiMessage;
-import com.xiaoyi.ssm.model.Coach;
+import com.xiaoyi.ssm.dto.PageBean;
 import com.xiaoyi.ssm.model.Member;
 import com.xiaoyi.ssm.model.Order;
 import com.xiaoyi.ssm.model.OrderLog;
 import com.xiaoyi.ssm.model.Reserve;
-import com.xiaoyi.ssm.service.CoachService;
+import com.xiaoyi.ssm.model.TrainCoach;
+import com.xiaoyi.ssm.model.TrainOrderComment;
+import com.xiaoyi.ssm.model.Venue;
+import com.xiaoyi.ssm.service.TrainCoachService;
+import com.xiaoyi.ssm.service.VenueCoachService;
 import com.xiaoyi.ssm.service.FieldService;
 import com.xiaoyi.ssm.service.FieldTemplateService;
 import com.xiaoyi.ssm.service.MemberService;
 import com.xiaoyi.ssm.service.OrderService;
 import com.xiaoyi.ssm.service.ReserveService;
+import com.xiaoyi.ssm.service.TrainOrderCommentService;
+import com.xiaoyi.ssm.service.VenueService;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
+import com.xiaoyi.ssm.util.MoblieMessageUtil;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
 import com.xiaoyi.ssm.wxPay.WXConfig;
 import com.xiaoyi.ssm.wxPay.WXPayJsapiUtil;
 import com.xiaoyi.ssm.wxPay.WXPayUtil;
+import com.xiaoyi.ssm.wxPay.WXPayWxappUtil;
 import com.xiaoyi.ssm.wxPay.XMLUtil;
 
 /**
@@ -68,7 +78,7 @@ public class ApiOrderController {
 	@Autowired
 	private ReserveService reserveService;
 	@Autowired
-	private CoachService coachService;
+	private VenueCoachService coachService;
 	@Autowired
 	private OrderService orderService;
 	@Autowired
@@ -77,6 +87,12 @@ public class ApiOrderController {
 	private MemberService memberService;
 	@Autowired
 	private OrderLogMapper orderMapper;
+	@Autowired
+	private TrainOrderCommentService trainOrderCommentService;
+	@Autowired
+	private VenueService venueService;
+	@Autowired
+	private TrainCoachService trainCoachService;
 
 	// 获取线程池连接
 	@Autowired
@@ -119,10 +135,10 @@ public class ApiOrderController {
 			}
 			// 单独选择一个教练数据
 			if (order.getCoachid() != null) {
-				Coach coach = coachService.selectByPrimaryKey(order.getCoachid());
+				TrainCoach trainCoach = trainCoachService.selectByPrimaryKey(order.getCoachid());
 				Map<String, Object> reservemap = new HashMap<>();
-				reservemap.put("name", coach.getName());// 场馆名称
-				reservemap.put("image", coach.getImage());// 图片
+				reservemap.put("name", trainCoach.getName());// 教练名称
+				reservemap.put("image", trainCoach.getHeadImage());// 图片
 				reservemap.put("timestr",
 						DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + " " + timeSumStr + " 教练");// 时间数据
 
@@ -159,10 +175,7 @@ public class ApiOrderController {
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
 		Order order = orderService.selectByMemberOrder(member.getId(), orderid);
 		if (order == null) {
-			return new ApiMessage(400, "订单查询失败");
-		}
-		if (order.getType() != 0) {
-			return new ApiMessage(400, "订单已不能支付");
+			return new ApiMessage(400, "订单不存在");
 		}
 		Map<String, Object> map = new HashMap<>();
 		map.put("orderId", order.getId());// id
@@ -186,10 +199,10 @@ public class ApiOrderController {
 			reservelist.add(reservemap);
 		}
 		if (order.getCoachid() != null) {
-			Coach coach = coachService.selectByPrimaryKey(order.getCoachid());
+			TrainCoach trainCoach = trainCoachService.selectByPrimaryKey(order.getCoachid());
 			Map<String, Object> reservemap = new HashMap<>();
-			reservemap.put("name", coach.getName());// 场馆名称
-			reservemap.put("image", coach.getImage());// 图片
+			reservemap.put("name", trainCoach.getName());// 教练名称
+			reservemap.put("image", trainCoach.getHeadImage());// 图片
 			reservemap.put("timestr",
 					DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + " " + timeSumStr + " 教练");// 时间数据
 
@@ -252,8 +265,8 @@ public class ApiOrderController {
 			return new ApiMessage(400, "订单不存在");
 		}
 
-		Map map = WXPayJsapiUtil.getPayParams("订场预定金额", order.getId(), member.getOpenid(), order.getPrice(), request.getRemoteAddr(), WXConfig.NOTIFY_URL1);
-
+		Map map = WXPayWxappUtil.getPayParams("订场预定金额", order.getId(), member.getAppopenid(), order.getPrice(), request.getRemoteAddr(), WXConfig.NOTIFY_URL1);
+		
 		return new ApiMessage(200, "支付参数", map);
 	}
 
@@ -308,11 +321,10 @@ public class ApiOrderController {
 			if ("SUCCESS".equals((String) packageParams.get("result_code"))) {
 				// 这里是支付成功
 				String orderNo = (String) packageParams.get("out_trade_no");
-				logger.info("微信订单号"+orderNo+"付款成功");
+				logger.info("微信订单号" + orderNo + "付款成功");
 				// 这里 根据实际业务场景 做相应的操作
 				// 通知微信.异步确认成功.必写.不然会一直通知后台.八次之后就认为交易失败了.
-				resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
-						+ "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
+				resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>" + "<return_msg><![CDATA[OK]]></return_msg>" + "</xml> ";
 				// 这一步开始就是写公司业务需要的代码了，不用参考我的 没有价值
 				Order order = orderService.selectByPrimaryKey(orderNo);
 				// 修改订单状态支付成功
@@ -328,12 +340,30 @@ public class ApiOrderController {
 				orderLog.setType(0);
 				orderLog.setContent("接收到微信通知，订单已支付成功");
 				orderMapper.insert(orderLog);
-
-				logger.info("微信订单号"+orderNo+"付款成功");
+				logger.info("微信订单号" + orderNo + "付款成功");
+				Venue venue = venueService.selectByPrimaryKey(order.getVenueid());
+				if (StringUtil.isBank(venue.getTrainteam())) {
+					if (venue.getTrainAddFlag() == 1) {
+						try {
+							Member member = memberService.selectByPrimaryKey(order.getMemberid());
+							List<Reserve> listReserve = reserveService.selectByOrder(order.getId());
+							String area = "";
+							String time = ""; 
+							for (int i = 0; i < listReserve.size(); i++) {
+								area += listReserve.get(i).getField().getName();
+								time += StringUtil.timeToTimestr(listReserve.get(i).getReservetimeframe().split(","));
+							}
+							MoblieMessageUtil.sendTemplateSms(venue.getTel(), member.getAppnickname(), member.getPhone(), area, 
+									DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd"), time);
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+					}
+				}
+				
 			} else {
-				logger.info("支付失败,错误信息："+packageParams.get("err_code"));
-				resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>"
-						+ "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";
+				logger.info("支付失败,错误信息：" + packageParams.get("err_code"));
+				resXml = "<xml>" + "<return_code><![CDATA[FAIL]]></return_code>" + "<return_msg><![CDATA[报文为空]]></return_msg>" + "</xml> ";
 			}
 			// ------------------------------
 			// 处理业务完毕
@@ -441,5 +471,99 @@ public class ApiOrderController {
 			logger.info("通知签名验证失败");
 		}
 	}
-
+	
+	/**  
+	 * @Description: 分页获取培训机构评价内容
+	 * @author 宋高俊  
+	 * @param pageBean
+	 * @param request
+	 * @param id
+	 * @return 
+	 * @date 2018年10月27日 下午3:34:52 
+	 */ 
+	@RequestMapping(value = "/getOrderComment")
+	@ResponseBody
+	public ApiMessage getOrderComment(PageBean pageBean, HttpServletRequest request, String id){
+		PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
+		List<TrainOrderComment> list = trainOrderCommentService.selectByTeam(id);
+		List<Map<String, Object>> maps = new ArrayList<Map<String,Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			Map<String, Object> commentMap = new HashMap<String, Object>();
+			commentMap.put("id", list.get(i).getId()); // ID 
+			commentMap.put("createTime", DateUtil.getFormat(list.get(i).getCreateTime())); // 时间
+			commentMap.put("title", list.get(i).getTrainCourse().getTitle()); // 课程名称
+			commentMap.put("classHour", list.get(i).getClassHour()); // 课时
+			commentMap.put("appnickname", list.get(i).getMember().getAppnickname()); // 用户昵称
+			commentMap.put("content", list.get(i).getContent()); // 评价内容
+			commentMap.put("appavatarurl", list.get(i).getMember().getAppavatarurl()); // 用户头像
+			commentMap.put("headImage", list.get(i).getTrainCoach().getHeadImage()); // 教练头像
+			commentMap.put("commentSelect", list.get(i).getCommentSelect()); // 评价选择(1=好评2=中评3=差评4=拒绝评价)
+			maps.add(commentMap);
+		}
+		return new ApiMessage(200, "支付参数", maps);
+	}
+	
+	/**  
+	 * @Description: 分页获取培训机构评价内容
+	 * @author 宋高俊  
+	 * @param pageBean
+	 * @param request
+	 * @param id
+	 * @return 
+	 * @date 2018年10月27日 下午3:34:52 
+	 */ 
+	@RequestMapping(value = "/getCourseComment")
+	@ResponseBody
+	public ApiMessage getCourseComment(PageBean pageBean, HttpServletRequest request, String id){
+		PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
+		List<TrainOrderComment> list = trainOrderCommentService.selectByTeam(id);
+		PageInfo<TrainOrderComment> pageInfo = new PageInfo<TrainOrderComment>(list);
+		List<Map<String, Object>> maps = new ArrayList<Map<String,Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			Map<String, Object> commentMap = new HashMap<String, Object>();
+			commentMap.put("id", list.get(i).getId()); // ID 
+			commentMap.put("createTime", DateUtil.getFormat(list.get(i).getCreateTime())); // 时间
+			commentMap.put("title", list.get(i).getTrainCourse().getTitle()); // 课程名称
+			commentMap.put("classHour", list.get(i).getClassHour()); // 课时
+			commentMap.put("appnickname", list.get(i).getMember().getAppnickname()); // 用户昵称
+			commentMap.put("content", list.get(i).getContent()); // 评价内容
+			commentMap.put("appavatarurl", list.get(i).getMember().getAppavatarurl()); // 用户头像
+			commentMap.put("headImage", list.get(i).getTrainCoach().getHeadImage()); // 教练头像
+			commentMap.put("commentSelect", list.get(i).getCommentSelect()); // 评价选择(1=好评2=中评3=差评4=拒绝评价)
+			maps.add(commentMap);
+		}
+		return new ApiMessage(200, pageInfo.getTotal()+"", maps);
+	}
+	
+	/**  
+	 * @Description: 分页获取教练评价内容
+	 * @author 宋高俊  
+	 * @param pageBean
+	 * @param request
+	 * @param id
+	 * @return 
+	 * @date 2018年10月27日 下午3:34:52 
+	 */ 
+	@RequestMapping(value = "/getCoachComment")
+	@ResponseBody
+	public ApiMessage getCoachComment(PageBean pageBean, HttpServletRequest request, String id){
+		PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
+		List<TrainOrderComment> list = trainOrderCommentService.selectByCoach(id);
+		PageInfo<TrainOrderComment> pageInfo = new PageInfo<TrainOrderComment>(list);
+		List<Map<String, Object>> maps = new ArrayList<Map<String,Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			Map<String, Object> commentMap = new HashMap<String, Object>();
+			commentMap.put("id", list.get(i).getId()); // ID 
+			commentMap.put("createTime", DateUtil.getFormat(list.get(i).getCreateTime())); // 时间
+			commentMap.put("title", list.get(i).getTrainCourse().getTitle()); // 课程名称
+			commentMap.put("classHour", list.get(i).getClassHour()); // 课时
+			commentMap.put("appnickname", list.get(i).getMember().getAppnickname()); // 用户昵称
+			commentMap.put("content", list.get(i).getContent()); // 评价内容
+			commentMap.put("appavatarurl", list.get(i).getMember().getAppavatarurl()); // 用户头像
+			commentMap.put("headImage", list.get(i).getTrainCoach().getHeadImage()); // 教练头像
+			commentMap.put("commentSelect", list.get(i).getCommentSelect()); // 评价选择(1=好评2=中评3=差评4=拒绝评价)
+			maps.add(commentMap);
+		}
+		return new ApiMessage(200, pageInfo.getTotal()+"", maps);
+	}
 }

@@ -114,4 +114,15 @@ public interface VenueMapper extends BaseMapper<Venue, String>{
 	 * @date 2018年10月20日 下午3:25:58 
 	 */ 
 	List<Venue> selectByNearbyMapVenue(@Param("begLng")double begLng, @Param("endLng")double endLng, @Param("begLat")double begLat, @Param("endLat")double endLat, @Param("ballType")Integer ballType);
+
+	/**  
+	 * @Description: 条件查询场馆
+	 * @author 宋高俊  
+	 * @param selectType
+	 * @param keyword
+	 * @return 
+	 * @date 2018年10月30日 上午10:09:42 
+	 */ 
+	List<Venue> selectBySearch(@Param("selectType")Integer selectType, @Param("keyword")String keyword);
+	
 }

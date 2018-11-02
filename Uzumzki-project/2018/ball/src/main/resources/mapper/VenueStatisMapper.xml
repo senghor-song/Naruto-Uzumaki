@@ -23,8 +23,13 @@
 	
 	<select id="selectByVenue"  resultMap="BaseResultMap">
 		SELECT * FROM VenueStatis WHERE VenueID = #{venueid,jdbcType=CHAR}  
-		AND StatisDate &gt; #{startDate,jdbcType=TIMESTAMP} AND StatisDate &lt; #{endDate,jdbcType=TIMESTAMP}
+		AND StatisDate &gt;= #{startDate,jdbcType=TIMESTAMP} AND StatisDate &lt;= #{endDate,jdbcType=TIMESTAMP}
 		ORDER BY `StatisDate`
+	</select>
+	
+	<select id="selectByOldVenueStatis"  resultMap="BaseResultMap">
+		SELECT * FROM VenueStatis WHERE VenueID = #{venueid,jdbcType=CHAR}  
+		AND StatisDate = #{date,jdbcType=TIMESTAMP} ORDER BY `StatisDate` limit 1
 	</select>
 	
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">

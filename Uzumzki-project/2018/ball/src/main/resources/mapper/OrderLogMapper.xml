@@ -15,7 +15,7 @@
 	<select id="selectByOrder" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from OrderLog where OrderID = #{orderid,jdbcType=CHAR}
+		from OrderLog where OrderID = #{orderid,jdbcType=CHAR} ORDER BY CreateTime DESC
 	</select>
 	
 	<select id="countByOrder" parameterType="java.lang.String" resultType="java.lang.Integer">

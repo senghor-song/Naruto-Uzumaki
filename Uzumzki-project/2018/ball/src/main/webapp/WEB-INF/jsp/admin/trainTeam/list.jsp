@@ -5,9 +5,10 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>后台管理系统</title>
+    <title>小易运维</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
     <link href="/WebBackAPI/admin/static/css/site.css" rel="stylesheet">
 </head>
 
@@ -27,9 +28,23 @@
                         	<div class="card-header">
                                 <h3 class="card-title">
                                     <div class="row">
-                                        <div class="col-lg-4 btncaozuo">
+                                        <div class="col-lg-9 btncaozuo">
                                             <button class="btn btn-primary btn-sm" id="trainEnter">入驻申请</button>
                                         </div>
+                                        <div class="input-group input-group-sm float-right col-lg-3" style="width: 350px;">
+											<select class="form-control float-right" id="trainSelectType">
+												<option value="0">城市</option>
+												<option value="1">机构名</option>
+											</select> 
+											<input class="form-control float-right" id="trainKeyword" name="table_search" type="text"
+												placeholder="请输入关键字" maxlength="20">
+						
+											<div class="input-group-append">
+												<button class="btn btn-default" id="trainSearch" type="submit">
+													<i class="fa fa-search"></i> 搜索
+												</button>
+											</div>
+										</div>
                                     </div>
                                 </h3>
                             </div>
@@ -85,7 +100,7 @@
 <script src="/WebBackAPI/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
 <script src="/WebBackAPI/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <script src="/WebBackAPI/admin/static/js/jq-ext.js"></script>
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ITcG0S4URK9aokGSOhTNnSXCO9o7fK8D"></script>
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ITcG0S4URK9aokGSOhTNnSXCO9o7fK8D"></script>
 <script>
 var map=null;
 var mapmarker=null;
@@ -100,7 +115,7 @@ var mapmarker=null;
             },
             search: function () {
                 var self = this;
-                $("#btnSearch").unbind().on("click", function () {
+                $("#trainSearch").unbind().on("click", function () {
                     $.reload(self.obj);
                 });
             },
@@ -114,10 +129,10 @@ var mapmarker=null;
                         height: $(window).height() - 140,
                         where: {
                             selectType: function () {
-                                return $("#selectType").val()
+                                return $("#trainSelectType").val()
                             },
                             keyword: function () {
-                                return $("#keyword").val()
+                                return $("#trainKeyword").val()
                             }
                         },
                         cols: [
@@ -125,9 +140,12 @@ var mapmarker=null;
                     			{field: 'id', title: 'id', hide:true},
                                 {field: 'city', title: '城市', sort: true},
                                 {field: 'title', title: '机构', sort: true},
+                                {field: 'typeFlag', title: '状态', sort: true},
+                                {field: 'lngAndLat', title: '经纬', sort: true},
+                                {field: 'phone', title: '电话', sort: true},
                                 {field: 'level', title: '评级', sort: true},
                                 {field: 'levelTime', title: '当前评级', sort: true},
-                                {field: 'teachClass', title: '类型', sort: true},
+                                {field: 'teachClass', title: '类型', hide:true},
                                 {field: 'trainCoachSum', title: '教练', sort: true},
                                 {field: 'trainCourseSum', title: '课程', sort: true},
                                 {field: 'dayPhoneSum', title: '近60日电话', sort: true},
@@ -185,23 +203,88 @@ var mapmarker=null;
                         },
                         item3: {
                             name: "调整评级", callback: function (key, opt) {
-                                $.showContentMenu(key, opt)
-                                $.tableObject({
-                                    tableId: 'updateLevel',
-                                    tableOption: {
-                                        url: '/WebBackAPI/admin/train/trainloglist?id='+$(this).find("td").eq(0).attr('title'),
-                                        page: false,
-                                        height: $("#updateLevel").parents(".layui-layer-content").height() - 30,
-                                        where: {},
-                                        cols: [
-                                            [
-                                                { field: 'createtime', title: '时间', sort: true },
-                                                { field: 'type', title: '类别', sort: true },
-                                                { field: 'content', title: '内容', sort: true },
-                                            ]
-                                        ]
-                                    }
+                            	$.ajax({  
+                                    type : "POST",  //提交方式  
+                                    url : "/WebBackAPI/admin/trainTeam/updateLevel",//路径  
+                                    data : {  
+                                        "id" : $(this).find("td").eq(0).attr('title'),
+                                    },//数据这里使用的是Json格式进行传输  
+                                    dataType:"html",
+                                    success : function(result) {//返回数据根据结果进行相应的处理  
+                                   		 layer.open({
+                                            type: 1,
+                                            area: [$(document).width() + 'px', '200px'],
+                                            offset: 'b',
+                                            title: opt.items[key].name,
+                                            resize: true,
+                                            anim: 1,
+                                            content: result,
+                                            maxmin: false,
+                                            shadeClose: true,
+                                            cancel: function (index, layero) {
+                                                $(".contextMenuDialog").addClass("hide");
+                                    			 $.reload(tableObj.obj);
+                                            },
+                                            end: function () {
+                                                $(".contextMenuDialog").addClass("hide");
+                                    			 $.reload(tableObj.obj);
+                                            }
+                                        });
+                                    }  
                                 });
+                            }
+                        },
+                        item4: {
+                            name: "编辑", callback: function (key, opt) {
+                            	$.showAjaxContent("编辑", "35%", "/WebBackAPI/admin/trainTeam/edit", $(this).find("td").eq(0).attr('title'));
+                            	var lng = $(this).find("td").eq(16).attr('title');
+                            	var lat = $(this).find("td").eq(17).attr('title');
+                            	$("#citymapDiv").removeClass("hide");
+                            	layer.open({
+                             	  title: "位置", 
+                				  type: 1,
+                				  anim: 1,
+                				  shade: 0.3,
+                				  closeBtn: 0,
+                				  offset: '20px',
+                				  title: false,
+                				  move: false,
+                	              shadeClose : true,
+                				  resize: false,
+                				  area: ['30%', '50%'],
+                				  content: $('#citymap'),
+                                  cancel: function (index, layero) {
+                                	  layer.closeAll();
+                                      $(".contextMenuDialog").addClass("hide");
+                          			  $.reload(self.obj);
+                                  },
+                                  end: function () {
+                                	  layer.closeAll();
+                                      $(".contextMenuDialog").addClass("hide");
+                          			  $.reload(self.obj);
+                                  },
+                				  success: function(){
+                					    map = new BMap.Map("citymap");    // 创建Map实例
+	                					map.centerAndZoom(new BMap.Point(114.056386, 22.592976), 15);  // 初始化地图,设置中心点坐标和地图级别
+                						//添加地图类型控件
+                						map.addControl(new BMap.MapTypeControl({
+                							mapTypes:[
+                						        BMAP_NORMAL_MAP,
+                						        BMAP_HYBRID_MAP
+                						    ]}));	  
+                						map.setCurrentCity("深圳");          // 设置地图显示的城市 此项是必须设置的
+                						map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+                						
+                						if(mapmarker != null){
+                	   				        map.removeOverlay(mapmarker);
+                	   					}
+               	   			        	var point = new BMap.Point(lng, lat);
+               	   			      		map.centerAndZoom(point, 16);
+               	   			      		var marker = new BMap.Marker(point);// 创建标注
+               	   			      		mapmarker = marker;
+               	   			      		map.addOverlay(marker);// 将标注添加到地图中
+                				   }
+                				});
                             }
                         }
                     }
@@ -224,9 +307,11 @@ var mapmarker=null;
                 content: obj,
                 cancel: function (index, layero) {
                     $(".contextMenuDialog").addClass("hide");
+                    layer.closeAll(); 
 	            },
 	        	end: function () {
                     $(".contextMenuDialog").addClass("hide");
+                    layer.closeAll(); 
 	        	}
             });
             trainEnterTableInit(0);
@@ -263,7 +348,7 @@ var mapmarker=null;
                                },
                                cols: [
                                    [
-                        				{field: 'id', title: 'id', hide:true},
+                        			   {field: 'id', title: 'id', hide:true},
                                        {field: 'createTime', title: '申请时间', sort: true},
                                        {field: 'appnickname', title: '操作人', sort: true},
                                        {field: 'phone', title: '绑定', sort: true},
@@ -385,6 +470,7 @@ var mapmarker=null;
 </div>
 
 <div class="contextMenuDialog hide" id="button1">
+    <div class="card-body">
 	<div class="card-tools" style="padding-bottom: 10px;">
 		<div class="input-group input-group-sm" style="width: 150px;">
 			审核状态: <select class="form-control float-right" id="selectType" ">
@@ -396,6 +482,7 @@ var mapmarker=null;
 	</div>
 	<div class="row">
 		<table id="tableAllTrainEnter"></table>
+	</div>
 	</div>
 </div>
 

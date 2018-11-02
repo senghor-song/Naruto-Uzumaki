@@ -131,6 +131,7 @@ public class StringUtil {
 	/**
 	 * @Description: 将时间编号转换为时间段
 	 * @author 宋高俊
+	 * @param 1-48
 	 * @return 例如：10:00-13:00
 	 * @date 2018年8月18日 上午10:15:04
 	 */

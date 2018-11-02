@@ -7,18 +7,7 @@ import java.util.Date;
  * 实体
  */
 public class TrainTeamLog implements Serializable {
-	
-	private TrainCoach trainCoach;
-	
-    public TrainCoach getTrainCoach() {
-		return trainCoach;
-	}
-
-	public void setTrainCoach(TrainCoach trainCoach) {
-		this.trainCoach = trainCoach;
-	}
-
-	/** ID */
+    /** ID */
     private String id;
 
     /** 创建时间 */
@@ -26,9 +15,6 @@ public class TrainTeamLog implements Serializable {
 
     /** 培训机构ID */
     private String trainTeamId;
-
-    /** 教练ID */
-    private String trainCoachId;
 
     /** 备注内容 */
     private String content;
@@ -84,22 +70,6 @@ public class TrainTeamLog implements Serializable {
      */
     public void setTrainTeamId(String trainTeamId) {
         this.trainTeamId = trainTeamId == null ? null : trainTeamId.trim();
-    }
-
-    /**
-     * 教练ID
-     * @return Train_coach_id 教练ID
-     */
-    public String getTrainCoachId() {
-        return trainCoachId;
-    }
-
-    /**
-     * 教练ID
-     * @param trainCoachId 教练ID
-     */
-    public void setTrainCoachId(String trainCoachId) {
-        this.trainCoachId = trainCoachId == null ? null : trainCoachId.trim();
     }
 
     /**

@@ -5,9 +5,10 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>后台管理系统</title>
+    <title>小易运维</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
     <link href="/WebBackAPI/admin/static/css/site.css" rel="stylesheet">
 </head>
 
@@ -174,6 +175,8 @@
    			var layEvent = obj.event;
    			var tr = obj.tr;
 			var check = 0;
+			var logSum = data.cityLogSum + 1;
+			obj.update({ cityLogSum: logSum });
 			if (layEvent == 'yesHot' || layEvent == 'noHot') {
 				if (layEvent == 'yesHot') {
 					obj.update({ hotflag: '是' });

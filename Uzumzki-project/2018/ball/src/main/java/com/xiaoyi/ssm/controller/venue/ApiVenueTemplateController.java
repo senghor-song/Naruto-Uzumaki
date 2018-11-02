@@ -47,12 +47,7 @@ public class ApiVenueTemplateController {
 	@ResponseBody
 	public ApiMessage list(HttpServletRequest request, String id) {
 		
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
-
 		Venue venue = venueService.selectByPrimaryKey(id);
-
 		if (venue == null) {
 			return new ApiMessage(400, "场馆不存在");
 		}
@@ -62,6 +57,8 @@ public class ApiVenueTemplateController {
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", venueTemplate.getId());// id
 			map.put("name", venueTemplate.getName());// 模板名称
+			map.put("sysFlag", venueTemplate.getId().equals(venueTemplate.getVenueid()));// true为系统默认false不是
+			map.put("defaultFlag", venueTemplate.getDefaultflag());// 是否为默认模板(0=否1=是)
 			listmap.add(map);
 		}
 		return new ApiMessage(200, "查询成功", listmap);
@@ -129,7 +126,10 @@ public class ApiVenueTemplateController {
 	public ApiMessage deleteTmplate(String id) {
 		VenueTemplate venueTemplate = venueTemplateService.selectByPrimaryKey(id);
 		if (venueTemplate.getDefaultflag() == 1) {
-			return new ApiMessage(400, "默认模板不能删除,请先设置其他模板为默认模板");
+			// 现有默认模板删除后,将系统模板设为默认
+			VenueTemplate sysVenueTemplate = venueTemplateService.selectByVenueTemplate(venueTemplate.getVenueid(), venueTemplate.getVenueid());
+			sysVenueTemplate.setDefaultflag(1);
+			venueTemplateService.updateByPrimaryKeySelective(sysVenueTemplate);
 		}
 		
 		int flag = venueTemplateService.deleteByPrimaryKey(id);

@@ -30,8 +30,11 @@ import com.xiaoyi.ssm.service.InviteBallService;
 import com.xiaoyi.ssm.service.InviteImageService;
 import com.xiaoyi.ssm.service.InviteJoinService;
 import com.xiaoyi.ssm.service.MemberService;
+import com.xiaoyi.ssm.service.NewsCollectService;
 import com.xiaoyi.ssm.service.TrainCoachService;
+import com.xiaoyi.ssm.service.TrainCourseCollectService;
 import com.xiaoyi.ssm.service.TrainOrderService;
+import com.xiaoyi.ssm.service.TrainTeamCollectService;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.MoblieMessageUtil;
@@ -65,6 +68,12 @@ public class ApiMemberController {
 	private TrainCoachService trainCoachService;
 	@Autowired
 	private MemberHabitMapper memberHabitMapper;
+	@Autowired
+	private TrainTeamCollectService trainTeamCollectService;
+	@Autowired
+	private TrainCourseCollectService trainCourseCollectService;
+	@Autowired
+	private NewsCollectService newsCollectService;
 
 	/**
 	 * @Description: 查询我参与的约球
@@ -192,9 +201,14 @@ public class ApiMemberController {
 		map.put("myJoinBall", myJoinBall);// 我参与的约球总数
 		map.put("myJoinApplyBall", myJoinApplyBall);// 我发起的约球总数
 		map.put("myTrainOrder", myTrainOrder);// 我的私教总数
-		map.put("venue", memberHabitMapper.countOften(member.getId()));// 场馆收藏总数
+		int collectSum = 0;
+		collectSum += memberHabitMapper.countOften(member.getId());
+		collectSum += trainTeamCollectService.countByMember(member.getId());
+		collectSum += trainCourseCollectService.countByMember(member.getId());
+		collectSum += newsCollectService.countByMember(member.getId());
+		map.put("venue", collectSum);// 收藏总数
 		
-		TrainCoach trainCoach = trainCoachService.selectByMemberId(member.getId());
+		TrainCoach trainCoach = trainCoachService.selectByMember(member.getId());
 		if (trainCoach != null ) {
 			map.put("coachFlag", 1);// 是教练
 		}else {

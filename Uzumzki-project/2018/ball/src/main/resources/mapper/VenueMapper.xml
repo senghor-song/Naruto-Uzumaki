@@ -10,13 +10,12 @@
 		<result column="Address" jdbcType="VARCHAR" property="address" />
 		<result column="CityID" jdbcType="VARCHAR" property="cityid" />
 		<result column="DistrictID" jdbcType="VARCHAR" property="districtid" />
+		<result column="Owner" jdbcType="VARCHAR" property="owner" />
 		<result column="Tel" jdbcType="VARCHAR" property="tel" />
 		<result column="BallSum" jdbcType="INTEGER" property="ballsum" />
 		<result column="Image" jdbcType="VARCHAR" property="image" />
 		<result column="WarmReminder" jdbcType="VARCHAR" property="warmreminder" />
-		<result column="AmountBank" jdbcType="VARCHAR" property="amountbank" />
-		<result column="AmountAccount" jdbcType="VARCHAR" property="amountaccount" />
-		<result column="AmountAccountNumber" jdbcType="VARCHAR" property="amountaccountnumber" />
+		<result column="Member_id" jdbcType="VARCHAR" property="memberId" />
 		<result column="Amount" jdbcType="DOUBLE" property="amount" />
 		<result column="Balance" jdbcType="DOUBLE" property="balance" />
 		<result column="FreezeAmount" jdbcType="DOUBLE" property="freezeamount" />
@@ -24,8 +23,10 @@
 		<result column="Longitude" jdbcType="DOUBLE" property="longitude" />
 		<result column="Latitude" jdbcType="DOUBLE" property="latitude" />
 		<result column="Type" jdbcType="INTEGER" property="type" />
+		<result column="Train_add_flag" jdbcType="INTEGER" property="trainAddFlag" />
 		<result column="TrainTeam" jdbcType="VARCHAR" property="trainteam" />
 		<result column="ShowFlag" jdbcType="INTEGER" property="showflag" />
+		<result column="Min_amount" jdbcType="DOUBLE" property="minAmount" />
 		<association property="cityT" javaType="com.xiaoyi.ssm.model.City">
 			<id column="ID" jdbcType="CHAR" property="id" />
 			<result column="cCity" jdbcType="VARCHAR" property="city" />
@@ -36,15 +37,14 @@
 		</association>
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, CreateTime, ModifyTime, VenueNO, Name, Address, CityID, DistrictID, Tel, BallSum,
-		Image, WarmReminder, AmountBank, AmountAccount, AmountAccountNumber, Amount, Balance,
-		FreezeAmount, OrderVerify, Longitude, Latitude, Type, TrainTeam, ShowFlag
+		ID, CreateTime, ModifyTime, VenueNO, Name, Address, CityID, DistrictID, Owner, Tel,
+		BallSum, Image, WarmReminder, Member_id, Amount, Balance, FreezeAmount, OrderVerify,
+		Longitude, Latitude, Type, Train_add_flag, TrainTeam, ShowFlag, Min_amount
 	</sql>
 
 	<select id="selectByOftenMember" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT v.* FROM
-		Venue v INNER JOIN MemberHabit mh ON v.`ID`
-		= mh.`VenueID` WHERE mh.`MemberID` = #{id} ORDER BY
+		Venue v INNER JOIN MemberHabit mh ON v.`ID` = mh.`VenueID` WHERE mh.`MemberID` = #{id} ORDER BY
 		mh.`CreateTime` DESC
 	</select>
 
@@ -57,8 +57,7 @@
 	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Venue" resultMap="BaseResultMap">
 		SELECT v.*,c.`City` cCity, d.`District` dDistrict FROM Venue v LEFT JOIN City c ON
 		v.`CityID` =
-		c.`ID`
-		LEFT JOIN District d ON v.`DistrictID` = d.`ID`
+		c.`ID` LEFT JOIN District d ON v.`DistrictID` = d.`ID`
 		<where>
 			<if test="createtime != null">
 				AND v.CreateTime = #{createtime,jdbcType=TIMESTAMP}
@@ -137,45 +136,72 @@
 		</if>
 	</select>
 
-
 	<select id="selectByTrainTeamID" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT v.* FROM Venue v INNER JOIN TrainTeamVenue ttv ON v.`ID` = ttv.`Train_venue_id` WHERE
-		ttv.`Train_team_id` = #{id} 
+		SELECT v.* FROM
+		Venue v INNER JOIN TrainTeamVenue ttv ON v.`ID` = ttv.`Train_venue_id` WHERE
+		ttv.`Train_team_id` =
+		#{id}
 	</select>
-	
+
 	<delete id="deleteByTeamVenue" parameterType="java.lang.String">
-		delete from TrainTeamVenue where Train_venue_id  = #{id,jdbcType=CHAR} AND Train_team_id = #{trainTeamId,jdbcType=CHAR}
+		delete from TrainTeamVenue where Train_venue_id
+		= #{id,jdbcType=CHAR} AND Train_team_id = #{trainTeamId,jdbcType=CHAR}
 	</delete>
-	
+
 	<insert id="saveTeamVenue" parameterType="com.xiaoyi.ssm.model.TrainTeamVenue">
-		insert into TrainTeamVenue (ID, Train_venue_id, Train_team_id
+		insert into TrainTeamVenue (ID, Train_venue_id,
+		Train_team_id
 		)
-		values (#{id,jdbcType=VARCHAR}, #{trainVenueId,jdbcType=VARCHAR}, #{trainTeamId,jdbcType=VARCHAR}
+		values (#{id,jdbcType=VARCHAR}, #{trainVenueId,jdbcType=VARCHAR},
+		#{trainTeamId,jdbcType=VARCHAR}
 		)
 	</insert>
-	
+
 	<select id="countByTeam" parameterType="java.lang.String" resultType="java.lang.Integer">
-		select count(0) from TrainTeamVenue where Train_team_id = #{id,jdbcType=VARCHAR}
+		select count(0) from
+		TrainTeamVenue where Train_team_id = #{id,jdbcType=VARCHAR}
 	</select>
-	
+
 	<select id="selectTrainVenue" resultMap="BaseResultMap">
-		SELECT * FROM Venue 
+		SELECT * FROM Venue
 		<where>
 			<if test="name != null">
 				AND Name LIKE concat('%',concat('${venueName}','%'))
 			</if>
 		</where>
 	</select>
-	
+
 	<select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT  * FROM Venue WHERE Name LIKE concat('%',concat('${venueName}','%'))
+		SELECT * FROM Venue
+		WHERE Name LIKE concat('%',concat('${venueName}','%'))
 	</select>
-	
+
 	<select id="selectByNearbyMapVenue" resultMap="BaseResultMap">
-		SELECT * FROM Venue WHERE `Longitude` &gt; #{begLng} AND `Longitude` &lt; #{endLng} AND `Latitude` &gt; #{begLat} AND `Latitude` &lt; #{endLat}
+		SELECT * FROM Venue WHERE `Longitude` &gt; #{begLng} AND `Longitude` &lt; #{endLng} AND `Latitude`
+		&gt; #{begLat} AND `Latitude` &lt; #{endLat}
 		<if test="ballType != null">
 			AND Type = #{ballType}
-		</if>	
+		</if>
+	</select>
+
+	<select id="selectBySearch" resultMap="BaseResultMap">
+		SELECT v.*,c.`City` cCity, d.`District` dDistrict FROM Venue v LEFT JOIN City c ON
+		v.`CityID` =
+		c.`ID` LEFT JOIN District d ON v.`DistrictID` = d.`ID`
+		<where>
+			<if test="selectType != null">
+				<if test="selectType == 0">
+					<if test="keyword != null and keyword != ''">
+						AND c.`City` LIKE concat('%',concat('${keyword}','%'))
+					</if>
+				</if>
+				<if test="selectType == 1">
+					<if test="keyword != null and keyword != ''">
+						AND v.Name LIKE concat('%',concat('${keyword}','%'))
+					</if>
+				</if>
+			</if>
+		</where>
 	</select>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -191,23 +217,22 @@
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Venue">
 		insert into Venue (ID, CreateTime, ModifyTime,
 		VenueNO, Name, Address,
-		CityID, DistrictID, Tel,
-		BallSum, Image, WarmReminder,
-		AmountBank, AmountAccount, AmountAccountNumber,
-		Amount, Balance, FreezeAmount,
-		OrderVerify, Longitude, Latitude,
-		Type, TrainTeam, ShowFlag
-		)
+		CityID, DistrictID, Owner,
+		Tel, BallSum, Image,
+		WarmReminder, Member_id, Amount,
+		Balance, FreezeAmount, OrderVerify,
+		Longitude, Latitude, Type,
+		Train_add_flag, TrainTeam, ShowFlag,
+		Min_amount)
 		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP},
 		#{venueno,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
-		#{cityid,jdbcType=VARCHAR}, #{districtid,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR},
-		#{ballsum,jdbcType=INTEGER}, #{image,jdbcType=VARCHAR}, #{warmreminder,jdbcType=VARCHAR},
-		#{amountbank,jdbcType=VARCHAR}, #{amountaccount,jdbcType=VARCHAR},
-		#{amountaccountnumber,jdbcType=VARCHAR},
-		#{amount,jdbcType=DOUBLE}, #{balance,jdbcType=DOUBLE}, #{freezeamount,jdbcType=DOUBLE},
-		#{orderverify,jdbcType=INTEGER}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE},
-		#{type,jdbcType=INTEGER}, #{trainteam,jdbcType=VARCHAR}, #{showflag,jdbcType=INTEGER}
-		)
+		#{cityid,jdbcType=VARCHAR}, #{districtid,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR},
+		#{tel,jdbcType=VARCHAR}, #{ballsum,jdbcType=INTEGER}, #{image,jdbcType=VARCHAR},
+		#{warmreminder,jdbcType=VARCHAR}, #{memberId,jdbcType=VARCHAR}, #{amount,jdbcType=DOUBLE},
+		#{balance,jdbcType=DOUBLE}, #{freezeamount,jdbcType=DOUBLE}, #{orderverify,jdbcType=INTEGER},
+		#{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, #{type,jdbcType=INTEGER},
+		#{trainAddFlag,jdbcType=INTEGER}, #{trainteam,jdbcType=VARCHAR}, #{showflag,jdbcType=INTEGER},
+		#{minAmount,jdbcType=DOUBLE})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Venue">
 		insert into Venue
@@ -236,6 +261,9 @@
 			<if test="districtid != null">
 				DistrictID,
 			</if>
+			<if test="owner != null">
+				Owner,
+			</if>
 			<if test="tel != null">
 				Tel,
 			</if>
@@ -248,14 +276,8 @@
 			<if test="warmreminder != null">
 				WarmReminder,
 			</if>
-			<if test="amountbank != null">
-				AmountBank,
-			</if>
-			<if test="amountaccount != null">
-				AmountAccount,
-			</if>
-			<if test="amountaccountnumber != null">
-				AmountAccountNumber,
+			<if test="memberId != null">
+				Member_id,
 			</if>
 			<if test="amount != null">
 				Amount,
@@ -278,11 +300,17 @@
 			<if test="type != null">
 				Type,
 			</if>
+			<if test="trainAddFlag != null">
+				Train_add_flag,
+			</if>
 			<if test="trainteam != null">
 				TrainTeam,
 			</if>
 			<if test="showflag != null">
 				ShowFlag,
+			</if>
+			<if test="minAmount != null">
+				Min_amount,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -310,6 +338,9 @@
 			<if test="districtid != null">
 				#{districtid,jdbcType=VARCHAR},
 			</if>
+			<if test="owner != null">
+				#{owner,jdbcType=VARCHAR},
+			</if>
 			<if test="tel != null">
 				#{tel,jdbcType=VARCHAR},
 			</if>
@@ -322,14 +353,8 @@
 			<if test="warmreminder != null">
 				#{warmreminder,jdbcType=VARCHAR},
 			</if>
-			<if test="amountbank != null">
-				#{amountbank,jdbcType=VARCHAR},
-			</if>
-			<if test="amountaccount != null">
-				#{amountaccount,jdbcType=VARCHAR},
-			</if>
-			<if test="amountaccountnumber != null">
-				#{amountaccountnumber,jdbcType=VARCHAR},
+			<if test="memberId != null">
+				#{memberId,jdbcType=VARCHAR},
 			</if>
 			<if test="amount != null">
 				#{amount,jdbcType=DOUBLE},
@@ -352,11 +377,17 @@
 			<if test="type != null">
 				#{type,jdbcType=INTEGER},
 			</if>
+			<if test="trainAddFlag != null">
+				#{trainAddFlag,jdbcType=INTEGER},
+			</if>
 			<if test="trainteam != null">
 				#{trainteam,jdbcType=VARCHAR},
 			</if>
 			<if test="showflag != null">
 				#{showflag,jdbcType=INTEGER},
+			</if>
+			<if test="minAmount != null">
+				#{minAmount,jdbcType=DOUBLE},
 			</if>
 		</trim>
 	</insert>
@@ -384,6 +415,9 @@
 			<if test="districtid != null">
 				DistrictID = #{districtid,jdbcType=VARCHAR},
 			</if>
+			<if test="owner != null">
+				Owner = #{owner,jdbcType=VARCHAR},
+			</if>
 			<if test="tel != null">
 				Tel = #{tel,jdbcType=VARCHAR},
 			</if>
@@ -396,14 +430,8 @@
 			<if test="warmreminder != null">
 				WarmReminder = #{warmreminder,jdbcType=VARCHAR},
 			</if>
-			<if test="amountbank != null">
-				AmountBank = #{amountbank,jdbcType=VARCHAR},
-			</if>
-			<if test="amountaccount != null">
-				AmountAccount = #{amountaccount,jdbcType=VARCHAR},
-			</if>
-			<if test="amountaccountnumber != null">
-				AmountAccountNumber = #{amountaccountnumber,jdbcType=VARCHAR},
+			<if test="memberId != null">
+				Member_id = #{memberId,jdbcType=VARCHAR},
 			</if>
 			<if test="amount != null">
 				Amount = #{amount,jdbcType=DOUBLE},
@@ -426,11 +454,17 @@
 			<if test="type != null">
 				Type = #{type,jdbcType=INTEGER},
 			</if>
+			<if test="trainAddFlag != null">
+				Train_add_flag = #{trainAddFlag,jdbcType=INTEGER},
+			</if>
 			<if test="trainteam != null">
 				TrainTeam = #{trainteam,jdbcType=VARCHAR},
 			</if>
 			<if test="showflag != null">
 				ShowFlag = #{showflag,jdbcType=INTEGER},
+			</if>
+			<if test="minAmount != null">
+				Min_amount = #{minAmount,jdbcType=DOUBLE},
 			</if>
 		</set>
 		where ID = #{id,jdbcType=CHAR}
@@ -444,13 +478,12 @@
 		Address = #{address,jdbcType=VARCHAR},
 		CityID = #{cityid,jdbcType=VARCHAR},
 		DistrictID = #{districtid,jdbcType=VARCHAR},
+		Owner = #{owner,jdbcType=VARCHAR},
 		Tel = #{tel,jdbcType=VARCHAR},
 		BallSum = #{ballsum,jdbcType=INTEGER},
 		Image = #{image,jdbcType=VARCHAR},
 		WarmReminder = #{warmreminder,jdbcType=VARCHAR},
-		AmountBank = #{amountbank,jdbcType=VARCHAR},
-		AmountAccount = #{amountaccount,jdbcType=VARCHAR},
-		AmountAccountNumber = #{amountaccountnumber,jdbcType=VARCHAR},
+		Member_id = #{memberId,jdbcType=VARCHAR},
 		Amount = #{amount,jdbcType=DOUBLE},
 		Balance = #{balance,jdbcType=DOUBLE},
 		FreezeAmount = #{freezeamount,jdbcType=DOUBLE},
@@ -458,8 +491,10 @@
 		Longitude = #{longitude,jdbcType=DOUBLE},
 		Latitude = #{latitude,jdbcType=DOUBLE},
 		Type = #{type,jdbcType=INTEGER},
+		Train_add_flag = #{trainAddFlag,jdbcType=INTEGER},
 		TrainTeam = #{trainteam,jdbcType=VARCHAR},
-		ShowFlag = #{showflag,jdbcType=INTEGER}
+		ShowFlag = #{showflag,jdbcType=INTEGER},
+		Min_amount = #{minAmount,jdbcType=DOUBLE}
 		where ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

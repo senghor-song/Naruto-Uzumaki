@@ -32,7 +32,6 @@ import com.xiaoyi.ssm.dto.FieldTemplateDto;
 import com.xiaoyi.ssm.dto.OrderDto;
 import com.xiaoyi.ssm.dto.PageBean;
 import com.xiaoyi.ssm.model.City;
-import com.xiaoyi.ssm.model.Coach;
 import com.xiaoyi.ssm.model.District;
 import com.xiaoyi.ssm.model.Field;
 import com.xiaoyi.ssm.model.FieldTemplate;
@@ -41,19 +40,25 @@ import com.xiaoyi.ssm.model.MemberHabit;
 import com.xiaoyi.ssm.model.Order;
 import com.xiaoyi.ssm.model.OrderLog;
 import com.xiaoyi.ssm.model.Reserve;
+import com.xiaoyi.ssm.model.TrainCoach;
 import com.xiaoyi.ssm.model.TrainTeam;
 import com.xiaoyi.ssm.model.Venue;
+import com.xiaoyi.ssm.model.VenueCoach;
 import com.xiaoyi.ssm.model.VenueError;
 import com.xiaoyi.ssm.model.VenueLock;
+import com.xiaoyi.ssm.model.VenueLog;
 import com.xiaoyi.ssm.service.CityService;
-import com.xiaoyi.ssm.service.CoachService;
 import com.xiaoyi.ssm.service.DistrictService;
 import com.xiaoyi.ssm.service.FieldService;
 import com.xiaoyi.ssm.service.FieldTemplateService;
 import com.xiaoyi.ssm.service.MemberService;
 import com.xiaoyi.ssm.service.OrderService;
 import com.xiaoyi.ssm.service.ReserveService;
+import com.xiaoyi.ssm.service.TrainCoachService;
+import com.xiaoyi.ssm.service.TrainTeamService;
+import com.xiaoyi.ssm.service.VenueCoachService;
 import com.xiaoyi.ssm.service.VenueErrorService;
+import com.xiaoyi.ssm.service.VenueLogService;
 import com.xiaoyi.ssm.service.VenueService;
 import com.xiaoyi.ssm.util.Arith;
 import com.xiaoyi.ssm.util.DateUtil;
@@ -90,13 +95,19 @@ public class ApiVenueController {
 	@Autowired
 	private VenueLockMapper venueLockMapper;
 	@Autowired
-	private CoachService coachService;
+	private VenueCoachService coachService;
 	@Autowired
 	private OrderLogMapper orderLogMapper;
 	@Autowired
 	private MemberHabitMapper memberHabitMapper;
 	@Autowired
 	private VenueErrorService venueErrorService;
+	@Autowired
+	private VenueLogService venueLogService;
+	@Autowired
+	private TrainTeamService trainTeamService;
+	@Autowired
+	private VenueCoachService venueCoachService;
 
 	// 获取线程池连接
 	@Autowired
@@ -117,19 +128,36 @@ public class ApiVenueController {
 	@ResponseBody
 	public ApiMessage getMapVenue(HttpServletRequest request, double begLng, double endLng, double begLat, double endLat, Integer ballType) {
 
-		List<Venue> list = venueService.selectByNearbyMapVenue(begLng, endLng, begLat, endLat, ballType);
-		List<Map<String, Object>> listmap = new ArrayList<Map<String, Object>>();
-		for (int i = 0; i < list.size(); i++) {
-			Venue venue = list.get(i);
+		List<Venue> venueList = venueService.selectByNearbyMapVenue(begLng, endLng, begLat, endLat, ballType);
+		List<Map<String, Object>> venueListMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < venueList.size(); i++) {
+			Venue venue = venueList.get(i);
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("id", venue.getId()); // ID
 			map.put("title", venue.getName()); // 场馆名称
 			map.put("lng", venue.getLongitude()); // 经度
 			map.put("lat", venue.getLatitude()); // 纬度
 			map.put("type", venue.getType()); // 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场)
-			listmap.add(map);
+			venueListMap.add(map);
 		}
-		return new ApiMessage(200, "获取成功", listmap);
+
+		List<TrainTeam> teamList = trainTeamService.selectByNearbyMapTrainTeamType(begLng, endLng, begLat, endLat, ballType);
+		List<Map<String, Object>> teamListMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < teamList.size(); i++) {
+			TrainTeam trainTeam = teamList.get(i);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("id", trainTeam.getId()); // ID
+			map.put("title", trainTeam.getTitle()); // 场馆名称
+			map.put("lng", trainTeam.getLongitude()); // 经度
+			map.put("lat", trainTeam.getLatitude()); // 纬度
+			map.put("type", trainTeam.getTeachClass()); // 开设科目逗号隔开(网球,足球,羽毛球)
+			teamListMap.add(map);
+		}
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("venueListMap", venueListMap);
+		map.put("teamListMap", teamListMap);
+		return new ApiMessage(200, "获取成功", map);
 	}
 	
 	
@@ -233,10 +261,22 @@ public class ApiVenueController {
 	@RequestMapping(value = "/updateVenue")
 	@ResponseBody
 	public ApiMessage updateTmplate(String venueid, Venue venue, HttpServletRequest request) {
+
+		HttpSession session = request.getSession();
+		String openid = (String) session.getAttribute("openid");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
+		
 		venue.setId(venueid);
 		venue.setModifytime(new Date());
 		int flag = venueService.updateByPrimaryKeySelective(venue);
 		if (flag > 0) {
+			
+			VenueLog venueLog = new VenueLog();
+			venueLog.setId(Utils.getUUID());
+			venueLog.setCreatetime(new Date());
+			venueLog.setVenueid(venueid);
+			venueLog.setContent(member.getAppnickname()+"在客户端修改场馆数据");
+			venueLogService.insertSelective(venueLog);
 			return new ApiMessage(200, "修改成功");
 		}
 		return new ApiMessage(400, "修改失败");
@@ -488,7 +528,7 @@ public class ApiVenueController {
 	 * @return
 	 * @date 2018年9月7日 下午8:36:15
 	 */
-	@SuppressWarnings("unused")
+	/*@SuppressWarnings("unused")
 	@RequestMapping(value = "/order/details")
 	@ResponseBody
 	public ApiMessage orderdetails(String orderid) {
@@ -518,7 +558,7 @@ public class ApiVenueController {
 			map.put("coachamount", "0");// 服务费用
 		}
 		return new ApiMessage(200, "查询成功", map);
-	}
+	}*/
 	
 	/**  
 	 * @Description: 常用场馆列表
@@ -535,7 +575,6 @@ public class ApiVenueController {
 		
 		HttpSession session = request.getSession();
 		String openid = (String) session.getAttribute("openid");
-		
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
 		
 		List<Map<String, Object>> listmap = new ArrayList<>();
@@ -555,7 +594,7 @@ public class ApiVenueController {
 	}
 
 	/**
-	 * @Description: 会员选择日程数据(price为-1不可预订 -2已预订-3预订中-4已过期)
+	 * @Description: 会员选择日程数据(price为-1不可预订 -2已预订-3预订中-4已过期-5锁定)
 	 * @author 宋高俊
 	 * @date 2018年8月16日 下午7:35:14
 	 */
@@ -690,85 +729,20 @@ public class ApiVenueController {
 	 */
 	@RequestMapping(value = "/selectCoach")
 	@ResponseBody
-	public ApiMessage selectCoach(String date, String timestr, String venueid) {
-		if (StringUtil.isBank(date, timestr, venueid)) {
-			return new ApiMessage(400, "参数不完整");
-		}
-
-		List<String> datalist = new ArrayList<>();// 保存多个订场时间段详情数据
-
-		double timesum = 0;// 小时数
-		double price = 0;// 价格总数
-
-		// 解析提交的时间段选择数据
-		JSONArray jsonArray = JSONArray.fromObject(timestr);
-		for (int i = 0; i < jsonArray.size(); i++) {
-			// 预约时间段详情
-			String datastr = "";
-			JSONObject jsonObject = jsonArray.getJSONObject(i);
-			// 场地数据
-			Field field = fieldService.selectByPrimaryKey(jsonObject.get("fieldid").toString());
-			// 获取模板数据
-			FieldTemplateDto ftd = new FieldTemplateDto();
-			// 当前日期
-			ftd.setDate(DateUtil.getParse(date, "yyyy-MM-dd"));
-			ftd.setFieldid(field.getId());
-			ftd.setVenueid(venueid);
-			FieldTemplate ft = fieldTemplateService.selectByVenueAndField(ftd);
-			if (ft == null) {
-				return new ApiMessage(400, field.getName() + date + "未开放预约");
-			}
-			// 模板价格数据
-			String[] template = ft.getVenueTemplate().getPrice().split(",");
-
-			// 获取当前场地被预约的时间段
-			String timeno = (String) jsonObject.get("datestr");
-			String[] timesums = timeno.split(",");
-			int[] timetoint = new int[timesums.length];
-			for (int j = 0; j < timesums.length; j++) {
-				timetoint[j] = Integer.valueOf(timesums[j]);
-			}
-			List<String> arrays = StringUtil.getContinuousNumber(timetoint);
-			for (int k = 0; k < arrays.size(); k++) {
-				String[] time = arrays.get(k).split(",");
-				for (int j = 0; j < time.length; j++) {
-					// 计算总价格
-					int timeflag = Integer.valueOf(time[j]) - 1;
-					price = Arith.add(price, Double.valueOf(template[timeflag]));
-				}
-				// 生成预约时段数据
-				datastr = field.getName() + "(" + date + " " + StringUtil.timeToTimestr(time) + ")";
-				datalist.add(datastr);
-				// 计算总小时数
-				timesum += time.length * 0.5;
-			}
-
-		}
-
-		Coach c = new Coach();
-		c.setVenueid(venueid);
-		List<Coach> list = coachService.selectByAll(c);
+	public ApiMessage selectCoach(String venueid) {
+		List<VenueCoach> list = venueCoachService.selectByVenue(venueid);
 		List<Map<String, Object>> listmap = new ArrayList<>();
 		for (int i = 0; i < list.size(); i++) {
-			Coach coach = list.get(i);
+			VenueCoach venueCoach = list.get(i);
 			Map<String, Object> map = new HashMap<>();
-			map.put("id", coach.getId()); // ID
-			map.put("name", coach.getName()); // 姓名
-			map.put("price", coach.getPrice() * timesum); // 价格
-			map.put("image", coach.getImage()); // 图片
-			map.put("introduce", coach.getIntroduce()); // 图片
+			map.put("id", venueCoach.getTrainCoach().getId()); // 教练ID
+			map.put("coachid", venueCoach.getId()); // 陪练ID
+			map.put("name", venueCoach.getTrainCoach().getName()); // 姓名
+			map.put("price", venueCoach.getPrice()); // 价格
+			map.put("image", venueCoach.getTrainCoach().getHeadImage()); // 图片
 			listmap.add(map);
 		}
-		Map<String, Object> returnmap = new HashMap<>();
-		returnmap.put("datalist", datalist); // 订场详情数据
-		returnmap.put("time", timesum); // 小时数
-		returnmap.put("price", price); // 价格
-		returnmap.put("coachlist", listmap); // 教练数据
-
-		returnmap.put("date", date); // 回传数据
-		returnmap.put("timestr", timestr); // 回传数据
-		returnmap.put("venueid", venueid); // 回传数据
-		return ApiMessage.succeed(returnmap);
+		return ApiMessage.succeed(listmap);
 	}
 
 	/**
@@ -875,11 +849,12 @@ public class ApiVenueController {
 			}
 		}
 		if (!StringUtil.isBank(coachid)) {
-			Coach coach = coachService.selectByPrimaryKey(coachid);
-			if (coach != null) {
-				order.setCoachid(coach.getId());
-				order.setCoachamount(coach.getPrice() * timesum);
-				price = Arith.add(price, coach.getPrice() * timesum);
+			VenueCoach venueCoach = venueCoachService.selectByPrimaryKey(coachid);
+			if (venueCoach != null) {
+				order.setCoachid(coachid);
+				// 半小时价格乘2
+				order.setCoachamount(venueCoach.getPrice() * 2 * timesum);
+				price = Arith.add(price, order.getCoachamount());
 			}
 		}
 		order.setPrice(price);

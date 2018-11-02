@@ -3,8 +3,6 @@ package com.xiaoyi.ssm.service;
 import java.io.Serializable;
 import java.util.List;
 
-import com.xiaoyi.ssm.dto.ApiMessage;
-
 /**
  * @Description: 基类业务逻辑层
  * @author song

@@ -20,6 +20,9 @@ public class TrainCourse implements Serializable {
     /** 课程编号 */
     private Integer trainCourseNo;
 
+    /** 培训机构ID */
+    private String trainTeamId;
+
     /** 主教ID */
     private String trainCoachId;
 
@@ -144,6 +147,22 @@ public class TrainCourse implements Serializable {
      */
     public void setTrainCourseNo(Integer trainCourseNo) {
         this.trainCourseNo = trainCourseNo;
+    }
+
+    /**
+     * 培训机构ID
+     * @return Train_team_id 培训机构ID
+     */
+    public String getTrainTeamId() {
+        return trainTeamId;
+    }
+
+    /**
+     * 培训机构ID
+     * @param trainTeamId 培训机构ID
+     */
+    public void setTrainTeamId(String trainTeamId) {
+        this.trainTeamId = trainTeamId == null ? null : trainTeamId.trim();
     }
 
     /**

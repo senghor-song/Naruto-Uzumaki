@@ -23,10 +23,9 @@ public class MoblieMessageUtil {
 	// 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
 	private static String accessKeyId = Global.aliyunSMSAccessKeyId;
 	private static String accessKeySecret = Global.aliyunSMSAccessKeySecret;
-	private static String signName = Global.aliyunSMSSignName;
 	private static String templeteCode = Global.aliyunSMSTempleteCode;
 
-	public static SendSmsResponse sendSms(String mobile, String templateParam, String templateCode)
+	public static SendSmsResponse sendSms(String mobile, String templateParam, String templateCode, String signName)
 			throws ClientException {
 
 		// 可自助调整超时时间
@@ -68,10 +67,23 @@ public class MoblieMessageUtil {
 
 	public static SendSmsResponse sendIdentifyingCode(String mobile, String code) {
 		try {
-			return sendSms(mobile, "{\"code\":\"" + code + "\"}", templeteCode);
+			return sendSms(mobile, "{\"code\":\"" + code + "\"}", templeteCode, Global.aliyunSMSSignName);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static SendSmsResponse sendTemplateSms(String mobile, String name, String tel, String area, String day, String time) {
+		try {
+			return sendSms(mobile, "{\"name\":\"" + name + "\", \"tel\":\"" + tel + "\", \"area\":\"" + area + "\", \"day\":\"" + day + "\", \"time\":\"" + time + "\"}",
+					Global.aliyunSMSTempleteCode1, Global.aliyunSMSSignName1);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public static void main(String[] args) {
+		MoblieMessageUtil.sendTemplateSms("1520710815", "", "", "", "", "");
 	}
 }

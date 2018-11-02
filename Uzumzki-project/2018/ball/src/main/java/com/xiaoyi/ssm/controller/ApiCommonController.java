@@ -51,12 +51,14 @@ import com.xiaoyi.ssm.model.Member;
 import com.xiaoyi.ssm.model.NewsBanner;
 import com.xiaoyi.ssm.model.Order;
 import com.xiaoyi.ssm.model.OrderLog;
+import com.xiaoyi.ssm.model.TrainTeam;
 import com.xiaoyi.ssm.model.Venue;
 import com.xiaoyi.ssm.service.CityService;
 import com.xiaoyi.ssm.service.DistrictService;
 import com.xiaoyi.ssm.service.MemberService;
 import com.xiaoyi.ssm.service.NewsBannerService;
 import com.xiaoyi.ssm.service.OrderService;
+import com.xiaoyi.ssm.service.TrainTeamService;
 import com.xiaoyi.ssm.service.VenueErrorService;
 import com.xiaoyi.ssm.service.VenueService;
 import com.xiaoyi.ssm.util.CheckUtil;
@@ -105,6 +107,8 @@ public class ApiCommonController {
 	private OrderLogMapper orderMapper;
 	@Autowired
 	private VenueErrorService venueErrorService;
+	@Autowired
+	private TrainTeamService trainTeamService;
 	
 	/**
 	 * @Description: 用于验证身份证号是否正确
@@ -141,7 +145,6 @@ public class ApiCommonController {
 		
 		Member member = new Member();
 		member.setPhone(phone);
-		member.setPassword(password);
 		Member loginmember = memberService.login(member);
 
 		if (loginmember != null) {
@@ -374,6 +377,14 @@ public class ApiCommonController {
 			if (lng != null && lat != null) {
 				map.put("area", (int) MapUtils.getDistance(lng, lat, venue.getLongitude(), venue.getLatitude()));// 距离
 			}
+
+			List<TrainTeam> list =trainTeamService.selectByVenue(venue.getId());
+			if (list.size() > 0) {
+				map.put("showTrain", 1);
+			}else {
+				map.put("showTrain", 0);
+			}
+			map.put("minAmount", venue.getMinAmount());// 球场类型
 			listmap.add(map);
 		}
 		return new ApiMessage(200, "查询成功", listmap);

@@ -40,9 +40,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xiaoyi.ssm.model.AmountRefund;
 import com.xiaoyi.ssm.model.WXCompanyPayment;
 import com.xiaoyi.ssm.service.AmountRefundService;
-import com.xiaoyi.ssm.service.InviteBallService;
 import com.xiaoyi.ssm.service.WXCompanyPaymentService;
-import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.SpringUtils;
@@ -635,7 +633,7 @@ public class WXPayUtil {
 //		System.out.println(WXPayUtil.wxOrderQuery("76e09798d5ad457da9c6e4b173787b23"));
 		String uuidString = Utils.getUUID();
 		System.out.println(uuidString);
-		System.out.println(WXPayUtil.wxCompanyPayment(uuidString, "oozuywt6GdCgM-Z4Kk9CrvvTAkJo", 0.4, "测试"));
+		System.out.println(WXPayUtil.weiXinRefund("e12e917aa0514184a0871136c47db95b", 0.1,0.1, "测试", 2));
 	}
 
 }

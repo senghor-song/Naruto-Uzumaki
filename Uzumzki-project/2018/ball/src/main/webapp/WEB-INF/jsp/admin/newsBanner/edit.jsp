@@ -123,8 +123,8 @@
 	                dataType:"json",
 	                success : function(result) {//返回数据根据结果进行相应的处理  
 	                    if ( result.code == 200 ) {  
-	                		layer.msg("保存成功");
-                        	parent.window.location.href="/WebBackAPI/admin/newsBanner/listview";
+	                		layer.msg("保存成功");/* 
+                        	parent.window.location.href="/WebBackAPI/admin/newsBanner/listview"; */
 	                    } else {
 	                		layer.confirm(result.msg, {
 	                			btn: ['确定'] //按钮

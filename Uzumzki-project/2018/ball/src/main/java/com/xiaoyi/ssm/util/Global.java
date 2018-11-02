@@ -46,10 +46,14 @@ public class Global {
 	public final static String aliyunSMSAccessKeyId = "LTAIWzdEloEBE07i";
 	/** 阿里云SMS账户密码 */
 	public final static String aliyunSMSAccessKeySecret = "xan1El2kNfYWKiVYD696I8IQxbIkyS";
-	/** 阿里云SMS签名信息 */
+	/** 阿里云SMS签名信息---小易信息 */
 	public final static String aliyunSMSSignName = "小易信息";
-	/** 阿里云SMS短信模板代码 */
+	/** 阿里云SMS签名信息---学训易 */
+	public final static String aliyunSMSSignName1 = "学训易";
+	/** 阿里云SMS短信模板代码---短信验证码 */
 	public final static String aliyunSMSTempleteCode = "SMS_46390046";
+	/** 阿里云SMS短信模板代码1---短信通知 */
+	public final static String aliyunSMSTempleteCode1 = "SMS_149423736";
 
 	/**  
 	 * @Description: Redis缓存的表名

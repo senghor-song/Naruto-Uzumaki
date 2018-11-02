@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 实体
+ * 场馆申请入驻表
  */
 public class VenueEnter implements Serializable {
 	private Staff staff;
@@ -75,6 +75,18 @@ public class VenueEnter implements Serializable {
 
     /** 城市名 */
     private String cityName;
+
+    /** 机构名称 */
+    private String trainTeamName;
+
+    /** 机构ID */
+    private String trainTeamId;
+
+    /** 城市ID */
+    private String cityId;
+
+    /** 区县ID */
+    private String districtId;
 
     /**
      * VenueEnter
@@ -351,5 +363,69 @@ public class VenueEnter implements Serializable {
      */
     public void setCityName(String cityName) {
         this.cityName = cityName == null ? null : cityName.trim();
+    }
+
+    /**
+     * 机构名称
+     * @return Train_team_name 机构名称
+     */
+    public String getTrainTeamName() {
+        return trainTeamName;
+    }
+
+    /**
+     * 机构名称
+     * @param trainTeamName 机构名称
+     */
+    public void setTrainTeamName(String trainTeamName) {
+        this.trainTeamName = trainTeamName == null ? null : trainTeamName.trim();
+    }
+
+    /**
+     * 机构ID
+     * @return Train_team_id 机构ID
+     */
+    public String getTrainTeamId() {
+        return trainTeamId;
+    }
+
+    /**
+     * 机构ID
+     * @param trainTeamId 机构ID
+     */
+    public void setTrainTeamId(String trainTeamId) {
+        this.trainTeamId = trainTeamId == null ? null : trainTeamId.trim();
+    }
+
+    /**
+     * 城市ID
+     * @return City_id 城市ID
+     */
+    public String getCityId() {
+        return cityId;
+    }
+
+    /**
+     * 城市ID
+     * @param cityId 城市ID
+     */
+    public void setCityId(String cityId) {
+        this.cityId = cityId == null ? null : cityId.trim();
+    }
+
+    /**
+     * 区县ID
+     * @return District_id 区县ID
+     */
+    public String getDistrictId() {
+        return districtId;
+    }
+
+    /**
+     * 区县ID
+     * @param districtId 区县ID
+     */
+    public void setDistrictId(String districtId) {
+        this.districtId = districtId == null ? null : districtId.trim();
     }
 }

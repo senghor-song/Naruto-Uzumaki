@@ -8,8 +8,6 @@
 		<result column="ModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
 		<result column="Name" jdbcType="VARCHAR" property="name" />
 		<result column="Phone" jdbcType="VARCHAR" property="phone" />
-		<result column="Password" jdbcType="VARCHAR" property="password" />
-		<result column="ManagerID" jdbcType="VARCHAR" property="managerid" />
 		<result column="OpenID" jdbcType="VARCHAR" property="openid" />
 		<result column="AppOpenID" jdbcType="VARCHAR" property="appopenid" />
 		<result column="AppIosOpenID" jdbcType="VARCHAR" property="appiosopenid" />
@@ -24,16 +22,16 @@
 		<result column="ShowWechatID" jdbcType="INTEGER" property="showwechatid" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, MemberNo, CreateTime, ModifyTime, Name, Phone, Password, ManagerID, OpenID, AppOpenID,
-		AppIosOpenID, UnionID, AppNickName, AppAvatarUrl, AppGender, WechatID, WXPayment,
-		ShowPhone, ShowHistory, ShowWechatID
+		ID, MemberNo, CreateTime, ModifyTime, Name, Phone, OpenID, AppOpenID, AppIosOpenID,
+		UnionID, AppNickName, AppAvatarUrl, AppGender, WechatID, WXPayment, ShowPhone, ShowHistory,
+		ShowWechatID
 	</sql>
 
 	<select id="login" parameterType="com.xiaoyi.ssm.model.Member" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from Member
-		where Phone = #{phone,jdbcType=CHAR} AND Password = #{password,jdbcType=CHAR}
+		where Phone = #{phone,jdbcType=CHAR}
 	</select>
 
 	<select id="selectByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -54,13 +52,6 @@
 		from Member where UnionID = #{unionid,jdbcType=CHAR}
 	</select>
 
-	<update id="updateByPhone" parameterType="java.lang.String">
-		update Member
-		set Password =
-		#{password,jdbcType=VARCHAR}
-		where Phone = #{phone,jdbcType=CHAR}
-	</update>
-
 	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Member" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -80,18 +71,18 @@
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Member">
 		insert into Member (ID, MemberNo, CreateTime,
 		ModifyTime, Name, Phone,
-		Password, ManagerID, OpenID,
-		AppOpenID, AppIosOpenID, UnionID,
-		AppNickName, AppAvatarUrl, AppGender,
-		WechatID, WXPayment, ShowPhone,
-		ShowHistory, ShowWechatID)
+		OpenID, AppOpenID, AppIosOpenID,
+		UnionID, AppNickName, AppAvatarUrl,
+		AppGender, WechatID, WXPayment,
+		ShowPhone, ShowHistory, ShowWechatID
+		)
 		values (#{id,jdbcType=CHAR}, #{memberno,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP},
 		#{modifytime,jdbcType=TIMESTAMP}, #{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
-		#{password,jdbcType=VARCHAR}, #{managerid,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR},
-		#{appopenid,jdbcType=VARCHAR}, #{appiosopenid,jdbcType=VARCHAR}, #{unionid,jdbcType=VARCHAR},
-		#{appnickname,jdbcType=VARCHAR}, #{appavatarurl,jdbcType=VARCHAR}, #{appgender,jdbcType=INTEGER},
-		#{wechatid,jdbcType=VARCHAR}, #{wxpayment,jdbcType=DOUBLE}, #{showphone,jdbcType=INTEGER},
-		#{showhistory,jdbcType=INTEGER}, #{showwechatid,jdbcType=INTEGER})
+		#{openid,jdbcType=VARCHAR}, #{appopenid,jdbcType=VARCHAR}, #{appiosopenid,jdbcType=VARCHAR},
+		#{unionid,jdbcType=VARCHAR}, #{appnickname,jdbcType=VARCHAR}, #{appavatarurl,jdbcType=VARCHAR},
+		#{appgender,jdbcType=INTEGER}, #{wechatid,jdbcType=VARCHAR}, #{wxpayment,jdbcType=DOUBLE},
+		#{showphone,jdbcType=INTEGER}, #{showhistory,jdbcType=INTEGER}, #{showwechatid,jdbcType=INTEGER}
+		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Member">
 		insert into Member
@@ -113,12 +104,6 @@
 			</if>
 			<if test="phone != null">
 				Phone,
-			</if>
-			<if test="password != null">
-				Password,
-			</if>
-			<if test="managerid != null">
-				ManagerID,
 			</if>
 			<if test="openid != null">
 				OpenID,
@@ -176,12 +161,6 @@
 			<if test="phone != null">
 				#{phone,jdbcType=VARCHAR},
 			</if>
-			<if test="password != null">
-				#{password,jdbcType=VARCHAR},
-			</if>
-			<if test="managerid != null">
-				#{managerid,jdbcType=VARCHAR},
-			</if>
 			<if test="openid != null">
 				#{openid,jdbcType=VARCHAR},
 			</if>
@@ -238,12 +217,6 @@
 			<if test="phone != null">
 				Phone = #{phone,jdbcType=VARCHAR},
 			</if>
-			<if test="password != null">
-				Password = #{password,jdbcType=VARCHAR},
-			</if>
-			<if test="managerid != null">
-				ManagerID = #{managerid,jdbcType=VARCHAR},
-			</if>
 			<if test="openid != null">
 				OpenID = #{openid,jdbcType=VARCHAR},
 			</if>
@@ -290,8 +263,6 @@
 		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
 		Name = #{name,jdbcType=VARCHAR},
 		Phone = #{phone,jdbcType=VARCHAR},
-		Password = #{password,jdbcType=VARCHAR},
-		ManagerID = #{managerid,jdbcType=VARCHAR},
 		OpenID = #{openid,jdbcType=VARCHAR},
 		AppOpenID = #{appopenid,jdbcType=VARCHAR},
 		AppIosOpenID = #{appiosopenid,jdbcType=VARCHAR},

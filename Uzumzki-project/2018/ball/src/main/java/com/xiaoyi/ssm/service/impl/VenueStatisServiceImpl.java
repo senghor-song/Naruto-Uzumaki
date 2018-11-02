@@ -43,6 +43,12 @@ public class VenueStatisServiceImpl extends AbstractService<VenueStatis,String> 
 	@Transactional
 	@Override
 	public ApiMessage saveVenueStatis(String venueid,VenueTemplate venueTemplate,String date) {
+
+		VenueStatis oldVenueStatis = venueStatisMapper.selectByOldVenueStatis(venueid, DateUtil.getParse(date, "yyyy-MM-dd"));
+		if (oldVenueStatis != null) {
+			return new ApiMessage(400, "不允许重复选配模板");
+		}
+		
 		
 		//新增一条日期模板数据
 		VenueStatis vs = new VenueStatis();

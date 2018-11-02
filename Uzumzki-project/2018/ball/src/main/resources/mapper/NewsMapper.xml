@@ -3,54 +3,66 @@
 <mapper namespace="com.xiaoyi.ssm.dao.NewsMapper">
 	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.News">
 		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="News_no" jdbcType="INTEGER" property="newsNo" />
 		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="Modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
 		<result column="Title" jdbcType="VARCHAR" property="title" />
 		<result column="Head_image" jdbcType="VARCHAR" property="headImage" />
-	</resultMap>
-	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.xiaoyi.ssm.model.News">
+		<result column="Show_flag" jdbcType="INTEGER" property="showFlag" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<result column="Content_simple" jdbcType="VARCHAR" property="contentSimple" />
 		<result column="Content" jdbcType="LONGVARCHAR" property="content" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, Create_time, Modify_time, Title, Head_image
+		ID, News_no, Create_time, Modify_time, Title, Head_image, Show_flag, Remark, Content,
+		Content_simple
 	</sql>
-	<sql id="Blob_Column_List">
-		Content
-	</sql>
-	
-	<select id="selectByAll" resultMap="ResultMapWithBLOBs">
+
+	<select id="selectByAll" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		,
-		<include refid="Blob_Column_List" />
-		from News
+		from News where Show_flag = 1
 	</select>
 	
-	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+	<select id="selectByCollect" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM News n INNER JOIN NewsCollect nc ON n.`ID` = nc.`News_id` WHERE nc.`Member_id` = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		,
-		<include refid="Blob_Column_List" />
 		from News
 		where ID = #{id,jdbcType=VARCHAR}
 	</select>
+	
+	<select id="selectByAdminAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from News
+	</select>
+
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
 		delete from News
 		where ID = #{id,jdbcType=VARCHAR}
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.News">
-		insert into News (ID, Create_time, Modify_time,
-		Title, Head_image, Content
-		)
-		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
-		#{title,jdbcType=VARCHAR}, #{headImage,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR}
-		)
+		insert into News (ID, News_no, Create_time,
+		Modify_time, Title, Content_simple,
+		Head_image, Show_flag, Remark,
+		Content)
+		values (#{id,jdbcType=VARCHAR}, #{newsNo,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+		#{modifyTime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR}, #{contentSimple,jdbcType=VARCHAR},
+		#{headImage,jdbcType=VARCHAR}, #{showFlag,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR},
+		#{content,jdbcType=LONGVARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.News">
 		insert into News
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				ID,
+			</if>
+			<if test="newsNo != null">
+				News_no,
 			</if>
 			<if test="createTime != null">
 				Create_time,
@@ -61,8 +73,17 @@
 			<if test="title != null">
 				Title,
 			</if>
+			<if test="contentSimple != null">
+				Content_simple,
+			</if>
 			<if test="headImage != null">
 				Head_image,
+			</if>
+			<if test="showFlag != null">
+				Show_flag,
+			</if>
+			<if test="remark != null">
+				Remark,
 			</if>
 			<if test="content != null">
 				Content,
@@ -71,6 +92,9 @@
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="newsNo != null">
+				#{newsNo,jdbcType=INTEGER},
 			</if>
 			<if test="createTime != null">
 				#{createTime,jdbcType=TIMESTAMP},
@@ -81,8 +105,17 @@
 			<if test="title != null">
 				#{title,jdbcType=VARCHAR},
 			</if>
+			<if test="contentSimple != null">
+				#{contentSimple,jdbcType=VARCHAR},
+			</if>
 			<if test="headImage != null">
 				#{headImage,jdbcType=VARCHAR},
+			</if>
+			<if test="showFlag != null">
+				#{showFlag,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
 			</if>
 			<if test="content != null">
 				#{content,jdbcType=LONGVARCHAR},
@@ -92,6 +125,9 @@
 	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.News">
 		update News
 		<set>
+			<if test="newsNo != null">
+				News_no = #{newsNo,jdbcType=INTEGER},
+			</if>
 			<if test="createTime != null">
 				Create_time = #{createTime,jdbcType=TIMESTAMP},
 			</if>
@@ -101,8 +137,17 @@
 			<if test="title != null">
 				Title = #{title,jdbcType=VARCHAR},
 			</if>
+			<if test="contentSimple != null">
+				Content_simple = #{contentSimple,jdbcType=VARCHAR},
+			</if>
 			<if test="headImage != null">
 				Head_image = #{headImage,jdbcType=VARCHAR},
+			</if>
+			<if test="showFlag != null">
+				Show_flag = #{showFlag,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
 			</if>
 			<if test="content != null">
 				Content = #{content,jdbcType=LONGVARCHAR},
@@ -112,19 +157,27 @@
 	</update>
 	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.xiaoyi.ssm.model.News">
 		update News
-		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		set News_no = #{newsNo,jdbcType=INTEGER},
+		Create_time = #{createTime,jdbcType=TIMESTAMP},
 		Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
 		Title = #{title,jdbcType=VARCHAR},
+		Content_simple = #{contentSimple,jdbcType=VARCHAR},
 		Head_image = #{headImage,jdbcType=VARCHAR},
+		Show_flag = #{showFlag,jdbcType=INTEGER},
+		Remark = #{remark,jdbcType=VARCHAR},
 		Content = #{content,jdbcType=LONGVARCHAR}
 		where ID = #{id,jdbcType=VARCHAR}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.News">
 		update News
-		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		set News_no = #{newsNo,jdbcType=INTEGER},
+		Create_time = #{createTime,jdbcType=TIMESTAMP},
 		Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
 		Title = #{title,jdbcType=VARCHAR},
-		Head_image = #{headImage,jdbcType=VARCHAR}
+		Content_simple = #{contentSimple,jdbcType=VARCHAR},
+		Head_image = #{headImage,jdbcType=VARCHAR},
+		Show_flag = #{showFlag,jdbcType=INTEGER},
+		Remark = #{remark,jdbcType=VARCHAR}
 		where ID = #{id,jdbcType=VARCHAR}
 	</update>
 </mapper>

@@ -8,7 +8,7 @@
 	body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
 	 .anchorBL{display:none;}
 	</style>
-	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=${key}"></script>
+	<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=${key}"></script>
 	<script type="text/javascript" src="/WebBackAPI/admin/static/js/GeoUtils.js"></script>
 	<title>地图展示</title>
 </head>

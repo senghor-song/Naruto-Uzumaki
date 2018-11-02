@@ -6,6 +6,7 @@
 		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="Modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
 		<result column="Train_course_no" jdbcType="INTEGER" property="trainCourseNo" />
+		<result column="Train_team_id" jdbcType="VARCHAR" property="trainTeamId" />
 		<result column="Train_coach_id" jdbcType="VARCHAR" property="trainCoachId" />
 		<result column="Title" jdbcType="VARCHAR" property="title" />
 		<result column="Head_image" jdbcType="VARCHAR" property="headImage" />
@@ -27,16 +28,17 @@
 		<result column="Apply_flag" jdbcType="INTEGER" property="applyFlag" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, Create_time, Modify_time, Train_course_no, Train_coach_id, Title, Head_image,
-		Amount, Min_age, Max_age, Suit_base, To_teach_number, Class_hour, To_teach_time,
+		ID, Create_time, Modify_time, Train_course_no, Train_team_id, Train_coach_id, Title,
+		Head_image, Amount, Min_age, Max_age, Suit_base, To_teach_number, Class_hour, To_teach_time,
 		Class_trait, Pay_make, Pay_adjust, Pay_refund, Pay_trial, Train_venue_id, Ball_type,
 		Apply_people_sum, Apply_flag
 	</sql>
 
 	<select id="selectByTrainTeamID" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT tce.*
-		FROM TrainCourse tce INNER JOIN TrainCoach tch ON tce.`Train_coach_id` = tch.`ID` WHERE
-		tch.`Train_team_id` = #{id}
+		SELECT tce.* FROM TrainCourse tce 
+		INNER JOIN TrainCoach tch ON tce.`Train_coach_id` = tch.`ID` 
+		INNER JOIN TrainTeamCoach ttc ON tch.`ID` = ttc.`Train_coach_id`
+		WHERE ttc.`Train_team_id` = #{id}
 	</select>
 
 	<select id="selectByTrainCoachID" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -55,6 +57,17 @@
 		TrainCourse where Train_coach_id = #{id,jdbcType=VARCHAR}
 	</select>
 
+	<select id="selectByCollect" resultMap="BaseResultMap">
+		SELECT * FROM TrainCourse tc INNER JOIN
+		TrainCourseCollect tcc ON tc.`ID` = tcc.`Train_course_id` WHERE tcc.`Member_id` = #{id}
+	</select>
+
+	<select id="selectByMember" resultMap="BaseResultMap">
+		SELECT * FROM TrainCourse tc INNER JOIN
+		TrainCourseCollect tcc ON tc.`ID` = tcc.`Train_course_id`
+		WHERE tcc.`Member_id` = #{id} AND tcc.`Train_course_id` = #{memberid} limit 1
+	</select>
+
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -67,21 +80,24 @@
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.TrainCourse">
 		insert into TrainCourse (ID, Create_time, Modify_time,
-		Train_course_no, Train_coach_id, Title,
-		Head_image, Amount, Min_age,
-		Max_age, Suit_base, To_teach_number,
-		Class_hour, To_teach_time, Class_trait,
-		Pay_make, Pay_adjust, Pay_refund,
-		Pay_trial, Train_venue_id, Ball_type,
-		Apply_people_sum, Apply_flag)
+		Train_course_no, Train_team_id, Train_coach_id,
+		Title, Head_image, Amount,
+		Min_age, Max_age, Suit_base,
+		To_teach_number, Class_hour, To_teach_time,
+		Class_trait, Pay_make, Pay_adjust,
+		Pay_refund, Pay_trial, Train_venue_id,
+		Ball_type, Apply_people_sum, Apply_flag
+		)
 		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
-		#{trainCourseNo,jdbcType=INTEGER}, #{trainCoachId,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR},
-		#{headImage,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{minAge,jdbcType=INTEGER},
-		#{maxAge,jdbcType=INTEGER}, #{suitBase,jdbcType=VARCHAR}, #{toTeachNumber,jdbcType=INTEGER},
-		#{classHour,jdbcType=INTEGER}, #{toTeachTime,jdbcType=VARCHAR}, #{classTrait,jdbcType=VARCHAR},
-		#{payMake,jdbcType=VARCHAR}, #{payAdjust,jdbcType=VARCHAR}, #{payRefund,jdbcType=VARCHAR},
-		#{payTrial,jdbcType=VARCHAR}, #{trainVenueId,jdbcType=VARCHAR}, #{ballType,jdbcType=INTEGER},
-		#{applyPeopleSum,jdbcType=INTEGER}, #{applyFlag,jdbcType=INTEGER})
+		#{trainCourseNo,jdbcType=INTEGER}, #{trainTeamId,jdbcType=VARCHAR},
+		#{trainCoachId,jdbcType=VARCHAR},
+		#{title,jdbcType=VARCHAR}, #{headImage,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL},
+		#{minAge,jdbcType=INTEGER}, #{maxAge,jdbcType=INTEGER}, #{suitBase,jdbcType=VARCHAR},
+		#{toTeachNumber,jdbcType=INTEGER}, #{classHour,jdbcType=INTEGER}, #{toTeachTime,jdbcType=VARCHAR},
+		#{classTrait,jdbcType=VARCHAR}, #{payMake,jdbcType=VARCHAR}, #{payAdjust,jdbcType=VARCHAR},
+		#{payRefund,jdbcType=VARCHAR}, #{payTrial,jdbcType=VARCHAR}, #{trainVenueId,jdbcType=VARCHAR},
+		#{ballType,jdbcType=INTEGER}, #{applyPeopleSum,jdbcType=INTEGER}, #{applyFlag,jdbcType=INTEGER}
+		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.TrainCourse">
 		insert into TrainCourse
@@ -97,6 +113,9 @@
 			</if>
 			<if test="trainCourseNo != null">
 				Train_course_no,
+			</if>
+			<if test="trainTeamId != null">
+				Train_team_id,
 			</if>
 			<if test="trainCoachId != null">
 				Train_coach_id,
@@ -169,6 +188,9 @@
 			<if test="trainCourseNo != null">
 				#{trainCourseNo,jdbcType=INTEGER},
 			</if>
+			<if test="trainTeamId != null">
+				#{trainTeamId,jdbcType=VARCHAR},
+			</if>
 			<if test="trainCoachId != null">
 				#{trainCoachId,jdbcType=VARCHAR},
 			</if>
@@ -240,6 +262,9 @@
 			<if test="trainCourseNo != null">
 				Train_course_no = #{trainCourseNo,jdbcType=INTEGER},
 			</if>
+			<if test="trainTeamId != null">
+				Train_team_id = #{trainTeamId,jdbcType=VARCHAR},
+			</if>
 			<if test="trainCoachId != null">
 				Train_coach_id = #{trainCoachId,jdbcType=VARCHAR},
 			</if>
@@ -305,6 +330,7 @@
 		set Create_time = #{createTime,jdbcType=TIMESTAMP},
 		Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
 		Train_course_no = #{trainCourseNo,jdbcType=INTEGER},
+		Train_team_id = #{trainTeamId,jdbcType=VARCHAR},
 		Train_coach_id = #{trainCoachId,jdbcType=VARCHAR},
 		Title = #{title,jdbcType=VARCHAR},
 		Head_image = #{headImage,jdbcType=VARCHAR},

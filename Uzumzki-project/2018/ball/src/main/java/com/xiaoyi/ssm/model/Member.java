@@ -36,7 +36,6 @@ public class Member implements Serializable {
 	public void setRefresh_token_app(String refresh_token_app) {
 		this.refresh_token_app = refresh_token_app;
 	}
-
     /** 会员 */
     private String id;
 
@@ -55,12 +54,6 @@ public class Member implements Serializable {
     /** 手机号 */
     private String phone;
 
-    /** 密码 */
-    private String password;
-
-    /** 管理员ID */
-    private String managerid;
-
     /** 微信公众号的openid */
     private String openid;
 
@@ -76,7 +69,7 @@ public class Member implements Serializable {
     /** 微信昵称 */
     private String appnickname;
 
-    /** 头像URL */
+    /** 微信头像URL */
     private String appavatarurl;
 
     /** 微信性别(0=未知1=女2=男) */
@@ -199,38 +192,6 @@ public class Member implements Serializable {
     }
 
     /**
-     * 密码
-     * @return Password 密码
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * 密码
-     * @param password 密码
-     */
-    public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
-    }
-
-    /**
-     * 管理员ID
-     * @return ManagerID 管理员ID
-     */
-    public String getManagerid() {
-        return managerid;
-    }
-
-    /**
-     * 管理员ID
-     * @param managerid 管理员ID
-     */
-    public void setManagerid(String managerid) {
-        this.managerid = managerid == null ? null : managerid.trim();
-    }
-
-    /**
      * 微信公众号的openid
      * @return OpenID 微信公众号的openid
      */
@@ -311,16 +272,16 @@ public class Member implements Serializable {
     }
 
     /**
-     * 头像URL
-     * @return AppAvatarUrl 头像URL
+     * 微信头像URL
+     * @return AppAvatarUrl 微信头像URL
      */
     public String getAppavatarurl() {
         return appavatarurl;
     }
 
     /**
-     * 头像URL
-     * @param appavatarurl 头像URL
+     * 微信头像URL
+     * @param appavatarurl 微信头像URL
      */
     public void setAppavatarurl(String appavatarurl) {
         this.appavatarurl = appavatarurl == null ? null : appavatarurl.trim();

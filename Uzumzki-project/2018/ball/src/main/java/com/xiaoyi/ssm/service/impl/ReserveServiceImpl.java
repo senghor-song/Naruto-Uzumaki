@@ -36,4 +36,16 @@ public class ReserveServiceImpl extends AbstractService<Reserve,String> implemen
 		return reserveMapper.selectByFieldTemplateDto(fieldTemplateDto);
 	}
 
+	/**  
+	 * @Description: 根据订单ID查询预约数据
+	 * @author 宋高俊  
+	 * @param orderid
+	 * @return 
+	 * @date 2018年11月2日 上午11:55:54 
+	 */ 
+	@Override
+	public List<Reserve> selectByOrder(String orderid) {
+		return reserveMapper.selectByOrder(orderid);
+	}
+
 }

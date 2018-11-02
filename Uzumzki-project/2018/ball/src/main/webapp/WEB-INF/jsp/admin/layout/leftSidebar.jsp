@@ -1,9 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <a href="http://www.ekeae.com" class="brand-link">
     <img src="/WebBackAPI/admin/static/image/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-    <span class="brand-text font-weight-light">订场管理</span>
+    <span class="brand-text font-weight-light">小易运维</span>
 </a>
 
 <div class="sidebar">
@@ -17,14 +18,32 @@
     </div>
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a href="/WebBackAPI/admin/common/index" class="nav-link" id="selectindex_0">
                     <i class="nav-icon fa fa-area-chart"></i>
                     <p>控制台</p>
                 </a>
-            </li>
+            </li> -->
+            <c:forEach var="permission" items="${permissions}">
+            	<li class="nav-item has-treeview">
+	                <a href="#" class="nav-link">
+	                    <i class="${permission.menuIcon}"></i>
+	                    <p>${permission.menuTitle}<i class="fa fa-angle-left right"></i></p>
+	                </a>
+	                <ul class="nav nav-treeview">
+            			<c:forEach var="menu" items="${permission.menus}">
+		                    <li class="nav-item">
+		                        <a href="${menu.menuUrl}" class="nav-link" id="${menu.menuIcon}" style="padding-left: 65px;">
+		                            <p>${menu.menuTitle}</p>
+		                        </a>
+		                    </li>
+	                    </c:forEach>
+	                </ul>
+	            </li>
+            </c:forEach>
             
-            <li class="nav-item has-treeview">
+            
+            <%-- <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                     <i class="fa fa-thumbs-up fa-fw"></i>
                     <p>产品<i class="fa fa-angle-left right"></i></p>
@@ -93,26 +112,33 @@
                             <p>城市</p>
                         </a>
                     </li>
-                </ul>
-            </li>
-            <li class="nav-item has-treeview">
-                <a href="#" class="nav-link">
-                    <i class="fa fa-handshake-o fa-fw"></i>
-                    <p>伙伴<i class="fa fa-angle-left right"></i></p>
-                </a>
-                <ul class="nav nav-treeview">
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/staff/listview" class="nav-link" id="selectindex_10" style="padding-left: 65px;">
-                            <p>伙伴</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/WebBackAPI/admin/staff/listview" class="nav-link" id="selectindex_11" style="padding-left: 65px;">
-                            <p>ACL</p>
+                        <a href="/WebBackAPI/admin/news/listview" class="nav-link" id="selectindex_13" style="padding-left: 65px;">
+                            <p>资讯</p>
                         </a>
                     </li>
                 </ul>
             </li>
+            <c:if test="${sessionScope.loginStaffInfo.power == 9}">
+	            <li class="nav-item has-treeview">
+	                <a href="#" class="nav-link">
+	                    <i class="fa fa-handshake-o fa-fw"></i>
+	                    <p>伙伴<i class="fa fa-angle-left right"></i></p>
+	                </a>
+	                <ul class="nav nav-treeview">
+	                    <li class="nav-item">
+	                        <a href="/WebBackAPI/admin/staff/listview" class="nav-link" id="selectindex_10" style="padding-left: 65px;">
+	                            <p>伙伴</p>
+	                        </a>
+	                    </li>
+	                    <li class="nav-item">
+	                        <a href="/WebBackAPI/admin/staff/listview" class="nav-link" id="selectindex_11" style="padding-left: 65px;">
+	                            <p>ACL</p>
+	                        </a>
+	                    </li>
+	                </ul>
+	            </li>
+            </c:if>
             <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                 	<i class="fa fa-tasks fa-fw"></i>
@@ -120,12 +146,12 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/staff/listview" class="nav-link" id="selectindex_12" style="padding-left: 65px;">
+                        <a href="/WebBackAPI/admin/amount/listview" class="nav-link" id="selectindex_12" style="padding-left: 65px;">
                             <p>对账</p>
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> --%>
         </ul>
     </nav>
 </div>
@@ -134,11 +160,15 @@
         <div class="row m-0 p-0">
             <div class="col-lg-7">
                 <div class="row lh-24">
-                    <div class="col-lg-4">中文名：</div>
+                    <div class="col-lg-4">昵称：</div>
+                    <div class="col-lg-8">${sessionScope.loginStaffInfo.nickname}</div>
+                </div>
+                <div class="row lh-24">
+                    <div class="col-lg-4">姓名：</div>
                     <div class="col-lg-8">${sessionScope.loginStaffInfo.name}</div>
                 </div>
                 <div class="row lh-24">
-                    <div class="col-lg-4">职级：</div>
+                    <div class="col-lg-4">岗位：</div>
                     <div class="col-lg-8">${sessionScope.loginStaffInfo.position}</div>
                 </div>
                 <div class="row lh-24">
@@ -153,7 +183,7 @@
             <div class="col-lg-5">
                 <div class="row lh-24">
                     <div class="col-lg-4">权限：</div>
-                    <div class="col-lg-8">${sessionScope.loginStaffInfo.power == 1 ? "一级" : sessionScope.loginStaffInfo.power == 2 ? "二级" : sessionScope.loginStaffInfo.power == 3 ? "三级" : sessionScope.loginStaffInfo.power == 4 ? "四级" : sessionScope.loginStaffInfo.power == 5 ? "五级" : sessionScope.loginStaffInfo.power == 6 ? "六级" : "七级"}</div>
+                    <div class="col-lg-8">${sessionScope.loginStaffInfo.power == 1 ? "一级" : sessionScope.loginStaffInfo.power == 2 ? "二级" : sessionScope.loginStaffInfo.power == 3 ? "三级" : sessionScope.loginStaffInfo.power == 4 ? "四级" : sessionScope.loginStaffInfo.power == 5 ? "五级" : sessionScope.loginStaffInfo.power == 6 ? "六级" : sessionScope.loginStaffInfo.power == 7 ? "七级" : sessionScope.loginStaffInfo.power == 8 ? "八级" : "九级"}</div>
                 </div>
             </div>
         </div>

@@ -7,6 +7,10 @@
 		<result column="Member_id" jdbcType="VARCHAR" property="memberId" />
 		<result column="Venue_id" jdbcType="VARCHAR" property="venueId" />
 		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<association property="member" javaType="com.xiaoyi.ssm.model.Member">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="mAppnickName" jdbcType="VARCHAR" property="appnickname" />
+		</association>
 	</resultMap>
 	<sql id="Base_Column_List">
 		ID, Create_time, Member_id, Venue_id, Content
@@ -14,6 +18,10 @@
 	
 	<select id="countByVenue" parameterType="java.lang.String" resultType="java.lang.Integer">
 		select count(0) from VenueError where Venue_id = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT ve.*, m.`AppNickName` mAppNickName FROM VenueError ve LEFT JOIN Member m ON ve.`Member_id` = m.`ID` WHERE Venue_id = #{venueid,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">

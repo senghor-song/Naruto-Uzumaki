@@ -1,9 +1,12 @@
 package com.xiaoyi.ssm.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,8 +22,10 @@ import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.City;
 import com.xiaoyi.ssm.model.CityLog;
 import com.xiaoyi.ssm.model.District;
+import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.service.CityService;
 import com.xiaoyi.ssm.service.DistrictService;
+import com.xiaoyi.ssm.util.Utils;
 
 /**  
  * @Description: 城市控制器
@@ -150,10 +155,25 @@ public class CityController {
 	 */ 
 	@RequestMapping(value = "/uodateHot")
 	@ResponseBody
-	public ApiMessage uodateHot(String id, Integer check) {
+	public ApiMessage uodateHot(String id, Integer check, HttpServletRequest request) {
+		// 登录用户
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		
 		City city = cityService.selectByPrimaryKey(id);
 		city.setHotflag(check);
 		cityService.updateByPrimaryKeySelective(city);
+		
+		CityLog cityLog = new CityLog();
+		cityLog.setId(Utils.getUUID());
+		cityLog.setCreatetime(new Date());
+		cityLog.setStaffid(staff.getId());
+		cityLog.setCityid(id);
+		if (check == 1) {
+			cityLog.setContent("设为热门城市");
+		}else {
+			cityLog.setContent("取消热门城市");
+		}
+		cityLogMapper.insertSelective(cityLog);
 		return new ApiMessage(200, "修改成功");
 	}
 	
@@ -167,10 +187,25 @@ public class CityController {
 	 */ 
 	@RequestMapping(value = "/uodateMap")
 	@ResponseBody
-	public ApiMessage uodateMap(String id, Integer check) {
+	public ApiMessage uodateMap(String id, Integer check, HttpServletRequest request) {
+		// 登录用户
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		
 		City city = cityService.selectByPrimaryKey(id);
 		city.setMapflag(check);
 		cityService.updateByPrimaryKeySelective(city);
+
+		CityLog cityLog = new CityLog();
+		cityLog.setId(Utils.getUUID());
+		cityLog.setCreatetime(new Date());
+		cityLog.setStaffid(staff.getId());
+		cityLog.setCityid(id);
+		if (check == 1) {
+			cityLog.setContent("设为地图显示");
+		}else {
+			cityLog.setContent("取消地图显示");
+		}
+		cityLogMapper.insertSelective(cityLog);
 		return new ApiMessage(200, "修改成功");
 	}
 }

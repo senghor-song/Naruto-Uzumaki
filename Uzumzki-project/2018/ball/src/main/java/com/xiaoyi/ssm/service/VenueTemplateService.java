@@ -34,4 +34,14 @@ public interface VenueTemplateService extends BaseService<VenueTemplate, String>
 	 */ 
 	Integer updateNoDefaultVenue(String id);
 
+	/**  
+	 * @Description: 根据场馆馆和模板id查询
+	 * @author 宋高俊  
+	 * @param venueid
+	 * @param templateid
+	 * @return 
+	 * @date 2018年11月2日 上午9:17:32 
+	 */ 
+	VenueTemplate selectByVenueTemplate(String venueid, String templateid);
+
 }

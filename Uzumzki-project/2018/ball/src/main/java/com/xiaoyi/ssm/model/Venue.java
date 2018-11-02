@@ -49,6 +49,9 @@ public class Venue implements Serializable {
     /** 区县 */
     private String districtid;
 
+    /** 经营者 */
+    private String owner;
+
     /** 联系电话 */
     private String tel;
 
@@ -61,14 +64,8 @@ public class Venue implements Serializable {
     /** 温馨提醒 */
     private String warmreminder;
 
-    /** 回款银行 */
-    private String amountbank;
-
-    /** 回款账户 */
-    private String amountaccount;
-
-    /** 回款账号 */
-    private String amountaccountnumber;
+    /** 回款人 */
+    private String memberId;
 
     /** 场馆总收入 */
     private Double amount;
@@ -91,11 +88,17 @@ public class Venue implements Serializable {
     /** 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场) */
     private Integer type;
 
+    /** 入驻状态0=空1=添加 */
+    private Integer trainAddFlag;
+
     /** 培训机构ID */
     private String trainteam;
 
-    /** 状态(0=审核中1=正常2=屏蔽) */
+    /** 状态(1=正常2=屏蔽) */
     private Integer showflag;
+
+    /** 最低价格培训 */
+    private Double minAmount;
 
     /**
      * Venue
@@ -231,6 +234,22 @@ public class Venue implements Serializable {
     }
 
     /**
+     * 经营者
+     * @return Owner 经营者
+     */
+    public String getOwner() {
+        return owner;
+    }
+
+    /**
+     * 经营者
+     * @param owner 经营者
+     */
+    public void setOwner(String owner) {
+        this.owner = owner == null ? null : owner.trim();
+    }
+
+    /**
      * 联系电话
      * @return Tel 联系电话
      */
@@ -295,51 +314,19 @@ public class Venue implements Serializable {
     }
 
     /**
-     * 回款银行
-     * @return AmountBank 回款银行
+     * 回款人
+     * @return Member_id 回款人
      */
-    public String getAmountbank() {
-        return amountbank;
+    public String getMemberId() {
+        return memberId;
     }
 
     /**
-     * 回款银行
-     * @param amountbank 回款银行
+     * 回款人
+     * @param memberId 回款人
      */
-    public void setAmountbank(String amountbank) {
-        this.amountbank = amountbank == null ? null : amountbank.trim();
-    }
-
-    /**
-     * 回款账户
-     * @return AmountAccount 回款账户
-     */
-    public String getAmountaccount() {
-        return amountaccount;
-    }
-
-    /**
-     * 回款账户
-     * @param amountaccount 回款账户
-     */
-    public void setAmountaccount(String amountaccount) {
-        this.amountaccount = amountaccount == null ? null : amountaccount.trim();
-    }
-
-    /**
-     * 回款账号
-     * @return AmountAccountNumber 回款账号
-     */
-    public String getAmountaccountnumber() {
-        return amountaccountnumber;
-    }
-
-    /**
-     * 回款账号
-     * @param amountaccountnumber 回款账号
-     */
-    public void setAmountaccountnumber(String amountaccountnumber) {
-        this.amountaccountnumber = amountaccountnumber == null ? null : amountaccountnumber.trim();
+    public void setMemberId(String memberId) {
+        this.memberId = memberId == null ? null : memberId.trim();
     }
 
     /**
@@ -455,6 +442,22 @@ public class Venue implements Serializable {
     }
 
     /**
+     * 入驻状态0=空1=添加
+     * @return Train_add_flag 入驻状态0=空1=添加
+     */
+    public Integer getTrainAddFlag() {
+        return trainAddFlag;
+    }
+
+    /**
+     * 入驻状态0=空1=添加
+     * @param trainAddFlag 入驻状态0=空1=添加
+     */
+    public void setTrainAddFlag(Integer trainAddFlag) {
+        this.trainAddFlag = trainAddFlag;
+    }
+
+    /**
      * 培训机构ID
      * @return TrainTeam 培训机构ID
      */
@@ -471,18 +474,34 @@ public class Venue implements Serializable {
     }
 
     /**
-     * 状态(0=审核中1=正常2=屏蔽)
-     * @return ShowFlag 状态(0=审核中1=正常2=屏蔽)
+     * 状态(1=正常2=屏蔽)
+     * @return ShowFlag 状态(1=正常2=屏蔽)
      */
     public Integer getShowflag() {
         return showflag;
     }
 
     /**
-     * 状态(0=审核中1=正常2=屏蔽)
-     * @param showflag 状态(0=审核中1=正常2=屏蔽)
+     * 状态(1=正常2=屏蔽)
+     * @param showflag 状态(1=正常2=屏蔽)
      */
     public void setShowflag(Integer showflag) {
         this.showflag = showflag;
+    }
+
+    /**
+     * 最低价格培训
+     * @return Min_amount 最低价格培训
+     */
+    public Double getMinAmount() {
+        return minAmount;
+    }
+
+    /**
+     * 最低价格培训
+     * @param minAmount 最低价格培训
+     */
+    public void setMinAmount(Double minAmount) {
+        this.minAmount = minAmount;
     }
 }

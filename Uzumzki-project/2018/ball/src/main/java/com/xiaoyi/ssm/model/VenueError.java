@@ -7,7 +7,18 @@ import java.util.Date;
  * 场馆纠错表实体
  */
 public class VenueError implements Serializable {
-    /** ID */
+	
+	private Member member;
+	
+    public Member getMember() {
+		return member;
+	}
+
+	public void setMember(Member member) {
+		this.member = member;
+	}
+
+	/** ID */
     private String id;
 
     /** 创建时间 */

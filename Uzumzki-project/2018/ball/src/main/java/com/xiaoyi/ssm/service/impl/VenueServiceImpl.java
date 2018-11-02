@@ -150,10 +150,32 @@ public class VenueServiceImpl extends AbstractService<Venue,String> implements V
 		return venueMapper.selectByName(name);
 	}
 
-
+	/**  
+	 * @Description: 根据经纬度筛选场馆
+	 * @author 宋高俊  
+	 * @param begLng
+	 * @param endLng
+	 * @param begLat
+	 * @param endLat
+	 * @return 
+	 * @date 2018年10月20日 下午3:25:58 
+	 */ 
 	@Override
 	public List<Venue> selectByNearbyMapVenue(double begLng, double endLng, double begLat, double endLat, Integer ballType) {
 		return venueMapper.selectByNearbyMapVenue(begLng, endLng, begLat, endLat, ballType);
+	}
+
+	/**  
+	 * @Description: 条件查询场馆
+	 * @author 宋高俊  
+	 * @param selectType
+	 * @param keyword
+	 * @return 
+	 * @date 2018年10月30日 上午10:09:42 
+	 */ 
+	@Override
+	public List<Venue> selectBySearch(Integer selectType, String keyword) {
+		return venueMapper.selectBySearch(selectType, keyword);
 	}
 
 }

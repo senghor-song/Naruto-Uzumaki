@@ -4,11 +4,24 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 新闻咨询表实体
+ * 新闻资讯表实体
  */
 public class News implements Serializable {
-    /** ID */
+	private Integer collectFlag;//0=未收藏1=已收藏
+	
+    public Integer getCollectFlag() {
+		return collectFlag;
+	}
+
+	public void setCollectFlag(Integer collectFlag) {
+		this.collectFlag = collectFlag;
+	}
+
+	/** ID */
     private String id;
+
+    /** 资讯编号 */
+    private Integer newsNo;
 
     /** 创建时间 */
     private Date createTime;
@@ -19,8 +32,17 @@ public class News implements Serializable {
     /** 标题 */
     private String title;
 
+    /** 摘要 */
+    private String contentSimple;
+
     /** 封面图 */
     private String headImage;
+
+    /** 使能0=否1=是 */
+    private Integer showFlag;
+
+    /** 备注 */
+    private String remark;
 
     /** 内容 */
     private String content;
@@ -44,6 +66,22 @@ public class News implements Serializable {
      */
     public void setId(String id) {
         this.id = id == null ? null : id.trim();
+    }
+
+    /**
+     * 资讯编号
+     * @return News_no 资讯编号
+     */
+    public Integer getNewsNo() {
+        return newsNo;
+    }
+
+    /**
+     * 资讯编号
+     * @param newsNo 资讯编号
+     */
+    public void setNewsNo(Integer newsNo) {
+        this.newsNo = newsNo;
     }
 
     /**
@@ -95,6 +133,22 @@ public class News implements Serializable {
     }
 
     /**
+     * 摘要
+     * @return Content_simple 摘要
+     */
+    public String getContentSimple() {
+        return contentSimple;
+    }
+
+    /**
+     * 摘要
+     * @param contentSimple 摘要
+     */
+    public void setContentSimple(String contentSimple) {
+        this.contentSimple = contentSimple == null ? null : contentSimple.trim();
+    }
+
+    /**
      * 封面图
      * @return Head_image 封面图
      */
@@ -108,6 +162,38 @@ public class News implements Serializable {
      */
     public void setHeadImage(String headImage) {
         this.headImage = headImage == null ? null : headImage.trim();
+    }
+
+    /**
+     * 使能0=否1=是
+     * @return Show_flag 使能0=否1=是
+     */
+    public Integer getShowFlag() {
+        return showFlag;
+    }
+
+    /**
+     * 使能0=否1=是
+     * @param showFlag 使能0=否1=是
+     */
+    public void setShowFlag(Integer showFlag) {
+        this.showFlag = showFlag;
+    }
+
+    /**
+     * 备注
+     * @return Remark 备注
+     */
+    public String getRemark() {
+        return remark;
+    }
+
+    /**
+     * 备注
+     * @param remark 备注
+     */
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 
     /**

@@ -8,14 +8,15 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 
 import net.sf.json.JSONObject;
+import cn.hutool.core.date.DateUtil;
 
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.InviteBall;
 import com.xiaoyi.ssm.model.InviteBallAA;
 import com.xiaoyi.ssm.model.Member;
 import com.xiaoyi.ssm.util.Arith;
-import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
+import com.xiaoyi.ssm.util.MapUtils;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.Utils;
 import com.xiaoyi.ssm.wxPay.AES;
@@ -48,28 +49,31 @@ public class Test {
 	}
 
 	public static void main(String[] args) throws Exception {
-		for (int i = 0; i < 10; i++) {
-			
-			switch (i) {
-			case 1:
-				System.out.println(i);
-				break;
-			case 2:
-				System.out.println(i);
-				break;
-			case 3:
-				System.out.println(i);
-				break;
-			case 4:
-				System.out.println(i);
-				break;
-			case 5:
-				System.out.println(i);
-				break;
-				
-			}
-		}
 		
+		int sum = 0;
+		if (sum == 1) 
+			System.out.println("0");
+		else 
+			if (sum == 1) 
+				System.out.println("1");
+			else 
+				System.out.println("2");
+				System.out.println("4");
+		
+			System.out.println("3");
+
+			
+			
+			
+//		System.out.println((int) MapUtils.getDistance(114, 22, 114.3, 22.3));
+//		Date date1 = DateUtil.parse("2018-06-25");
+//		Date date2 = DateUtil.parse("2018-11-15");
+//		System.out.println(DateUtil.betweenDay(date1, date2, true));
+//		System.out.println(137/7);
+		
+		String string = "/WebBackAPI/admin/inviteBall/listview";
+		String[] strings = string.split("/");
+		System.err.println();
 //		System.out.println("最终兑换"+maxBox(10)+ "瓶矿泉水");
 //		WXUtil.weiXinRefund("85f730b12aee4bb5af5b338d74ab4eba", 0.5, 0.5, "", 1);
 

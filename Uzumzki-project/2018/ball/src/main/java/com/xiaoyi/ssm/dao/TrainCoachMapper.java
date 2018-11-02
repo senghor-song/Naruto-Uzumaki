@@ -21,14 +21,15 @@ public interface TrainCoachMapper extends BaseMapper<TrainCoach, String>{
 	 * @date 2018年9月29日 下午8:48:31 
 	 */
 	List<TrainCoach> selectByTrainTeamID(String id);
+	
 	/**  
-	 * @Description: 根据用户ID查询教练
+	 * @Description: 根据用户查询是否已成为某个培训机构的教练
 	 * @author 宋高俊  
-	 * @param id
+	 * @param memberId
 	 * @return 
-	 * @date 2018年10月8日 下午3:03:31 
+	 * @date 2018年10月30日 下午7:47:15 
 	 */ 
-	TrainCoach selectByMemberId(String id);
+	TrainCoach selectByMember(String id);
 	
 	/**  
 	 * @Description: 根据用户ID和培训机构ID查询教练

@@ -36,10 +36,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from Staff
-		where Openid = #{openid,jdbcType=CHAR}
-		<if test="unionid != null and unionid != ''">
-			AND unionid = #{unionid,jdbcType=CHAR}
-		</if>
+		where unionid = #{unionid,jdbcType=CHAR} 
 		limit 1
 	</select>
 

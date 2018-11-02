@@ -10,6 +10,9 @@ public class TrainTeam implements Serializable {
     /** 培训机构 */
     private String id;
 
+    /** 培训机构编号 */
+    private Integer trainTeamNo;
+
     /** 创建时间 */
     private Date createTime;
 
@@ -64,6 +67,21 @@ public class TrainTeam implements Serializable {
     /** 评级修改时间 */
     private Date levelTime;
 
+    /** 最低价格 */
+    private Double minAmount;
+
+    /** 网球课时长度 */
+    private Integer ballHour1;
+
+    /** 足球课时长度 */
+    private Integer ballHour2;
+
+    /** 羽毛球课时长度 */
+    private Integer ballHour3;
+
+    /** 状态0=禁用1=正常 */
+    private Integer typeFlag;
+
     /**
      * TrainTeam
      */
@@ -83,6 +101,22 @@ public class TrainTeam implements Serializable {
      */
     public void setId(String id) {
         this.id = id == null ? null : id.trim();
+    }
+
+    /**
+     * 培训机构编号
+     * @return Train_team_no 培训机构编号
+     */
+    public Integer getTrainTeamNo() {
+        return trainTeamNo;
+    }
+
+    /**
+     * 培训机构编号
+     * @param trainTeamNo 培训机构编号
+     */
+    public void setTrainTeamNo(Integer trainTeamNo) {
+        this.trainTeamNo = trainTeamNo;
     }
 
     /**
@@ -371,5 +405,85 @@ public class TrainTeam implements Serializable {
      */
     public void setLevelTime(Date levelTime) {
         this.levelTime = levelTime;
+    }
+
+    /**
+     * 最低价格
+     * @return Min_amount 最低价格
+     */
+    public Double getMinAmount() {
+        return minAmount;
+    }
+
+    /**
+     * 最低价格
+     * @param minAmount 最低价格
+     */
+    public void setMinAmount(Double minAmount) {
+        this.minAmount = minAmount;
+    }
+
+    /**
+     * 网球课时长度
+     * @return Ball_hour1 网球课时长度
+     */
+    public Integer getBallHour1() {
+        return ballHour1;
+    }
+
+    /**
+     * 网球课时长度
+     * @param ballHour1 网球课时长度
+     */
+    public void setBallHour1(Integer ballHour1) {
+        this.ballHour1 = ballHour1;
+    }
+
+    /**
+     * 足球课时长度
+     * @return Ball_hour2 足球课时长度
+     */
+    public Integer getBallHour2() {
+        return ballHour2;
+    }
+
+    /**
+     * 足球课时长度
+     * @param ballHour2 足球课时长度
+     */
+    public void setBallHour2(Integer ballHour2) {
+        this.ballHour2 = ballHour2;
+    }
+
+    /**
+     * 羽毛球课时长度
+     * @return Ball_hour3 羽毛球课时长度
+     */
+    public Integer getBallHour3() {
+        return ballHour3;
+    }
+
+    /**
+     * 羽毛球课时长度
+     * @param ballHour3 羽毛球课时长度
+     */
+    public void setBallHour3(Integer ballHour3) {
+        this.ballHour3 = ballHour3;
+    }
+
+    /**
+     * 状态0=禁用1=正常
+     * @return Type_flag 状态0=禁用1=正常
+     */
+    public Integer getTypeFlag() {
+        return typeFlag;
+    }
+
+    /**
+     * 状态0=禁用1=正常
+     * @param typeFlag 状态0=禁用1=正常
+     */
+    public void setTypeFlag(Integer typeFlag) {
+        this.typeFlag = typeFlag;
     }
 }

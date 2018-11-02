@@ -17,13 +17,13 @@ public class WXConfig {
 	/** 公众号id 公司提供wx3d5beb67c8455dd2 */
 	public static final String appid = "wxa76f9c07c99468b2";
 //	public static final String appid = "wx2efc8721a286a255";
-	public static final String appid_web = "wx57555504fc7f9fd2";// 网站应用
+	public static final String appid_web = "wxa6c95fe48935f880";// 网站应用
 	public static final String appid_app = "wxa9e29d03b2a14aa4";// 移动应用
 
 	/** 公众号密钥，公司提供aae6b38f32894df280e79da3a53043e3 */
 	public static final String appSecret = "3caf90ffa0f40292524eba00588f6e0d";
 //	public static final String appSecret = "9a198b8c3497aafa8c71d0397b67d0fb";
-	public static final String appSecret_web = "0e5aed5af5ab222499ac99d8136d76d7";// 网站应用
+	public static final String appSecret_web = "4920697bf2410d51ed708729fad2e5d8";// 网站应用
 	public static final String appSecret_app = "f543351fee9f76359f31bbb43eda7cbc";// 移动应用
 
 	/** 商户号 公司提供 */
@@ -32,7 +32,7 @@ public class WXConfig {
 	/** 商户号密钥，公司提供 */
 	public static final String paternerKey = "ekeEKE00000000000000000000000000";
 
-	/** 公众号订场支付通知地址 */
+	/** 小程序订场支付通知地址 */
 	public static final String NOTIFY_URL1 = "https://ball.ekeae.com/WebBackAPI/memberapi/order/weixinNotify";
 	/** 公众号约球支付通知地址 */
 	public static final String NOTIFY_URL2 = "https://ball.ekeae.com/WebBackAPI/memberapi/order/weixinNotify";

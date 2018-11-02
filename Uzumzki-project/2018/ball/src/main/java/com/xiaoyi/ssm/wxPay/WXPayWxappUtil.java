@@ -54,7 +54,7 @@ public class WXPayWxappUtil extends WXPayUtil{
 		packageParams.put("total_fee", String.valueOf(total_fee));// 标价金额
 		packageParams.put("spbill_create_ip", ip);// 终端IP
 		packageParams.put("time_start", DateUtil.getFormat(new Date(), "yyyyMMddHHmmss"));// 交易起始时间
-		packageParams.put("time_expire", DateUtil.getFormat(DateUtil.getPreTime(new Date(), 1, 5), "yyyyMMddHHmmss"));// 交易结束时间
+		packageParams.put("time_expire", DateUtil.getFormat(DateUtil.getPreTime(new Date(), 1, 6), "yyyyMMddHHmmss"));// 交易结束时间
 		packageParams.put("notify_url", notify_url);// 通知地址
 		packageParams.put("trade_type", "JSAPI");// 交易类型
 		packageParams.put("openid", openid);// 用户标识
