@@ -11,6 +11,9 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 
+/**
+ * 发送短信通知消息工具类
+ * */
 public class MoblieMessageUtil {
 
 	private final static Logger logger = Logger.getLogger(MoblieMessageUtil.class);
@@ -50,14 +53,15 @@ public class MoblieMessageUtil {
 		// 可选:模板中的变量替换JSON串,如模板内容为"亲爱的${name},您的验证码为${code}"时,此处的值为
 		request.setTemplateParam(templateParam);
 
-		// 选填-上行短信扩展码(无特殊需求用户请忽略此字段)
-		// request.setSmsUpExtendCode("90997");
+		// 选填-上行短信扩展码(无特殊需求用户请忽略此字段)7
+		request.setSmsUpExtendCode("555");
 
 		// 可选:outId为提供给业务方扩展字段,最终在短信回执消息中将此值带回给调用者
-		request.setOutId("yourOutId");
+		request.setOutId("555");
 
 		// hint 此处可能会抛出异常，注意catch
 		SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
+		logger.info("发送提示："+sendSmsResponse.getMessage());
 		if (sendSmsResponse.getCode() != null && sendSmsResponse.getCode().equals("OK")) {
 			// 请求成功
 			logger.info(mobile + "发送成功");
@@ -65,6 +69,14 @@ public class MoblieMessageUtil {
 		return sendSmsResponse;
 	}
 
+	/**
+	 * @Description: 验证码
+	 * @author 宋高俊  
+	 * @param mobile 手机号
+	 * @param code 验证码
+	 * @return 
+	 * @date 2018年11月6日 上午9:35:30 
+	 */
 	public static SendSmsResponse sendIdentifyingCode(String mobile, String code) {
 		try {
 			return sendSms(mobile, "{\"code\":\"" + code + "\"}", templeteCode, Global.aliyunSMSSignName);
@@ -74,16 +86,100 @@ public class MoblieMessageUtil {
 		return null;
 	}
 
-	public static SendSmsResponse sendTemplateSms(String mobile, String name, String tel, String area, String day, String time) {
+	/**
+	 * @Description: 下单发送 
+	 * @author 宋高俊  
+	 * @param mobile 场馆联系方式
+	 * @param name 用户昵称
+	 * @param tel 用户手机号
+	 * @param area 场地
+	 * @param day 日期
+	 * @param time 时间段
+	 * @return 
+	 * @date 2018年11月6日 上午9:35:48 
+	 */
+//	public static SendSmsResponse sendTemplateSms(String mobile, String name, String tel, String area, String day, String time) {
+//		try {
+//			return sendSms(mobile, "{\"name\":\"" + name + "\", \"tel\":\"" + tel + "\", \"area\":\"" + area + "\", \"day\":\"" + day + "\", \"time\":\"" + time + "\"}",
+//					Global.aliyunSMSTempleteCode1, Global.aliyunSMSSignName1);
+//		} catch (ClientException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
+	
+	/**
+	 * @Description: 支付成功发送
+	 * @author 宋高俊  
+	 * @param mobile 场馆联系方式
+	 * @param name 用户昵称
+	 * @param tel 用户手机号
+	 * @param area 场地
+	 * @param day 日期
+	 * @param time 时间段
+	 * @param code 回复内容
+	 * @return 
+	 * @date 2018年11月6日 上午9:35:48 
+	 */
+	public static SendSmsResponse sendTemplateSms2(String mobile, String name, String tel, String day, String time, double money, Integer code) {
 		try {
-			return sendSms(mobile, "{\"name\":\"" + name + "\", \"tel\":\"" + tel + "\", \"area\":\"" + area + "\", \"day\":\"" + day + "\", \"time\":\"" + time + "\"}",
-					Global.aliyunSMSTempleteCode1, Global.aliyunSMSSignName1);
+			return sendSms(mobile, "{\"name\":\"" + name + "\", \"tel\":\"" + tel + "\", \"day\":\"" + day + "\", \"time\":\"" + time + "\", \"money\":\"" + money + "\", \"code\":\"" + code + "\"}",
+					Global.aliyunSMSTempleteCode2, Global.aliyunSMSSignName1);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
+	
+	
+	/**
+	 * @Description: 场馆方：便捷确认完成
+	 * @author 宋高俊  
+	 * @param mobile 场馆联系方式
+	 * @param name 用户昵称
+	 * @param tel 用户手机号
+	 * @param area 场地
+	 * @param day 日期
+	 * @param time 时间段
+	 * @return 
+	 * @date 2018年11月6日 上午9:35:48 
+	 */
+	/*public static SendSmsResponse sendTemplateSms4(String mobile, String name, String tel, String area, String day, String time, double money) {
+		try {
+			return sendSms(mobile, "{\"name\":\"" + name + "\", \"tel\":\"" + tel + "\", \"area\":\"" + area 
+					+ "\", \"day\":\"" + day + "\", \"time\":\"" + time + "\", \"money\":\"" + money + "\"}",
+					Global.aliyunSMSTempleteCode4, Global.aliyunSMSSignName1);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}*/
+
+	/**
+	 * @Description: 用户方：便捷确认完成
+	 * @author 宋高俊  
+	 * @param mobile 场馆联系方式
+	 * @param name 用户昵称
+	 * @param tel 用户手机号
+	 * @param area 场地
+	 * @param day 日期
+	 * @param time 时间段
+	 * @return 
+	 * @date 2018年11月6日 上午9:35:48 
+	 */
+//	public static SendSmsResponse sendTemplateSms5(String mobile, String name, String tel, String area, String day, String time) {
+//		try {
+//			return sendSms(mobile, "{\"name\":\"" + name + "\", \"tel\":\"" + tel + "\", \"area\":\"" + area 
+//					+ "\", \"day\":\"" + day + "\", \"time\":\"" + time + "\"}",
+//					Global.aliyunSMSTempleteCode5, Global.aliyunSMSSignName1);
+//		} catch (ClientException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
+	
 	public static void main(String[] args) {
-		MoblieMessageUtil.sendTemplateSms("1520710815", "", "", "", "", "");
+//		MoblieMessageUtil.sendTemplateSms("15207108156", "小宋", "15207108156", "东边1", "2018-11-08", "12:30-13:30");
+//		MoblieMessageUtil.sendTemplateSms5("14774825972", "小宋", "15207108156", "东边1", "2018-11-08", "12:30-13:30");
 	}
 }

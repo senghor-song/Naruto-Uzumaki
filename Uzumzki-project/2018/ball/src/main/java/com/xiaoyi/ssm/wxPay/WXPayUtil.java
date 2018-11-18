@@ -37,10 +37,13 @@ import org.apache.log4j.Logger;
 import org.jdom.JDOMException;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.AmountRefund;
 import com.xiaoyi.ssm.model.WXCompanyPayment;
 import com.xiaoyi.ssm.service.AmountRefundService;
+import com.xiaoyi.ssm.service.InviteBallService;
 import com.xiaoyi.ssm.service.WXCompanyPaymentService;
+import com.xiaoyi.ssm.util.Arith;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.SpringUtils;
@@ -312,6 +315,10 @@ public class WXPayUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static String sendWXappTemplate(String openid, String templateId, String pagepath, JSONObject datajson) {
+		if (StringUtil.isBank(openid)) {
+			return "用户没有关注公众号";
+		}
+		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("touser", openid);
 		jsonObject.put("template_id", templateId);
@@ -349,9 +356,12 @@ public class WXPayUtil {
 		parameters.put("fee_type", "CNY");// 退款货币种类
 		parameters.put("total_fee", String.valueOf(Utils.doubleToInt(total_fee)));// 订单金额
 		parameters.put("refund_fee", String.valueOf(Utils.doubleToInt(refund_fee)));// 退款金额
-		parameters.put("refund_desc", content);
+		parameters.put("refund_desc", content);// 退费备注
 		parameters.put("sign", WXPayUtil.createSign(parameters, WXConfig.paternerKey));
-
+		
+		// 手续费金额
+		Double amountFee = Arith.sub(total_fee, refund_fee);
+		
 		String xml = XMLUtil.mapToXml(parameters);
 
 		logger.info(xml);
@@ -375,31 +385,33 @@ public class WXPayUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
+		// 退款流水
+		AmountRefundService amountRefundService = SpringUtils.getBean("amountRefundServiceImpl", AmountRefundService.class);
 		// 退款业务数据处理
 		AmountRefund amountRefund = new AmountRefund();
 		amountRefund.setId(Utils.getUUID());
 		amountRefund.setContent(content);
+		amountRefund.setAmountSum(total_fee);
+		amountRefund.setAmount(refund_fee);
 		amountRefund.setSourceId(id);
 		amountRefund.setRefundSource(refundSource);
 		amountRefund.setRefundRemark(result);
 		amountRefund.setRefundPayType(1);
-		amountRefund.setAmountSum(total_fee);
-		amountRefund.setAmount(refund_fee);
-
-		AmountRefundService amountRefundService = SpringUtils.getBean("amountRefundServiceImpl", AmountRefundService.class);
+		amountRefund.setRefundFee(amountFee);
+		
 		// result_code 返回SUCCESS/FAIL, SUCCESS
 		// 新增退款记录数据
 		if ("SUCCESS".equals(map.get("result_code"))) {
 			// 退款成功
+			amountRefund.setRefundTime(new Date());
 			amountRefund.setRefundStatus(1);
 		} else {
 			// 退款失败
 			// 新增退款记录数据
 			amountRefund.setRefundStatus(2);
 		}
-		amountRefundService.insert(amountRefund);
-
+		amountRefundService.insertSelective(amountRefund);
 		return map;
 	}
 
@@ -414,12 +426,13 @@ public class WXPayUtil {
 	 * @date 2018年9月27日 下午8:56:15 
 	 */ 
 	@SuppressWarnings({ "rawtypes" })
-	public static String wxCompanyPayment(String partner_trade_no,String openid, double amount, String desc) {
+	public static boolean wxCompanyPayment(String partner_trade_no,String openid, double amount, String desc) {
 
 		// String openid = "oozuywt6GdCgM-Z4Kk9CrvvTAkJo";
 		// String re_user_name = "宋高俊";
 		// double amount = 1;
 		// String desc = "测试支付";
+		boolean flag = false;
 
 		SortedMap<Object, Object> parameters = new TreeMap<Object, Object>();
 		String nonceStr = Utils.getUUID();// 随机字符串
@@ -428,7 +441,7 @@ public class WXPayUtil {
 		parameters.put("nonce_str", nonceStr);// 随机字符串
 		parameters.put("partner_trade_no", partner_trade_no);// 商户订单号
 		parameters.put("openid", openid);// 用户openid
-		parameters.put("check_name", "NO_CHECK");// 校验用户姓名选项NO_CHECK：不校验真实姓名  FORCE_CHECK：强校验真实姓名
+		parameters.put("check_name", "NO_CHECK");// 校验用户姓名选项 , NO_CHECK：不校验真实姓名,  FORCE_CHECK：强校验真实姓名
 //		parameters.put("re_user_name", name);// 校验用户姓名选项
 		parameters.put("amount", String.valueOf(Utils.doubleToInt(amount)));// 订单金额
 		parameters.put("desc", desc);// 企业付款描述信息
@@ -447,31 +460,41 @@ public class WXPayUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 
+		// 微信企业支付流水
 		WXCompanyPaymentService wxCompanyPaymentService = SpringUtils.getBean("wxCompanyPaymentServiceImpl", WXCompanyPaymentService.class);
 		WXCompanyPayment wxCompanyPayment = new WXCompanyPayment();
 		wxCompanyPayment.setId(Utils.getUUID());
 		wxCompanyPayment.setCreateTime(new Date());
+		wxCompanyPayment.setOrderId(partner_trade_no);
+		wxCompanyPayment.setOpenid(openid);
 		wxCompanyPayment.setAmount(amount);
 		wxCompanyPayment.setDesc(desc);
-		wxCompanyPayment.setOpenid(openid);
 		
 		Map map = new HashMap<>();
 		try {
 			logger.info("返回参数：" + result);
 			map = XMLUtil.doXMLParse(result);
 			wxCompanyPayment.setReturnXml(result);
-			
+			//return_code为FAIL 此字段是通信标识，非交易标识，交易是否成功需要查看result_code来判断
 			if ("FAIL".equals(map.get("return_code"))) {
 				wxCompanyPayment.setPayType(2);
 				wxCompanyPayment.setPayMsg(map.get("return_msg") != null ? map.get("return_msg").toString() : "");
 				logger.info(map.get("return_msg"));
 			}else {
+			//return_code为SUCCESS
+				// result_code 为FAIL时
 				if ("FAIL".equals(map.get("result_code"))) {
 					wxCompanyPayment.setPayType(2);
 					wxCompanyPayment.setPayMsg(map.get("err_code_des") != null ? map.get("err_code_des").toString() : "");
 					logger.info(map.get("err_code_des"));
+				} else {
+					// result_code 为SUCCESS时
+					wxCompanyPayment.setPayType(1);
+					wxCompanyPayment.setPaymentNo(map.get("payment_no").toString());
+					wxCompanyPayment.setPayMsg("支付成功");
+					wxCompanyPayment.setPaymentTime(map.get("payment_time").toString());
+					flag = true;
 				}
 			}
 			wxCompanyPaymentService.insertSelective(wxCompanyPayment);
@@ -480,7 +503,7 @@ public class WXPayUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return wxCompanyPayment.getId();
+		return flag;
 	}
 	
 	/**

@@ -60,9 +60,9 @@ public class ApiCalendarController {
 	@ResponseBody
 	public ApiMessage calendar(String date, HttpServletRequest request, String venueid) {
 		
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		
 		Venue venue = venueService.selectByPrimaryKey(venueid);
 		
 		//获取当前月份的第一天和最后一天
@@ -116,6 +116,7 @@ public class ApiCalendarController {
 		
 		//根据管理员获取所管理的场馆
 		Venue venue = venueService.selectByPrimaryKey(venueid);
+		
 		//新增一条日期模板数据
 		VenueStatis vs = venueStatisService.selectByPrimaryKey(id);
 

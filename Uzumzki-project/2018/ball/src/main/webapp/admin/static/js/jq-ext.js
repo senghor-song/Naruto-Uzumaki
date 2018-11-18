@@ -5,7 +5,7 @@ var carousel = layui.carousel;
 var dataList = null;
 var dataList2 = null;
 var dataList3 = null;
-
+var redisRefreshTime = "";
 function redisRefresh(){
 	$.ajax({  
         type : "POST",  //提交方式  
@@ -21,15 +21,22 @@ function redisRefresh(){
             	$('#venueCheckSum').html("0");
             	$('#venueEnterSum').html("0");
             	$('#trainEnterSum').html("0");
+            	window.clearInterval(redisRefreshTime); 
             }  
-        }  
+        },
+        error:function(){
+        	$('#venueCheckSum').html("0");
+        	$('#venueEnterSum').html("0");
+        	$('#trainEnterSum').html("0");
+        	window.clearInterval(redisRefreshTime); 
+        }
     }); 
 }
 
 $(function () {
 
 	redisRefresh();
-	window.setInterval(redisRefresh,60000); 
+	redisRefreshTime = window.setInterval(redisRefresh,60000); 
 	
     $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
 

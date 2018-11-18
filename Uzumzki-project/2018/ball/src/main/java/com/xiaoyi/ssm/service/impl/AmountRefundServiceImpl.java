@@ -22,4 +22,5 @@ public class AmountRefundServiceImpl extends AbstractService<AmountRefund,String
 	public void setBaseMapper() {
 	    super.setBaseMapper(amountRefundMapper);
 	}
+
 }

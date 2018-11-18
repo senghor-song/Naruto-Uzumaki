@@ -18,6 +18,11 @@
 			<id column="ttcID" jdbcType="CHAR" property="id" />
 			<result column="ttcTeach_type" jdbcType="VARCHAR" property="teachType" />
 		</association>
+		<association property="venueCoach" javaType="com.xiaoyi.ssm.model.VenueCoach">
+			<id column="vcID" jdbcType="CHAR" property="id" />
+			<result column="vcPrice" jdbcType="VARCHAR" property="price" />
+			<result column="vcType_flag" jdbcType="VARCHAR" property="typeFlag" />
+		</association>
 	</resultMap>
 	<sql id="Base_Column_List">
 		ID, Create_time, Modify_time, Member_id, Name, Sex, Working_age, Head_image, Lecture_style,
@@ -36,8 +41,7 @@
 
 	<select id="selectByMemberTeam" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT tc.* FROM TrainTeamCoach ttc INNER JOIN TrainCoach tc ON ttc.`Train_coach_id` = tc.`ID` 
-		INNER JOIN Member m ON tc.`Member_id` = m.`ID` WHERE ttc.Train_team_id = #{teamId,jdbcType=VARCHAR} 
-		AND m.`ID` = #{memberId,jdbcType=VARCHAR}
+		WHERE ttc.Train_team_id = #{teamId,jdbcType=VARCHAR} AND tc.`Member_id` = #{memberId,jdbcType=VARCHAR}
 	</select>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -49,6 +53,24 @@
 		TrainCoach tc WHERE ttc.Train_team_id = #{id,jdbcType=VARCHAR}
 	</select>
 
+	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tc.*,vc.ID vcID, vc.Price vcPrice,vc.Type_flag vcType_flag FROM TrainCoach tc 
+		INNER JOIN TrainTeamCoach ttc ON tc.`ID` = ttc.`Train_coach_id` 
+		LEFT JOIN (SELECT * FROM VenueCoach WHERE `Venue_id` = #{venueid}) vc ON tc.`ID` = vc.`Train_coach_id` 
+	</select>
+	
+	<select id="selectByDefault" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM TrainCoach WHERE `ID` = #{id,jdbcType=VARCHAR} 
+	</select>
+
+	<select id="selectByTeamManager" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tc.* FROM TrainCoach tc INNER JOIN TrainTeamCoach ttc ON tc.`ID` = ttc.`Train_coach_id` WHERE ttc.`Manager`=1 AND ttc.`Train_team_id` = #{trainTeamId}
+	</select>
+	
+	<select id="selectByMemberTeamManager" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tc.* FROM TrainTeamCoach ttc INNER JOIN TrainCoach tc ON ttc.`Train_coach_id` = tc.`ID` 
+		WHERE ttc.`Train_team_id` = #{teamId,jdbcType=VARCHAR}  AND tc.`Member_id` = #{memberId,jdbcType=VARCHAR} AND ttc.`Manager` IN (#{manager})
+	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
 		delete from TrainCoach

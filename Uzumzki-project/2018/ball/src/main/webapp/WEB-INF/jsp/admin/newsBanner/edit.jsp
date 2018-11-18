@@ -55,6 +55,7 @@
 				            	</c:if>
 				            </div>
 				            <div class="publicbg-title">
+	                        	<input id="coverpath" type="hidden" value="${image}">
 								<button class="layui-btn test" lay-data="{url: '/WebBackAPI/admin/common/uploadImage'}" name="file">上传图片</button>
 							</div>
 	                    </div>
@@ -96,14 +97,7 @@
 				done: function(res, index, upload) {
 					layer.msg("上传成功");
 					$('.image1').html("<div class=\"publicbg-box\"><img class=\"publicbg-img\" src=\""+res.data+"\"></div>");
-					$.ajax({  
-                        type : "POST",  //提交方式  
-                        url : "/WebBackAPI/admin/newsBanner/saveImage",//路径  
-                        data : {id : id, url : res.data},//数据，这里使用的是Json格式进行传输  
-                        dataType:"json",
-                        success : function(result) {//返回数据根据结果进行相应的处理  
-                        }  
-                    }); 
+					$('#coverpath').val(res.data);
 				}
 			})
 		});
@@ -112,13 +106,15 @@
 	        $("#saveNewsBanner").click(function () {
 	        	var remark = $("#remark").val();
 	        	var contentpath = $("#contentpath").val();
+	        	var coverpath = $('#coverpath').val();
 	            $.ajax({  
 	                type : "POST",  //提交方式  
 	                url : "/WebBackAPI/admin/newsBanner/saveNewsBanner",//路径  
 	                data : {  
 	                	id : id,
 	                    remark : remark,
-	                    contentpath : contentpath
+	                    contentpath : contentpath,
+	                    coverpath : coverpath
 	                },//数据，这里使用的是Json格式进行传输  
 	                dataType:"json",
 	                success : function(result) {//返回数据根据结果进行相应的处理  

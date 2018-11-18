@@ -34,7 +34,6 @@ public class MemberApiInterceptor extends HandlerInterceptorAdapter {
 		String url = requestUri.substring(contextPath.length());
 		
 		String token = request.getParameter("token");
-		
 		if (StringUtil.isBank(token)) {
 			logger.info("session:" + request.getSession().getId());
 			logger.info("公众号访问openid:" + (String) request.getSession().getAttribute("openid"));
@@ -52,7 +51,7 @@ public class MemberApiInterceptor extends HandlerInterceptorAdapter {
 			Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 			if (member != null) {
 				logger.info("token:" + token);
-				request.getSession().setAttribute("openid", token);
+				request.setAttribute("token", token);
 				return true;
 			}
 		}

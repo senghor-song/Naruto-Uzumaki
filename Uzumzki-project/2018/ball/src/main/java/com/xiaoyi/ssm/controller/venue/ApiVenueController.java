@@ -10,12 +10,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
@@ -24,6 +21,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.hutool.core.util.ObjectUtil;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.xiaoyi.ssm.dao.AmountRefundWayMapper;
 import com.xiaoyi.ssm.dao.MemberHabitMapper;
 import com.xiaoyi.ssm.dao.OrderLogMapper;
 import com.xiaoyi.ssm.dao.VenueLockMapper;
@@ -31,6 +31,7 @@ import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.dto.FieldTemplateDto;
 import com.xiaoyi.ssm.dto.OrderDto;
 import com.xiaoyi.ssm.dto.PageBean;
+import com.xiaoyi.ssm.model.AmountRefundWay;
 import com.xiaoyi.ssm.model.City;
 import com.xiaoyi.ssm.model.District;
 import com.xiaoyi.ssm.model.Field;
@@ -42,6 +43,7 @@ import com.xiaoyi.ssm.model.OrderLog;
 import com.xiaoyi.ssm.model.Reserve;
 import com.xiaoyi.ssm.model.TrainCoach;
 import com.xiaoyi.ssm.model.TrainTeam;
+import com.xiaoyi.ssm.model.TrainTeamCoach;
 import com.xiaoyi.ssm.model.Venue;
 import com.xiaoyi.ssm.model.VenueCoach;
 import com.xiaoyi.ssm.model.VenueError;
@@ -55,17 +57,22 @@ import com.xiaoyi.ssm.service.MemberService;
 import com.xiaoyi.ssm.service.OrderService;
 import com.xiaoyi.ssm.service.ReserveService;
 import com.xiaoyi.ssm.service.TrainCoachService;
+import com.xiaoyi.ssm.service.TrainTeamCoachService;
 import com.xiaoyi.ssm.service.TrainTeamService;
 import com.xiaoyi.ssm.service.VenueCoachService;
 import com.xiaoyi.ssm.service.VenueErrorService;
 import com.xiaoyi.ssm.service.VenueLogService;
+import com.xiaoyi.ssm.service.VenueRefundService;
 import com.xiaoyi.ssm.service.VenueService;
 import com.xiaoyi.ssm.util.Arith;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
+import com.xiaoyi.ssm.util.MoblieVoiceUtil;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
+import com.xiaoyi.ssm.wxPay.WXConfig;
+import com.xiaoyi.ssm.wxPay.WXPayUtil;
 
 /**  
  * @Description: 后台场馆控制器
@@ -75,6 +82,8 @@ import com.xiaoyi.ssm.util.Utils;
 @Controller("wxappApiVenueController")
 @RequestMapping("venue/manager")
 public class ApiVenueController {
+
+    private static Logger logger = Logger.getLogger(ApiVenueController.class.getName());
 	
 	@Autowired
 	private MemberService memberService;
@@ -108,6 +117,14 @@ public class ApiVenueController {
 	private TrainTeamService trainTeamService;
 	@Autowired
 	private VenueCoachService venueCoachService;
+	@Autowired
+	private AmountRefundWayMapper amountRefundWayMapper;
+	@Autowired
+	private TrainCoachService trainCoachService;
+	@Autowired
+	private TrainTeamCoachService trainTeamCoachService;
+	@Autowired
+	private VenueRefundService venueRefundService;
 
 	// 获取线程池连接
 	@Autowired
@@ -196,10 +213,6 @@ public class ApiVenueController {
 	@ResponseBody
 	public ApiMessage venueList(String id, HttpServletRequest request) {
 
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
-
 		// 获取培训机构管理的场馆
 		List<Venue> list = venueService.selectByManager(id);
 		List<Map<String, Object>> listmap = new ArrayList<>();
@@ -210,6 +223,8 @@ public class ApiVenueController {
 			map.put("name", venue.getName());// 名称
 			map.put("address", venue.getAddress());// 地址
 			map.put("type", venue.getType());// 球场类型
+			map.put("venueCoachSum", venueCoachService.countByVenue(venue.getId()));// 陪练数量
+			map.put("venueRefundSum", venueRefundService.countByVenue(venue.getId()));// 陪练数量
 			listmap.add(map);
 		}
 		
@@ -224,10 +239,6 @@ public class ApiVenueController {
 	@RequestMapping(value = "/deateils")
 	@ResponseBody
 	public ApiMessage deateils(HttpServletRequest request , String venueid) {
-		
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
 
 		Venue venue = venueService.selectByPrimaryKey(venueid);
 		Map<String, Object> map = new LinkedHashMap<>();
@@ -241,7 +252,7 @@ public class ApiVenueController {
 		map.put("city", ObjectUtil.defaultIfNull(city, city.getCity()) + "-" + ObjectUtil.defaultIfNull(district, district.getDistrict())); // 球馆地址-城市
 		map.put("image", venue.getImage()); // 图标
 		map.put("address", venue.getAddress()); // 详细地址
-		map.put("tel", venue.getTel()); // 电话
+		map.put("tel", venue.getContactPhone()); // 电话
 		map.put("warmreminder", venue.getWarmreminder()); // 滚动提示
 		map.put("backPayment", "0"); // 允许后付(0=否1=是)
 		map.put("orderverify", venue.getOrderverify()); // 订场确认(0=人工确认1=自动确认)
@@ -262,9 +273,8 @@ public class ApiVenueController {
 	@ResponseBody
 	public ApiMessage updateTmplate(String venueid, Venue venue, HttpServletRequest request) {
 
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 		
 		venue.setId(venueid);
 		venue.setModifytime(new Date());
@@ -283,31 +293,218 @@ public class ApiVenueController {
 	}
 	
 	/**
+	 * @Description: 会员选择日程数据(price为-1不可预订 -2已预订-3预订中-4已过期-5锁定)
+	 * @author 宋高俊
+	 * @date 2018年8月16日 下午7:35:14
+	 */
+	@RequestMapping(value = "/reserve")
+	@ResponseBody
+	public ApiMessage reserve(HttpServletRequest request, PageBean pageBean, String venueid, String datestr) {
+
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+
+		// 当前日期
+		Date newDate = DateUtil.getPreTime(new Date(), 2, 1);
+		// 查询日期
+		Date date = new Date();
+		int outtime = 0;
+		
+		if (StringUtils.isBlank(datestr)) {
+			// 获取当天的00:00:00时间
+			date = DateUtil.getWeeHours(newDate, 0);
+		} else {
+			date = DateUtil.getParse(datestr, "yyyy-MM-dd");
+		}
+		// 判断是否是当前日期
+		if (new Date().getTime() > date.getTime()) {
+			String hour = DateUtil.getFormat(newDate, "HH");
+			String minute = DateUtil.getFormat(newDate, "mm");
+			// 已过期的时段
+			outtime = (int) (Integer.valueOf(hour) / 0.5);
+			// 分钟小于30则减一
+			if (Integer.valueOf(minute) < 30) {
+				outtime--;
+			}
+		}
+
+		// 获取当前场馆下的所有场地
+		Field f = new Field();
+		f.setVenueid(venueid);
+		List<Field> fields = fieldService.selectByAll(f);
+
+		List<Map<String, Object>> listmap = new ArrayList<>();
+
+		// 开始封装当天日期的日程
+		for (int i = 0; i < fields.size(); i++) {
+			// 最终返回日期数据
+			List<Map<String, Object>> datelistmap = new ArrayList<>();
+
+			Field field = fields.get(i);
+
+			// 根据场馆和场地ID获取场地当天使用模板
+			FieldTemplateDto ftd = new FieldTemplateDto();
+			ftd.setDate(date);
+			ftd.setFieldid(field.getId());
+			ftd.setVenueid(venueid);
+			FieldTemplate ft = fieldTemplateService.selectByVenueAndField(ftd);
+			// 初始模板价格数据
+			String[] template = {};
+
+			int time = 0;
+			if (ft != null) {
+				// 获取模板时段价格初始状态
+				template = ft.getVenueTemplate().getPrice().split(",");
+				for (int j = 0; j < template.length; j++) {
+					Map<String, Object> map = new HashMap<>();
+					map.put("no", j + 1);
+					if ((j + 1) % 2 == 0) {
+						map.put("time", time + ":30-" + (time + 1) + ":00");
+						time++;
+					} else {
+						map.put("time", time + ":00-" + time + ":30");
+					}
+					// 小于或等于过期时段的时段状态则修改为已过期
+					if (j <= outtime && !"-1".equals(template[j])) {
+						map.put("price", "-4");
+					} else {
+						map.put("price", template[j]);
+					}
+					map.put("flag", "");
+					datelistmap.add(map);
+				}
+				// 获取当天所有预约的时段数据
+				FieldTemplateDto fieldTemplateDto = new FieldTemplateDto();
+				fieldTemplateDto.setDate(date);
+				fieldTemplateDto.setFieldid(field.getId());
+				fieldTemplateDto.setVenueid(venueid);
+				List<Reserve> reserves = reserveService.selectByFieldTemplateDto(fieldTemplateDto);
+				// 修改时段状态
+				for (int j = 0; j < reserves.size(); j++) {
+					Reserve reserve = reserves.get(j);
+					// 将已预约成功的时段改为已预约状态
+					String[] timestr = reserves.get(j).getReservetimeframe().split(",");
+					// 当前时段状态
+					String priceType = "";
+					Date outDate = reserve.getCreatetime();
+					if (reserve.getOrder().getType() == 1 || reserve.getOrder().getType() == 6) {
+						// 已消费和支付待消费都是已预约状态
+						priceType = "-2";
+					} else if (reserve.getOrder().getType() == 0) {
+						// 待支付是预约中状态
+						priceType = "-3";
+					} else if (reserve.getOrder().getType() == 5) {
+						priceType = "-2";
+						outDate = DateUtil.getPreTime(outDate, 1, 30);
+					}
+
+					TrainCoach trainCoach = new TrainCoach();
+					String trainCoachName = "";
+					if (!StringUtil.isBank(reserve.getOrder().getCoachid())) {
+						trainCoach = trainCoachService.selectByPrimaryKey(reserve.getOrder().getCoachid());
+						trainCoachName = trainCoach.getName();
+					}
+
+					// 修改时段内的状态
+					for (int k = 0; k < timestr.length; k++) {
+						int flag = Integer.valueOf(timestr[k]) - 1;
+						Map<String, Object> timemap = datelistmap.get(flag);
+						timemap.put("price", priceType);
+						timemap.put("flag", "user" + j);
+						timemap.put("coach", trainCoachName);
+						timemap.put("outDate", DateUtil.getFormat(outDate, "HH:mm"));
+						timemap.put("type", reserve.getOrder().getType());
+						timemap.put("orderId", reserve.getOrder().getId());
+						Member orderMember = memberService.selectByPrimaryKey(reserve.getOrder().getMemberid());
+						timemap.put("memberName", orderMember.getAppnickname());
+						if (member.getId().equals(reserve.getOrder().getMemberid())) {
+							timemap.put("memberFlag", true);
+						}
+						datelistmap.set(flag, timemap);
+					}
+				}
+
+				// 获取当天锁定占用时段=-5
+				List<VenueLock> venueLocks = venueLockMapper.selectByNowDate(fieldTemplateDto);
+				// 修改时段状态
+				for (int j = 0; j < venueLocks.size(); j++) {
+					VenueLock venueLock = venueLocks.get(j);
+					// 已有状态的时间段
+					String[] timestr = venueLock.getVenuetimeframe().split(",");
+
+					// 修改时段内的状态
+					for (int k = 0; k < timestr.length; k++) {
+						int flag = Integer.valueOf(timestr[k]) - 1;
+						Map<String, Object> timemap = datelistmap.get(flag);
+						timemap.put("price", "-5");
+						timemap.put("flag", "user" + j + "-5");
+						datelistmap.set(flag, timemap);
+					}
+				}
+			}else {
+				for (int j = 0; j < 48; j++) {
+					Map<String, Object> map = new HashMap<>();
+					map.put("no", j + 1);
+					if ((j + 1) % 2 == 0) {
+						map.put("time", time + ":30-" + (time + 1) + ":00");
+						time++;
+					} else {
+						map.put("time", time + ":00-" + time + ":30");
+					}
+					if (j < 16) {
+						map.put("price", "-1");
+					} else {
+						map.put("price", "-4");
+					}
+					map.put("flag", "");
+					datelistmap.add(map);
+				}
+			}
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", field.getId());
+			map.put("name", field.getName());
+			map.put("datelist", datelistmap);
+			listmap.add(map);
+		}
+
+		return new ApiMessage(200, "查询成功", listmap);
+	}
+
+	
+	/**
 	 * @Description: 管理员选择日程数据
 	 * @author 宋高俊
 	 * @date 2018年8月31日 下午7:42:02
 	 */
 	@RequestMapping(value = "/dayReserve")
 	@ResponseBody
-	public ApiMessage reserve(PageBean pageBean, String datestr, HttpServletRequest request, String venueid) {
+	public ApiMessage dayReserve(String datestr, HttpServletRequest request, String venueid) {
 
-		Venue venue = venueService.selectByPrimaryKey(venueid);
 		// 当前日期
+		Date newDate = DateUtil.getPreTime(new Date(), 2, 1);
+		// 查询日期
 		Date date = new Date();
-		String hour = DateUtil.getFormat(date, "HH");
-		String minute = DateUtil.getFormat(date, "mm");
-		// 已过期的时段
-		int outtime = (int) (Integer.valueOf(hour) / 0.5);
-		if (Integer.valueOf(minute) < 30) {
-			outtime--;
-		}
+		int outtime = 0;
+		
 		if (StringUtils.isBlank(datestr)) {
 			// 获取当天的00:00:00时间
-			date = DateUtil.getWeeHours(date, 0);
+			date = DateUtil.getWeeHours(newDate, 0);
 		} else {
 			date = DateUtil.getParse(datestr, "yyyy-MM-dd");
 		}
+		// 判断是否是当前日期
+		if (new Date().getTime() > date.getTime()) {
+			String hour = DateUtil.getFormat(newDate, "HH");
+			String minute = DateUtil.getFormat(newDate, "mm");
+			// 已过期的时段
+			outtime = (int) (Integer.valueOf(hour) / 0.5);
+			// 分钟小于30则减一
+			if (Integer.valueOf(minute) < 30) {
+				outtime--;
+			}
+		}
 
+		Venue venue = venueService.selectByPrimaryKey(venueid);
 		// 获取当前场馆下的所有场地
 		Field f = new Field();
 		f.setVenueid(venue.getId());
@@ -366,14 +563,13 @@ public class ApiVenueController {
 					String[] timestr = reserve.getReservetimeframe().split(",");
 					// 当前时段状态
 					String priceType = "";
-					if (reserve.getOrder().getType() == 1 || reserve.getOrder().getType() == 6) {
+					if (reserve.getOrder().getType() == 1 || reserve.getOrder().getType() == 5 || reserve.getOrder().getType() == 6) {
 						// 已消费和支付待消费都是已预约状态
 						priceType = "-2";
 					} else if (reserve.getOrder().getType() == 0) {
 						// 待支付是预约中状态
 						priceType = "-3";
 					}
-
 					// 修改时段内的状态
 					for (int k = 0; k < timestr.length; k++) {
 						int flag = Integer.valueOf(timestr[k]) - 1;
@@ -381,6 +577,19 @@ public class ApiVenueController {
 						timemap.put("id", reserve.getOrderid());
 						timemap.put("price", priceType);
 						timemap.put("flag", "user" + j + priceType);
+						timemap.put("type", reserve.getOrder().getType());
+						timemap.put("orderId", reserve.getOrder().getId());
+
+						Member orderMember = memberService.selectByPrimaryKey(reserve.getOrder().getMemberid());
+						if (orderMember != null){
+							timemap.put("memberName", orderMember.getAppnickname());
+						}
+						if(!StringUtil.isBank(reserve.getOrder().getCoachid())){
+							TrainCoach trainCoach = trainCoachService.selectByPrimaryKey(reserve.getOrder().getCoachid());
+							if (trainCoach != null){
+								timemap.put("coachName", trainCoach.getName());
+							}
+						}
 						datelistmap.set(flag, timemap);
 					}
 				}
@@ -404,7 +613,24 @@ public class ApiVenueController {
 						datelistmap.set(flag, timemap);
 					}
 				}
-
+			}else {
+				for (int j = 0; j < 48; j++) {
+					Map<String, Object> map = new HashMap<>();
+					map.put("no", j + 1);
+					if ((j + 1) % 2 == 0) {
+						map.put("time", time + ":30-" + (time + 1) + ":00");
+						time++;
+					} else {
+						map.put("time", time + ":00-" + time + ":30");
+					}
+					if (j < 16) {
+						map.put("price", "-1");
+					} else {
+						map.put("price", "-4");
+					}
+					map.put("flag", "");
+					datelistmap.add(map);
+				}
 			}
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", field.getId());
@@ -429,9 +655,8 @@ public class ApiVenueController {
 	@ResponseBody
 	public ApiMessage setVenueLock(String venueid, String fieldid, String content, String date, String venuetimeframe, HttpServletRequest request) {
 
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 		
 		String[] times = venuetimeframe.split(",");
 		for (int i = 0; i < times.length; i++) {
@@ -469,9 +694,8 @@ public class ApiVenueController {
 	@ResponseBody
 	public ApiMessage setVenueLockList(HttpServletRequest request) {
 
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 		
 		List<String> list = venueLockMapper.selectContentByManager(member.getId());
 		return new ApiMessage(200, "查询成功", list);
@@ -487,8 +711,6 @@ public class ApiVenueController {
 	@ResponseBody
 	public ApiMessage updateVenueLock(String id, String content, HttpServletRequest request) {
 		
-//		HttpSession session = request.getSession();
-//		String openid = (String) session.getAttribute("openid");
 		VenueLock venueLock = new VenueLock();
 		venueLock.setId(id);
 		venueLock.setContent(content);
@@ -563,19 +785,15 @@ public class ApiVenueController {
 	/**  
 	 * @Description: 常用场馆列表
 	 * @author 宋高俊  
-	 * @param pageBean
-	 * @param cityid
-	 * @param districtid
-	 * @return 
+	 * @return
 	 * @date 2018年9月10日 下午4:00:58 
 	 */ 
 	@RequestMapping(value = "/oftenVenue")
 	@ResponseBody
 	public ApiMessage oftenVenue(HttpServletRequest request) {
-		
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
+
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 		
 		List<Map<String, Object>> listmap = new ArrayList<>();
 		List<Venue> venues = venueService.selectByOftenMember(member.getId());
@@ -585,7 +803,7 @@ public class ApiVenueController {
 			map.put("image", venue.getImage());// 图片
 			map.put("name", venue.getName());// 名称
 			map.put("address", venue.getAddress());// 地址
-			map.put("phone", venue.getTel());// 电话
+			map.put("phone", venue.getContactPhone());// 电话
 			map.put("warmreminder", venue.getWarmreminder());// 温馨提示
 			map.put("type", venue.getType());// 球场类型
 			listmap.add(map);
@@ -593,135 +811,7 @@ public class ApiVenueController {
 		return new ApiMessage(200, "查询成功", listmap);
 	}
 
-	/**
-	 * @Description: 会员选择日程数据(price为-1不可预订 -2已预订-3预订中-4已过期-5锁定)
-	 * @author 宋高俊
-	 * @date 2018年8月16日 下午7:35:14
-	 */
-	@RequestMapping(value = "/reserve")
-	@ResponseBody
-	public ApiMessage reserve(PageBean pageBean, String venueid, String datestr) {
-		// 当前日期
-		Date date = new Date();
-		String hour = DateUtil.getFormat(date, "HH");
-		String minute = DateUtil.getFormat(date, "mm");
-		// 已过期的时段
-		int outtime = (int) (Integer.valueOf(hour) / 0.5);
-		if (Integer.valueOf(minute) < 30) {
-			outtime--;
-		}
-		if (StringUtils.isBlank(datestr)) {
-			// 获取当天的00:00:00时间
-			date = DateUtil.getWeeHours(date, 0);
-		} else {
-			date = DateUtil.getParse(datestr, "yyyy-MM-dd");
-		}
-
-		// 获取当前场馆下的所有场地
-		Field f = new Field();
-		f.setVenueid(venueid);
-		List<Field> fields = fieldService.selectByAll(f);
-
-		List<Map<String, Object>> listmap = new ArrayList<>();
-
-		// 开始封装当天日期的日程
-		for (int i = 0; i < fields.size(); i++) {
-			// 最终返回日期数据
-			List<Map<String, Object>> datelistmap = new ArrayList<>();
-
-			Field field = fields.get(i);
-
-			// 根据场馆和场地ID获取场地当天使用模板
-			FieldTemplateDto ftd = new FieldTemplateDto();
-			ftd.setDate(date);
-			ftd.setFieldid(field.getId());
-			ftd.setVenueid(venueid);
-			FieldTemplate ft = fieldTemplateService.selectByVenueAndField(ftd);
-			// 初始模板价格数据
-			String[] template = new String[48];
-
-			int time = 0;
-			if (ft != null) {
-				// 获取模板时段价格初始状态
-				template = ft.getVenueTemplate().getPrice().split(",");
-				for (int j = 0; j < template.length; j++) {
-					Map<String, Object> map = new HashMap<>();
-					map.put("no", j + 1);
-					if ((j + 1) % 2 == 0) {
-						map.put("time", time + ":30-" + (time + 1) + ":00");
-						time++;
-					} else {
-						map.put("time", time + ":00-" + time + ":30");
-					}
-					// 小于或等于过期时段的时段状态则修改为已过期
-					if (j <= outtime && !"-1".equals(template[j])) {
-						map.put("price", "-4");
-					} else {
-						map.put("price", template[j]);
-					}
-					map.put("flag", "");
-					datelistmap.add(map);
-				}
-				// 获取当天所有预约的时段数据
-				FieldTemplateDto fieldTemplateDto = new FieldTemplateDto();
-				fieldTemplateDto.setDate(date);
-				fieldTemplateDto.setFieldid(field.getId());
-				fieldTemplateDto.setVenueid(venueid);
-				List<Reserve> reserves = reserveService.selectByFieldTemplateDto(fieldTemplateDto);
-				// 修改时段状态
-				for (int j = 0; j < reserves.size(); j++) {
-					Reserve reserve = reserves.get(j);
-					// 将已预约成功的时段改为已预约状态
-					String[] timestr = reserves.get(j).getReservetimeframe().split(",");
-					// 当前时段状态
-					String priceType = "";
-					if (reserve.getOrder().getType() == 1 || reserve.getOrder().getType() == 6) {
-						// 已消费和支付待消费都是已预约状态
-						priceType = "-2";
-					} else if (reserve.getOrder().getType() == 0) {
-						// 待支付是预约中状态
-						priceType = "-3";
-					}
-
-					// 修改时段内的状态
-					for (int k = 0; k < timestr.length; k++) {
-						int flag = Integer.valueOf(timestr[k]) - 1;
-						Map<String, Object> timemap = datelistmap.get(flag);
-						timemap.put("price", priceType);
-						timemap.put("flag", "user" + j);
-						datelistmap.set(flag, timemap);
-					}
-				}
-
-				// 获取当天锁定占用时段=-5
-				List<VenueLock> venueLocks = venueLockMapper.selectByNowDate(fieldTemplateDto);
-				// 修改时段状态
-				for (int j = 0; j < venueLocks.size(); j++) {
-					VenueLock venueLock = venueLocks.get(j);
-					// 已有状态的时间段
-					String[] timestr = venueLock.getVenuetimeframe().split(",");
-
-					// 修改时段内的状态
-					for (int k = 0; k < timestr.length; k++) {
-						int flag = Integer.valueOf(timestr[k]) - 1;
-						Map<String, Object> timemap = datelistmap.get(flag);
-						timemap.put("price", "-5");
-						timemap.put("flag", "user" + j + "-5");
-						datelistmap.set(flag, timemap);
-					}
-				}
-
-			}
-			Map<String, Object> map = new HashMap<>();
-			map.put("id", field.getId());
-			map.put("name", field.getName());
-			map.put("datelist", datelistmap);
-			listmap.add(map);
-		}
-
-		return new ApiMessage(200, "查询成功", listmap);
-	}
-
+	
 	/**
 	 * @Description: 获取服务人员数据
 	 * @author 宋高俊
@@ -730,16 +820,29 @@ public class ApiVenueController {
 	@RequestMapping(value = "/selectCoach")
 	@ResponseBody
 	public ApiMessage selectCoach(String venueid) {
+		
+		
 		List<VenueCoach> list = venueCoachService.selectByVenue(venueid);
 		List<Map<String, Object>> listmap = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			VenueCoach venueCoach = list.get(i);
+		if (list.size() > 0) {
+			for (int i = 0; i < list.size(); i++) {
+				VenueCoach venueCoach = list.get(i);
+				Map<String, Object> map = new HashMap<>();
+				map.put("id", venueCoach.getTrainCoachId()); // 陪练ID
+				map.put("coachid", venueCoach.getId()); // 陪练ID
+				map.put("name", venueCoach.getTrainCoach().getName()); // 姓名
+				map.put("price", venueCoach.getPrice()); // 价格
+				map.put("image", venueCoach.getTrainCoach().getHeadImage()); // 图片
+				listmap.add(map);
+			}
+		}else {
+			Venue venue = venueService.selectByPrimaryKey(venueid);
 			Map<String, Object> map = new HashMap<>();
-			map.put("id", venueCoach.getTrainCoach().getId()); // 教练ID
-			map.put("coachid", venueCoach.getId()); // 陪练ID
-			map.put("name", venueCoach.getTrainCoach().getName()); // 姓名
-			map.put("price", venueCoach.getPrice()); // 价格
-			map.put("image", venueCoach.getTrainCoach().getHeadImage()); // 图片
+			TrainCoach trainCoach = trainCoachService.selectByDefault(venue.getCityid());
+			map.put("coachid", trainCoach.getId()); // 陪练ID
+			map.put("name", trainCoach.getName()); // 姓名
+			map.put("price", trainCoach.getMemberId()); // 由于没有用户保存价格
+			map.put("image", trainCoach.getHeadImage()); // 图片
 			listmap.add(map);
 		}
 		return ApiMessage.succeed(listmap);
@@ -753,16 +856,15 @@ public class ApiVenueController {
 	@RequestMapping(value = "/saveorder")
 	@ResponseBody
 	public ApiMessage saveorder(String date, String timestr, String venueid, String coachid, HttpServletRequest request){
-		
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
+
+		String token = (String) request.getAttribute("token");
+		final Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 
 		if (StringUtil.isBank(date, timestr, venueid)) {
 			return new ApiMessage(400, "参数不完整");
 		}
 		// 订单开始时间
 		Date datetime = new Date();
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
 		if (member == null) {
 			return new ApiMessage(400, "请登录后操作");
 		}
@@ -784,7 +886,7 @@ public class ApiVenueController {
 		double price = 0;// 价格总数
 
 		// 解析提交的时间段选择数据
-		JSONArray jsonArray = JSONArray.fromObject(timestr);
+		JSONArray jsonArray = JSONArray.parseArray(timestr);
 		for (int i = 0; i < jsonArray.size(); i++) {
 			// 预约时间段详情
 			String datastr = "";
@@ -869,7 +971,59 @@ public class ApiVenueController {
 		orderLog.setType(0);
 		orderLog.setContent("创建订单,等待支付");
 		orderLogMapper.insert(orderLog);
+		
+		MemberHabit oldMemberHabit = memberHabitMapper.selectByMemberVenue(member.getId(), venueid);
+		if (oldMemberHabit == null) {
+			// 保存常去场馆
+			MemberHabit memberHabit = new MemberHabit();
+			memberHabit.setId(Utils.getUUID());
+			memberHabit.setCreatetime(new Date());
+			memberHabit.setMemberid(member.getId());
+			memberHabit.setVenueid(venueid);
+			memberHabitMapper.insertSelective(memberHabit);
+		}
 
+		// 获取订单数据
+		Venue venue = venueService.selectByPrimaryKey(order.getVenueid());
+		List<Reserve> listReserve = reserveService.selectByOrder(order.getId());
+		String area = "";
+		String time = ""; 
+		if (listReserve.size() > 0) {
+			area = venue.getName() + listReserve.get(0).getField().getName();
+			time = StringUtil.timeToTimestr(listReserve.get(0).getReservetimeframe().split(","));
+		}
+		final String area2 = area;
+		final String time2 = time; 
+//		// 发送订单取消数据
+//		MoblieMessageUtil.sendTemplateSms(venue.getInformPhone(), member.getAppnickname(), member.getPhone(), area, 
+//				DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd"), time);
+		// 场馆
+		Member venueMember = memberService.selectByPhone(venue.getContactPhone());
+		final String openId = venueMember.getOpenid();
+		
+		// 订单数据
+		Order newOrder = orderService.selectByPrimaryKey(orderid);
+		// 预定通知消息
+		JSONObject datajson = new JSONObject();
+		datajson.put("first", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(new Date()) + "\"}"));
+		datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + newOrder.getOrderno() + "\"}"));
+		datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"网球场预定\"}"));
+		datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"待支付\"}"));
+		datajson.put( "remark",
+				JSONObject.parseObject("{\"value\":\"球友" + member.getAppnickname() + "(手机" + member.getPhone() + ")申请预约球场" + area + "，日期"
+						+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + time + "用场，等待完成支付。\"}"));
+		if (!StringUtil.isBank(venue.getTrainteam())) {
+			TrainCoach trainCoach = trainCoachService.selectByMemberTeamManager(venueMember.getId(), venue.getTrainteam());
+			if (trainCoach != null) {
+				// 有权限查看
+				logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/user/venueMenu/lock/lock?venueId="+venue.getId(), datajson));
+			}else {
+				logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
+			}
+		}else {
+			logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
+		}
+		
 		// 开启线程处理延时任务
 		new Timer(order.getId() + "订单支付超时，已关闭").schedule(new TimerTask() {
 			@Override
@@ -878,7 +1032,7 @@ public class ApiVenueController {
 				OrderLog orderLog = new OrderLog();
 				orderLog.setOrderid(orderid);
 				orderLog.setType(0);
-				if (order.getType() == 1 || order.getType() == 4) {
+				if (order.getType() == 5 || order.getType() == 6) {
 					// 记录日志
 					orderLog.setId(Utils.getUUID());
 					orderLog.setCreatetime(new Date());
@@ -895,6 +1049,30 @@ public class ApiVenueController {
 					orderLog.setCreatetime(new Date());
 					orderLog.setContent("订单支付时间结束，检查订单未支付成功，处理为支付超时");
 					orderLogMapper.insertSelective(orderLog);
+					
+
+					// 预定通知消息
+					JSONObject datajson = new JSONObject();
+					datajson.put("first", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(new Date()) + "\"}"));
+					datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + order.getOrderno() + "\"}"));
+					datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"网球场预定\"}"));
+					datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"支付超时\"}"));
+					
+					// 支付超时，发给场馆
+					if (!StringUtil.isBank(openId)) {
+						datajson.put( "remark",
+								JSONObject.parseObject("{\"value\":\"球友" + member.getAppnickname() + "(手机" + member.getPhone() + ")申请预约球场" + area2 + "，日期"
+										+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + time2 + "用场，支付超时。\"}"));
+						logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "/pages/index/index", datajson));
+					}
+
+					// 支付超时，发给用户
+					if (!StringUtil.isBank(member.getOpenid())) {
+						datajson.put( "remark",
+								JSONObject.parseObject("{\"value\":\"您预约的" + area2 + "，日期"
+										+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + time2 + "用场，因支付超时已被取消。\"}"));
+						logger.info(WXPayUtil.sendWXappTemplate(member.getOpenid(), WXConfig.wxTemplateId, "/pages/index/index", datajson));
+					}
 				}
 			}
 		}, 300000);
@@ -934,22 +1112,28 @@ public class ApiVenueController {
 	@RequestMapping(value = "/addVenueHabit")
 	@ResponseBody
 	public ApiMessage addVenueHabit(HttpServletRequest request, String id) {
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
+		
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 
-		// 保存常去场馆
-		MemberHabit memberHabit = new MemberHabit();
-		memberHabit.setId(Utils.getUUID());
-		memberHabit.setCreatetime(new Date());
-		memberHabit.setMemberid(member.getId());
-		memberHabit.setVenueid(id);
-		int flag = memberHabitMapper.insertSelective(memberHabit);
-		if (flag > 0) {
-			return new ApiMessage(200, "增加成功");
+		MemberHabit oldMemberHabit = memberHabitMapper.selectByMemberVenue(member.getId(), id);
+		if (oldMemberHabit == null) {
+			// 保存常去场馆
+			MemberHabit memberHabit = new MemberHabit();
+			memberHabit.setId(Utils.getUUID());
+			memberHabit.setCreatetime(new Date());
+			memberHabit.setMemberid(member.getId());
+			memberHabit.setVenueid(id);
+			int flag = memberHabitMapper.insertSelective(memberHabit);
+			if (flag > 0) {
+				return new ApiMessage(200, "增加成功");
+			} else {
+				return new ApiMessage(400, "增加失败");
+			}
 		} else {
-			return new ApiMessage(400, "增加失败");
+			return new ApiMessage(400, "已收藏该场馆");
 		}
+		
 	}
 
 	/**
@@ -963,9 +1147,8 @@ public class ApiVenueController {
 	@RequestMapping(value = "/deleteVenueHabit")
 	@ResponseBody
 	public ApiMessage deleteVenueHabit(HttpServletRequest request, String id) {
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 
 		MemberHabit memberHabit = memberHabitMapper.selectByMemberVenue(member.getId(), id);
 		if (memberHabit.getMemberid().equals(member.getId())) {
@@ -986,15 +1169,14 @@ public class ApiVenueController {
 	@ResponseBody
 	public ApiMessage details(HttpServletRequest request, String venueid) {
 
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 		
 		Venue venue = venueService.selectByPrimaryKey(venueid);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("name", venue.getName());// 获取场馆名
 		map.put("address", venue.getAddress());// 获取场馆地址
-		map.put("tel", venue.getTel());// 获取场馆电话
+		map.put("tel", venue.getContactPhone());// 获取场馆电话
 		map.put("lng", venue.getLongitude());// 获取经度
 		map.put("lat", venue.getLatitude());// 获取纬度
 		
@@ -1018,9 +1200,8 @@ public class ApiVenueController {
 	@RequestMapping(value = "/saveVenueError")
 	@ResponseBody
 	public ApiMessage saveVenueError(HttpServletRequest request, String id, String content) {
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 		
 		VenueError ve = new VenueError();
 		ve.setId(Utils.getUUID());
@@ -1031,6 +1212,248 @@ public class ApiVenueController {
 		
 		venueErrorService.insertSelective(ve);
 		return new ApiMessage(200, "纠错成功");
+	}
+	
+	/**  
+	 * @Description: 根据场馆获取退费费率
+	 * @author 宋高俊  
+	 * @param request
+	 * @param venueid
+	 * @return 
+	 * @date 2018年11月6日 下午4:41:47 
+	 */ 
+	@RequestMapping(value = "/getAmountRefundWay")
+	@ResponseBody
+	public ApiMessage getAmountRefundWay(HttpServletRequest request, String venueid) {
+		
+		AmountRefundWay amountRefundWay = amountRefundWayMapper.selectByPrimaryKey(venueid);
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (amountRefundWay != null) {
+			map.put("id", amountRefundWay.getId());// ID
+			map.put("fee1", amountRefundWay.getFee1());// <2小时内费率
+			map.put("fee2", amountRefundWay.getFee2());// 2-4小时内费率
+			map.put("fee3", amountRefundWay.getFee3());// 4-6小时内费率
+			map.put("weatherStart", amountRefundWay.getWeatherStart());// 天气原因开始前
+			map.put("weatherEnd", amountRefundWay.getWeatherEnd());// 天气原因开始后
+		}else {
+			map.put("fee1", 0);// <2小时内费率
+			map.put("fee2", 0);// 2-4小时内费率
+			map.put("fee3", 0);// 4-6小时内费率
+			map.put("weatherStart", 0);// 天气原因开始前
+			map.put("weatherEnd", 0);// 天气原因开始后
+		}
+		
+		return new ApiMessage(200, "获取成功", map);
+	}
+	
+	/**  
+	 * @Description: 修改场馆费率
+	 * @author 宋高俊  
+	 * @param request
+	 * @param amountRefundWay
+	 * @return 
+	 * @date 2018年11月6日 下午4:48:04 
+	 */ 
+	@RequestMapping(value = "/updateAmountRefundWay")
+	@ResponseBody
+	public ApiMessage updateAmountRefundWay(HttpServletRequest request, AmountRefundWay amountRefundWay, String venueId) {
+		
+		int flag = 0;
+		// 有退费ID则修改数据
+		if (!StringUtil.isBank(amountRefundWay.getId())) {
+			flag = amountRefundWayMapper.updateByPrimaryKeySelective(amountRefundWay);
+		}else {
+			// 查询是否已经有过场馆费率数据了
+			AmountRefundWay lodAmountRefundWay = amountRefundWayMapper.selectByPrimaryKey(venueId);
+			if (lodAmountRefundWay == null) {
+				// 无则创建退费数据
+				amountRefundWay.setId(venueId);
+				amountRefundWay.setCreateTime(new Date());
+				amountRefundWay.setModifyTime(new Date());
+				flag = amountRefundWayMapper.insertSelective(amountRefundWay);
+			}
+		}
+		
+		if (flag > 0) {
+			return new ApiMessage(200, "修改成功");
+		}else {
+			return new ApiMessage(400, "修改失败");
+		}
+	}
+	
+	/**
+	 * @Description: 根据手机号查询是否有匹配的场馆
+	 * @param request
+	 * @return
+	 * @date 2018年11月15日20:27:37
+	 */
+	@RequestMapping(value = "/getMatchingVenue")
+	@ResponseBody
+	public ApiMessage getMatchingVenue(HttpServletRequest request) {
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		List<Venue> venues = venueService.selectByMatchingVenue(member.getPhone());
+		if (venues.size() > 0) {
+			// 有匹配的场馆
+			return new ApiMessage(200, "获取成功", true);
+		} else {
+			// 无匹配的场馆
+			return new ApiMessage(200, "获取成功", false);
+		}
+	}
+	
+	/**
+	 * @Description: 根据手机号查询是否有匹配的场馆
+	 * @param request
+	 * @return
+	 * @date 2018年11月15日20:27:37
+	 */
+	@RequestMapping(value = "/getMatchingVenue/list")
+	@ResponseBody
+	public ApiMessage getMatchingVenueList(HttpServletRequest request) {
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		List<Venue> venues = venueService.selectByMatchingVenue(member.getPhone());
+		List<Map<String, Object>> venueListMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < venues.size(); i++) {
+			Venue venue = venues.get(i);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("id", venue.getId());// ID
+			map.put("image", venue.getImage());// 封面
+			map.put("venueName", venue.getName());// 场馆名称
+			map.put("address", venue.getAddress());// 地址
+			map.put("ballType", venue.getType());// 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场)
+			if (StringUtil.isBank(venue.getTrainteam())) {
+				map.put("enterFalg", false);// 是否入驻 true为是false为否
+			} else {
+				TrainTeam trainTeam = trainTeamService.selectByPrimaryKey(venue.getTrainteam());
+				map.put("enterFalg", true);// 是否入驻 true为是false为否
+				map.put("enterTeamName", trainTeam.getTitle());// 入驻机构名
+				map.put("owner", venue.getOwner());// 联系人
+			}
+			venueListMap.add(map);
+		}
+		return new ApiMessage(200, "获取成功", venueListMap);
+	}
+	
+	/**
+	 * @Description: 场馆详情页
+	 * @param request
+	 * @return
+	 * @date 2018年11月15日20:27:37
+	 */
+	@RequestMapping(value = "/getMatchingVenue/details")
+	@ResponseBody
+	public ApiMessage getMatchingVenueDetails(HttpServletRequest request, String venueId) {
+		
+		Venue venue = venueService.selectByPrimaryKey(venueId);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("id", venue.getId());// ID 
+		map.put("venueName", venue.getName());// 场馆名称
+		map.put("address", venue.getAddress());// 位置
+		map.put("owner", venue.getOwner());// 联系人
+		map.put("ballsum", venue.getBallsum());// 球场片数
+		
+		return new ApiMessage(200, "获取成功", map);
+	}
+	
+	/**
+	 * @Description: 入驻场馆
+	 * @param request
+	 * @return
+	 * @date 2018年11月15日20:27:37
+	 */
+	@RequestMapping(value = "/getMatchingVenue/enter")
+	@ResponseBody
+	public ApiMessage getMatchingVenueEnter(HttpServletRequest request, String venueId, String owner, Integer ballSum, String trainTeamName) {
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		
+		Venue venue = venueService.selectByPrimaryKey(venueId);
+		// 新建培训机构
+		TrainTeam trainTeam = new TrainTeam();
+		trainTeam.setId(Utils.getUUID());
+		trainTeam.setCreateTime(new Date());
+		trainTeam.setModifyTime(new Date());
+		trainTeam.setAddress(venue.getAddress());
+		trainTeam.setCityId(venue.getCityid());
+		trainTeam.setTitle(trainTeamName);
+		trainTeam.setPhone(member.getPhone());
+		trainTeam.setHeadImage(venue.getImage());
+		trainTeam.setLongitude(venue.getLongitude());
+		trainTeam.setLatitude(venue.getLatitude());
+		trainTeam.setTeachClass(venue.getType() == 1 ? "网球" : venue.getType() == 2 ? "足球" : venue.getType() == 3 ? "羽毛球" : "篮球");
+		trainTeam.setTypeFlag(1);
+
+		TrainCoach oldTrainCoach = trainCoachService.selectByMember(member.getId());
+		
+		if (oldTrainCoach == null) {
+			// 生成教练数据
+			TrainCoach trainCoach = new TrainCoach();
+			trainCoach.setId(Utils.getUUID());
+			trainCoach.setCreateTime(new Date());
+			trainCoach.setModifyTime(new Date());
+			trainCoach.setMemberId(member.getId());
+			trainCoach.setName(member.getAppnickname());
+			trainCoach.setHeadImage(member.getAppavatarurl());
+			trainCoachService.insertSelective(trainCoach);
+
+			// 添加教练身份
+			TrainTeamCoach trainTeamCoach = new TrainTeamCoach();
+			trainTeamCoach.setId(Utils.getUUID());
+			trainTeamCoach.setManager(1);
+			trainTeamCoach.setShowFlag(1);
+			trainTeamCoach.setTeachType(1);
+			trainTeamCoach.setTrainCoachId(trainCoach.getId());
+			trainTeamCoach.setTrainTeamId(trainTeam.getId());
+			trainTeamCoachService.insertSelective(trainTeamCoach);
+			
+			trainTeam.setTrainCoachId(trainCoach.getId());
+		} else {
+			trainTeam.setTrainCoachId(oldTrainCoach.getId());
+		}
+		trainTeamService.insertSelective(trainTeam);
+		return new ApiMessage(200, "获取成功");
+	}
+	
+	/**
+	 * @Description: 发送语音验证码
+	 * @author 宋高俊
+	 * @param request
+	 * @param tel
+	 * @return
+	 * @date 2018年11月17日 上午9:42:20
+	 */
+	@RequestMapping(value = "/sendVoiceTeamplate")
+	@ResponseBody
+	public ApiMessage sendVoiceTeamplate(HttpServletRequest request, String tel) {
+		String code = Utils.getCode();
+		MoblieVoiceUtil.sendVoiceTeamplate(tel, code);
+		RedisUtil.setRedis(Global.wxapp_voice_SmsCode_ + tel, code, 300);
+		return new ApiMessage(200, "发送成功");
+	}
+	
+	/**
+	 * @Description: 验证语音验证码
+	 * @author 宋高俊
+	 * @param request
+	 * @param tel
+	 * @return
+	 * @date 2018年11月17日 上午9:42:20
+	 */
+	@RequestMapping(value = "/verifyCode")
+	@ResponseBody
+	public ApiMessage verifyCode(HttpServletRequest request, String tel, String code) {
+		String codeNow = RedisUtil.getRedis(Global.wxapp_voice_SmsCode_ + tel);
+		if (StringUtil.isBank(codeNow)) {
+			return new ApiMessage(200, "请先发送验证码", false);
+		}
+		if (codeNow.equals(code)) {
+			RedisUtil.delRedis(Global.wxapp_voice_SmsCode_ + tel);
+			return new ApiMessage(200, "验证码正确", true);
+		}else {
+			return new ApiMessage(200, "验证码错误", false);
+		}
 	}
 }
 

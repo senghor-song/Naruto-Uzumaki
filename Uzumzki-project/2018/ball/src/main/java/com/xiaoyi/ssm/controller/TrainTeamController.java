@@ -21,6 +21,7 @@ import com.xiaoyi.ssm.dto.AdminPage;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.City;
 import com.xiaoyi.ssm.model.Member;
+import com.xiaoyi.ssm.model.Permission;
 import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.model.TrainCoach;
 import com.xiaoyi.ssm.model.TrainEnter;
@@ -30,6 +31,7 @@ import com.xiaoyi.ssm.model.TrainTeamFeedback;
 import com.xiaoyi.ssm.model.TrainTeamLog;
 import com.xiaoyi.ssm.service.CityService;
 import com.xiaoyi.ssm.service.MemberService;
+import com.xiaoyi.ssm.service.PermissionService;
 import com.xiaoyi.ssm.service.TrainCoachService;
 import com.xiaoyi.ssm.service.TrainCourseService;
 import com.xiaoyi.ssm.service.TrainEnterService;
@@ -78,6 +80,8 @@ public class TrainTeamController {
 	private MemberService memberService;
 	@Autowired
 	private TrainTeamCoachService trainTeamCoachService;
+	@Autowired
+	private PermissionService permissionService;
 
 	/**
 	 * @Description: 培训机构页面
@@ -86,7 +90,12 @@ public class TrainTeamController {
 	 * @date 2018年10月11日 下午8:16:51
 	 */
 	@RequestMapping(value = "/listview")
-	public String listview() {
+	public String listview(HttpServletRequest request, Model model) {
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		List<Permission> list = permissionService.selectByBtu(staff.getPower(), "23");
+		for (int i = 0; i < list.size(); i++) {
+			model.addAttribute("btn"+list.get(i).getId(), "1");
+		}
 		return "admin/trainTeam/list";
 	}
 
@@ -123,7 +132,7 @@ public class TrainTeamController {
 			
 			map.put("level", trainTeam.getLevel());// 评级
 			map.put("levelTime", DateUtil.getFormat(trainTeam.getLevelTime(), "yyyy-MM-dd"));// 当前评级
-			map.put("trainCoachSum", trainCoachService.countByTeam(trainTeam.getId()));// 教练数量
+			map.put("trainCoachSum", trainTeamCoachService.selectByTrainTeamID(trainTeam.getId()).size());// 教练数量
 			map.put("trainCourseSum", trainCourseService.countByTeam(trainTeam.getId()));// 课程数量
 			
 			// 获取两个月前的时间
@@ -327,14 +336,14 @@ public class TrainTeamController {
 		return "admin/trainTeam/edit";
 	}
 	
-	/**  
+	/**
 	 * @Description: 修改培训机构数据页面
 	 * @author 宋高俊  
 	 * @param model
 	 * @param id
 	 * @return 
 	 * @date 2018年10月25日 上午11:18:12 
-	 */ 
+	 */
 	@RequestMapping(value = "/update")
 	@ResponseBody
 	public ApiMessage update(HttpServletRequest request, TrainTeam trainTeam) {
@@ -384,5 +393,28 @@ public class TrainTeamController {
 		trainTeam.setLevelTime(new Date());
 		trainTeamService.updateByPrimaryKeySelective(trainTeam);
 		return new ApiMessage(200, "修改成功");
+	}
+	
+	/**
+	 * @Description: 培训机构教练数据
+	 * @author 宋高俊
+	 * @param adminPage
+	 * @return
+	 * @date 2018年10月11日 下午8:17:04
+	 */
+	@RequestMapping(value = "/coach/list")
+	@ResponseBody
+	public AdminMessage coachList(AdminPage adminPage, String id) {
+		PageHelper.startPage(adminPage.getPage(), adminPage.getLimit());
+		List<TrainTeamCoach> list = trainTeamCoachService.selectByTrainTeamID(id);
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			TrainTeamCoach trainTeamCoach = list.get(i);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("coachName", trainTeamCoach.getTrainCoach().getName());// 时间
+			map.put("manager", trainTeamCoach.getManager() == 0 ? "外聘" : trainTeamCoach.getManager() == 1 ? "店长" : "管理");// 内容
+			listMap.add(map);
+		}
+		return new AdminMessage(0, listMap);
 	}
 }

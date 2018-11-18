@@ -1,5 +1,6 @@
 package com.xiaoyi.ssm.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.xiaoyi.ssm.dto.OrderDto;
@@ -53,4 +54,40 @@ public interface OrderService extends BaseService<Order, String> {
 	 * @date 2018年8月30日 下午2:11:06 
 	 */ 
 	List<Order> selectByAmount(String amountid);
+
+	/**  
+	 * @Description: 会员订场总数
+	 * @author 宋高俊  
+	 * @param member
+	 * @return 
+	 * @date 2018年11月3日 下午4:01:24 
+	 */ 
+	Integer countByMember(String memberid);
+
+	/**  
+	 * @Description: 查询确认时间超时的订单
+	 * @author 宋高俊  
+	 * @param preTime
+	 * @return 
+	 * @date 2018年11月8日 上午9:27:06 
+	 */ 
+	List<Order> selectByTimeOut(Date preTime,Integer type);
+
+	/**
+	 * @Description: 查询昨天的场馆订单
+	 * @param venueId
+	 * @param date
+	 * @return
+	 * @date 2018年11月15日14:34:50
+	 */
+	List<Order> selectByPayVenue(String venueId, String date);
+
+	/**
+	 * @Description: 修改昨天的场馆订单为已提现
+	 * @param venueId
+	 * @param date
+	 * @return
+	 * @date 2018年11月15日14:34:50
+	 */
+	int updateByPayVenue(String venueId, String date);
 }

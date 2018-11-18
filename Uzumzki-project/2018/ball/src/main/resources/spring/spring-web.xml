@@ -100,9 +100,6 @@
 		</mvc:interceptor>
 		<mvc:interceptor>
 			<mvc:mapping path="/venue/**" />
-			<mvc:exclude-mapping path="/venue/manager/selectCoach" />
-			<mvc:exclude-mapping path="/venue/manager/datelist" />
-			<mvc:exclude-mapping path="/venue/manager/reserve" />
 			<mvc:exclude-mapping path="/venue/manager/order/weixinNotify" />
 			<bean class="com.xiaoyi.ssm.interceptor.MemberApiInterceptor"></bean>
 		</mvc:interceptor>
@@ -110,8 +107,6 @@
 			<mvc:mapping path="/wxapp/**" />
 			<mvc:exclude-mapping path="/wxapp/common/**" />
 			<mvc:exclude-mapping path="/wxapp/train/course/weixinNotify" />
-			<mvc:exclude-mapping path="/wxapp/news/list" />
-			<mvc:exclude-mapping path="/wxapp/inviteBall/getInviteBall" />
 			<mvc:exclude-mapping path="/wxapp/inviteBall/weixinNotify" />
 			<mvc:exclude-mapping path="/wxapp/inviteBall/weixinAANotify" />
 			<mvc:exclude-mapping path="/wxapp/train/common/**" />
@@ -147,4 +142,7 @@
 			<bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />
 		</property>
 	</bean>
+	
+	<!-- 所有缓存初始化 -->
+	<bean id="SmsInit" class="com.xiaoyi.ssm.init.SmsInit"></bean>
 </beans>

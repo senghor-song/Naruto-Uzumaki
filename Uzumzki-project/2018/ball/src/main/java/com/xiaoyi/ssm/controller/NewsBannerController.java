@@ -21,10 +21,14 @@ import com.xiaoyi.ssm.dto.AdminPage;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.NewsBanner;
 import com.xiaoyi.ssm.model.NewsBannerLog;
+import com.xiaoyi.ssm.model.Permission;
 import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.service.NewsBannerLogService;
 import com.xiaoyi.ssm.service.NewsBannerService;
+import com.xiaoyi.ssm.service.OperationLogService;
+import com.xiaoyi.ssm.service.PermissionService;
 import com.xiaoyi.ssm.util.DateUtil;
+import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
 
 /**
@@ -40,6 +44,10 @@ public class NewsBannerController {
 	private NewsBannerService newsBannerService;
 	@Autowired
 	private NewsBannerLogService newsBannerLogService;
+	@Autowired
+	private PermissionService permissionService;
+    @Autowired
+    private OperationLogService operationLogService;
 
 	/**
 	 * @Description: 横幅列表页面
@@ -47,7 +55,12 @@ public class NewsBannerController {
 	 * @date 2018年7月25日 下午10:29:51
 	 */
 	@RequestMapping("/listview")
-	public String listview() {
+	public String listview(HttpServletRequest request, Model model) {
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		List<Permission> list = permissionService.selectByBtu(staff.getPower(), "31");
+		for (int i = 0; i < list.size(); i++) {
+			model.addAttribute("btn"+list.get(i).getId(), "1");
+		}
 		return "admin/newsBanner/list";
 	}
 
@@ -103,7 +116,7 @@ public class NewsBannerController {
 	}
 
 	/**
-	 * @Description: 图片编辑页面
+	 * @Description: 编辑页面
 	 * @author 宋高俊
 	 * @return
 	 * @date 2018年9月21日 下午2:56:42
@@ -159,24 +172,41 @@ public class NewsBannerController {
 	 */
 	@RequestMapping(value = "/saveNewsBanner")
 	@ResponseBody
-	public ApiMessage saveNewsBanner(HttpServletRequest request, String id, String remark, String contentpath) {
+	public ApiMessage saveNewsBanner(HttpServletRequest request, String id, String remark, String contentpath, String coverpath) {
 		// 登录用户
 		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
 		// 修改横幅信息
 		NewsBanner newsBanner = newsBannerService.selectByPrimaryKey(id);
+		String content = "";
+
+		if (!contentpath.equals(newsBanner.getContentpath())) {
+			content += "内容Url修改为" + contentpath + "。";
+		}
+		if (!remark.equals(newsBanner.getRemark())) {
+			content += "备注修改为" + remark + "。";
+		}
+		if (!coverpath.equals(newsBanner.getCoverpath())){
+			content += "封面Url修改为" + contentpath + "。";
+		}
+		if (StringUtil.isBank(content)) {
+			return ApiMessage.succeed();
+		}
+		
 		newsBanner.setContentpath(contentpath);
 		newsBanner.setRemark(remark);
+		newsBanner.setCoverpath(coverpath);
 		newsBannerService.updateByPrimaryKeySelective(newsBanner);
 
 		// 新增横幅日志
 		NewsBannerLog newsBannerLog = new NewsBannerLog();
 		newsBannerLog.setId(Utils.getUUID());
 		newsBannerLog.setEditid(staff.getId());
-		newsBannerLog.setContent("跳转地址修改为：" + contentpath + ",备注修改为：" + remark);
+		newsBannerLog.setContent(content);
 		newsBannerLog.setLogtime(new Date());
 		newsBannerLog.setNewsbannerid(id);
 		newsBannerLogService.insertSelective(newsBannerLog);
 
+		operationLogService.saveLog(staff.getId(), "横幅："+content, Utils.getIpAddr(request));
 		return ApiMessage.succeed();
 	}
 

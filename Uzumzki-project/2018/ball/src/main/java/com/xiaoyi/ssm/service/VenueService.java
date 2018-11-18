@@ -2,6 +2,7 @@ package com.xiaoyi.ssm.service;
 
 import java.util.List;
 
+import com.xiaoyi.ssm.model.Member;
 import com.xiaoyi.ssm.model.TrainTeamVenue;
 import com.xiaoyi.ssm.model.Venue;
 
@@ -126,4 +127,30 @@ public interface VenueService extends BaseService<Venue, String> {
 	 * @date 2018年10月30日 上午10:09:42 
 	 */ 
 	List<Venue> selectBySearch(Integer selectType, String keyword);
+
+	/**  
+	 * @Description: 条件查询模板分析数据
+	 * @author 宋高俊  
+	 * @param ballType 
+	 * @param trainAddFlag 
+	 * @return 
+	 * @date 2018年11月2日 下午8:08:47 
+	 */ 
+	List<Venue> selectByVenueSearch(String cityid, Integer sumTemplate, Integer trainAddFlag, Integer ballType);
+
+	/**  
+	 * @Description: 查询订单已消费可以结算的订单
+	 * @author 宋高俊  
+	 * @return 
+	 * @date 2018年11月15日14:23:09
+	 */ 
+	List<Venue> selectByDateOut(String date);
+
+	/**  
+	 * @Description: 根据手机号查询是否有匹配的场馆
+	 * @author 宋高俊  
+	 * @return 
+	 * @date 2018年11月15日14:23:09
+	 */ 
+	List<Venue> selectByMatchingVenue(String phone);
 }

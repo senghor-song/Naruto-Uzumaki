@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
@@ -111,18 +112,22 @@
                         cols: [
                             [
                        			{field: 'id', title: 'id', hide:true},
-                                {field: 'cityno', title: '编号', sort: true},
-                                {field: 'initial', title: '字母', sort: true},
-                                {field: 'hotflag', title: '热门', sort: true},
+                                {field: 'initial', title: '字母', sort: true, width:80},
+                                {field: 'hotflag', title: '热门', width:80, sort: true},
                                 {field: 'city', title: '城市', sort: true},
-                                {field: 'map', title: '地图', sort: true},
-                                {field: 'distinct', title: '下属区县', sort: true},
-                                {field: 'cityLogSum', title: '日志', sort: true},
-                                {fixed: 'right', title: '操作', align:'center', toolbar: '#cityBar'}
+                                {field: 'mapflag', title: '地图', width:80, sort: true},
+                                {field: 'distinct', title: '下属区县', sort: true, width:120},
+                                {field: 'cityLogSum', title: '日志', sort: true, width:80},
+                                {field: 'coachPrice', title: '缺省网球陪练(元)', edit : "text"},
+                                {field: 'cityflag', title: '入口', width:100, sort: true},
+        						<c:if test="${btn323 == 1}">
+                                	{fixed: 'right', title: '操作', align:'center', toolbar: '#cityBar'}
+                                </c:if>
                             ]
                         ]
                     },
                     menuItem: {
+						<c:if test="${btn321 == 1}">
                     	item0: {
                             name: "区县", callback: function (key, opt) {
                                 $.showContentMenu(key, opt)
@@ -143,6 +148,8 @@
                                 });
                             }
                         },
+                        </c:if>
+						<c:if test="${btn322 == 1}">
                         item1: {
                             name: "日志", callback: function (key, opt) {
                                 $.showContentMenu(key, opt)
@@ -164,12 +171,27 @@
                                 });
                             }
                         }
+                        </c:if>
                     }
                 });
                 
             }
         }
         tableObj.init();
+        layui.table.on('edit(tableList)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+       		$.ajax({
+				type : "POST", //提交方式  
+				url : "/WebBackAPI/admin/city/updateCoach",//路径  
+				data : {
+					id : obj.data.id,
+					price : obj.value
+				},//数据，这里使用的是Json格式进行传输  
+				dataType : "json",
+				success : function(result) {//返回数据根据结果进行相应的处理  
+
+				}
+			});
+       	});
         layui.table.on('tool(tableList)', function(obj) {
    			var data = obj.data;
    			var layEvent = obj.event;
@@ -182,14 +204,14 @@
 					obj.update({ hotflag: '是' });
    					layer.msg("设为热门");
    					check = 1;
-   					tr.find("td").eq(8).find("div").find("a").eq(0).text("取消热门");
-   					tr.find("td").eq(8).find("div").find("a").eq(0).attr("lay-event","noHot");
+   					tr.find("td").eq(9).find("div").find("a").eq(1).text("取消热门");
+   					tr.find("td").eq(9).find("div").find("a").eq(1).attr("lay-event","noHot");
    				} else if (layEvent == 'noHot') {
    					obj.update({ hotflag: '否' });
    					layer.msg("取消热门");
    					check = 0;
-   					tr.find("td").eq(8).find("div").find("a").eq(0).text("设为热门");
-   					tr.find("td").eq(8).find("div").find("a").eq(0).attr("lay-event","yesHot");
+   					tr.find("td").eq(9).find("div").find("a").eq(1).text("设为热门");
+   					tr.find("td").eq(9).find("div").find("a").eq(1).attr("lay-event","yesHot");
    				} 
 				$.ajax({
   					type : "POST", //提交方式  
@@ -205,17 +227,17 @@
    				});
 			} else if (layEvent == 'yesMap' || layEvent == 'noMap') {
 				if (layEvent == 'yesMap') {
-					obj.update({ map: '是' });
+					obj.update({ mapflag: '是' });
    					layer.msg("设为地图");
    					check = 1;
-   					tr.find("td").eq(8).find("div").find("a").eq(1).text("取消地图");
-   					tr.find("td").eq(8).find("div").find("a").eq(1).attr("lay-event","noMap");
+   					tr.find("td").eq(9).find("div").find("a").eq(2).text("取消地图");
+   					tr.find("td").eq(9).find("div").find("a").eq(2).attr("lay-event","noMap");
    				} else if (layEvent == 'noMap') {
-					obj.update({ map: '否' });
+					obj.update({ mapflag: '否' });
    					layer.msg("取消地图");
    					check = 0;
-   					tr.find("td").eq(8).find("div").find("a").eq(1).text("设为地图");
-   					tr.find("td").eq(8).find("div").find("a").eq(1).attr("lay-event","yesMap");
+   					tr.find("td").eq(9).find("div").find("a").eq(2).text("设为地图");
+   					tr.find("td").eq(9).find("div").find("a").eq(2).attr("lay-event","yesMap");
    				}
 				$.ajax({
   					type : "POST", //提交方式  
@@ -229,23 +251,72 @@
   	
   					}
    				});
-			}/* 
-			$.reload(tableObj.obj); */
+			} else if (layEvent == 'yesCity' || layEvent == 'noCity') {
+                if (layEvent == 'yesCity') {
+                    obj.update({ cityflag: '开放' });
+                    layer.msg("开放入口");
+                    check = 1;
+                    tr.find("td").eq(9).find("div").find("a").eq(0).text("关闭入口");
+                    tr.find("td").eq(9).find("div").find("a").eq(0).attr("lay-event","noCity");
+                } else if (layEvent == 'noCity') {
+                    obj.update({ cityflag: '关闭' });
+                    layer.msg("关闭入口");
+                    check = 0;
+                    tr.find("td").eq(9).find("div").find("a").eq(0).text("开放入口");
+                    tr.find("td").eq(9).find("div").find("a").eq(0).attr("lay-event","yesCity");
+
+                    if(data.hotflag == "是"){
+                    	obj.update({ hotflag: '否' });
+       					tr.find("td").eq(9).find("div").find("a").eq(1).text("设为热门");
+       					tr.find("td").eq(9).find("div").find("a").eq(1).attr("lay-event","yesHot");
+                        $.ajax({
+          					type : "POST", //提交方式  
+          					url : "/WebBackAPI/admin/city/uodateHot",//路径  
+          					data : {
+          						id : data.id,
+          						check : 0
+          					},//数据，这里使用的是Json格式进行传输  
+          					dataType : "json",
+          					success : function(result) {//返回数据根据结果进行相应的处理  
+          	
+          					}
+           				});
+                    }
+                }
+                $.ajax({
+                    type : "POST", //提交方式
+                    url : "/WebBackAPI/admin/city/uodateCityFlag",//路径
+                    data : {
+                        id : data.id,
+                        check : check
+                    },//数据，这里使用的是Json格式进行传输
+                    dataType : "json",
+                    success : function(result) {//返回数据根据结果进行相应的处理
+
+                    }
+                });
+            }
         });
     });
 </script>
 <script type="text/html" id="cityBar">
   <!-- 这里同样支持 laytpl 语法，如： -->
+  {{# if(d.cityflag == '关闭'){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="yesCity" style="color: #fff;">开放入口</a>
+  {{# } }}
+  {{# if(d.cityflag == '开放'){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="noCity" style="color: #fff;">关闭入口</a>
+  {{# } }}
   {{# if(d.hotflag == '否'){ }}
     <a class="layui-btn layui-btn-xs" lay-event="yesHot" style="color: #fff;">设为热门</a>
   {{# } }}
   {{# if(d.hotflag == '是'){ }}
     <a class="layui-btn layui-btn-xs" lay-event="noHot" style="color: #fff;">取消热门</a>
   {{# } }}
-  {{# if(d.map == '否'){ }}
+  {{# if(d.mapflag == '否'){ }}
     <a class="layui-btn layui-btn-xs" lay-event="yesMap" style="color: #fff;">设为地图</a>
   {{# } }}
-  {{# if(d.map == '是'){ }}
+  {{# if(d.mapflag == '是'){ }}
     <a class="layui-btn layui-btn-xs" lay-event="noMap" style="color: #fff;">取消地图</a>
   {{# } }}
 </script>

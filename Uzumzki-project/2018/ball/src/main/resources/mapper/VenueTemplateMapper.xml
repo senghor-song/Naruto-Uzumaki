@@ -23,7 +23,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from VenueTemplate
-		where VenueID = #{venueid,jdbcType=CHAR}
+		where VenueID = #{venueid,jdbcType=CHAR} ORDER BY `CreateTime`
 	</select>
 	
 	<select id="selectByVenueTemplate" parameterType="java.lang.String" resultMap="BaseResultMap">

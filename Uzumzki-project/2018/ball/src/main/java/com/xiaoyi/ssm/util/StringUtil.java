@@ -158,6 +158,30 @@ public class StringUtil {
 			return "";
 		}
 	}
+	
+	/**
+	 * @Description: 将时间编号转换为时间段
+	 * @author 宋高俊
+	 * @param 1-48
+	 * @return 例如：10:00-13:00
+	 * @date 2018年8月18日 上午10:15:04
+	 */
+	public static String timeToTimestr(Integer time) {
+		try {
+			String datestr = "";
+			time = time - 1;
+			datestr += time / 2 + ":";
+			int flag = time % 2;
+			if (flag == 1) {
+				datestr += "30";
+			} else {
+				datestr += "00";
+			}
+			return datestr;
+		} catch (Exception e) {
+			return "";
+		}
+	}
 
 	public static void main(String[] args) {
 		String[] array={"1","2"};

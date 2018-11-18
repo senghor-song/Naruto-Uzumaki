@@ -7,9 +7,19 @@ import java.util.Date;
  * 教练基础信息表实体
  */
 public class TrainCoach implements Serializable {
+	
+	private VenueCoach venueCoach;
 	private TrainTeamCoach trainTeamCoach;
 	
-    public TrainTeamCoach getTrainTeamCoach() {
+    public VenueCoach getVenueCoach() {
+		return venueCoach;
+	}
+
+	public void setVenueCoach(VenueCoach venueCoach) {
+		this.venueCoach = venueCoach;
+	}
+
+	public TrainTeamCoach getTrainTeamCoach() {
 		return trainTeamCoach;
 	}
 

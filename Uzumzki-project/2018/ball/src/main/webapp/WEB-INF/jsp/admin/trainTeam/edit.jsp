@@ -48,7 +48,7 @@
                     <div class="col-lg-6 listrow">
                         <span class="nti">城市：</span>
                         <span class="ncon">
-                            <select class="form-control" name="cityid" id="cityid">
+                            <select class="form-control" name="cityId" id="cityId">
                             	<c:forEach items="${citys}" var="city">
                                 	<option value="${city.id }" <c:if test="${city.id eq cityid}">selected="selected"</c:if>>${city.city }</option>
                               	</c:forEach>
@@ -126,7 +126,7 @@
 		
 		$("#saveTrainTeam").click(function () {
 			var id = $('#id').val();
-			var cityid = $('#cityid').val();
+			var cityId = $('#cityId').val();
 			var level = $('#level').val();
 			var title = $('#title').val();
 			var phone = $('#phone').val();
@@ -136,11 +136,14 @@
            	$.ajax({  
                 type : "POST",  //提交方式  
                 url : "/WebBackAPI/admin/trainTeam/update",//路径  
-                data : {id : id, cityid : cityid, level : level, title : title, phone : phone, headImage : headImage, brandContent : brandContent, typeFlag : typeFlag},//数据，这里使用的是Json格式进行传输 
+                data : {id : id, cityId : cityId, level : level, title : title, phone : phone, headImage : headImage, brandContent : brandContent, typeFlag : typeFlag},//数据，这里使用的是Json格式进行传输 
                 dataType:"json",
                 success : function(result) {//返回数据根据结果进行相应的处理  
                     if ( result.code == 200 ) {  
     					layer.msg("修改成功");
+                        layer.closeAll(); 
+                        $(".contextMenuDialog").addClass("hide");
+    					$.reload(tableObj.obj);
                     } else {
                 		layer.confirm(result.msg, {
                 			btn: ['确定'] //按钮

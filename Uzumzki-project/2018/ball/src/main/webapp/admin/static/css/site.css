@@ -13,7 +13,8 @@
 @import "zTreeStyle/zTreeStyle.css";
 @import "../plugins/css/font_691533_zs88228ai5xko6r.css";
 
-	 .anchorBL{display:none;}
+.BMap_cpyCtrl{display:none;}
+.anchorBL a[title="到百度地图查看此区域"]{display:none;}
 #mapDiv2, #mapDiv2 > div, #mapDiv2 > div > img {
     height: 100%;
 }

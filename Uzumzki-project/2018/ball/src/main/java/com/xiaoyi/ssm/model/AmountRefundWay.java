@@ -7,7 +7,7 @@ import java.util.Date;
  * 退款方式表实体
  */
 public class AmountRefundWay implements Serializable {
-    /** ID */
+    /** ID和场馆ID主键关联 */
     private String id;
 
     /** 创建时间 */
@@ -16,23 +16,20 @@ public class AmountRefundWay implements Serializable {
     /** 修改时间 */
     private Date modifyTime;
 
-    /** 开始时间 */
-    private Integer startTime;
+    /** <2小时内费率 */
+    private Integer fee1;
 
-    /** 结束时间 */
-    private Integer endTime;
+    /** 2-4小时内费率 */
+    private Integer fee2;
 
-    /** 类型(0=订场1=拼场2=天气原因) */
-    private Integer type;
+    /** 4-6小时内费率 */
+    private Integer fee3;
 
-    /** 退款比例 */
-    private Integer rete;
+    /** 天气原因开始前 */
+    private Integer weatherStart;
 
-    /** 建议比例 */
-    private Integer proposal;
-
-    /** 场馆ID */
-    private String venueId;
+    /** 天气原因开始后 */
+    private Integer weatherEnd;
 
     /**
      * AmountRefundWay
@@ -40,16 +37,16 @@ public class AmountRefundWay implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * ID
-     * @return ID ID
+     * ID和场馆ID主键关联
+     * @return ID ID和场馆ID主键关联
      */
     public String getId() {
         return id;
     }
 
     /**
-     * ID
-     * @param id ID
+     * ID和场馆ID主键关联
+     * @param id ID和场馆ID主键关联
      */
     public void setId(String id) {
         this.id = id == null ? null : id.trim();
@@ -88,98 +85,82 @@ public class AmountRefundWay implements Serializable {
     }
 
     /**
-     * 开始时间
-     * @return Start_time 开始时间
+     * <2小时内费率
+     * @return Fee1 <2小时内费率
      */
-    public Integer getStartTime() {
-        return startTime;
+    public Integer getFee1() {
+        return fee1;
     }
 
     /**
-     * 开始时间
-     * @param startTime 开始时间
+     * <2小时内费率
+     * @param fee1 <2小时内费率
      */
-    public void setStartTime(Integer startTime) {
-        this.startTime = startTime;
+    public void setFee1(Integer fee1) {
+        this.fee1 = fee1;
     }
 
     /**
-     * 结束时间
-     * @return End_time 结束时间
+     * 2-4小时内费率
+     * @return Fee2 2-4小时内费率
      */
-    public Integer getEndTime() {
-        return endTime;
+    public Integer getFee2() {
+        return fee2;
     }
 
     /**
-     * 结束时间
-     * @param endTime 结束时间
+     * 2-4小时内费率
+     * @param fee2 2-4小时内费率
      */
-    public void setEndTime(Integer endTime) {
-        this.endTime = endTime;
+    public void setFee2(Integer fee2) {
+        this.fee2 = fee2;
     }
 
     /**
-     * 类型(0=订场1=拼场2=天气原因)
-     * @return Type 类型(0=订场1=拼场2=天气原因)
+     * 4-6小时内费率
+     * @return Fee3 4-6小时内费率
      */
-    public Integer getType() {
-        return type;
+    public Integer getFee3() {
+        return fee3;
     }
 
     /**
-     * 类型(0=订场1=拼场2=天气原因)
-     * @param type 类型(0=订场1=拼场2=天气原因)
+     * 4-6小时内费率
+     * @param fee3 4-6小时内费率
      */
-    public void setType(Integer type) {
-        this.type = type;
+    public void setFee3(Integer fee3) {
+        this.fee3 = fee3;
     }
 
     /**
-     * 退款比例
-     * @return Rete 退款比例
+     * 天气原因开始前
+     * @return Weather_start 天气原因开始前
      */
-    public Integer getRete() {
-        return rete;
+    public Integer getWeatherStart() {
+        return weatherStart;
     }
 
     /**
-     * 退款比例
-     * @param rete 退款比例
+     * 天气原因开始前
+     * @param weatherStart 天气原因开始前
      */
-    public void setRete(Integer rete) {
-        this.rete = rete;
+    public void setWeatherStart(Integer weatherStart) {
+        this.weatherStart = weatherStart;
     }
 
     /**
-     * 建议比例
-     * @return Proposal 建议比例
+     * 天气原因开始后
+     * @return weather_end 天气原因开始后
      */
-    public Integer getProposal() {
-        return proposal;
+    public Integer getWeatherEnd() {
+        return weatherEnd;
     }
 
     /**
-     * 建议比例
-     * @param proposal 建议比例
+     * 天气原因开始后
+     * @param weatherEnd 天气原因开始后
      */
-    public void setProposal(Integer proposal) {
-        this.proposal = proposal;
-    }
-
-    /**
-     * 场馆ID
-     * @return Venue_id 场馆ID
-     */
-    public String getVenueId() {
-        return venueId;
-    }
-
-    /**
-     * 场馆ID
-     * @param venueId 场馆ID
-     */
-    public void setVenueId(String venueId) {
-        this.venueId = venueId == null ? null : venueId.trim();
+    public void setWeatherEnd(Integer weatherEnd) {
+        this.weatherEnd = weatherEnd;
     }
 }

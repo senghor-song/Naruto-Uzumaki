@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -17,7 +20,10 @@ import com.xiaoyi.ssm.dto.AdminMessage;
 import com.xiaoyi.ssm.dto.AdminPage;
 import com.xiaoyi.ssm.model.Order;
 import com.xiaoyi.ssm.model.OrderLog;
+import com.xiaoyi.ssm.model.Permission;
+import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.service.OrderService;
+import com.xiaoyi.ssm.service.PermissionService;
 import com.xiaoyi.ssm.util.DateUtil;
 
 /**
@@ -33,6 +39,8 @@ public class OrderController {
 	private OrderService orderService;
 	@Autowired
 	private OrderLogMapper orderLogMapper;
+	@Autowired
+	private PermissionService permissionService;
 
 	/**
 	 * @Description: 订单页面
@@ -40,7 +48,12 @@ public class OrderController {
 	 * @date 2018年8月14日 下午7:02:41
 	 */
 	@RequestMapping(value = "/listview")
-	public String listview() {
+	public String listview(HttpServletRequest request, Model model) {
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		List<Permission> list = permissionService.selectByBtu(staff.getPower(), "12");
+		for (int i = 0; i < list.size(); i++) {
+			model.addAttribute("btn"+list.get(i).getId(), "1");
+		}
 		return "admin/order/list";
 	}
 

@@ -361,6 +361,11 @@
 			<artifactId>hutool-all</artifactId>
 			<version>4.1.17</version>
 		</dependency>
+		<dependency>
+			<groupId>com.aliyun</groupId>
+			<artifactId>aliyun-java-sdk-dyvmsapi</artifactId>
+			<version>1.2.2</version>
+		</dependency>
 		<!--插件 end -->
 	</dependencies>
 	<!-- Build Settings -->

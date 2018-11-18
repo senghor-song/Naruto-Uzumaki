@@ -5,6 +5,7 @@
 		<id column="ID" jdbcType="VARCHAR" property="id" />
 		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="Member_id" jdbcType="VARCHAR" property="memberId" />
+		<result column="Source_flag" jdbcType="INTEGER" property="sourceFlag" />
 		<result column="Title" jdbcType="VARCHAR" property="title" />
 		<result column="Longitude" jdbcType="DOUBLE" property="longitude" />
 		<result column="Latitude" jdbcType="DOUBLE" property="latitude" />
@@ -34,9 +35,9 @@
 		</association>
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, Create_time, Member_id, Title, Longitude, Latitude, Address, Check_flag, Ball_type,
-		Check_time, Check_staff, Main_name, Main_phone, Ball_sum, Content, Head_image, City_name,
-		Train_team_name, Train_team_id, City_id, District_id
+		ID, Create_time, Member_id, Source_flag, Title, Longitude, Latitude, Address, Check_flag,
+		Ball_type, Check_time, Check_staff, Main_name, Main_phone, Ball_sum, Content, Head_image,
+		City_name, Train_team_name, Train_team_id, City_id, District_id
 	</sql>
 
 	<select id="selectByEnterAll" resultMap="BaseResultMap">
@@ -64,21 +65,21 @@
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueEnter">
 		insert into VenueEnter (ID, Create_time, Member_id,
-		Title, Longitude, Latitude,
-		Address, Check_flag, Ball_type,
-		Check_time, Check_staff, Main_name,
-		Main_phone, Ball_sum, Content,
-		Head_image, City_name, Train_team_name,
-		Train_team_id, City_id, District_id
-		)
+		Source_flag, Title, Longitude,
+		Latitude, Address, Check_flag,
+		Ball_type, Check_time, Check_staff,
+		Main_name, Main_phone, Ball_sum,
+		Content, Head_image, City_name,
+		Train_team_name, Train_team_id, City_id,
+		District_id)
 		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{memberId,jdbcType=VARCHAR},
-		#{title,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE},
-		#{address,jdbcType=VARCHAR}, #{checkFlag,jdbcType=INTEGER}, #{ballType,jdbcType=INTEGER},
-		#{checkTime,jdbcType=TIMESTAMP}, #{checkStaff,jdbcType=VARCHAR}, #{mainName,jdbcType=VARCHAR},
-		#{mainPhone,jdbcType=VARCHAR}, #{ballSum,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
-		#{headImage,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR}, #{trainTeamName,jdbcType=VARCHAR},
-		#{trainTeamId,jdbcType=VARCHAR}, #{cityId,jdbcType=VARCHAR}, #{districtId,jdbcType=VARCHAR}
-		)
+		#{sourceFlag,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE},
+		#{latitude,jdbcType=DOUBLE}, #{address,jdbcType=VARCHAR}, #{checkFlag,jdbcType=INTEGER},
+		#{ballType,jdbcType=INTEGER}, #{checkTime,jdbcType=TIMESTAMP}, #{checkStaff,jdbcType=VARCHAR},
+		#{mainName,jdbcType=VARCHAR}, #{mainPhone,jdbcType=VARCHAR}, #{ballSum,jdbcType=VARCHAR},
+		#{content,jdbcType=VARCHAR}, #{headImage,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR},
+		#{trainTeamName,jdbcType=VARCHAR}, #{trainTeamId,jdbcType=VARCHAR}, #{cityId,jdbcType=VARCHAR},
+		#{districtId,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueEnter">
 		insert into VenueEnter
@@ -91,6 +92,9 @@
 			</if>
 			<if test="memberId != null">
 				Member_id,
+			</if>
+			<if test="sourceFlag != null">
+				Source_flag,
 			</if>
 			<if test="title != null">
 				Title,
@@ -157,6 +161,9 @@
 			<if test="memberId != null">
 				#{memberId,jdbcType=VARCHAR},
 			</if>
+			<if test="sourceFlag != null">
+				#{sourceFlag,jdbcType=INTEGER},
+			</if>
 			<if test="title != null">
 				#{title,jdbcType=VARCHAR},
 			</if>
@@ -222,6 +229,9 @@
 			<if test="memberId != null">
 				Member_id = #{memberId,jdbcType=VARCHAR},
 			</if>
+			<if test="sourceFlag != null">
+				Source_flag = #{sourceFlag,jdbcType=INTEGER},
+			</if>
 			<if test="title != null">
 				Title = #{title,jdbcType=VARCHAR},
 			</if>
@@ -283,6 +293,7 @@
 		update VenueEnter
 		set Create_time = #{createTime,jdbcType=TIMESTAMP},
 		Member_id = #{memberId,jdbcType=VARCHAR},
+		Source_flag = #{sourceFlag,jdbcType=INTEGER},
 		Title = #{title,jdbcType=VARCHAR},
 		Longitude = #{longitude,jdbcType=DOUBLE},
 		Latitude = #{latitude,jdbcType=DOUBLE},

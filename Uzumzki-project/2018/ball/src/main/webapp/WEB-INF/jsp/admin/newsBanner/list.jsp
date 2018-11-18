@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
@@ -160,6 +161,7 @@
                             ]
                         },
                         menuItem: {
+    						<c:if test="${btn311 == 1}">
                             item1: {
                                 name: "编辑", callback: function (key, opt) {
                                 	 $.ajax({  
@@ -193,6 +195,8 @@
                                      });
                                 }
                             },
+                            </c:if>
+    						<c:if test="${btn312 == 1}">
                             item2: {
                                 name: "日志", callback: function (key, opt) {
                                     $.showContentMenu(key, opt)
@@ -214,6 +218,7 @@
                                     });
                                 }
                             },
+                            </c:if>
 
                         }
                     });

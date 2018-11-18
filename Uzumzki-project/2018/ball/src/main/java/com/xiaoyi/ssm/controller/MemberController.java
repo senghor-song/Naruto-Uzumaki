@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -15,7 +18,10 @@ import com.github.pagehelper.PageInfo;
 import com.xiaoyi.ssm.dto.AdminMessage;
 import com.xiaoyi.ssm.dto.AdminPage;
 import com.xiaoyi.ssm.model.Member;
+import com.xiaoyi.ssm.model.Permission;
+import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.service.MemberService;
+import com.xiaoyi.ssm.service.PermissionService;
 import com.xiaoyi.ssm.util.DateUtil;
 
 /**
@@ -29,6 +35,8 @@ public class MemberController {
 
 	@Autowired
 	private MemberService memberService;
+	@Autowired
+	private PermissionService permissionService;
 
 	/**
 	 * @Description: 用户页面
@@ -37,7 +45,12 @@ public class MemberController {
 	 * @date 2018年9月20日 下午3:33:36
 	 */
 	@RequestMapping(value = "/listview")
-	public String listview() {
+	public String listview(HttpServletRequest request, Model model) {
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		List<Permission> list = permissionService.selectByBtu(staff.getPower(), "21");
+		for (int i = 0; i < list.size(); i++) {
+			model.addAttribute("btn"+list.get(i).getId(), "1");
+		}
 		return "admin/member/list";
 	}
 

@@ -24,8 +24,16 @@
 	<select id="selectByVenueAndField" parameterType="com.xiaoyi.ssm.dto.FieldTemplateDto" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		,vt.* FROM FieldTemplate ft INNER JOIN VenueTemplate vt 
-		WHERE ft.`VenueID` = #{venueid} AND ft.`FieldID` = #{fieldid} AND ft.`FieldTime` = #{date} limit 1
+        ,vt.* 
+	    FROM
+	        FieldTemplate ft 
+	    LEFT JOIN
+	        VenueTemplate vt  
+	    ON ft.`TemplateID` = vt.`ID`
+	    WHERE
+	        vt.`VenueID` = #{venueid}
+	        AND ft.`FieldID` = #{fieldid}
+	        AND ft.`FieldTime` = #{date} LIMIT 1
 	</select>
 	
 	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.FieldTemplate" resultMap="BaseResultMap">

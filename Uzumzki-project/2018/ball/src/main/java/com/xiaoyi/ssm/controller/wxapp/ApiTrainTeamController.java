@@ -32,6 +32,7 @@ import com.xiaoyi.ssm.model.TrainTeamPhone;
 import com.xiaoyi.ssm.model.Venue;
 import com.xiaoyi.ssm.model.VenueCheck;
 import com.xiaoyi.ssm.model.VenueEnter;
+import com.xiaoyi.ssm.service.MemberService;
 import com.xiaoyi.ssm.service.TrainCoachService;
 import com.xiaoyi.ssm.service.TrainCourseService;
 import com.xiaoyi.ssm.service.TrainEnterService;
@@ -56,7 +57,7 @@ import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.Utils;
 
 /**
- * @Description: 培训结构接口控制器
+ * @Description: 培训机构接口控制器
  * @author 宋高俊
  * @date 2018年9月29日 下午7:01:57
  */
@@ -122,14 +123,6 @@ public class ApiTrainTeamController {
 		map.put("name", trainTeamCoach.getTrainCoach().getName()); // 当前教练姓名
 		map.put("type", trainTeamCoach.getTeachType());// 当前教练身份1=主教2助教
 		map.put("manager", trainTeamCoach.getManager()); // 教练所属机构身份0=普通教练1=创建人2=管理员
-
-		int trainCourseSum = trainCourseService.countByCoach(trainTeamCoach.getTrainCoach().getId());
-		int trainCoachSum = trainCoachService.countByTeam(trainTeam.getId());
-		map.put("trainVenueSum", trainTeam.getVenueNumber()); // 教学场地数量
-		map.put("trainCoachSum", trainCoachSum); // 教练团队
-		map.put("trainCourseSum", trainCourseSum); // 我的课程
-		map.put("trainLogSum", 0); // 机构日志
-		map.put("refundSum", 0); // 退费申请
 
 		return new ApiMessage(200, "获取成功", map);
 	}
@@ -339,7 +332,6 @@ public class ApiTrainTeamController {
 	 * @Description: 保存教学场地
 	 * @author 宋高俊
 	 * @param request
-	 * @param trainVenue
 	 * @return
 	 * @date 2018年10月10日 下午2:43:48
 	 */
@@ -472,8 +464,7 @@ public class ApiTrainTeamController {
 	 * @Description: 场馆入驻申请接口
 	 * @author 宋高俊  
 	 * @param request
-	 * @param trainEnter
-	 * @return 
+	 * @return
 	 * @date 2018年10月17日 下午3:36:38 
 	 */ 
 	@RequestMapping(value = "/addVenueEnter")
@@ -499,9 +490,8 @@ public class ApiTrainTeamController {
 	/**  
 	 * @Description: 获取初始化参数
 	 * @author 宋高俊  
-	 * @param name
-	 * @return 
-	 * @date 2018年10月18日 下午2:58:34 
+	 * @return
+	 * @date 2018年10月18日 下午2:58:34
 	 */ 
 	@RequestMapping(value = "/getVenueEnter")
 	@ResponseBody
@@ -537,6 +527,8 @@ public class ApiTrainTeamController {
 			Map<String, Object> map = new LinkedHashMap<String, Object>();
 			map.put("id", list.get(i).getId()); // 场地ID
 			map.put("name", list.get(i).getName()); // 场地名称
+			map.put("address", list.get(i).getAddress()); // 场地地址
+			map.put("contactPhone", list.get(i).getContactPhone()); // 场地电话
 			listMaps.add(map);
 		}
 		return new ApiMessage(200, "获取成功", listMaps);
@@ -822,5 +814,110 @@ public class ApiTrainTeamController {
 		
 		return new ApiMessage(200, "获取成功", map);
 	}
+
+	/**  
+	 * @Description: 机构管理数据
+	 * @author 宋高俊  
+	 * @param request
+	 * @param trainTeamId
+	 * @return 
+	 * @date 2018年11月5日 下午3:52:39 
+	 */ 
+	@RequestMapping(value = "/manager/getTrainTeamManager")
+	@ResponseBody
+	public ApiMessage getTrainTeamManager(HttpServletRequest request, String trainTeamId) {
+		
+        // 用户数据
+        String token = (String) request.getAttribute("token");
+        Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+        
+		TrainTeam trainTeam = trainTeamService.selectByPrimaryKey(trainTeamId);
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		// 可用的状态
+		List<Venue> listVenue = venueService.selectByTrainTeamID(trainTeamId);
+		// 待审的状态
+		List<VenueCheck> listVenueCheck = venueCheckService.selectByTrainTeamID(trainTeamId);
+
+		List<TrainTeamCoach> list = trainTeamCoachService.selectByTrainTeamID(trainTeamId);
+		int trainVenue = listVenue.size() + listVenueCheck.size();
+		map.put("trainVenueSum", trainVenue);// 教学场地数量
+		map.put("trainCoachSum", list.size());// 教练团队数量
+		
+		TrainCoach trainCoach = trainCoachService.selectByPrimaryKey(trainTeam.getTrainCoachId());
+		
+		map.put("coachId", trainCoach.getId());// 回款ID 
+		map.put("account", trainCoach.getName());// 回款账号
+
+		TrainCoach trainCoachManager = trainCoachService.selectByTeamManager(trainTeamId);
+
+		map.put("trainCoachManagerId", trainCoachManager.getId());// 店长ID
+		return new ApiMessage(200, "获取成功", map);
+	}
 	
+	/**  
+	 * @Description: 设置机构回款账户
+	 * @author 宋高俊  
+	 * @param request
+	 * @param trainTeamId
+	 * @return 
+	 * @date 2018年11月6日 下午3:29:38 
+	 */ 
+	@RequestMapping(value = "/manager/setTrainCoach")
+	@ResponseBody
+	public ApiMessage setTrainCoach(HttpServletRequest request, String trainTeamId, String trainCoachId) {
+		
+        // 用户数据
+        String token = (String) request.getAttribute("token");
+        Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+        
+        TrainTeamCoach trainTeamCoach = trainTeamCoachService.selectByMemberTeam(member.getId(), trainTeamId);
+        if (trainTeamCoach.getManager() == 1) {
+			TrainTeam trainTeam = new TrainTeam();
+			trainTeam.setId(trainTeamId);
+			trainTeam.setTrainCoachId(trainCoachId);
+			trainTeamService.updateByPrimaryKeySelective(trainTeam);
+			return new ApiMessage(200, "修改成功");
+		}else {
+			return new ApiMessage(400, "当前用户权限不足");
+		}
+	}
+
+	/**
+	 * @Description: 转让店长接口
+	 * @author 宋高俊
+	 * @param request
+	 * @return
+	 * @date 2018年10月18日 下午7:49:43
+	 */
+	@RequestMapping(value = "/trainTeam/updateManager")
+	@ResponseBody
+	public ApiMessage updateManager(HttpServletRequest request, String trainTeamId, String trainCoachId) {
+		// 用户数据
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+
+		// 查询当前身份是否是店长
+		TrainTeamCoach trainTeamCoach = trainTeamCoachService.selectByMemberTeam(member.getId(), trainTeamId);
+		if (trainTeamCoach != null) {
+			if (trainTeamCoach.getManager() == 1) {
+				TrainTeamCoach newTrainTeamCoach = trainTeamCoachService.selectByCoachTeam(trainCoachId,trainTeamId);
+				if (newTrainTeamCoach != null) {
+					trainTeamCoach.setManager(2);
+					trainTeamCoachService.updateByPrimaryKeySelective(trainTeamCoach);
+					newTrainTeamCoach.setManager(1);
+					trainTeamCoachService.updateByPrimaryKeySelective(newTrainTeamCoach);
+					return new ApiMessage(200, "修改成功");
+				}
+			}
+		}
+		return new ApiMessage(400, "权限不足");
+	}
+	
+	@RequestMapping(value = "/managerFlag")
+	@ResponseBody
+	public ApiMessage managerFlag(HttpServletRequest request) {
+		return new ApiMessage(400, "权限不足");
+	}
+
 }

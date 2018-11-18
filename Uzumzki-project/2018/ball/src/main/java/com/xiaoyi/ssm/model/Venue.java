@@ -9,6 +9,24 @@ import java.util.Date;
 public class Venue implements Serializable {
 	private City cityT;
 	private District districtT;
+	private VenueTemplate venueTemplate;
+	private Integer sumTemplate;
+
+	public Integer getSumTemplate() {
+		return sumTemplate;
+	}
+
+	public void setSumTemplate(Integer sumTemplate) {
+		this.sumTemplate = sumTemplate;
+	}
+
+	public VenueTemplate getVenueTemplate() {
+		return venueTemplate;
+	}
+
+	public void setVenueTemplate(VenueTemplate venueTemplate) {
+		this.venueTemplate = venueTemplate;
+	}
 
 	public City getCityT() {
 		return cityT;
@@ -49,11 +67,14 @@ public class Venue implements Serializable {
     /** 区县 */
     private String districtid;
 
-    /** 经营者 */
+    /** 联系人 */
     private String owner;
 
     /** 联系电话 */
-    private String tel;
+    private String contactPhone;
+
+    /** 通知电话 */
+    private String informPhone;
 
     /** 场地数量 */
     private Integer ballsum;
@@ -99,6 +120,15 @@ public class Venue implements Serializable {
 
     /** 最低价格培训 */
     private Double minAmount;
+
+    /** 订场入口(0=否1=是) */
+    private Integer reserveShow;
+
+    /** 订场短信(0=否1=是) */
+    private Integer reserveSms;
+
+    /** 订场支付短信(0=否1=是) */
+    private Integer reservePaySms;
 
     /**
      * Venue
@@ -234,16 +264,16 @@ public class Venue implements Serializable {
     }
 
     /**
-     * 经营者
-     * @return Owner 经营者
+     * 联系人
+     * @return Owner 联系人
      */
     public String getOwner() {
         return owner;
     }
 
     /**
-     * 经营者
-     * @param owner 经营者
+     * 联系人
+     * @param owner 联系人
      */
     public void setOwner(String owner) {
         this.owner = owner == null ? null : owner.trim();
@@ -251,18 +281,34 @@ public class Venue implements Serializable {
 
     /**
      * 联系电话
-     * @return Tel 联系电话
+     * @return Contact_phone 联系电话
      */
-    public String getTel() {
-        return tel;
+    public String getContactPhone() {
+        return contactPhone;
     }
 
     /**
      * 联系电话
-     * @param tel 联系电话
+     * @param contactPhone 联系电话
      */
-    public void setTel(String tel) {
-        this.tel = tel == null ? null : tel.trim();
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone == null ? null : contactPhone.trim();
+    }
+
+    /**
+     * 通知电话
+     * @return Inform_phone 通知电话
+     */
+    public String getInformPhone() {
+        return informPhone;
+    }
+
+    /**
+     * 通知电话
+     * @param informPhone 通知电话
+     */
+    public void setInformPhone(String informPhone) {
+        this.informPhone = informPhone == null ? null : informPhone.trim();
     }
 
     /**
@@ -503,5 +549,53 @@ public class Venue implements Serializable {
      */
     public void setMinAmount(Double minAmount) {
         this.minAmount = minAmount;
+    }
+
+    /**
+     * 订场入口(0=否1=是)
+     * @return Reserve_show 订场入口(0=否1=是)
+     */
+    public Integer getReserveShow() {
+        return reserveShow;
+    }
+
+    /**
+     * 订场入口(0=否1=是)
+     * @param reserveShow 订场入口(0=否1=是)
+     */
+    public void setReserveShow(Integer reserveShow) {
+        this.reserveShow = reserveShow;
+    }
+
+    /**
+     * 订场短信(0=否1=是)
+     * @return Reserve_sms 订场短信(0=否1=是)
+     */
+    public Integer getReserveSms() {
+        return reserveSms;
+    }
+
+    /**
+     * 订场短信(0=否1=是)
+     * @param reserveSms 订场短信(0=否1=是)
+     */
+    public void setReserveSms(Integer reserveSms) {
+        this.reserveSms = reserveSms;
+    }
+
+    /**
+     * 订场支付短信(0=否1=是)
+     * @return Reserve_pay_sms 订场支付短信(0=否1=是)
+     */
+    public Integer getReservePaySms() {
+        return reservePaySms;
+    }
+
+    /**
+     * 订场支付短信(0=否1=是)
+     * @param reservePaySms 订场支付短信(0=否1=是)
+     */
+    public void setReservePaySms(Integer reservePaySms) {
+        this.reservePaySms = reservePaySms;
     }
 }

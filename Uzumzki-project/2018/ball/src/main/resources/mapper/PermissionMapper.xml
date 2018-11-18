@@ -48,6 +48,12 @@
 		p2.Parent_id p2Parent_id
 	</sql>
 	
+	<select id="selectByAdmin" parameterType="com.xiaoyi.ssm.model.Permission" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Permission where Menu_button in (1,2,3) ORDER BY id
+	</select>
+	
 	<select id="selectByMenu" resultMap="BaseResultMap">
 		SELECT p1.*,<include refid="Base_Column_List2" /> FROM (SELECT * FROM Permission WHERE `Menu_button` = 0 ) p1 INNER JOIN Permission p2 ON p1.ID = p2.`Parent_id` 
 		<where>
@@ -104,6 +110,32 @@
 			</if>
 		</if>
 		AND p2.Menu_Url = #{requestUri}
+	</select>
+	
+	<select id="selectByBtu" resultMap="BaseResultMap">
+		SELECT * FROM Permission WHERE 
+		<if test="power == 1">
+			Right_type1 = 1
+		</if>
+		<if test="power == 2">
+			Right_type2 = 1
+		</if>
+		<if test="power == 3">
+			Right_type3 = 1
+		</if>
+		<if test="power == 4">
+			Right_type4 = 1
+		</if>
+		<if test="power == 5">
+			Right_type5 = 1
+		</if>
+		<if test="power == 6">
+			Right_type6 = 1
+		</if>
+		<if test="power == 7">
+			Right_type7 = 1
+		</if>
+		AND Parent_id = #{parentid}
 	</select>
 	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">

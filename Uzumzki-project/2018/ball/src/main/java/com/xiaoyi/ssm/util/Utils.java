@@ -3,6 +3,8 @@ package com.xiaoyi.ssm.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -19,8 +21,11 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -43,6 +48,7 @@ import com.aliyun.oss.model.ObjectListing;
  */
 public class Utils {
 
+	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(Utils.class);
 	
 	/**
@@ -217,6 +223,51 @@ public class Utils {
 			return null;
 		}
 	}
+	
+	/**  
+	 * @Description: 根据http请求保存至OSS服务器
+	 * @author 宋高俊  
+	 * @param urlStr
+	 * @return 
+	 * @date 2018年11月7日 下午8:13:56 
+	 */ 
+	public static String getImageHttpUrl(String urlStr) {  
+		HttpURLConnection httpUrl = null;  
+		URL url = null;  
+		try {
+			url = new URL(urlStr);  
+			httpUrl = (HttpURLConnection) url.openConnection();  
+			httpUrl.connect();  
+			
+			InputStream fileContent = httpUrl.getInputStream();
+			String fileName = httpUrl.getContentType();
+			fileName = fileName.replace("/", ".");
+			fileName = Utils.getUUID() + fileName.substring(fileName.lastIndexOf("."));
+			// 域名根节点
+			String endpoint = Global.aliyunOssEndpoint;
+			// 账户ID
+			String accessKeyId = Global.aliyunOssAccessKeyId;
+			// 账户密码
+			String accessKeySecret = Global.aliyunOssAccessKeySecret;
+			// 创建OSSClient实例。
+			OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+			// 设置上传文件保存目录，按照年月日分文件夹存放
+			Calendar now = Calendar.getInstance();
+			String remoteFilePath = "ball/"+now.get(Calendar.YEAR) + "/" + (now.get(Calendar.MONTH) + 1) + "/" + now.get(Calendar.DAY_OF_MONTH) + "/";
+	
+			String bucketName = Global.aliyunOssBucketName;
+	
+			remoteFilePath += fileName;
+			// 上传文件流。
+			ossClient.putObject(bucketName, remoteFilePath, fileContent);
+			// 关闭OSSClient。
+			ossClient.shutdown();
+			String imageUrl = Global.aliyunOssIpAddress + remoteFilePath;
+			return imageUrl;
+		} catch (Exception e) {
+			return "";
+		}
+	} 
 	
 	/**  
 	 * @Description: 获取4位数字的验证码
@@ -432,6 +483,32 @@ public class Utils {
 			e.printStackTrace();
 		}
 	}
-    
-    
+	
+	/**
+	 * 获取访问用户的客户端IP（适用于公网与局域网）.
+	 */
+	public static final String getIpAddr(final HttpServletRequest request){
+		if (request == null) {
+			return "";
+		}
+		String ipString = request.getHeader("x-forwarded-for");
+		if (StringUtils.isBlank(ipString) || "unknown".equalsIgnoreCase(ipString)) {
+			ipString = request.getHeader("Proxy-Client-IP");
+		}
+		if (StringUtils.isBlank(ipString) || "unknown".equalsIgnoreCase(ipString)) {
+			ipString = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (StringUtils.isBlank(ipString) || "unknown".equalsIgnoreCase(ipString)) {
+			ipString = request.getRemoteAddr();
+		}
+		// 多个路由时，取第一个非unknown的ip
+		final String[] arr = ipString.split(",");
+		for (final String str : arr) {
+			if (!"unknown".equalsIgnoreCase(str)) {
+				ipString = str;
+				break;
+			}
+		}
+		return ipString;
+	}
 }

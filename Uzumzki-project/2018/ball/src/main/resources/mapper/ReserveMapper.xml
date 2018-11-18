@@ -9,8 +9,15 @@
 		<result column="ReserveAmount" jdbcType="DOUBLE" property="reserveamount" />
 		<result column="OrderID" jdbcType="VARCHAR" property="orderid" />
 		<association property="order" javaType="com.xiaoyi.ssm.model.Order">
-			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<id column="oID" jdbcType="VARCHAR" property="id" />
+			<result column="oCreateTime" jdbcType="VARCHAR" property="createtime" />
 			<result column="oType" jdbcType="VARCHAR" property="type" />
+			<result column="oCoachID" jdbcType="VARCHAR" property="coachid" />
+			<result column="oMemberID" jdbcType="VARCHAR" property="memberid" />
+		</association>
+		<association property="field" javaType="com.xiaoyi.ssm.model.Field">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="fName" jdbcType="VARCHAR" property="name" />
 		</association>
 	</resultMap>
 	<sql id="Base_Column_List">
@@ -41,14 +48,13 @@
 	</select>
 	
 	<select id="selectByFieldTemplateDto" parameterType="com.xiaoyi.ssm.dto.FieldTemplateDto" resultMap="BaseResultMap">
-		SELECT r.*,o.`Type` oType FROM Reserve r INNER JOIN `Order` o ON r.`OrderID` = o.`ID` WHERE o.`Type` in (0,1,6) 
+		SELECT r.*,o.`ID` oID , o.`Type` oType,o.`CoachID` oCoachID,o.`MemberID` oMemberID, o.`CreateTime` oCreateTime
+		FROM Reserve r INNER JOIN `Order` o ON r.`OrderID` = o.`ID` WHERE o.`Type` IN (0,1,5,6) 
 		AND o.`OrderDate` = #{date} AND o.`VenueID` = #{venueid} AND r.`FieldID` = #{fieldid}
 	</select>
 
 	<select id="selectByOrder" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List" />
-		from Reserve
+		SELECT r.*,f.`Name` fName FROM Reserve r INNER JOIN `Field` f ON r.`FieldID` = f.`ID`
 		where OrderID = #{id,jdbcType=CHAR}
 	</select>
 	

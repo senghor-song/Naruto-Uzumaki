@@ -19,9 +19,6 @@ public class WXCompanyPayment implements Serializable {
     /** openid */
     private String openid;
 
-    /** 用户姓名 */
-    private String userName;
-
     /** 付款金额 */
     private Double amount;
 
@@ -33,6 +30,12 @@ public class WXCompanyPayment implements Serializable {
 
     /** 支付信息 */
     private String payMsg;
+
+    /** 微信付款单号 */
+    private String paymentNo;
+
+    /** 付款成功时间 */
+    private String paymentTime;
 
     /** 微信返回参数 */
     private String returnXml;
@@ -107,24 +110,8 @@ public class WXCompanyPayment implements Serializable {
     }
 
     /**
-     * 用户姓名
-     * @return User_name 用户姓名
-     */
-    public String getUserName() {
-        return userName;
-    }
-
-    /**
-     * 用户姓名
-     * @param userName 用户姓名
-     */
-    public void setUserName(String userName) {
-        this.userName = userName == null ? null : userName.trim();
-    }
-
-    /**
      * 付款金额
-     * @return amount 付款金额
+     * @return Amount 付款金额
      */
     public Double getAmount() {
         return amount;
@@ -184,6 +171,38 @@ public class WXCompanyPayment implements Serializable {
      */
     public void setPayMsg(String payMsg) {
         this.payMsg = payMsg == null ? null : payMsg.trim();
+    }
+
+    /**
+     * 微信付款单号
+     * @return Payment_no 微信付款单号
+     */
+    public String getPaymentNo() {
+        return paymentNo;
+    }
+
+    /**
+     * 微信付款单号
+     * @param paymentNo 微信付款单号
+     */
+    public void setPaymentNo(String paymentNo) {
+        this.paymentNo = paymentNo == null ? null : paymentNo.trim();
+    }
+
+    /**
+     * 付款成功时间
+     * @return Payment_time 付款成功时间
+     */
+    public String getPaymentTime() {
+        return paymentTime;
+    }
+
+    /**
+     * 付款成功时间
+     * @param paymentTime 付款成功时间
+     */
+    public void setPaymentTime(String paymentTime) {
+        this.paymentTime = paymentTime == null ? null : paymentTime.trim();
     }
 
     /**

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.xiaoyi.ssm.dao.AmountRefundWayMapper;
 import com.xiaoyi.ssm.dao.VenueMapper;
+import com.xiaoyi.ssm.model.Member;
 import com.xiaoyi.ssm.model.TrainTeamVenue;
 import com.xiaoyi.ssm.model.Venue;
 import com.xiaoyi.ssm.service.FieldService;
@@ -176,6 +177,41 @@ public class VenueServiceImpl extends AbstractService<Venue,String> implements V
 	@Override
 	public List<Venue> selectBySearch(Integer selectType, String keyword) {
 		return venueMapper.selectBySearch(selectType, keyword);
+	}
+
+	/**  
+	 * @Description: 条件查询模板分析数据
+	 * @author 宋高俊  
+	 * @param ballType 
+	 * @param trainAddFlag 
+	 * @return 
+	 * @date 2018年11月2日 下午8:08:47 
+	 */ 
+	@Override
+	public List<Venue> selectByVenueSearch(String cityid, Integer sumTemplate, Integer trainAddFlag, Integer ballType) {
+		return venueMapper.selectByVenueSearch(cityid, sumTemplate, trainAddFlag, ballType);
+	}
+
+	/**  
+	 * @Description: 查询订单已消费可以结算的订单
+	 * @author 宋高俊  
+	 * @return 
+	 * @date 2018年11月15日14:23:09
+	 */ 
+	@Override
+	public List<Venue> selectByDateOut(String date) {
+		return venueMapper.selectByDateOut(date);
+	}
+
+	/**  
+	 * @Description: 根据手机号查询是否有匹配的场馆
+	 * @author 宋高俊  
+	 * @return 
+	 * @date 2018年11月15日14:23:09
+	 */ 
+	@Override
+	public List<Venue> selectByMatchingVenue(String phone) {
+		return venueMapper.selectByMatchingVenue(phone);
 	}
 
 }

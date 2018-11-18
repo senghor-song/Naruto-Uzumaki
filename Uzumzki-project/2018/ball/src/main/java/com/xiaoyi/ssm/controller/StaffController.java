@@ -24,9 +24,11 @@ import com.xiaoyi.ssm.dao.StaffLogMapper;
 import com.xiaoyi.ssm.dto.AdminMessage;
 import com.xiaoyi.ssm.dto.AdminPage;
 import com.xiaoyi.ssm.dto.ApiMessage;
+import com.xiaoyi.ssm.model.Permission;
 import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.model.StaffApply;
 import com.xiaoyi.ssm.model.StaffLog;
+import com.xiaoyi.ssm.service.PermissionService;
 import com.xiaoyi.ssm.service.StaffApplyService;
 import com.xiaoyi.ssm.service.StaffService;
 import com.xiaoyi.ssm.util.DateUtil;
@@ -51,6 +53,8 @@ public class StaffController {
 	private StaffLogMapper staffLogMapper;
 	@Autowired
 	private StaffApplyService staffApplyService;
+	@Autowired
+	private PermissionService permissionService;
 
 	/**
 	 * @Description: 登录方法
@@ -167,7 +171,12 @@ public class StaffController {
 	 * @date 2018年7月27日 下午6:55:37
 	 */
 	@RequestMapping(value = "/listview")
-	public String listview() {
+	public String listview(HttpServletRequest request, Model model) {
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		List<Permission> list = permissionService.selectByBtu(staff.getPower(), "41");
+		for (int i = 0; i < list.size(); i++) {
+			model.addAttribute("btn"+list.get(i).getId(), "1");
+		}
 		return "admin/staff/list";
 	}
 

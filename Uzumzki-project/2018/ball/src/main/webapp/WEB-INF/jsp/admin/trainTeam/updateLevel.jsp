@@ -50,6 +50,9 @@
                 success : function(result) {//返回数据根据结果进行相应的处理  
                     if ( result.code == 200 ) {  
     					layer.msg("修改成功");
+                        layer.closeAll(); 
+                        $(".contextMenuDialog").addClass("hide");
+            			$.reload(tableObj.obj);
                     } else {
                 		layer.confirm(result.msg, {
                 			btn: ['确定'] //按钮

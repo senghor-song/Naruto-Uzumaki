@@ -14,7 +14,7 @@
 	<select id="selectByMemberVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from MemberHabit where MemberID = #{memberid,jdbcType=CHAR} and  VenueID = #{venueid,jdbcType=CHAR}
+		from MemberHabit where MemberID = #{memberid,jdbcType=CHAR} and  VenueID = #{venueid,jdbcType=CHAR} limit 1
 	</select>
 	
 	<select id="countOften" parameterType="java.lang.String" resultType="java.lang.Integer">

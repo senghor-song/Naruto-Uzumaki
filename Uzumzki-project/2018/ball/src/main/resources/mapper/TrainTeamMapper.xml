@@ -27,13 +27,13 @@
 		<result column="Ball_hour2" jdbcType="INTEGER" property="ballHour2" />
 		<result column="Ball_hour3" jdbcType="INTEGER" property="ballHour3" />
 		<result column="Type_flag" jdbcType="INTEGER" property="typeFlag" />
+		<result column="Train_coach_id" jdbcType="VARCHAR" property="trainCoachId" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		ID, Train_team_no, Create_time, Modify_time, Title, Title_flag, Phone, Head_image,
 		Brand_content, Trait, Free_classes, Free_parking, City_id, Address, Longitude, Latitude,
 		Venue_number, Teach_class, Level, Level_time, Min_amount, Ball_hour1, Ball_hour2,
-		Ball_hour3,
-		Type_flag
+		Ball_hour3, Type_flag, Train_coach_id
 	</sql>
 
 	<select id="selectByNearby" resultMap="BaseResultMap">
@@ -78,7 +78,7 @@
 	</select>
 
 	<select id="selectAllAdmin" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT * FROM TrainTeam tt LEFT JOIN City c ON tt.`City_id` = c.`ID` 
+		SELECT * FROM TrainTeam tt LEFT JOIN City c ON tt.`City_id` = c.`ID`
 		<where>
 			<if test="selectType != null">
 				<if test="selectType == 0">
@@ -120,9 +120,10 @@
 		SELECT * FROM TrainTeam tt INNER JOIN
 		TrainTeamCollect ttc ON tt.`ID` = ttc.`Train_team_id` WHERE ttc.`Member_id` = #{id}
 	</select>
-	
+
 	<select id="selectByNearbyMapTrainTeamType" resultMap="BaseResultMap">
-		SELECT * FROM TrainTeam WHERE `Longitude` &gt; #{begLng} AND `Longitude` &lt; #{endLng} AND `Latitude`
+		SELECT * FROM TrainTeam WHERE `Longitude` &gt; #{begLng} AND `Longitude` &lt; #{endLng} AND
+		`Latitude`
 		&gt; #{begLat} AND `Latitude` &lt; #{endLat}
 		<if test="ballType != null">
 			<if test="ballType == 1">
@@ -136,15 +137,18 @@
 			</if>
 		</if>
 	</select>
-	
+
 	<select id="selectByMember" resultMap="BaseResultMap">
-		SELECT tt.* FROM TrainTeam tt INNER JOIN TrainTeamCoach ttc ON tt.`ID` = ttc.`Train_team_id` 
+		SELECT tt.* FROM TrainTeam tt INNER JOIN
+		TrainTeamCoach ttc ON tt.`ID` = ttc.`Train_team_id`
 		INNER JOIN TrainCoach tc ON tc.`ID` = ttc.`Train_coach_id` WHERE tc.`Member_id` = #{id}
 	</select>
-	
+
 	<select id="selectByMemberManager" resultMap="BaseResultMap">
-		SELECT tt.* FROM TrainTeam tt INNER JOIN TrainTeamCoach ttc ON tt.`ID` = ttc.`Train_team_id` 
-		INNER JOIN TrainCoach tc ON tc.`ID` = ttc.`Train_coach_id` WHERE tc.`Member_id` = #{memberid} AND ttc.`Manager` = #{manager}
+		SELECT tt.* FROM TrainTeam tt INNER JOIN
+		TrainTeamCoach ttc ON tt.`ID` = ttc.`Train_team_id`
+		INNER JOIN TrainCoach tc ON tc.`ID` = ttc.`Train_coach_id` WHERE tc.`Member_id` = #{memberid} AND
+		ttc.`Manager` = #{manager}
 	</select>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -155,8 +159,7 @@
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
 		delete from TrainTeam
-		where ID =
-		#{id,jdbcType=CHAR}
+		where ID = #{id,jdbcType=CHAR}
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.TrainTeam">
 		insert into TrainTeam (ID, Train_team_no, Create_time,
@@ -167,9 +170,8 @@
 		Latitude, Venue_number, Teach_class,
 		Level, Level_time, Min_amount,
 		Ball_hour1, Ball_hour2, Ball_hour3,
-		Type_flag)
-		values (#{id,jdbcType=CHAR},
-		#{trainTeamNo,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+		Type_flag, Train_coach_id)
+		values (#{id,jdbcType=CHAR}, #{trainTeamNo,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
 		#{modifyTime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR}, #{titleFlag,jdbcType=INTEGER},
 		#{phone,jdbcType=VARCHAR}, #{headImage,jdbcType=VARCHAR}, #{brandContent,jdbcType=VARCHAR},
 		#{trait,jdbcType=VARCHAR}, #{freeClasses,jdbcType=INTEGER}, #{freeParking,jdbcType=INTEGER},
@@ -177,7 +179,7 @@
 		#{latitude,jdbcType=DOUBLE}, #{venueNumber,jdbcType=INTEGER}, #{teachClass,jdbcType=VARCHAR},
 		#{level,jdbcType=INTEGER}, #{levelTime,jdbcType=TIMESTAMP}, #{minAmount,jdbcType=DOUBLE},
 		#{ballHour1,jdbcType=INTEGER}, #{ballHour2,jdbcType=INTEGER}, #{ballHour3,jdbcType=INTEGER},
-		#{typeFlag,jdbcType=INTEGER})
+		#{typeFlag,jdbcType=INTEGER}, #{trainCoachId,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.TrainTeam">
 		insert into TrainTeam
@@ -257,6 +259,9 @@
 			<if test="typeFlag != null">
 				Type_flag,
 			</if>
+			<if test="trainCoachId != null">
+				Train_coach_id,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -333,6 +338,9 @@
 			</if>
 			<if test="typeFlag != null">
 				#{typeFlag,jdbcType=INTEGER},
+			</if>
+			<if test="trainCoachId != null">
+				#{trainCoachId,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -411,48 +419,39 @@
 			<if test="typeFlag != null">
 				Type_flag = #{typeFlag,jdbcType=INTEGER},
 			</if>
+			<if test="trainCoachId != null">
+				Train_coach_id = #{trainCoachId,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where ID = #{id,jdbcType=CHAR}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.TrainTeam">
 		update TrainTeam
-		set Train_team_no =
-		#{trainTeamNo,jdbcType=INTEGER},
+		set Train_team_no = #{trainTeamNo,jdbcType=INTEGER},
 		Create_time = #{createTime,jdbcType=TIMESTAMP},
-		Modify_time =
-		#{modifyTime,jdbcType=TIMESTAMP},
+		Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
 		Title = #{title,jdbcType=VARCHAR},
-		Title_flag =
-		#{titleFlag,jdbcType=INTEGER},
+		Title_flag = #{titleFlag,jdbcType=INTEGER},
 		Phone = #{phone,jdbcType=VARCHAR},
-		Head_image =
-		#{headImage,jdbcType=VARCHAR},
+		Head_image = #{headImage,jdbcType=VARCHAR},
 		Brand_content = #{brandContent,jdbcType=VARCHAR},
-		Trait =
-		#{trait,jdbcType=VARCHAR},
+		Trait = #{trait,jdbcType=VARCHAR},
 		Free_classes = #{freeClasses,jdbcType=INTEGER},
-		Free_parking =
-		#{freeParking,jdbcType=INTEGER},
+		Free_parking = #{freeParking,jdbcType=INTEGER},
 		City_id = #{cityId,jdbcType=VARCHAR},
-		Address =
-		#{address,jdbcType=VARCHAR},
+		Address = #{address,jdbcType=VARCHAR},
 		Longitude = #{longitude,jdbcType=DOUBLE},
-		Latitude =
-		#{latitude,jdbcType=DOUBLE},
+		Latitude = #{latitude,jdbcType=DOUBLE},
 		Venue_number = #{venueNumber,jdbcType=INTEGER},
-		Teach_class =
-		#{teachClass,jdbcType=VARCHAR},
+		Teach_class = #{teachClass,jdbcType=VARCHAR},
 		Level = #{level,jdbcType=INTEGER},
-		Level_time =
-		#{levelTime,jdbcType=TIMESTAMP},
+		Level_time = #{levelTime,jdbcType=TIMESTAMP},
 		Min_amount = #{minAmount,jdbcType=DOUBLE},
-		Ball_hour1 =
-		#{ballHour1,jdbcType=INTEGER},
+		Ball_hour1 = #{ballHour1,jdbcType=INTEGER},
 		Ball_hour2 = #{ballHour2,jdbcType=INTEGER},
-		Ball_hour3 =
-		#{ballHour3,jdbcType=INTEGER},
-		Type_flag = #{typeFlag,jdbcType=INTEGER}
-		where ID =
-		#{id,jdbcType=CHAR}
+		Ball_hour3 = #{ballHour3,jdbcType=INTEGER},
+		Type_flag = #{typeFlag,jdbcType=INTEGER},
+		Train_coach_id = #{trainCoachId,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

@@ -44,7 +44,7 @@
 		SELECT
 		ij.*,m.`AppAvatarUrl` mAppAvatarUrl,m.`AppNickName` mAppNickName,m.`ID` mID,m.`OpenID` mOpenID
 		FROM InviteJoin ij
-		LEFT JOIN `Member` m ON ij.`Member_id` = m.`ID`
+		INNER JOIN `Member` m ON ij.`Member_id` = m.`ID`
 		where Invite_id =
 		#{id,jdbcType=VARCHAR} AND Pay_type in (1,4)
 	</select>

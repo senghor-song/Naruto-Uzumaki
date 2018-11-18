@@ -97,8 +97,11 @@ public class Order implements Serializable {
     /** 提现ID */
     private String amountid;
 
-    /** 提现状态(0=未提现1=正在提现2=已提现) */
+    /** 提现状态(0=未提现1=已提现) */
     private Integer amounttype;
+
+    /** 是否删除0=否1=是 */
+    private Integer deleteflag;
 
     /**
      * Order
@@ -346,18 +349,34 @@ public class Order implements Serializable {
     }
 
     /**
-     * 提现状态(0=未提现1=正在提现2=已提现)
-     * @return AmountType 提现状态(0=未提现1=正在提现2=已提现)
+     * 提现状态(0=未提现1=已提现)
+     * @return AmountType 提现状态(0=未提现1=已提现)
      */
     public Integer getAmounttype() {
         return amounttype;
     }
 
     /**
-     * 提现状态(0=未提现1=正在提现2=已提现)
-     * @param amounttype 提现状态(0=未提现1=正在提现2=已提现)
+     * 提现状态(0=未提现1=已提现)
+     * @param amounttype 提现状态(0=未提现1=已提现)
      */
     public void setAmounttype(Integer amounttype) {
         this.amounttype = amounttype;
+    }
+
+    /**
+     * 是否删除0=否1=是
+     * @return DeleteFlag 是否删除0=否1=是
+     */
+    public Integer getDeleteflag() {
+        return deleteflag;
+    }
+
+    /**
+     * 是否删除0=否1=是
+     * @param deleteflag 是否删除0=否1=是
+     */
+    public void setDeleteflag(Integer deleteflag) {
+        this.deleteflag = deleteflag;
     }
 }

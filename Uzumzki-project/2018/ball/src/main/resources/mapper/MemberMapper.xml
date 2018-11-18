@@ -57,6 +57,10 @@
 		<include refid="Base_Column_List" />
 		from Member
 	</select>
+	
+	<update id="updateByMemberOpenID" parameterType="java.lang.String">
+		UPDATE Member SET OpenID = "" WHERE ID = #{id}
+	</update>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select

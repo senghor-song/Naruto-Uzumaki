@@ -128,60 +128,6 @@ public class ApiCommonController {
 		}
 	}
 
-	/**
-	 * @Description: 会员登录接口
-	 * @author 宋高俊
-	 * @date 2018年8月16日 下午4:51:39
-	 */
-	@RequestMapping(value = "/member/login")
-	@ResponseBody
-	public ApiMessage memberlogin(String phone, String password, HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		String unionid = (String) session.getAttribute("unionid");
-
-		logger.info("openid:"+openid);
-		logger.info("unionid:"+unionid);
-		
-		Member member = new Member();
-		member.setPhone(phone);
-		Member loginmember = memberService.login(member);
-
-		if (loginmember != null) {
-			//判断这个openid是否已经被使用过
-			Member oldMember = memberService.selectByOpenid(openid);
-			if (oldMember != null) {
-				oldMember.setOpenid(Utils.getUUID());
-				oldMember.setUnionid(Utils.getUUID());
-				memberService.updateByPrimaryKeySelective(oldMember);
-			}
-			
-			loginmember.setOpenid(openid);
-			loginmember.setUnionid(unionid);
-			memberService.updateByPrimaryKeySelective(loginmember);
-
-			Map<String, Object> map = new HashMap<>();
-			// 获取上一次登录的token
-			// String token = (String)
-			// RedisUtil.getRedisOne(Global.redis_token_member,
-			// loginmember.getId());
-			// if (!StringUtil.isBank(token)) {
-			// RedisUtil.delRedis(Global.redis_member, token);
-			// }
-			// 本次登录使用的token
-			// String loginToken = SHA1.encode(UUID.randomUUID().toString());
-			String loginToken = loginmember.getId();
-			// RedisUtil.addRedis(Global.redis_token_member,
-			// loginmember.getId(), loginToken);
-			RedisUtil.addRedis(Global.redis_member, openid, loginmember);
-			map.put("token", loginToken);
-			// map.put("isopenid", loginmember.getOpenid() != null ? 1 : 0);
-
-			return new ApiMessage(200, "登录成功", map);
-		} else {
-			return new ApiMessage(400, "账号或密码错误");
-		}
-	}
 
 	/**
 	 * @Description: 注册接口
@@ -385,6 +331,7 @@ public class ApiCommonController {
 				map.put("showTrain", 0);
 			}
 			map.put("minAmount", venue.getMinAmount());// 球场类型
+			map.put("reserveShow", venue.getReserveShow());// 是否显示订场 订场入口(0=否1=是)
 			listmap.add(map);
 		}
 		return new ApiMessage(200, "查询成功", listmap);
@@ -402,7 +349,7 @@ public class ApiCommonController {
 	public ApiMessage venueGetPhone(String id) {
 		Venue venue = venueService.selectByPrimaryKey(id);
 		if (venue != null) {
-			return new ApiMessage(200, "查询成功", venue.getTel());
+			return new ApiMessage(200, "查询成功", venue.getContactPhone());
 		}else {
 			return new ApiMessage(400, "场馆不存在");
 		}
@@ -673,25 +620,27 @@ public class ApiCommonController {
 				if (!StringUtil.isBank(userinfo)) {
 					logger.info("根据openid获取到用户数据" + userinfo);
 					JSONObject jsonObject = JSONObject.fromObject(userinfo);
+					
+					String unionid = jsonObject.getString("unionid");
 					// 更新用户的微信数据
-					Member member = memberService.selectByOpenid(openid);
+					Member member = memberService.selectByUnionid(unionid);
 
 					// 判断该用户是否是第一次关注
 					if (member != null) {
 						
-						logger.info(openid+"用户再次关注");
+						logger.info(unionid+"用户再次关注");
 						
 						//非首次关注仅更新头像，性别，昵称
 						member.setAppavatarurl(jsonObject.getString("headimgurl"));
 						member.setAppgender(jsonObject.getInt("sex"));
 						member.setAppnickname(jsonObject.getString("nickname"));
+						member.setOpenid(jsonObject.getString("openid"));
 						member.setModifytime(new Date());
 						
 						// 开发期间更新unionid
 						member.setUnionid(jsonObject.getString("unionid"));
 						memberService.updateByPrimaryKeySelective(member);
 						textMsg.setContent("欢迎再次关注易订场公众号");
-						
 					}else {
 						//首次关注需判断是否已使用过小程序
 						member = memberService.selectByUnionid(jsonObject.getString("unionid"));
@@ -725,8 +674,18 @@ public class ApiCommonController {
 						}
 						textMsg.setContent("欢迎关注易订场公众号");
 					}
+					// 更新缓存中用户信息
 					RedisUtil.addRedis(Global.redis_member, jsonObject.getString("unionid"), member);
 				}
+			} else if ("unsubscribe".equals(MsgXMLUtil.readNode(root, "Event"))) {
+				// 取关事件
+				String openid = MsgXMLUtil.readNode(root, "FromUserName");
+				logger.info(openid + "用户取消关注公众号");
+				
+				Member member = memberService.selectByOpenid(openid);
+
+				memberService.updateByMemberOpenID(member.getId());
+				
 			} else if ("CLICK".equals(MsgXMLUtil.readNode(root, "Event"))) {
 				logger.info("消息类型为公众号菜单点击事件：" + MsgXMLUtil.readNode(root, "EventKey"));
 				if ("online_service".equals(MsgXMLUtil.readNode(root, "EventKey"))) {
@@ -1124,28 +1083,4 @@ public class ApiCommonController {
 		return new ApiMessage(200, "修改成功");
 	}
 
-	/**
-	 * @Description: 小程序接口
-	 * @author 宋高俊
-	 * @param number
-	 * @date 2018年9月8日 下午4:27:58
-	 */
-	@RequestMapping(value = "/setNumber")
-	@ResponseBody
-	public ApiMessage setNumber(Integer number, HttpServletRequest request) {
-		Global.number = number;
-		return new ApiMessage(200, "成功", number);
-	}
-
-	/**
-	 * @Description: 小程序接口
-	 * @author 宋高俊
-	 * @param number
-	 * @date 2018年9月8日 下午4:27:58
-	 */
-	@RequestMapping(value = "/getNumber")
-	@ResponseBody
-	public ApiMessage getNumber(Integer number, HttpServletRequest request) {
-		return new ApiMessage(200, "成功", Global.number);
-	}
 }

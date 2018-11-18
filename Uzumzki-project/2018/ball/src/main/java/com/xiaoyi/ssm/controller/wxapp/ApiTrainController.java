@@ -2,6 +2,7 @@ package com.xiaoyi.ssm.controller.wxapp;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,20 +10,20 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.xiaoyi.ssm.model.*;
+import com.xiaoyi.ssm.util.Global;
+import com.xiaoyi.ssm.util.RedisUtil;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageHelper;
+import com.xiaoyi.ssm.controller.ApiCommonController;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.dto.PageBean;
-import com.xiaoyi.ssm.model.City;
-import com.xiaoyi.ssm.model.TrainCoach;
-import com.xiaoyi.ssm.model.TrainCourse;
-import com.xiaoyi.ssm.model.TrainTeam;
-import com.xiaoyi.ssm.model.TrainTeamCoach;
-import com.xiaoyi.ssm.model.TrainTeamImage;
 import com.xiaoyi.ssm.service.CityService;
 import com.xiaoyi.ssm.service.TrainCoachService;
 import com.xiaoyi.ssm.service.TrainCourseService;
@@ -42,6 +43,8 @@ import com.xiaoyi.ssm.util.MapUtils;
 @Controller("wxappTrainController")
 @RequestMapping("wxapp/train/common")
 public class ApiTrainController {
+	
+    private static Logger logger = Logger.getLogger(ApiTrainController.class.getName());
 
 	@Autowired
 	private TrainTeamService trainTeamService;
@@ -59,6 +62,26 @@ public class ApiTrainController {
 	private CityService cityService;
 	@Autowired
 	private TrainTeamCoachService trainTeamCoachService;
+	
+	/**  
+	 * @Description: 获取短信上行消息
+	 * @author 宋高俊  
+	 * @return
+	 * @date 2018年11月6日 上午10:15:31 
+	 */ 
+	@RequestMapping(value = "/receiveSms")
+	@ResponseBody
+	public Map<String, Object> receiveSms(HttpServletRequest request) {
+		Enumeration enu = request.getParameterNames();
+		while (enu.hasMoreElements()) {
+			String paraName = (String) enu.nextElement();
+			logger.info("获取到上行消息:"+paraName + ": " + request.getParameter(paraName));
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("code", 0);
+		map.put("msg", "接收成功");
+		return map;
+	}
 
 	/**
 	 * @Description: 获取培训机构列表数据
@@ -282,6 +305,6 @@ public class ApiTrainController {
 		City city = cityService.selectByName(name);
 		return new ApiMessage(200, "获取成功", city.getMapflag());
 	}
-	
+
 }
 

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
@@ -28,9 +29,11 @@
                         	<div class="card-header">
                                 <h3 class="card-title">
                                     <div class="row">
-                                        <div class="col-lg-9 btncaozuo">
-                                            <button class="btn btn-primary btn-sm" id="trainEnter">入驻申请</button>
-                                        </div>
+										<c:if test="${btn235 == 1}">
+	                                        <div class="col-lg-9 btncaozuo">
+	                                            <button class="btn btn-primary btn-sm" id="trainEnter">入驻申请</button>
+                                        	</div>
+                       					</c:if>			
                                         <div class="input-group input-group-sm float-right col-lg-3" style="width: 350px;">
 											<select class="form-control float-right" id="trainSelectType">
 												<option value="0">城市</option>
@@ -159,6 +162,7 @@ var mapmarker=null;
                         ]
                     },
                     menuItem: {
+						<c:if test="${btn221 == 1}">
                         item1: {
                             name: "日志", callback: function (key, opt) {
                                 $.showContentMenu(key, opt)
@@ -180,6 +184,8 @@ var mapmarker=null;
                                 });
                             }
                         },
+                        </c:if>
+						<c:if test="${btn232 == 1}">
                         item2: {
                             name: "线下交易反馈", callback: function (key, opt) {
                                 $.showContentMenu(key, opt)
@@ -201,6 +207,8 @@ var mapmarker=null;
                                 });
                             }
                         },
+                        </c:if>
+						<c:if test="${btn233 == 1}">
                         item3: {
                             name: "调整评级", callback: function (key, opt) {
                             	$.ajax({  
@@ -222,18 +230,22 @@ var mapmarker=null;
                                             maxmin: false,
                                             shadeClose: true,
                                             cancel: function (index, layero) {
-                                                $(".contextMenuDialog").addClass("hide");
-                                    			 $.reload(tableObj.obj);
+                                                layer.closeAll(); 
+                                            	$(".contextMenuDialog").addClass("hide");
+                                    			$.reload(tableObj.obj);
                                             },
                                             end: function () {
+                                                layer.closeAll(); 
                                                 $(".contextMenuDialog").addClass("hide");
-                                    			 $.reload(tableObj.obj);
+                                    			$.reload(tableObj.obj);
                                             }
                                         });
                                     }  
                                 });
                             }
                         },
+                        </c:if>
+						<c:if test="${btn234 == 1}">
                         item4: {
                             name: "编辑", callback: function (key, opt) {
                             	$.showAjaxContent("编辑", "35%", "/WebBackAPI/admin/trainTeam/edit", $(this).find("td").eq(0).attr('title'));
@@ -286,7 +298,30 @@ var mapmarker=null;
                 				   }
                 				});
                             }
-                        }
+                        },
+                        </c:if>
+						<c:if test="${btn236 == 1}">
+                        item5: {
+                            name: "教练", callback: function (key, opt) {
+                                $.showContentMenu(key, opt)
+                                $.tableObject({
+                                    tableId: 'tableTrainTeamCoach',
+                                    tableOption: {
+                                        url: '/WebBackAPI/admin/trainTeam/coach/list?id='+$(this).find("td").eq(0).attr('title'),
+                                        page: false,
+                                        height: $("#tableTrainTeamCoach").parents(".layui-layer-content").height() - 30,
+                                        where: {},
+                                        cols: [
+                                            [
+	                                             { field: 'coachName', title: '教练', sort: true },
+	                                             { field: 'manager', title: '身份', sort: true },
+                                            ]
+                                        ]
+                                    }
+                                });
+                            }
+                        },
+                        </c:if>
                     }
                 });
             }
@@ -507,6 +542,14 @@ var mapmarker=null;
     <div class="card-body">
         <div class="row">
             <table id="updateLevel"></table>
+        </div>
+    </div>
+</div>
+
+<div class="contextMenuDialog hide" id="item5">
+    <div class="card-body">
+        <div class="row">
+            <table id="tableTrainTeamCoach"></table>
         </div>
     </div>
 </div>

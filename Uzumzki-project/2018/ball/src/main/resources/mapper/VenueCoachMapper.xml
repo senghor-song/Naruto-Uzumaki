@@ -24,6 +24,10 @@
 		FROM VenueCoach vc LEFT JOIN TrainCoach tc ON vc.`Train_coach_id` = tc.`ID` 
 		WHERE Venue_id = #{venueid} AND Type_flag = 1 
 	</select>
+	
+	<select id="countByVenue" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(0) from VenueCoach where Venue_id = #{id,jdbcType=VARCHAR} AND Type_flag = 1
+	</select>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select

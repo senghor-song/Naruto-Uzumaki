@@ -53,7 +53,6 @@ public class TrainTeamCoachServiceImpl extends AbstractService<TrainTeamCoach,St
 	/**  
 	 * @Description: 根据用户和培训机构查询
 	 * @author 宋高俊  
-	 * @param trainCoachId
 	 * @param trainTeamId
 	 * @return 
 	 * @date 2018年10月30日 下午8:54:44 

@@ -99,6 +99,17 @@ public class MemberServiceImpl extends AbstractService<Member,String> implements
 	public List<Member> selectByApp() {
 		return memberMapper.selectByApp();
 	}
+
+	/**  
+	 * @Description: 根据用户ID删除openid
+	 * @author 宋高俊  
+	 * @return 
+	 * @date 2018年10月23日 上午11:57:56 
+	 */ 
+	@Override
+	public int updateByMemberOpenID(String id) {
+		return memberMapper.updateByMemberOpenID(id);
+	}
 	
 	
 }

@@ -1,79 +1,51 @@
 package com.xiaoyi.ssm.test;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import net.sf.json.JSONObject;
-import cn.hutool.core.date.DateUtil;
-
-import com.xiaoyi.ssm.dto.ApiMessage;
-import com.xiaoyi.ssm.model.InviteBall;
-import com.xiaoyi.ssm.model.InviteBallAA;
-import com.xiaoyi.ssm.model.Member;
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 import com.xiaoyi.ssm.util.Arith;
+import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
-import com.xiaoyi.ssm.util.MapUtils;
 import com.xiaoyi.ssm.util.RedisUtil;
-import com.xiaoyi.ssm.util.Utils;
-import com.xiaoyi.ssm.wxPay.AES;
+import com.xiaoyi.ssm.wxPay.WXConfig;
 import com.xiaoyi.ssm.wxPay.WXPayUtil;
+
+import cn.hutool.http.HttpUtil;
 
 public class Test {
 
 	private static Logger logger = Logger.getLogger(Test.class);
 
-	static int maxBox(int beerNum) {
-		int allBox = beerNum; // 总兑换数量
-		int allGai = beerNum; // 盖子数量
-		int allBeer = beerNum; // 瓶子数量
-		int i = 1;
-		while (allBox >= 2 || allGai >= 4) {
-			System.out.print("第" + i + "次,已兑换矿泉水" + allBeer + "瓶,上次已兑换"+allBox+"瓶矿泉水,");
-			int x = allBox % 2;// 剩余瓶子
-			int y = (allBox - x) / 2;// 可兑换数量
-			System.out.print("瓶子剩余" + allBox + "个,可兑换"+y+"瓶矿泉水,");
-			int a = allGai % 4;// 剩余盖子
-			int b = (allGai - a) / 4;// 可兑换数量
-			System.out.print("盖子剩余" + allGai + "个,可兑换"+b+"瓶矿泉水,");
-			allBox = x + y + b; // 剩余瓶子加上瓶子兑换的矿泉水数再加上盖子兑换的矿泉水数等于最终剩余瓶子
-			allGai = a + b + y; // 剩余盖子加上盖子兑换的矿泉水数再加上瓶子兑换的矿泉水数等于最终剩余盖子
-			allBeer += y + b; // 本次兑换的总矿泉水数
-			System.out.println("共可兑换" + allBox + "瓶矿泉水");
-			i++;
-		}
-		return allBeer;
-	}
-
+	
+	
 	public static void main(String[] args) throws Exception {
 		
-		int sum = 0;
-		if (sum == 1) 
-			System.out.println("0");
-		else 
-			if (sum == 1) 
-				System.out.println("1");
-			else 
-				System.out.println("2");
-				System.out.println("4");
+		System.out.println(Arith.round(10/100.0,2));
 		
-			System.out.println("3");
-
-			
-			
-			
+//		// 预定通知消息
+//		JSONObject datajson = new JSONObject();
+//		datajson.put("first", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(new Date()) + "\"}"));
+//		datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"100001\"}"));
+//		datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"网球场预定\"}"));
+//		datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"超时确认\"}"));
+//		datajson.put( "remark",
+//				JSONObject.parseObject("{\"value\":\"球友我小时候可帅了(手机15207108156)申请预约球场东边球场，日期 2018-11-16，时段 12:00-13:00用场，超过三十分钟未确认，自动取消。\"}"));
+//		logger.info(WXPayUtil.sendWXappTemplate("oozuywqi1Ivg1SljKJ7LussZ6Zq8", WXConfig.wxTemplateId, "/pages/index/index", datajson));
+		
 //		System.out.println((int) MapUtils.getDistance(114, 22, 114.3, 22.3));
 //		Date date1 = DateUtil.parse("2018-06-25");
 //		Date date2 = DateUtil.parse("2018-11-15");
 //		System.out.println(DateUtil.betweenDay(date1, date2, true));
 //		System.out.println(137/7);
 		
-		String string = "/WebBackAPI/admin/inviteBall/listview";
-		String[] strings = string.split("/");
-		System.err.println();
+//		String string = "/WebBackAPI/admin/inviteBall/listview";
+//		String[] strings = string.split("/");
+//		System.err.println();
 //		System.out.println("最终兑换"+maxBox(10)+ "瓶矿泉水");
 //		WXUtil.weiXinRefund("85f730b12aee4bb5af5b338d74ab4eba", 0.5, 0.5, "", 1);
 
@@ -205,4 +177,28 @@ public class Test {
 		
 //		System.out.println(Utils.countFee(5,1));
 	}
+	
+
+	static int maxBox(int beerNum) {
+		int allBox = beerNum; // 总兑换数量
+		int allGai = beerNum; // 盖子数量
+		int allBeer = beerNum; // 瓶子数量
+		int i = 1;
+		while (allBox >= 2 || allGai >= 4) {
+			System.out.print("第" + i + "次,已兑换矿泉水" + allBeer + "瓶,上次已兑换"+allBox+"瓶矿泉水,");
+			int x = allBox % 2;// 剩余瓶子
+			int y = (allBox - x) / 2;// 可兑换数量
+			System.out.print("瓶子剩余" + allBox + "个,可兑换"+y+"瓶矿泉水,");
+			int a = allGai % 4;// 剩余盖子
+			int b = (allGai - a) / 4;// 可兑换数量
+			System.out.print("盖子剩余" + allGai + "个,可兑换"+b+"瓶矿泉水,");
+			allBox = x + y + b; // 剩余瓶子加上瓶子兑换的矿泉水数再加上盖子兑换的矿泉水数等于最终剩余瓶子
+			allGai = a + b + y; // 剩余盖子加上盖子兑换的矿泉水数再加上瓶子兑换的矿泉水数等于最终剩余盖子
+			allBeer += y + b; // 本次兑换的总矿泉水数
+			System.out.println("共可兑换" + allBox + "瓶矿泉水");
+			i++;
+		}
+		return allBeer;
+	}
+
 }

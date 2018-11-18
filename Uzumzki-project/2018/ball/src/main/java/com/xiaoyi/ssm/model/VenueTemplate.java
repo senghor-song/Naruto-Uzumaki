@@ -7,7 +7,8 @@ import java.util.Date;
  * 实体
  */
 public class VenueTemplate implements Serializable {
-    /** 场馆模板 */
+
+	/** 场馆模板 */
     private String id;
 
     /** 创建时间 */

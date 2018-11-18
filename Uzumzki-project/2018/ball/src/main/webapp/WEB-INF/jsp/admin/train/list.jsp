@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
@@ -126,6 +127,7 @@
                         ]
                     },
                     menuItem: {
+                    	<c:if test="${btn131 == 1}">
                         item1: {
                             name: "查看", callback: function (key, opt) {
                                 $.showContentMenu(key, opt)
@@ -147,6 +149,7 @@
                                 });
                             }
                         }
+                    	</c:if>
                     }
                 });
             }

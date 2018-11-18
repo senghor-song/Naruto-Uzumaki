@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
@@ -29,31 +30,14 @@
                                 <div class="card-header">
                             		<h3 class="card-title">
                                         <div class="row">
-                                            <div class="col-lg-4 btncaozuo">
-                                                <button class="btn btn-primary btn-sm mr-2" id="applyStaff">加入申请</button>
-                                            </div>
-                                        </div>
+											<c:if test="${btn413 == 1}">
+												<div class="col-lg-4 btncaozuo">
+													<button class="btn btn-primary btn-sm mr-2" id="applyStaff">加入申请</button>
+												</div>
+											</c:if>
+										</div>
                                     </h3>
                                 </div>
-                                <!--<div class="card-header">
-                                    <h3 class="card-title">
-                                        <div class="row">
-                                            <div class="col-lg-4 btncaozuo">
-                                                &nbsp;
-                                            </div>
-                                        </div>
-                                    </h3>
-                                    <div class="card-tools">
-                                        <div class="input-group input-group-sm" style="width: 250px;">
-                                            <input class="form-control float-right" id="keyword" name="table_search" type="text" placeholder>
-                                            <div class="input-group-append">
-                                                <button class="btn btn-default" id="btnSearch" type="submit">
-                                                    <i class="fa fa-search"></i> 搜索
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>-->
 
                                 <div class="card-body table-responsive p-0">
                                     <table id="tableList"></table>
@@ -149,11 +133,8 @@
                             ]
                         },
                         menuItem: {
-                            /*item1: {
-                                name: "查看", callback: function (key, opt) {
-                                    $.showContentMenu(key, opt, 236);
-                                }
-                            },*/
+
+    						<c:if test="${btn411 == 1}">
                             item2: {
                                 name: "变更", callback: function (key, opt) {
                                		layer.open({
@@ -172,6 +153,8 @@
                                     });
                                 }
                             },
+                            </c:if>
+    						<c:if test="${btn412 == 1}">
                             item3: {
                                 name: "删除", callback: function (key, opt) {
                                 	var staffId = $(this).find("td").eq(0).attr('title');
@@ -195,6 +178,7 @@
                                     });
                                 }
                             },
+                            </c:if>
 
                         }
                     });

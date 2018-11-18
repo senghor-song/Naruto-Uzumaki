@@ -88,7 +88,7 @@
     
 	<div class="contextMenuDialog">
 		<div class="row">
-	    	<div class="card-body col-lg-6">
+	    	<div class="card-body col-lg-5">
 				<div class="row">
 					<div class="input-group input-group-sm float-right">
 						<select class="form-control float-right" id="venueSelectType">
@@ -117,7 +117,7 @@
 				    height:  100%;
 				    width:  100%; ">>>>>></br>批量执行</br>>>>>></button>
             </div>
-            <div class="card-body col-lg-5">
+            <div class="card-body col-lg-6">
 	            <div class="return" style="
 	            	border: 1px solid #a8acb1;
 				    height:  100%;
@@ -225,6 +225,10 @@
 		        $('.cell-input').each(function(){
 		            priceArr.push($(this).val());//添加至数组
 		        });
+		        if(venues.length == 0){
+					layer.msg("请选择要执行的场馆");
+		        	return;
+		        }
 				$.ajax({
 					type : "POST", //提交方式  
 					url : "/WebBackAPI/admin/venue/saveVenueTemplateAll",//路径  

@@ -33,9 +33,9 @@ public class WXConfig {
 	public static final String paternerKey = "ekeEKE00000000000000000000000000";
 
 	/** 小程序订场支付通知地址 */
-	public static final String NOTIFY_URL1 = "https://ball.ekeae.com/WebBackAPI/memberapi/order/weixinNotify";
+	public static final String NOTIFY_URL1 = "https://ball.ekeae.com/WebBackAPI/venue/manager/order/weixinNotify";
 	/** 公众号约球支付通知地址 */
-	public static final String NOTIFY_URL2 = "https://ball.ekeae.com/WebBackAPI/memberapi/order/weixinNotify";
+	public static final String NOTIFY_URL2 = "https://ball.ekeae.com/WebBackAPI/venue/manager/order/weixinNotify";
 	/** 小程序约球支付通知地址 */
 	public static final String APPNOTIFY_URL = "https://ball.ekeae.com/WebBackAPI/wxapp/inviteBall/weixinNotify";
 	
@@ -86,6 +86,19 @@ public class WXConfig {
 	 * 活动时间keyword3<br>
 	 **/
 	public static final String templateId3 = "nBeb55DKilg5pHld25X4FRRXYpoarFaxcnbft79t63w";
+	
+	
+
+	/** 
+	 * 订单进度提醒<br>
+	 * first<br>
+	 * 订单编号keyword1<br>
+	 * 订单内容keyword2<br>
+	 * 订单状态keyword2<br>
+	 * remark<br>
+	 **/
+	public static final String wxTemplateId = "k5a271O9L4aW1JGxeUroqGpLn0bJhz-f6JNciftAkIc";
+	
 	
 	// 获取ip
 	public static String getIP(HttpServletRequest request) {

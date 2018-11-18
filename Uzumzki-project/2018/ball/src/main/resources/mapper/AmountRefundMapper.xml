@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xiaoyi.ssm.dao.AmountRefundMapper">
 	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.AmountRefund">
-		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<id column="ID" jdbcType="CHAR" property="id" />
 		<result column="Content" jdbcType="VARCHAR" property="content" />
 		<result column="Amount_sum" jdbcType="DOUBLE" property="amountSum" />
 		<result column="Amount" jdbcType="DOUBLE" property="amount" />
@@ -12,31 +12,36 @@
 		<result column="Refund_pay_type" jdbcType="INTEGER" property="refundPayType" />
 		<result column="Refund_status" jdbcType="INTEGER" property="refundStatus" />
 		<result column="Refund_remark" jdbcType="VARCHAR" property="refundRemark" />
+		<result column="Refund_fee" jdbcType="DOUBLE" property="refundFee" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, Content, Amount_sum, Amount, Source_id, Refund_time, Refund_source, Refund_pay_type,
-		Refund_status, Refund_remark
+		ID, Content, Amount_sum, Amount, Source_id, Refund_time, Refund_source,
+		Refund_pay_type,
+		Refund_status, Refund_remark, Refund_fee
 	</sql>
-	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from AmountRefund
-		where ID = #{id,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
 		delete from AmountRefund
-		where ID = #{id,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.AmountRefund">
 		insert into AmountRefund (ID, Content, Amount_sum,
 		Amount, Source_id, Refund_time,
 		Refund_source, Refund_pay_type, Refund_status,
-		Refund_remark)
-		values (#{id,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{amountSum,jdbcType=DOUBLE},
+		Refund_remark, Refund_fee)
+		values (#{id,jdbcType=CHAR}, #{content,jdbcType=VARCHAR},
+		#{amountSum,jdbcType=DOUBLE},
 		#{amount,jdbcType=DOUBLE}, #{sourceId,jdbcType=VARCHAR}, #{refundTime,jdbcType=TIMESTAMP},
 		#{refundSource,jdbcType=INTEGER}, #{refundPayType,jdbcType=INTEGER},
 		#{refundStatus,jdbcType=INTEGER},
-		#{refundRemark,jdbcType=VARCHAR})
+		#{refundRemark,jdbcType=VARCHAR}, #{refundFee,jdbcType=DOUBLE})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.AmountRefund">
 		insert into AmountRefund
@@ -71,10 +76,13 @@
 			<if test="refundRemark != null">
 				Refund_remark,
 			</if>
+			<if test="refundFee != null">
+				Refund_fee,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
-				#{id,jdbcType=VARCHAR},
+				#{id,jdbcType=CHAR},
 			</if>
 			<if test="content != null">
 				#{content,jdbcType=VARCHAR},
@@ -102,6 +110,9 @@
 			</if>
 			<if test="refundRemark != null">
 				#{refundRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="refundFee != null">
+				#{refundFee,jdbcType=DOUBLE},
 			</if>
 		</trim>
 	</insert>
@@ -135,8 +146,11 @@
 			<if test="refundRemark != null">
 				Refund_remark = #{refundRemark,jdbcType=VARCHAR},
 			</if>
+			<if test="refundFee != null">
+				Refund_fee = #{refundFee,jdbcType=DOUBLE},
+			</if>
 		</set>
-		where ID = #{id,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.AmountRefund">
 		update AmountRefund
@@ -148,7 +162,8 @@
 		Refund_source = #{refundSource,jdbcType=INTEGER},
 		Refund_pay_type = #{refundPayType,jdbcType=INTEGER},
 		Refund_status = #{refundStatus,jdbcType=INTEGER},
-		Refund_remark = #{refundRemark,jdbcType=VARCHAR}
-		where ID = #{id,jdbcType=VARCHAR}
+		Refund_remark = #{refundRemark,jdbcType=VARCHAR},
+		Refund_fee = #{refundFee,jdbcType=DOUBLE}
+		where ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

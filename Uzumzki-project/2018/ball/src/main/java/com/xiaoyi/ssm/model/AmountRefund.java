@@ -7,7 +7,7 @@ import java.util.Date;
  * 金额退款表实体
  */
 public class AmountRefund implements Serializable {
-    /** 退款ID */
+    /** 退款 */
     private String id;
 
     /** 退款理由 */
@@ -37,22 +37,25 @@ public class AmountRefund implements Serializable {
     /** 退款返回通知(仅限第一次返回) */
     private String refundRemark;
 
+    /** 退款手续费 */
+    private Double refundFee;
+
     /**
      * AmountRefund
      */
     private static final long serialVersionUID = 1L;
 
     /**
-     * 退款ID
-     * @return ID 退款ID
+     * 退款
+     * @return ID 退款
      */
     public String getId() {
         return id;
     }
 
     /**
-     * 退款ID
-     * @param id 退款ID
+     * 退款
+     * @param id 退款
      */
     public void setId(String id) {
         this.id = id == null ? null : id.trim();
@@ -200,5 +203,21 @@ public class AmountRefund implements Serializable {
      */
     public void setRefundRemark(String refundRemark) {
         this.refundRemark = refundRemark == null ? null : refundRemark.trim();
+    }
+
+    /**
+     * 退款手续费
+     * @return Refund_fee 退款手续费
+     */
+    public Double getRefundFee() {
+        return refundFee;
+    }
+
+    /**
+     * 退款手续费
+     * @param refundFee 退款手续费
+     */
+    public void setRefundFee(Double refundFee) {
+        this.refundFee = refundFee;
     }
 }

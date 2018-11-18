@@ -63,5 +63,13 @@ public interface MemberMapper extends BaseMapper<Member, String>{
 	 * @date 2018年10月23日 上午11:57:56 
 	 */ 
 	List<Member> selectByApp();
+
+	/**  
+	 * @Description: 根据用户ID删除openid
+	 * @author 宋高俊  
+	 * @return 
+	 * @date 2018年10月23日 上午11:57:56 
+	 */ 
+	int updateByMemberOpenID(String id);
 	
 }

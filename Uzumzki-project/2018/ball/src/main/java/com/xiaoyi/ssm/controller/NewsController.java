@@ -23,9 +23,12 @@ import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.News;
 import com.xiaoyi.ssm.model.NewsError;
 import com.xiaoyi.ssm.model.NewsLog;
+import com.xiaoyi.ssm.model.Permission;
 import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.service.NewsErrorService;
 import com.xiaoyi.ssm.service.NewsService;
+import com.xiaoyi.ssm.service.OperationLogService;
+import com.xiaoyi.ssm.service.PermissionService;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
@@ -45,6 +48,10 @@ public class NewsController {
 	private NewsLogMapper newsLogMapper;
 	@Autowired
 	private NewsErrorService newsErrorService;
+	@Autowired
+	private PermissionService permissionService;
+    @Autowired
+    private OperationLogService operationLogService;
 
 	/**
 	 * @Description: 资讯列表页面
@@ -52,7 +59,12 @@ public class NewsController {
 	 * @date 2018年7月25日 下午10:29:51
 	 */
 	@RequestMapping("/listview")
-	public String listview() {
+	public String listview(HttpServletRequest request, Model model) {
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		List<Permission> list = permissionService.selectByBtu(staff.getPower(), "33");
+		for (int i = 0; i < list.size(); i++) {
+			model.addAttribute("btn"+list.get(i).getId(), "1");
+		}
 		return "admin/news/list";
 	}
 
@@ -172,21 +184,46 @@ public class NewsController {
 	public ApiMessage saveNews(HttpServletRequest request, News news) {
 		// 登录用户
 		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+
+		NewsLog newsLog = new NewsLog();
+		newsLog.setId(Utils.getUUID());
+		newsLog.setCreateTime(new Date());
+		newsLog.setStaffId(staff.getId());
+		
 		if (StringUtil.isBank(news.getId())) {
 			news.setId(Utils.getUUID());
 			news.setCreateTime(new Date());
 			news.setModifyTime(new Date());
 			newsService.insertSelective(news);
+			operationLogService.saveLog(staff.getId(), "资讯：新增"+news.getTitle(), Utils.getIpAddr(request));
+			newsLog.setContent("资讯：新增"+news.getTitle());
 		}else {
+			News lodNews = newsService.selectByPrimaryKey(news.getId());
+			
+			String content = "";
+			if (!lodNews.getRemark().equals(news.getRemark())) {
+				content += "备注修改为" + news.getRemark() + "。";
+			}
+			if (!lodNews.getTitle().equals(news.getTitle())) {
+				content += "标题修改为" + news.getTitle() + "。";
+			}
+			if (!lodNews.getContentSimple().equals(news.getContentSimple())) {
+				content += "摘要修改为" + news.getContentSimple() + "。";
+			}
+			if (!lodNews.getHeadImage().equals(news.getHeadImage())) {
+				content += "封面图修改为" + news.getHeadImage() + "。";
+			}
+			if (!lodNews.getContent().equals(news.getContent())) {
+				content += "修改内容" + "。";
+			}
+
+			operationLogService.saveLog(staff.getId(), "资讯："+content, Utils.getIpAddr(request));
+			newsLog.setContent(content);
+			
 			news.setModifyTime(new Date());
 			newsService.updateByPrimaryKeySelective(news);
 		}
-		NewsLog newsLog = new NewsLog();
-		newsLog.setId(Utils.getUUID());
-		newsLog.setCreateTime(new Date());
-		newsLog.setStaffId(staff.getId());
 		newsLog.setNewsId(news.getId());
-		newsLog.setContent("修改资讯");
 		newsLogMapper.insertSelective(newsLog);
 		
 		return new ApiMessage(200, "修改成功");

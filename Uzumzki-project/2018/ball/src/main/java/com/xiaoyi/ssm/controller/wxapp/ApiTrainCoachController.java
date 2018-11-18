@@ -26,9 +26,7 @@ import com.xiaoyi.ssm.service.TrainTeamCoachService;
 import com.xiaoyi.ssm.service.TrainTeamImageService;
 import com.xiaoyi.ssm.service.TrainTeamService;
 import com.xiaoyi.ssm.service.TrainTrialService;
-import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
-import com.xiaoyi.ssm.util.MapUtils;
 import com.xiaoyi.ssm.util.RedisUtil;
 
 /**
@@ -66,7 +64,7 @@ public class ApiTrainCoachController {
 	@RequestMapping(value = "/manager/getMyTrainCoach")
 	@ResponseBody
 	public ApiMessage getMyTrainCoach(HttpServletRequest request, String trainTeamID) {
-
+		
 		List<Map<String, Object>> listMaps = new ArrayList<Map<String, Object>>();
 		List<TrainTeamCoach> list = trainTeamCoachService.selectByTrainTeamID(trainTeamID);
 		for (int i = 0; i < list.size(); i++) {
@@ -79,6 +77,38 @@ public class ApiTrainCoachController {
 			listMaps.add(map);
 		}
 		return new ApiMessage(200, "获取成功", listMaps);
+	}
+	
+	/**  
+	 * @Description: 修改教练接口
+	 * @author 宋高俊  
+	 * @param request
+	 * @param trainTeamID
+	 * @param coachid
+	 * @param manager
+	 * @param type
+	 * @param showFlag
+	 * @return 
+	 * @date 2018年11月3日 下午3:39:23 
+	 */ 
+	@RequestMapping(value = "/manager/updateTrainCoach")
+	@ResponseBody
+	public ApiMessage updateTrainCoach(HttpServletRequest request, String trainTeamId, String trainCoachId, Integer manager, Integer type, Integer showFlag, String name) {
+		TrainTeamCoach trainTeamCoach = trainTeamCoachService.selectByCoachTeam(trainCoachId, trainTeamId);
+		trainTeamCoach.setManager(manager);
+		trainTeamCoach.setTeachType(type);
+		trainTeamCoach.setShowFlag(showFlag);
+		int flag = trainTeamCoachService.updateByPrimaryKeySelective(trainTeamCoach);
+		if (flag > 0) {
+			TrainCoach trainCoach = new TrainCoach();
+			trainCoach.setId(trainTeamCoach.getTrainCoachId());
+			trainCoach.setName(name);
+			trainCoach.setModifyTime(new Date());
+			trainCoachService.updateByPrimaryKeySelective(trainCoach);
+			return new ApiMessage(200, "修改成功");
+		} else {
+			return new ApiMessage(400, "修改失败");
+		}
 	}
 
 	/**

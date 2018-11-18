@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -22,9 +23,14 @@ import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.City;
 import com.xiaoyi.ssm.model.CityLog;
 import com.xiaoyi.ssm.model.District;
+import com.xiaoyi.ssm.model.Permission;
 import com.xiaoyi.ssm.model.Staff;
+import com.xiaoyi.ssm.model.TrainCoach;
 import com.xiaoyi.ssm.service.CityService;
 import com.xiaoyi.ssm.service.DistrictService;
+import com.xiaoyi.ssm.service.OperationLogService;
+import com.xiaoyi.ssm.service.PermissionService;
+import com.xiaoyi.ssm.service.TrainCoachService;
 import com.xiaoyi.ssm.util.Utils;
 
 /**  
@@ -42,6 +48,12 @@ public class CityController {
 	private DistrictService districtService;
 	@Autowired
 	private CityLogMapper cityLogMapper;
+	@Autowired
+	private PermissionService permissionService;
+	@Autowired
+	private TrainCoachService trainCoachService;
+    @Autowired
+    private OperationLogService operationLogService;
 
 	/**
 	 * @Description: 城市页面
@@ -49,7 +61,12 @@ public class CityController {
 	 * @date 2018年9月21日 下午3:55:30 
 	 */
 	@RequestMapping(value = "/listview")
-	public String listview() {
+	public String listview(HttpServletRequest request, Model model) {
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		List<Permission> list = permissionService.selectByBtu(staff.getPower(), "32");
+		for (int i = 0; i < list.size(); i++) {
+			model.addAttribute("btn"+list.get(i).getId(), "1");
+		}
 		return "admin/city/list";
 	}
 
@@ -75,22 +92,30 @@ public class CityController {
 			map.put("cityno", city.getCityno());// 编号
 			map.put("initial", city.getInitial());// 字母
 			map.put("hotflag", city.getHotflag() == 0 ? "否" : "是");// 热门
+			map.put("mapflag", city.getMapflag() == 0 ? "否" : "是");// 是否有地图
+			map.put("cityflag", city.getCityflag() == 0 ? "关闭" : "开放");// 是否开放
 			map.put("city", city.getCity());// 城市
 			
 			List<District> list2 = districtService.selectByCityId(city.getId());
-			String distinctString = "";
+			/*String distinctString = "";
 			for (District distinct : list2) {
 				distinctString += distinct.getDistrict() + ",";
 			}
 			if (distinctString.length() > 0) {
 				distinctString = distinctString.substring(0, distinctString.length()-1);
-			}
-			map.put("distinct", distinctString);// 下属区县
-			map.put("map", city.getMapflag() == 0 ? "否" : "是");// 场馆数
+			}*/
+			map.put("distinct", list2.size());// 下属区县
 //			map.put("venuesum", city.getVenuesum());// 场馆数
 			
 			Integer cityLogSum = cityLogMapper.countByCity(city.getId());
 			map.put("cityLogSum", cityLogSum);// 日志
+			
+			// 获取缺省教练
+			TrainCoach trainCoach = trainCoachService.selectByDefault(city.getId());
+			if (trainCoach != null) {
+				map.put("coachPrice", trainCoach.getMemberId());// 教练价格
+			}
+			
 			listMap.add(map);
 		}
 		return new AdminMessage(pageInfo.getTotal(), listMap);
@@ -170,10 +195,13 @@ public class CityController {
 		cityLog.setCityid(id);
 		if (check == 1) {
 			cityLog.setContent("设为热门城市");
+			operationLogService.saveLog(staff.getId(), "设为热门城市", Utils.getIpAddr(request));
 		}else {
 			cityLog.setContent("取消热门城市");
+			operationLogService.saveLog(staff.getId(), "取消热门城市", Utils.getIpAddr(request));
 		}
 		cityLogMapper.insertSelective(cityLog);
+
 		return new ApiMessage(200, "修改成功");
 	}
 	
@@ -202,10 +230,75 @@ public class CityController {
 		cityLog.setCityid(id);
 		if (check == 1) {
 			cityLog.setContent("设为地图显示");
+			operationLogService.saveLog(staff.getId(), "设为地图显示", Utils.getIpAddr(request));
 		}else {
 			cityLog.setContent("取消地图显示");
+			operationLogService.saveLog(staff.getId(), "取消地图显示", Utils.getIpAddr(request));
 		}
 		cityLogMapper.insertSelective(cityLog);
 		return new ApiMessage(200, "修改成功");
 	}
+
+	/**
+	 * @Description: 修改是否开放入口
+	 * @author 宋高俊
+	 * @param id
+	 * @param check
+	 * @return
+	 * @date 2018年10月20日 下午2:23:24
+	 */
+	@RequestMapping(value = "/uodateCityFlag")
+	@ResponseBody
+	public ApiMessage uodateCityFlag(String id, Integer check, HttpServletRequest request) {
+		// 登录用户
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+
+		City city = cityService.selectByPrimaryKey(id);
+		city.setCityflag(check);
+		cityService.updateByPrimaryKeySelective(city);
+
+		CityLog cityLog = new CityLog();
+		cityLog.setId(Utils.getUUID());
+		cityLog.setCreatetime(new Date());
+		cityLog.setStaffid(staff.getId());
+		cityLog.setCityid(id);
+		if (check == 1) {
+			cityLog.setContent("开放城市入口");
+			operationLogService.saveLog(staff.getId(), "开放城市入口", Utils.getIpAddr(request));
+		}else {
+			cityLog.setContent("关闭城市入口");
+			operationLogService.saveLog(staff.getId(), "关闭城市入口", Utils.getIpAddr(request));
+		}
+		cityLogMapper.insertSelective(cityLog);
+		return new ApiMessage(200, "修改成功");
+	}
+
+	/**  
+	 * @Description: 修改缺省教练价格
+	 * @author 宋高俊  
+	 * @param id
+	 * @param price
+	 * @return 
+	 * @date 2018年11月7日 上午9:41:55 
+	 */ 
+	@RequestMapping(value = "/updateCoach")
+	@ResponseBody
+	public ApiMessage updateCoach(String id, String price) {
+		TrainCoach trainCoach = trainCoachService.selectByDefault(id);
+		if (trainCoach != null) {
+			trainCoach.setMemberId(price);
+			trainCoachService.updateByPrimaryKeySelective(trainCoach);
+		}else {
+			trainCoach = new TrainCoach();
+			trainCoach.setId(id);
+			trainCoach.setCreateTime(new Date());
+			trainCoach.setModifyTime(new Date());
+			trainCoach.setName("陪练");
+			trainCoach.setHeadImage("https://ekeae-image.oss-cn-shenzhen.aliyuncs.com/baseImage/venue-coach.png");
+			trainCoach.setMemberId(price);
+			trainCoachService.insertSelective(trainCoach);
+		}
+		return new ApiMessage(200, "");
+	}
+	
 }

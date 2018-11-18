@@ -73,6 +73,7 @@ public class ApiCommonController {
 			RedisUtil.addRedis(Global.REDIS_WXAPP_SESSION, getCodeResultJson.getString("unionid"), getCodeResultJson);
 			map.put("token", getCodeResultJson.getString("unionid"));
 			if (member != null) {
+				// 用户基本信息
 				map.put("appavatarurl", member.getAppavatarurl());
 				map.put("appnickname", member.getAppnickname());
 				member.setSessionKey(getCodeResultJson.getString("session_key"));// 将session_key存入缓存
@@ -80,6 +81,8 @@ public class ApiCommonController {
 
 				member.setUnionid(getCodeResultJson.getString("unionid"));
 				member.setAppopenid(getCodeResultJson.getString("openid"));
+				// 返回小程序的openid
+				map.put("openid", getCodeResultJson.getString("openid"));
 				memberService.updateByPrimaryKeySelective(member);
 			}
 		} catch (Exception e) {
@@ -99,7 +102,7 @@ public class ApiCommonController {
 	public ApiMessage createMember(String token, String nickName, String avatarUrl, Integer gender) {
 		JSONObject jsonObject = JSONObject.fromObject(RedisUtil.getRedisOne(Global.REDIS_WXAPP_SESSION, token));
 
-		Member member = memberService.selectByUnionid(jsonObject.getString("unionid"));
+		Member member = memberService.selectByUnionid(token);
 
 		if (member != null) {
 			member.setModifytime(new Date());
@@ -169,39 +172,5 @@ public class ApiCommonController {
 			return new ApiMessage(200, "每人退费金额不足0.01", arityAmount);
 		}
 	}
-
-	/**
-	 * @Description:
-	 * @author 宋高俊
-	 * @param url
-	 * @return
-	 * @date 2018年9月28日 上午11:27:47
-	 */
-	@RequestMapping(value = "/getJson")
-	@ResponseBody
-	public ApiMessage getJson(String url) {
-		String jsonString = HttpUtils.sendGet(url, null);
-		JSONObject jsonObject = JSONObject.fromObject(jsonString);
-		return new ApiMessage(200, "", jsonObject);
-	}
 	
-	/**
-	 * @Description:
-	 * @author 宋高俊
-	 * @param url
-	 * @return
-	 * @date 2018年9月28日 上午11:27:47
-	 */
-	@RequestMapping(value = "/ifMemberPhone")
-	@ResponseBody
-	public ApiMessage ifMemberPhone(String token) {
-
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
-		if (StringUtil.isBank(member.getPhone())) {
-			return new ApiMessage(200, "未绑定手机号", false);
-		}else {
-			return new ApiMessage(200, "已绑定", true);
-		}
-	}
-
 }

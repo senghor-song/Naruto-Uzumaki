@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
@@ -44,10 +45,12 @@
                                         <div class="card-header">
                                             <h3 class="card-title">
                                                 <div class="row">
-                                                    <div class="col-lg-4 btncaozuo">
-                                                        <button class="btn btn-primary btn-sm" id="addNews">创建</button>
-                                                    </div>
-                                                </div>
+													<c:if test="${btn334 == 1}">
+														<div class="col-lg-4 btncaozuo">
+															<button class="btn btn-primary btn-sm" id="addNews">创建</button>
+														</div>
+													</c:if>
+												</div>
                                             </h3>
                                             <!-- <div class="card-tools">
                                                 <div class="input-group input-group-sm" style="width: 300px;">
@@ -163,11 +166,14 @@
                             ]
                         },
                         menuItem: {
+    						<c:if test="${btn331 == 1}">
                             item1: {
                                 name: "编辑", callback: function (key, opt) {
                                 	$.showContentMenuOpen(key, opt, 500, "/WebBackAPI/admin/news/edit?id="+ $(this).find("td").eq(0).attr('title'), "look");
                                 }
                             },
+                            </c:if>
+    						<c:if test="${btn332 == 1}">
                             item2: {
                                 name: "日志", callback: function (key, opt) {
                                     $.showContentMenu(key, opt)
@@ -189,6 +195,8 @@
                                     });
                                 }
                             },
+                            </c:if>
+    						<c:if test="${btn333 == 1}">
                             item3: {
                                 name: "纠错", callback: function (key, opt) {
                                     $.showContentMenu(key, opt)
@@ -210,6 +218,7 @@
                                     });
                                 }
                             },
+                            </c:if>
 
                         }
                     });

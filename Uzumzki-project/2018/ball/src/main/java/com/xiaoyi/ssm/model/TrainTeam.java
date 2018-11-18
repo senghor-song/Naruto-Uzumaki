@@ -82,6 +82,9 @@ public class TrainTeam implements Serializable {
     /** 状态0=禁用1=正常 */
     private Integer typeFlag;
 
+    /** 回款教练ID */
+    private String trainCoachId;
+
     /**
      * TrainTeam
      */
@@ -485,5 +488,21 @@ public class TrainTeam implements Serializable {
      */
     public void setTypeFlag(Integer typeFlag) {
         this.typeFlag = typeFlag;
+    }
+
+    /**
+     * 回款教练ID
+     * @return Train_coach_id 回款教练ID
+     */
+    public String getTrainCoachId() {
+        return trainCoachId;
+    }
+
+    /**
+     * 回款教练ID
+     * @param trainCoachId 回款教练ID
+     */
+    public void setTrainCoachId(String trainCoachId) {
+        this.trainCoachId = trainCoachId == null ? null : trainCoachId.trim();
     }
 }

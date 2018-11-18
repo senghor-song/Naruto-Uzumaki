@@ -24,6 +24,9 @@ public class City implements Serializable {
     /** 是否地图0=否1=是 */
     private Integer mapflag;
 
+    /** 是否开放0=否1=是 */
+    private Integer cityflag;
+
     /** 场馆数 */
     private Integer venuesum;
 
@@ -126,6 +129,22 @@ public class City implements Serializable {
      */
     public void setMapflag(Integer mapflag) {
         this.mapflag = mapflag;
+    }
+
+    /**
+     * 是否开放0=否1=是
+     * @return CityFlag 是否开放0=否1=是
+     */
+    public Integer getCityflag() {
+        return cityflag;
+    }
+
+    /**
+     * 是否开放0=否1=是
+     * @param cityflag 是否开放0=否1=是
+     */
+    public void setCityflag(Integer cityflag) {
+        this.cityflag = cityflag;
     }
 
     /**

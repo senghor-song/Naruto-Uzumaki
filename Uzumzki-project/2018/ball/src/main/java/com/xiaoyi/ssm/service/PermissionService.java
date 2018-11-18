@@ -30,4 +30,22 @@ public interface PermissionService extends BaseService<Permission, String> {
 	 */ 
 	Permission selectIsMenu(Integer rightType, String requestUri);
 
+	/**  
+	 * @Description: 查询后台权限页面数据
+	 * @author 宋高俊  
+	 * @return 
+	 * @date 2018年11月3日 上午10:59:53 
+	 */ 
+	List<Permission> selectByAdmin();
+
+	/**  
+	 * @Description: 根据用户级别和菜单ID查询子级权限
+	 * @author 宋高俊  
+	 * @param power
+	 * @param parentid
+	 * @return 
+	 * @date 2018年11月3日 下午2:12:06 
+	 */ 
+	List<Permission> selectByBtu(Integer power, String parentid);
+
 }

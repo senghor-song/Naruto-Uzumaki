@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 场馆申请入驻表
+ * 场馆申请入驻表实体
  */
 public class VenueEnter implements Serializable {
 	private Staff staff;
@@ -33,6 +33,9 @@ public class VenueEnter implements Serializable {
 
     /** 申请人 */
     private String memberId;
+
+    /** 来源0=客户端1=短信 */
+    private Integer sourceFlag;
 
     /** 球场名称 */
     private String title;
@@ -139,6 +142,22 @@ public class VenueEnter implements Serializable {
      */
     public void setMemberId(String memberId) {
         this.memberId = memberId == null ? null : memberId.trim();
+    }
+
+    /**
+     * 来源0=客户端1=短信
+     * @return Source_flag 来源0=客户端1=短信
+     */
+    public Integer getSourceFlag() {
+        return sourceFlag;
+    }
+
+    /**
+     * 来源0=客户端1=短信
+     * @param sourceFlag 来源0=客户端1=短信
+     */
+    public void setSourceFlag(Integer sourceFlag) {
+        this.sourceFlag = sourceFlag;
     }
 
     /**

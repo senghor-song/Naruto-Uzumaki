@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
@@ -124,6 +125,7 @@
                         ]
                     },
                     menuItem: {
+                    	<c:if test="${btn121 == 1}">
                         item1: {
                             name: "日志", callback: function (key, opt) {
                             	
@@ -146,6 +148,7 @@
                                 });
                             }
                         }
+                    	</c:if>
                     }
                 });
             }

@@ -125,6 +125,10 @@ public class ApiVenueTemplateController {
 	@ResponseBody
 	public ApiMessage deleteTmplate(String id) {
 		VenueTemplate venueTemplate = venueTemplateService.selectByPrimaryKey(id);
+		if (id.equals(venueTemplate.getVenueid())) {
+			return new ApiMessage(400, "删除失败,系统模板不能删除");
+		}
+		
 		if (venueTemplate.getDefaultflag() == 1) {
 			// 现有默认模板删除后,将系统模板设为默认
 			VenueTemplate sysVenueTemplate = venueTemplateService.selectByVenueTemplate(venueTemplate.getVenueid(), venueTemplate.getVenueid());
@@ -147,10 +151,9 @@ public class ApiVenueTemplateController {
 	@RequestMapping(value = "/saveTmplate")
 	@ResponseBody
 	public ApiMessage saveTmplate(String pricestr, String name, Integer defaultFlag, HttpServletRequest request, String id) {
-		
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
+
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 
 		Venue venue = venueService.selectByPrimaryKey(id);
 
@@ -174,7 +177,7 @@ public class ApiVenueTemplateController {
 		
 		int flag = venueTemplateService.insertSelective(venueTemplate);
 		if (flag > 0 ) {
-			return new ApiMessage(200, "添加成功");
+			return new ApiMessage(200, "添加成功", venueTemplate.getId());
 		}
 		return new ApiMessage(400, "添加失败");
 	}
@@ -190,10 +193,9 @@ public class ApiVenueTemplateController {
 	@RequestMapping(value = "/setDefaultTmplate")
 	@ResponseBody
 	public ApiMessage setDefaultTmplate(String id, String venueId, HttpServletRequest request) {
-		
-		HttpSession session = request.getSession();
-		String openid = (String) session.getAttribute("openid");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, openid);
+
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 
 		Venue venue = venueService.selectByPrimaryKey(venueId);
 

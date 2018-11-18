@@ -16,7 +16,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
 
@@ -32,10 +31,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.xiaoyi.ssm.dto.AdminMessage;
+import com.xiaoyi.ssm.dto.AdminPage;
 import com.xiaoyi.ssm.dto.ApiMessage;
+import com.xiaoyi.ssm.model.City;
+import com.xiaoyi.ssm.model.District;
+import com.xiaoyi.ssm.model.OperationLog;
 import com.xiaoyi.ssm.model.Permission;
 import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.model.StaffApply;
+import com.xiaoyi.ssm.model.TrainCoach;
+import com.xiaoyi.ssm.service.OperationLogService;
 import com.xiaoyi.ssm.service.PermissionService;
 import com.xiaoyi.ssm.service.StaffApplyService;
 import com.xiaoyi.ssm.service.StaffService;
@@ -64,6 +72,8 @@ public class AdminCommonController {
     private StaffApplyService staffApplyService;
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    private OperationLogService operationLogService;
     
     /**
 	 * @Description: 后台登录页面
@@ -71,9 +81,14 @@ public class AdminCommonController {
 	 * @date 2018年7月25日 下午12:15:57
 	 */
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
-	public String testLogin(Model model, HttpServletRequest request) {
+	public String testLogin(Model model, HttpServletRequest request, String id) {
 //		Staff staff = staffService.selectByPrimaryKey("72f2571706694e3fa0f10f451be7fad1");
-		Staff staff = staffService.selectByPrimaryKey("1");
+		Staff staff = new Staff();
+		if (StringUtil.isBank(id)) {
+			staff = staffService.selectByPrimaryKey("1");
+		}else {
+			staff = staffService.selectByPrimaryKey(id);
+		}
 		request.getSession().setAttribute("loginStaffInfo", staff);
 		return "redirect:/admin/common/index";
 	}
@@ -84,7 +99,8 @@ public class AdminCommonController {
 	 * @date 2018年7月25日 下午12:15:57
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String login() {
+	public String login(Model model) {
+		model.addAttribute("dateFlag", Global.DATE_STRING);
 		return "admin/WXlogin";
 	}
 	
@@ -98,6 +114,7 @@ public class AdminCommonController {
 	 */ 
 	@RequestMapping(value = "/authLogin")
 	public String authLogin(Model model, String code, String state, HttpServletRequest request) {
+		model.addAttribute("dateFlag", Global.DATE_STRING);
 		String requestUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=APPSECRET&code=CODE&grant_type=authorization_code"
 				.replace("APPID", WXConfig.appid_web).replace("APPSECRET", WXConfig.appSecret_web).replace("CODE", code);
 
@@ -146,6 +163,7 @@ public class AdminCommonController {
 				staffService.updateByPrimaryKeySelective(loginStaff);
 				// 保存登录信息
 				request.getSession().setAttribute("loginStaffInfo", loginStaff);
+				operationLogService.saveLog(loginStaff.getId(), "登录系统", Utils.getIpAddr(request));
 				return "redirect:/admin/common/index";
 			}else {
 				model.addAttribute("message", "您的账号未注册!");
@@ -371,5 +389,45 @@ public class AdminCommonController {
 	public ApiMessage deleteRedisupload(HttpServletRequest request, String redisname) {
 		RedisUtil.delRedis(Global.REDIS_SESSION_UPLOAD_MAP, request.getSession().getId() + redisname);
 		return ApiMessage.succeed();
+	}
+	
+	/**  
+	 * @Description: 操作日志数据
+	 * @author 宋高俊  
+	 * @param adminPage
+	 * @return 
+	 * @date 2018年11月7日 下午2:53:15 
+	 */ 
+	@RequestMapping(value = "/operationLog/list")
+	@ResponseBody
+	public AdminMessage operationLoglist(AdminPage adminPage) {
+		
+		PageHelper.startPage(adminPage.getPage(), adminPage.getLimit());
+		
+		List<OperationLog> list = operationLogService.selectByAll(null);
+		
+		PageInfo<OperationLog> pageInfo = new PageInfo<>(list);
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			OperationLog operationLog = list.get(i);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("id", operationLog.getId());// ID
+			map.put("content", DateUtil.getFormat(operationLog.getCreateTime()) + " " + operationLog.getStaff().getName() + " " + operationLog.getContent());// 内容
+			listMap.add(map);
+		}
+		return new AdminMessage(pageInfo.getTotal(), listMap);
+	}
+
+	/**  
+	 * @Description: 根据Url获取图片地址
+	 * @author 宋高俊  
+	 * @param urlStr
+	 * @return 
+	 * @date 2018年11月7日 下午8:19:05 
+	 */ 
+	@RequestMapping(value = "/getImageHttpUrl")
+	@ResponseBody
+	public ApiMessage getImageHttpUrl(String urlStr) {
+		return new ApiMessage(200,"获取成功",Utils.getImageHttpUrl(urlStr));
 	}
 }

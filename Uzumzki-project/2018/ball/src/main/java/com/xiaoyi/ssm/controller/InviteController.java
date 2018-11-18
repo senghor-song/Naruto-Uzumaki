@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -18,9 +21,12 @@ import com.xiaoyi.ssm.dto.AdminPage;
 import com.xiaoyi.ssm.model.InviteBall;
 import com.xiaoyi.ssm.model.InviteJoin;
 import com.xiaoyi.ssm.model.InviteLog;
+import com.xiaoyi.ssm.model.Permission;
+import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.service.InviteBallService;
 import com.xiaoyi.ssm.service.InviteJoinService;
 import com.xiaoyi.ssm.service.MemberService;
+import com.xiaoyi.ssm.service.PermissionService;
 import com.xiaoyi.ssm.util.DateUtil;
 
 /**
@@ -40,6 +46,8 @@ public class InviteController {
 	private InviteLogMapper inviteLogMapper;
 	@Autowired
 	private MemberService memberService;
+	@Autowired
+	private PermissionService permissionService;
 
 	/**
 	 * @Description: 约球页面
@@ -48,7 +56,12 @@ public class InviteController {
 	 * @date 2018年9月20日 下午5:03:30
 	 */
 	@RequestMapping(value = "/listview")
-	public String listview() {
+	public String listview(HttpServletRequest request, Model model) {
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		List<Permission> list = permissionService.selectByBtu(staff.getPower(), "11");
+		for (int i = 0; i < list.size(); i++) {
+			model.addAttribute("btn"+list.get(i).getId(), "1");
+		}
 		return "admin/inviteBall/list";
 	}
 

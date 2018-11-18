@@ -122,10 +122,12 @@ public class FieldTemplate implements Serializable {
         this.fieldid = fieldid == null ? null : fieldid.trim();
     }
 
+    /** 使用场馆模板ID */
 	public String getTemplateid() {
 		return templateid;
 	}
 
+    /** 使用场馆模板ID */
 	public void setTemplateid(String templateid) {
 		this.templateid = templateid;
 	}

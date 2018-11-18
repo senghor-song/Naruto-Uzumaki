@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -15,11 +18,14 @@ import com.github.pagehelper.PageInfo;
 import com.xiaoyi.ssm.dto.AdminMessage;
 import com.xiaoyi.ssm.dto.AdminPage;
 import com.xiaoyi.ssm.model.City;
+import com.xiaoyi.ssm.model.Permission;
+import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.model.TrainCoach;
 import com.xiaoyi.ssm.model.TrainOrder;
 import com.xiaoyi.ssm.model.TrainOrderLog;
 import com.xiaoyi.ssm.model.TrainTeam;
 import com.xiaoyi.ssm.service.CityService;
+import com.xiaoyi.ssm.service.PermissionService;
 import com.xiaoyi.ssm.service.TrainCoachService;
 import com.xiaoyi.ssm.service.TrainOrderLogService;
 import com.xiaoyi.ssm.service.TrainOrderService;
@@ -48,6 +54,8 @@ public class TrainController {
 	private TrainTeamCoachService trainTeamCoachService;
 	@Autowired
 	private TrainTeamService trainTeamService;
+	@Autowired
+	private PermissionService permissionService;
 
 	/**
 	 * @Description: 培训页面
@@ -55,7 +63,12 @@ public class TrainController {
 	 * @date 2018年8月20日 上午11:20:56
 	 */
 	@RequestMapping(value = "/listview")
-	public String listview() {
+	public String listview(HttpServletRequest request, Model model) {
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		List<Permission> list = permissionService.selectByBtu(staff.getPower(), "13");
+		for (int i = 0; i < list.size(); i++) {
+			model.addAttribute("btn"+list.get(i).getId(), "1");
+		}
 		return "admin/train/list";
 	}
 
@@ -77,7 +90,7 @@ public class TrainController {
 			// 培训教练数据
 			TrainCoach trainCoach = trainCoachService.selectByPrimaryKey(trainOrder.getTrainCourse().getTrainCoachId());
 			// 培训机构数据
-			TrainTeam trainTeam = trainTeamService.selectByCoach(trainOrder.getTrainCourse().getTrainTeamId());
+			TrainTeam trainTeam = trainTeamService.selectByPrimaryKey(trainOrder.getTrainCourse().getTrainTeamId());
 			// 培训机构城市数据
 			City city = cityService.selectByPrimaryKey(trainTeam.getCityId());
 

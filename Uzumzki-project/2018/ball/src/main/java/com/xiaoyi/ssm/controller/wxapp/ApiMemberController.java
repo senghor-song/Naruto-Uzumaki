@@ -1,5 +1,11 @@
 package com.xiaoyi.ssm.controller.wxapp;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,16 +31,22 @@ import com.xiaoyi.ssm.model.InviteBall;
 import com.xiaoyi.ssm.model.InviteImage;
 import com.xiaoyi.ssm.model.InviteJoin;
 import com.xiaoyi.ssm.model.Member;
+import com.xiaoyi.ssm.model.Order;
+import com.xiaoyi.ssm.model.Reserve;
 import com.xiaoyi.ssm.model.TrainCoach;
+import com.xiaoyi.ssm.model.Venue;
 import com.xiaoyi.ssm.service.InviteBallService;
 import com.xiaoyi.ssm.service.InviteImageService;
 import com.xiaoyi.ssm.service.InviteJoinService;
 import com.xiaoyi.ssm.service.MemberService;
 import com.xiaoyi.ssm.service.NewsCollectService;
+import com.xiaoyi.ssm.service.OrderService;
+import com.xiaoyi.ssm.service.ReserveService;
 import com.xiaoyi.ssm.service.TrainCoachService;
 import com.xiaoyi.ssm.service.TrainCourseCollectService;
 import com.xiaoyi.ssm.service.TrainOrderService;
 import com.xiaoyi.ssm.service.TrainTeamCollectService;
+import com.xiaoyi.ssm.service.VenueService;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.MoblieMessageUtil;
@@ -42,6 +54,7 @@ import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
 import com.xiaoyi.ssm.wxPay.AES;
+import com.xiaoyi.ssm.wxPay.WXConfig;
 
 /**
  * @Description: 微信小程序公共接口
@@ -74,6 +87,12 @@ public class ApiMemberController {
 	private TrainCourseCollectService trainCourseCollectService;
 	@Autowired
 	private NewsCollectService newsCollectService;
+	@Autowired
+	private OrderService orderService;
+	@Autowired
+	private VenueService venueService;
+	@Autowired
+	private ReserveService reserveService;
 
 	/**
 	 * @Description: 查询我参与的约球
@@ -197,16 +216,18 @@ public class ApiMemberController {
 		Integer myJoinBall = inviteJoinService.countByMyJoinBall(member.getId());
 		Integer myJoinApplyBall = inviteBallService.countByMyApplyBall(member.getId());
 		Integer myTrainOrder = trainOrderService.countByMyTrainOrder(member.getId());
+		Integer venueSum = orderService.countByMember(member.getId());
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("myJoinBall", myJoinBall);// 我参与的约球总数
 		map.put("myJoinApplyBall", myJoinApplyBall);// 我发起的约球总数
 		map.put("myTrainOrder", myTrainOrder);// 我的私教总数
+		map.put("venueSum", venueSum);// 我的订场总数
 		int collectSum = 0;
 		collectSum += memberHabitMapper.countOften(member.getId());
 		collectSum += trainTeamCollectService.countByMember(member.getId());
 		collectSum += trainCourseCollectService.countByMember(member.getId());
 		collectSum += newsCollectService.countByMember(member.getId());
-		map.put("venue", collectSum);// 收藏总数
+		map.put("collectSum", collectSum);// 收藏总数
 		
 		TrainCoach trainCoach = trainCoachService.selectByMember(member.getId());
 		if (trainCoach != null ) {
@@ -319,7 +340,10 @@ public class ApiMemberController {
 	public ApiMessage getMember(HttpServletRequest request) {
 
 		String token = (String) request.getAttribute("token");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		Member oldMember = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		
+		Member member = memberService.selectByPrimaryKey(oldMember.getId());
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("memberno", member.getMemberno()); //用户编号
 		map.put("phone", member.getPhone()); //绑定手机号
@@ -339,12 +363,12 @@ public class ApiMemberController {
 	 */ 
 	@RequestMapping(value = "/updateMember")
 	@ResponseBody
-	public ApiMessage updateMember(HttpServletRequest request, String phone, Integer showphone, Integer showhistory, String wechatid, Integer showwechatid) {
+	public ApiMessage updateMember(HttpServletRequest request, Integer showphone, Integer showhistory, String wechatid, Integer showwechatid) {
 
 		String token = (String) request.getAttribute("token");
-		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		Member oldMember = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 		
-		member.setPhone(phone); //绑定手机号
+		Member member = memberService.selectByPrimaryKey(oldMember.getId());
 		member.setShowphone(showphone); //活动发起人展示手机号
 		member.setShowhistory(showhistory); //是否显示历史活动
 		member.setWechatid(wechatid); //微信号
@@ -358,4 +382,202 @@ public class ApiMemberController {
 		}
 	}
 	
+	/**  
+	 * @Description: 发送预定通知
+	 * @author 宋高俊  
+	 * @param request
+	 * @return 
+	 * @date 2018年11月8日 上午11:59:17 
+	 */ 
+	@RequestMapping(value = "/sendTemplateMessage")
+	@ResponseBody
+	@SuppressWarnings("unchecked")
+	public ApiMessage sendTemplateMessage(HttpServletRequest request,String page, String formId, String orderId) {
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		
+		Order order = orderService.selectByPrimaryKey(orderId);
+		
+		JSONObject json = new JSONObject();
+		json.put("touser", member.getAppopenid());
+		json.put("template_id", Global.template_id);
+		json.put("page", page);
+		json.put("form_id", formId);
+
+		// 获取订单数据
+		Venue venue = venueService.selectByPrimaryKey(order.getVenueid());
+		List<Reserve> listReserve = reserveService.selectByOrder(order.getId());
+		String area = "";
+		String time = ""; 
+		if (listReserve.size() > 0) {
+			area = listReserve.get(0).getField().getName();
+			time = StringUtil.timeToTimestr(listReserve.get(0).getReservetimeframe().split(","));
+		}
+
+		JSONObject jsonObject = new JSONObject();
+		JSONObject valueObject1 = new JSONObject();
+		valueObject1.put("value", DateUtil.getFormat(order.getCreatetime(), "yyyy年MM月dd日  HH:mm"));// 预约时间：预约时间段
+		jsonObject.put("keyword1", valueObject1);
+		JSONObject valueObject2 = new JSONObject();
+		valueObject2.put("value", venue.getName() + "   " + area);// 预约地点：场馆名+场地
+		jsonObject.put("keyword2", valueObject2);
+		JSONObject valueObject3 = new JSONObject();
+		valueObject3.put("value", DateUtil.getFormat(order.getOrderdate(), "yyyy年MM月dd日") + " " + time);// 预约时间：预约时间段
+		jsonObject.put("keyword3", valueObject3);
+		JSONObject valueObject4 = new JSONObject();
+		valueObject4.put("value", "预约完成，请及时支付，5分钟超时将自动取消。");// 备注
+		jsonObject.put("keyword4", valueObject4);
+		json.put("data", jsonObject);
+		json.put("emphasis_keyword", "");
+        logger.info(json.toString());
+        
+        BufferedReader reader = null;
+        try {
+
+    		Map<String, Object> tokenMap = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, WXConfig.wxAppAppid);
+            URL url = new URL("https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+tokenMap.get("access_token"));// 创建连接
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setUseCaches(false);
+            connection.setInstanceFollowRedirects(true);
+            connection.setRequestMethod("POST"); // 设置请求方式
+            connection.setRequestProperty("Content-Type", "application/json"); // 设置发送数据的格式
+            connection.connect();
+            //一定要用BufferedReader 来接收响应， 使用字节来接收响应的方法是接收不到内容的
+            OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "UTF-8"); // utf-8编码
+            out.append(json.toString());
+            out.flush();
+            out.close();
+            // 读取响应
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+            String line;
+            String res = "";
+            while ((line = reader.readLine()) != null) {
+                res += line;
+            }
+            reader.close();
+    		return new ApiMessage(200, "获取成功",res);
+        } catch (IOException e) {
+            e.printStackTrace();
+    		return new ApiMessage(200, "获取成功");
+        }
+	}
+	
+	/**  
+	 * @Description: 发送支付通知
+	 * @author 宋高俊  
+	 * @param request
+	 * @return 
+	 * @date 2018年11月8日 上午11:59:17 
+	 */ 
+	@RequestMapping(value = "/sendTemplateMessage2")
+	@ResponseBody
+	@SuppressWarnings("unchecked")
+	public ApiMessage sendTemplateMessage2(HttpServletRequest request,String page, String formId, String orderId) {
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+
+		Order order = orderService.selectByPrimaryKey(orderId);
+		
+		JSONObject json = new JSONObject();
+		json.put("touser", member.getAppopenid());
+		json.put("template_id", Global.template_id2);
+		json.put("page", page);
+		json.put("form_id", formId);
+		
+		// 获取订单数据
+		Venue venue = venueService.selectByPrimaryKey(order.getVenueid());
+		List<Reserve> listReserve = reserveService.selectByOrder(order.getId());
+		String area = "";
+		String time = ""; 
+		if (listReserve.size() > 0) {
+			area = listReserve.get(0).getField().getName();
+			time = StringUtil.timeToTimestr(listReserve.get(0).getReservetimeframe().split(","));
+		}
+
+		JSONObject jsonObject = new JSONObject();
+		
+		JSONObject valueObject = new JSONObject();
+		valueObject.put("value", DateUtil.getFormat(order.getModifytime(), "yyyy年MM月dd日   HH时mm分"));// 支付时间
+		jsonObject.put("keyword1", valueObject);
+		
+		JSONObject valueObject2 = new JSONObject();
+		valueObject2.put("value", order.getOrderno());// 订单编号
+		jsonObject.put("keyword2", valueObject2);
+		
+		JSONObject valueObject3 = new JSONObject();
+		valueObject3.put("value", order.getPrice() + "元");// 金额：
+		jsonObject.put("keyword3", valueObject3);
+		
+		JSONObject valueObject4 = new JSONObject();
+		valueObject4.put("value", venue.getName() + "   " + area);// 场地名称：场馆名+场地
+		jsonObject.put("keyword4", valueObject4);
+
+		JSONObject valueObject5 = new JSONObject();
+		valueObject5.put("value", DateUtil.getFormat(order.getOrderdate(), "yyyy年MM月dd日") + " " + time);// 预约时间：
+		jsonObject.put("keyword5", valueObject5);
+
+		JSONObject valueObject6 = new JSONObject();
+		valueObject6.put("value", "稍候，场馆将在30分钟内反馈预定是否成功...");// 温馨提示：
+		jsonObject.put("keyword6", valueObject6);
+		
+		json.put("data", jsonObject);
+		json.put("emphasis_keyword", "");
+        logger.info(json.toString());
+        
+        BufferedReader reader = null;
+        try {
+
+    		Map<String, Object> tokenMap = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, WXConfig.wxAppAppid);
+            URL url = new URL("https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token="+tokenMap.get("access_token"));// 创建连接
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setUseCaches(false);
+            connection.setInstanceFollowRedirects(true);
+            connection.setRequestMethod("POST"); // 设置请求方式
+            connection.setRequestProperty("Content-Type", "application/json"); // 设置发送数据的格式
+            connection.connect();
+            //一定要用BufferedReader 来接收响应， 使用字节来接收响应的方法是接收不到内容的
+            OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "UTF-8"); // utf-8编码
+            out.append(json.toString());
+            out.flush();
+            out.close();
+            // 读取响应
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+            String line;
+            String res = "";
+            while ((line = reader.readLine()) != null) {
+                res += line;
+            }
+            reader.close();
+    		return new ApiMessage(200, "获取成功",res);
+        } catch (IOException e) {
+            e.printStackTrace();
+    		return new ApiMessage(200, "获取成功");
+        }
+	}
+	
+	/**  
+	 * @Description: 获取用户数据
+	 * @author 宋高俊  
+	 * @param request
+	 * @return 
+	 * @date 2018年10月12日 上午11:30:37 
+	 */ 
+	@RequestMapping(value = "/getMemberDetails")
+	@ResponseBody
+	public ApiMessage getMemberDetails(HttpServletRequest request) {
+		String token = (String) request.getAttribute("token");
+		Member oldMember = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		
+		Member member = memberService.selectByPrimaryKey(oldMember.getId());
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("subscribeFlag", !StringUtil.isBank(member.getOpenid()));// 是否关注公众号 true 已关注 false未关注
+		map.put("phoneFlag", !StringUtil.isBank(member.getPhone()));// 是否绑定手机号 true 已绑定 false未绑定
+		map.put("appavatarurl", member.getAppavatarurl());// 头像
+		map.put("appnickname", member.getAppnickname());// 昵称
+		return new ApiMessage(200, "获取成功", map);
+	}
 }

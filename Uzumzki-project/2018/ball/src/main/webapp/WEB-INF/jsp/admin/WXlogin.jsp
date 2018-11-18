@@ -16,10 +16,8 @@
         body .login0{background:#e9ecef}
         body .login1{background:#fff;border-radius:5px;}
         body .login4{width:300px;margin-top: -68px; margin-left: -15px;}
-        .login-wrap{width: 270px;
-	    height: 260px;
-	    overflow: hidden;
-	    transform: scale(0.9);}
+        .login-wrap{width: 270px; height: 260px; overflow: hidden; transform: scale(0.9);}
+	    #date{ color: #fff; position: fixed; bottom: 2%; right: 47%; }
     </style>
 </head>
 
@@ -30,6 +28,7 @@
 	        </div>
         </div>
     </div>
+    <span id="date">${dateFlag}</span>
 
     <!-- jQuery -->
     <script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
