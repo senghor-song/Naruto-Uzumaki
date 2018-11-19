@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.PermissionMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Permission">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Title" jdbcType="VARCHAR" property="title" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="Right_type1" jdbcType="INTEGER" property="rightType1" />
+		<result column="Right_type2" jdbcType="INTEGER" property="rightType2" />
+		<result column="Right_type3" jdbcType="INTEGER" property="rightType3" />
+		<result column="Right_type4" jdbcType="INTEGER" property="rightType4" />
+		<result column="Right_type5" jdbcType="INTEGER" property="rightType5" />
+		<result column="Right_type6" jdbcType="INTEGER" property="rightType6" />
+		<result column="Right_type7" jdbcType="INTEGER" property="rightType7" />
+		<result column="Menu_button" jdbcType="INTEGER" property="menuButton" />
+		<result column="Menu_title" jdbcType="VARCHAR" property="menuTitle" />
+		<result column="Menu_Url" jdbcType="VARCHAR" property="menuUrl" />
+		<result column="Menu_icon" jdbcType="VARCHAR" property="menuIcon" />
+		<result column="Parent_id" jdbcType="VARCHAR" property="parentId" />
+		<collection property="permissions" ofType="Permission" column="p2ID">
+			<id column="p2ID" jdbcType="VARCHAR" property="id" />
+			<result column="p2Title" jdbcType="VARCHAR" property="title" />
+			<result column="p2Content" jdbcType="VARCHAR" property="content" />
+			<result column="p2Right_type1" jdbcType="INTEGER" property="rightType1" />
+			<result column="p2Right_type2" jdbcType="INTEGER" property="rightType2" />
+			<result column="p2Right_type3" jdbcType="INTEGER" property="rightType3" />
+			<result column="p2Right_type4" jdbcType="INTEGER" property="rightType4" />
+			<result column="p2Right_type5" jdbcType="INTEGER" property="rightType5" />
+			<result column="p2Right_type6" jdbcType="INTEGER" property="rightType6" />
+			<result column="p2Right_type7" jdbcType="INTEGER" property="rightType7" />
+			<result column="p2Menu_button" jdbcType="INTEGER" property="menuButton" />
+			<result column="p2Menu_title" jdbcType="VARCHAR" property="menuTitle" />
+			<result column="p2Menu_Url" jdbcType="VARCHAR" property="menuUrl" />
+			<result column="p2Menu_icon" jdbcType="VARCHAR" property="menuIcon" />
+			<result column="p2Parent_id" jdbcType="VARCHAR" property="parentId" />
+		</collection>
+
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Title, Content, Right_type1, Right_type2, Right_type3, Right_type4, Right_type5,
+		Right_type6, Right_type7, Menu_button, Menu_title, Menu_Url, Menu_icon, Parent_id
+	</sql>
+	<sql id="Base_Column_List2">
+		p2.ID p2ID, p2.Title p2Title, p2.Content p2Content, p2.Right_type1 p2Right_type1, p2.Right_type2
+		p2Right_type2, p2.Right_type3 p2Right_type3, p2.Right_type4 p2Right_type4, p2.Right_type5
+		p2Right_type5, p2.Right_type6 p2Right_type6, p2.Right_type7 p2Right_type7, p2.Menu_button
+		p2Menu_button, p2.Menu_title p2Menu_title, p2.Menu_Url p2Menu_Url, p2.Menu_icon p2Menu_icon,
+		p2.Parent_id p2Parent_id
+	</sql>
+	
+	<select id="selectByAdmin" parameterType="com.xiaoyi.ssm.model.Permission" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Permission where Menu_button in (1,2,3) ORDER BY id
+	</select>
+	
+	<select id="selectByMenu" resultMap="BaseResultMap">
+		SELECT p1.*,<include refid="Base_Column_List2" /> FROM (SELECT * FROM Permission WHERE `Menu_button` = 0 ) p1 INNER JOIN Permission p2 ON p1.ID = p2.`Parent_id` 
+		<where>
+			<if test="rightType != null">
+				<if test="rightType == 1">
+					p2.Right_type1 = 1
+				</if>
+				<if test="rightType == 2">
+					p2.Right_type2 = 1
+				</if>
+				<if test="rightType == 3">
+					p2.Right_type3 = 1
+				</if>
+				<if test="rightType == 4">
+					p2.Right_type4 = 1
+				</if>
+				<if test="rightType == 5">
+					p2.Right_type5 = 1
+				</if>
+				<if test="rightType == 6">
+					p2.Right_type6 = 1
+				</if>
+				<if test="rightType == 7">
+					p2.Right_type7 = 1
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectIsMenu" resultMap="BaseResultMap">
+		SELECT p1.*,<include refid="Base_Column_List2" /> FROM (SELECT * FROM Permission WHERE `Menu_button` = 0 ) p1 INNER JOIN Permission p2 ON p1.ID = p2.`Parent_id` 
+		where
+		<if test="rightType != null">
+			<if test="rightType == 1">
+				p2.Right_type1 = 1
+			</if>
+			<if test="rightType == 2">
+				p2.Right_type2 = 1
+			</if>
+			<if test="rightType == 3">
+				p2.Right_type3 = 1
+			</if>
+			<if test="rightType == 4">
+				p2.Right_type4 = 1
+			</if>
+			<if test="rightType == 5">
+				p2.Right_type5 = 1
+			</if>
+			<if test="rightType == 6">
+				p2.Right_type6 = 1
+			</if>
+			<if test="rightType == 7">
+				p2.Right_type7 = 1
+			</if>
+		</if>
+		AND p2.Menu_Url = #{requestUri}
+	</select>
+	
+	<select id="selectByBtu" resultMap="BaseResultMap">
+		SELECT * FROM Permission WHERE 
+		<if test="power == 1">
+			Right_type1 = 1
+		</if>
+		<if test="power == 2">
+			Right_type2 = 1
+		</if>
+		<if test="power == 3">
+			Right_type3 = 1
+		</if>
+		<if test="power == 4">
+			Right_type4 = 1
+		</if>
+		<if test="power == 5">
+			Right_type5 = 1
+		</if>
+		<if test="power == 6">
+			Right_type6 = 1
+		</if>
+		<if test="power == 7">
+			Right_type7 = 1
+		</if>
+		AND Parent_id = #{parentid}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Permission
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Permission
+		where ID =
+		#{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Permission">
+		insert into Permission (ID, Title, Content,
+		Right_type1,
+		Right_type2, Right_type3,
+		Right_type4, Right_type5, Right_type6,
+		Right_type7, Menu_button,
+		Menu_title,
+		Menu_Url, Menu_icon, Parent_id
+		)
+		values (#{id,jdbcType=VARCHAR},
+		#{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+		#{rightType1,jdbcType=INTEGER},
+		#{rightType2,jdbcType=INTEGER}, #{rightType3,jdbcType=INTEGER},
+		#{rightType4,jdbcType=INTEGER},
+		#{rightType5,jdbcType=INTEGER}, #{rightType6,jdbcType=INTEGER},
+		#{rightType7,jdbcType=INTEGER},
+		#{menuButton,jdbcType=INTEGER}, #{menuTitle,jdbcType=VARCHAR},
+		#{menuUrl,jdbcType=VARCHAR},
+		#{menuIcon,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Permission">
+		insert into Permission
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="title != null">
+				Title,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+			<if test="rightType1 != null">
+				Right_type1,
+			</if>
+			<if test="rightType2 != null">
+				Right_type2,
+			</if>
+			<if test="rightType3 != null">
+				Right_type3,
+			</if>
+			<if test="rightType4 != null">
+				Right_type4,
+			</if>
+			<if test="rightType5 != null">
+				Right_type5,
+			</if>
+			<if test="rightType6 != null">
+				Right_type6,
+			</if>
+			<if test="rightType7 != null">
+				Right_type7,
+			</if>
+			<if test="menuButton != null">
+				Menu_button,
+			</if>
+			<if test="menuTitle != null">
+				Menu_title,
+			</if>
+			<if test="menuUrl != null">
+				Menu_Url,
+			</if>
+			<if test="menuIcon != null">
+				Menu_icon,
+			</if>
+			<if test="parentId != null">
+				Parent_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="rightType1 != null">
+				#{rightType1,jdbcType=INTEGER},
+			</if>
+			<if test="rightType2 != null">
+				#{rightType2,jdbcType=INTEGER},
+			</if>
+			<if test="rightType3 != null">
+				#{rightType3,jdbcType=INTEGER},
+			</if>
+			<if test="rightType4 != null">
+				#{rightType4,jdbcType=INTEGER},
+			</if>
+			<if test="rightType5 != null">
+				#{rightType5,jdbcType=INTEGER},
+			</if>
+			<if test="rightType6 != null">
+				#{rightType6,jdbcType=INTEGER},
+			</if>
+			<if test="rightType7 != null">
+				#{rightType7,jdbcType=INTEGER},
+			</if>
+			<if test="menuButton != null">
+				#{menuButton,jdbcType=INTEGER},
+			</if>
+			<if test="menuTitle != null">
+				#{menuTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="menuUrl != null">
+				#{menuUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="menuIcon != null">
+				#{menuIcon,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Permission">
+		update Permission
+		<set>
+			<if test="title != null">
+				Title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="rightType1 != null">
+				Right_type1 = #{rightType1,jdbcType=INTEGER},
+			</if>
+			<if test="rightType2 != null">
+				Right_type2 = #{rightType2,jdbcType=INTEGER},
+			</if>
+			<if test="rightType3 != null">
+				Right_type3 = #{rightType3,jdbcType=INTEGER},
+			</if>
+			<if test="rightType4 != null">
+				Right_type4 = #{rightType4,jdbcType=INTEGER},
+			</if>
+			<if test="rightType5 != null">
+				Right_type5 = #{rightType5,jdbcType=INTEGER},
+			</if>
+			<if test="rightType6 != null">
+				Right_type6 = #{rightType6,jdbcType=INTEGER},
+			</if>
+			<if test="rightType7 != null">
+				Right_type7 = #{rightType7,jdbcType=INTEGER},
+			</if>
+			<if test="menuButton != null">
+				Menu_button = #{menuButton,jdbcType=INTEGER},
+			</if>
+			<if test="menuTitle != null">
+				Menu_title = #{menuTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="menuUrl != null">
+				Menu_Url = #{menuUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="menuIcon != null">
+				Menu_icon = #{menuIcon,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				Parent_id = #{parentId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Permission">
+		update Permission
+		set Title =
+		#{title,jdbcType=VARCHAR},
+		Content = #{content,jdbcType=VARCHAR},
+		Right_type1 =
+		#{rightType1,jdbcType=INTEGER},
+		Right_type2 = #{rightType2,jdbcType=INTEGER},
+		Right_type3 =
+		#{rightType3,jdbcType=INTEGER},
+		Right_type4 = #{rightType4,jdbcType=INTEGER},
+		Right_type5 =
+		#{rightType5,jdbcType=INTEGER},
+		Right_type6 = #{rightType6,jdbcType=INTEGER},
+		Right_type7 =
+		#{rightType7,jdbcType=INTEGER},
+		Menu_button = #{menuButton,jdbcType=INTEGER},
+		Menu_title =
+		#{menuTitle,jdbcType=VARCHAR},
+		Menu_Url = #{menuUrl,jdbcType=VARCHAR},
+		Menu_icon =
+		#{menuIcon,jdbcType=VARCHAR},
+		Parent_id = #{parentId,jdbcType=VARCHAR}
+		where ID =
+		#{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

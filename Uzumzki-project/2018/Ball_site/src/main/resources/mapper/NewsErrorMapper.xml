@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.NewsErrorMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.NewsError">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Member_id" jdbcType="VARCHAR" property="memberId" />
+		<result column="News_id" jdbcType="VARCHAR" property="newsId" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<association property="member" javaType="com.xiaoyi.ssm.model.Member">
+			<id property="id" column="ID" />
+			<result column="mAppnickname" property="appnickname" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Member_id, News_id, Content
+	</sql>
+	
+	<select id="countByNews" parameterType="java.lang.String" resultType="Integer">
+		select count(0) from NewsError where News_id = #{id}
+	</select>
+	
+	<select id="selectByNews" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select ne.*,m.appnickname mAppnickname from NewsError ne LEFT JOIN Member m ON ne.`Member_id` = m.`ID` where ne.News_id = #{id,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from NewsError
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from NewsError
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.NewsError">
+		insert into NewsError (ID, Create_time, Member_id,
+		News_id, Content)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{memberId,jdbcType=VARCHAR},
+		#{newsId,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.NewsError">
+		insert into NewsError
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="memberId != null">
+				Member_id,
+			</if>
+			<if test="newsId != null">
+				News_id,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="memberId != null">
+				#{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="newsId != null">
+				#{newsId,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.NewsError">
+		update NewsError
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="memberId != null">
+				Member_id = #{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="newsId != null">
+				News_id = #{newsId,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.NewsError">
+		update NewsError
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Member_id = #{memberId,jdbcType=VARCHAR},
+		News_id = #{newsId,jdbcType=VARCHAR},
+		Content = #{content,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

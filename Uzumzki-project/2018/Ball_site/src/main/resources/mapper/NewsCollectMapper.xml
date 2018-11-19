@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.NewsCollectMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.NewsCollect">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="News_id" jdbcType="VARCHAR" property="newsId" />
+		<result column="Member_id" jdbcType="VARCHAR" property="memberId" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, News_id, Member_id
+	</sql>
+	
+	<delete id="deleteByIdAndMember" parameterType="java.lang.String">
+		delete from NewsCollect
+		where News_id = #{id,jdbcType=VARCHAR} and  Member_id = #{memberid,jdbcType=VARCHAR}
+	</delete>
+	
+	<select id="countByMember" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(0) from NewsCollect where Member_id = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectByNews" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from NewsCollect where News_id = #{id,jdbcType=VARCHAR} and Member_id = #{memberid,jdbcType=VARCHAR} limit 1
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from NewsCollect
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from NewsCollect
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.NewsCollect">
+		insert into NewsCollect (ID, Create_time, News_id,
+		Member_id)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{newsId,jdbcType=VARCHAR},
+		#{memberId,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.NewsCollect">
+		insert into NewsCollect
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="newsId != null">
+				News_id,
+			</if>
+			<if test="memberId != null">
+				Member_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="newsId != null">
+				#{newsId,jdbcType=VARCHAR},
+			</if>
+			<if test="memberId != null">
+				#{memberId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.NewsCollect">
+		update NewsCollect
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="newsId != null">
+				News_id = #{newsId,jdbcType=VARCHAR},
+			</if>
+			<if test="memberId != null">
+				Member_id = #{memberId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.NewsCollect">
+		update NewsCollect
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		News_id = #{newsId,jdbcType=VARCHAR},
+		Member_id = #{memberId,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

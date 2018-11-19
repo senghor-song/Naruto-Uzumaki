@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.TrainOrderCommentMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.TrainOrderComment">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+		<result column="Train_order_id" jdbcType="VARCHAR" property="trainOrderId" />
+		<result column="Train_coach_id" jdbcType="VARCHAR" property="trainCoachId" />
+		<result column="Member_id" jdbcType="VARCHAR" property="memberId" />
+		<result column="Class_hour" jdbcType="INTEGER" property="classHour" />
+		<result column="State" jdbcType="INTEGER" property="state" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="Comment_select" jdbcType="INTEGER" property="commentSelect" />
+		<association property="member" javaType="com.xiaoyi.ssm.model.Member">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="mAppNickName" jdbcType="VARCHAR" property="appnickname" />
+			<result column="mAppAvatarUrl" jdbcType="VARCHAR" property="appavatarurl" />
+		</association>
+		<association property="trainCoach" javaType="com.xiaoyi.ssm.model.TrainCoach">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="tcHead_image" jdbcType="VARCHAR" property="headImage" />
+		</association>
+		<association property="trainCourse" javaType="com.xiaoyi.ssm.model.TrainCourse">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="tcuTitle" jdbcType="VARCHAR" property="title" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Modify_time, Train_order_id, Train_coach_id, Member_id, Class_hour,
+		State, Content, Comment_select
+	</sql>
+
+	<select id="selectByHourOrder" resultMap="BaseResultMap">
+		SELECT * FROM TrainOrderComment WHERE
+		Train_order_id = #{id,jdbcType=VARCHAR} AND Class_hour = #{hour,jdbcType=INTEGER} AND state = 0
+	</select>
+
+	<select id="selectByOrder" resultMap="BaseResultMap">
+		SELECT toc.*,m.`AppAvatarUrl` mAppAvatarUrl,m.`AppNickName` mAppNickName
+		FROM TrainOrderComment toc LEFT JOIN Member m ON toc.`Member_id` = m.`ID` 
+		WHERE Train_order_id = #{id,jdbcType=VARCHAR} AND toc.State IN (1,2) ORDER BY Class_hour DESC
+	</select>
+
+	<select id="selectByTimeOut" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from TrainOrderComment where Create_time &lt;= #{preTime,jdbcType=TIMESTAMP} AND state = 0
+	</select>
+	
+	<select id="countByTeamId" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM TrainOrderComment toc INNER JOIN TrainCoach tc ON toc.`Train_coach_id` = tc.`ID` INNER JOIN TrainTeamCoach ttc ON tc.`ID` = ttc.`Train_coach_id`
+		WHERE ttc.`Train_team_id` = #{id,jdbcType=VARCHAR} and toc.Create_time &gt;= #{date,jdbcType=TIMESTAMP}
+	</select>
+	
+	<select id="countByTeamAll" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM TrainOrderComment toc INNER JOIN TrainCoach tc ON toc.`Train_coach_id` = tc.`ID` INNER JOIN TrainTeamCoach ttc ON tc.`ID` = ttc.`Train_coach_id`
+		WHERE ttc.`Train_team_id` = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectByTeamTen" resultMap="BaseResultMap">
+		SELECT toc.*,m.AppNickName mAppNickName,m.AppAvatarUrl mAppAvatarUrl , tc.Head_image tcHead_image , tcu.Title tcuTitle 
+		FROM TrainOrderComment toc 
+		INNER JOIN TrainCoach tc ON toc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN TrainTeamCoach ttc ON ttc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN Member m ON toc.`Member_id` = m.`id`
+		INNER JOIN TrainOrder tor ON tor.id = toc.`Train_order_id`
+		INNER JOIN TrainCourse tcu ON tcu.id = tor.Train_course_id
+		WHERE ttc.`Train_team_id` = #{id} AND toc.State IN (1,2) ORDER BY toc.`Create_time` DESC LIMIT 10
+	</select>
+	
+	<select id="selectByTeam" resultMap="BaseResultMap">
+		SELECT toc.*,m.AppNickName mAppNickName,m.AppAvatarUrl mAppAvatarUrl , tc.Head_image tcHead_image , tcu.Title tcuTitle 
+		FROM TrainOrderComment toc 
+		INNER JOIN TrainCoach tc ON toc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN TrainTeamCoach ttc ON ttc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN Member m ON toc.`Member_id` = m.`id`
+		INNER JOIN TrainOrder tor ON tor.id = toc.`Train_order_id`
+		INNER JOIN TrainCourse tcu ON tcu.id = tor.Train_course_id
+		WHERE ttc.`Train_team_id` = #{id} AND toc.State IN (1,2) ORDER BY toc.`Create_time` DESC
+	</select>
+	
+	<select id="selectByCourse" resultMap="BaseResultMap">
+		SELECT toc.*,m.AppNickName mAppNickName,m.AppAvatarUrl mAppAvatarUrl , tc.Head_image tcHead_image , tcu.Title tcuTitle 
+		FROM TrainOrderComment toc 
+		INNER JOIN TrainCoach tc ON toc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN TrainTeamCoach ttc ON ttc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN Member m ON toc.`Member_id` = m.`id`
+		INNER JOIN TrainOrder tor ON tor.id = toc.`Train_order_id`
+		INNER JOIN TrainCourse tcu ON tcu.id = tor.Train_course_id
+		WHERE tor.`id` = #{id} AND toc.State IN (1,2) ORDER BY toc.`Create_time` DESC
+	</select>
+	
+	<select id="selectByCoach" resultMap="BaseResultMap">
+		SELECT toc.*,m.AppNickName mAppNickName,m.AppAvatarUrl mAppAvatarUrl , tc.Head_image tcHead_image , tcu.Title tcuTitle 
+		FROM TrainOrderComment toc 
+		INNER JOIN TrainCoach tc ON toc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN TrainTeamCoach ttc ON ttc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN Member m ON toc.`Member_id` = m.`id`
+		INNER JOIN TrainOrder tor ON tor.id = toc.`Train_order_id`
+		INNER JOIN TrainCourse tcu ON tcu.id = tor.Train_course_id
+		WHERE tc.`id` = #{id} AND toc.State IN (1,2) ORDER BY toc.`Create_time` DESC
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from TrainOrderComment
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from TrainOrderComment
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.TrainOrderComment">
+		insert into TrainOrderComment (ID, Create_time, Modify_time,
+		Train_order_id, Train_coach_id, Member_id,
+		Class_hour, State, Content,
+		Comment_select)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
+		#{trainOrderId,jdbcType=VARCHAR}, #{trainCoachId,jdbcType=VARCHAR}, #{memberId,jdbcType=VARCHAR},
+		#{classHour,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR},
+		#{commentSelect,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.TrainOrderComment">
+		insert into TrainOrderComment
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="modifyTime != null">
+				Modify_time,
+			</if>
+			<if test="trainOrderId != null">
+				Train_order_id,
+			</if>
+			<if test="trainCoachId != null">
+				Train_coach_id,
+			</if>
+			<if test="memberId != null">
+				Member_id,
+			</if>
+			<if test="classHour != null">
+				Class_hour,
+			</if>
+			<if test="state != null">
+				State,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+			<if test="commentSelect != null">
+				Comment_select,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				#{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="trainOrderId != null">
+				#{trainOrderId,jdbcType=VARCHAR},
+			</if>
+			<if test="trainCoachId != null">
+				#{trainCoachId,jdbcType=VARCHAR},
+			</if>
+			<if test="memberId != null">
+				#{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="classHour != null">
+				#{classHour,jdbcType=INTEGER},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="commentSelect != null">
+				#{commentSelect,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.TrainOrderComment">
+		update TrainOrderComment
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="trainOrderId != null">
+				Train_order_id = #{trainOrderId,jdbcType=VARCHAR},
+			</if>
+			<if test="trainCoachId != null">
+				Train_coach_id = #{trainCoachId,jdbcType=VARCHAR},
+			</if>
+			<if test="memberId != null">
+				Member_id = #{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="classHour != null">
+				Class_hour = #{classHour,jdbcType=INTEGER},
+			</if>
+			<if test="state != null">
+				State = #{state,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="commentSelect != null">
+				Comment_select = #{commentSelect,jdbcType=INTEGER},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.TrainOrderComment">
+		update TrainOrderComment
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+		Train_order_id = #{trainOrderId,jdbcType=VARCHAR},
+		Train_coach_id = #{trainCoachId,jdbcType=VARCHAR},
+		Member_id = #{memberId,jdbcType=VARCHAR},
+		Class_hour = #{classHour,jdbcType=INTEGER},
+		State = #{state,jdbcType=INTEGER},
+		Content = #{content,jdbcType=VARCHAR},
+		Comment_select = #{commentSelect,jdbcType=INTEGER}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

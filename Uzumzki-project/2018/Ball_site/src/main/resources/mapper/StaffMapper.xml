@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.StaffMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Staff">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Staff_no" jdbcType="INTEGER" property="staffNo" />
+		<result column="Name" jdbcType="VARCHAR" property="name" />
+		<result column="DeptID" jdbcType="CHAR" property="deptid" />
+		<result column="Password" jdbcType="CHAR" property="password" />
+		<result column="Tel" jdbcType="CHAR" property="tel" />
+		<result column="Status_flag" jdbcType="CHAR" property="statusFlag" />
+		<result column="Position" jdbcType="CHAR" property="position" />
+		<result column="Power" jdbcType="INTEGER" property="power" />
+		<result column="Sex" jdbcType="CHAR" property="sex" />
+		<result column="IDCard" jdbcType="VARCHAR" property="idcard" />
+		<result column="Address" jdbcType="VARCHAR" property="address" />
+		<result column="Referee" jdbcType="VARCHAR" property="referee" />
+		<result column="Nickname" jdbcType="VARCHAR" property="nickname" />
+		<result column="Head_image" jdbcType="VARCHAR" property="headImage" />
+		<result column="Login_change" jdbcType="TIMESTAMP" property="loginChange" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<result column="Openid" jdbcType="VARCHAR" property="openid" />
+		<result column="Unionid" jdbcType="VARCHAR" property="unionid" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Staff_no, Name, DeptID, Password, Tel, Status_flag, Position, Power, Sex, IDCard,
+		Address, Referee, Nickname, Head_image, Login_change, Remark, Openid, Unionid
+	</sql>
+
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Staff" resultMap="BaseResultMap">
+		select * from
+		Staff
+	</select>
+
+	<select id="login" parameterType="com.xiaoyi.ssm.model.Staff" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Staff
+		where unionid = #{unionid,jdbcType=CHAR} 
+		limit 1
+	</select>
+
+	<select id="getPhoneRegister" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Staff where Tel = #{phone,jdbcType=CHAR} limit 1
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Staff
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Staff
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Staff">
+		insert into Staff (ID, Staff_no, Name,
+		DeptID, Password, Tel, Status_flag,
+		Position, Power, Sex, IDCard,
+		Address, Referee, Nickname,
+		Head_image, Login_change, Remark,
+		Openid, Unionid)
+		values (#{id,jdbcType=VARCHAR}, #{staffNo,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{deptid,jdbcType=CHAR}, #{password,jdbcType=CHAR}, #{tel,jdbcType=CHAR},
+		#{statusFlag,jdbcType=CHAR},
+		#{position,jdbcType=CHAR}, #{power,jdbcType=INTEGER}, #{sex,jdbcType=CHAR}, #{idcard,jdbcType=VARCHAR},
+		#{address,jdbcType=VARCHAR}, #{referee,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR},
+		#{headImage,jdbcType=VARCHAR}, #{loginChange,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR},
+		#{openid,jdbcType=VARCHAR}, #{unionid,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Staff">
+		insert into Staff
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="staffNo != null">
+				Staff_no,
+			</if>
+			<if test="name != null">
+				Name,
+			</if>
+			<if test="deptid != null">
+				DeptID,
+			</if>
+			<if test="password != null">
+				Password,
+			</if>
+			<if test="tel != null">
+				Tel,
+			</if>
+			<if test="statusFlag != null">
+				Status_flag,
+			</if>
+			<if test="position != null">
+				Position,
+			</if>
+			<if test="power != null">
+				Power,
+			</if>
+			<if test="sex != null">
+				Sex,
+			</if>
+			<if test="idcard != null">
+				IDCard,
+			</if>
+			<if test="address != null">
+				Address,
+			</if>
+			<if test="referee != null">
+				Referee,
+			</if>
+			<if test="nickname != null">
+				Nickname,
+			</if>
+			<if test="headImage != null">
+				Head_image,
+			</if>
+			<if test="loginChange != null">
+				Login_change,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="openid != null">
+				Openid,
+			</if>
+			<if test="unionid != null">
+				Unionid,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="staffNo != null">
+				#{staffNo,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="deptid != null">
+				#{deptid,jdbcType=CHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=CHAR},
+			</if>
+			<if test="tel != null">
+				#{tel,jdbcType=CHAR},
+			</if>
+			<if test="statusFlag != null">
+				#{statusFlag,jdbcType=CHAR},
+			</if>
+			<if test="position != null">
+				#{position,jdbcType=CHAR},
+			</if>
+			<if test="power != null">
+				#{power,jdbcType=INTEGER},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=CHAR},
+			</if>
+			<if test="idcard != null">
+				#{idcard,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="referee != null">
+				#{referee,jdbcType=VARCHAR},
+			</if>
+			<if test="nickname != null">
+				#{nickname,jdbcType=VARCHAR},
+			</if>
+			<if test="headImage != null">
+				#{headImage,jdbcType=VARCHAR},
+			</if>
+			<if test="loginChange != null">
+				#{loginChange,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="openid != null">
+				#{openid,jdbcType=VARCHAR},
+			</if>
+			<if test="unionid != null">
+				#{unionid,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Staff">
+		update Staff
+		<set>
+			<if test="staffNo != null">
+				Staff_no = #{staffNo,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				Name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="deptid != null">
+				DeptID = #{deptid,jdbcType=CHAR},
+			</if>
+			<if test="password != null">
+				Password = #{password,jdbcType=CHAR},
+			</if>
+			<if test="tel != null">
+				Tel = #{tel,jdbcType=CHAR},
+			</if>
+			<if test="statusFlag != null">
+				Status_flag = #{statusFlag,jdbcType=CHAR},
+			</if>
+			<if test="position != null">
+				Position = #{position,jdbcType=CHAR},
+			</if>
+			<if test="power != null">
+				Power = #{power,jdbcType=INTEGER},
+			</if>
+			<if test="sex != null">
+				Sex = #{sex,jdbcType=CHAR},
+			</if>
+			<if test="idcard != null">
+				IDCard = #{idcard,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="referee != null">
+				Referee = #{referee,jdbcType=VARCHAR},
+			</if>
+			<if test="nickname != null">
+				Nickname = #{nickname,jdbcType=VARCHAR},
+			</if>
+			<if test="headImage != null">
+				Head_image = #{headImage,jdbcType=VARCHAR},
+			</if>
+			<if test="loginChange != null">
+				Login_change = #{loginChange,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="openid != null">
+				Openid = #{openid,jdbcType=VARCHAR},
+			</if>
+			<if test="unionid != null">
+				Unionid = #{unionid,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Staff">
+		update Staff
+		set Staff_no = #{staffNo,jdbcType=INTEGER},
+		Name = #{name,jdbcType=VARCHAR},
+		DeptID = #{deptid,jdbcType=CHAR},
+		Password = #{password,jdbcType=CHAR},
+		Tel = #{tel,jdbcType=CHAR},
+		Status_flag = #{statusFlag,jdbcType=CHAR},
+		Position = #{position,jdbcType=CHAR},
+		Power = #{power,jdbcType=INTEGER},
+		Sex = #{sex,jdbcType=CHAR},
+		IDCard = #{idcard,jdbcType=VARCHAR},
+		Address = #{address,jdbcType=VARCHAR},
+		Referee = #{referee,jdbcType=VARCHAR},
+		Nickname = #{nickname,jdbcType=VARCHAR},
+		Head_image = #{headImage,jdbcType=VARCHAR},
+		Login_change = #{loginChange,jdbcType=TIMESTAMP},
+		Remark = #{remark,jdbcType=VARCHAR},
+		Openid = #{openid,jdbcType=VARCHAR},
+		Unionid = #{unionid,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

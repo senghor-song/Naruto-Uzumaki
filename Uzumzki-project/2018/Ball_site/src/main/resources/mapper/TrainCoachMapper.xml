@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.TrainCoachMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.TrainCoach">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+		<result column="Member_id" jdbcType="VARCHAR" property="memberId" />
+		<result column="Name" jdbcType="VARCHAR" property="name" />
+		<result column="Sex" jdbcType="INTEGER" property="sex" />
+		<result column="Working_age" jdbcType="INTEGER" property="workingAge" />
+		<result column="Head_image" jdbcType="VARCHAR" property="headImage" />
+		<result column="Lecture_style" jdbcType="VARCHAR" property="lectureStyle" />
+		<result column="Vitae" jdbcType="VARCHAR" property="vitae" />
+		<result column="Education" jdbcType="VARCHAR" property="education" />
+		<result column="Honor" jdbcType="VARCHAR" property="honor" />
+		<association property="trainTeamCoach" javaType="com.xiaoyi.ssm.model.TrainTeamCoach">
+			<id column="ttcID" jdbcType="CHAR" property="id" />
+			<result column="ttcTeach_type" jdbcType="VARCHAR" property="teachType" />
+		</association>
+		<association property="venueCoach" javaType="com.xiaoyi.ssm.model.VenueCoach">
+			<id column="vcID" jdbcType="CHAR" property="id" />
+			<result column="vcPrice" jdbcType="VARCHAR" property="price" />
+			<result column="vcType_flag" jdbcType="VARCHAR" property="typeFlag" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Modify_time, Member_id, Name, Sex, Working_age, Head_image, Lecture_style,
+		Vitae, Education, Honor
+	</sql>
+
+	<select id="selectByTrainTeamID" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tc.* FROM  TrainCoach tc INNER JOIN TrainTeamCoach ttc ON tc.`ID` = ttc.`Train_coach_id`
+		WHERE ttc.`Train_team_id` = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectByMember" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tc.* FROM TrainTeamCoach ttc INNER JOIN TrainCoach tc ON ttc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN Member m ON tc.`Member_id` = m.`ID` WHERE m.`ID` = #{id,jdbcType=VARCHAR} LIMIT 1
+	</select>
+
+	<select id="selectByMemberTeam" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tc.* FROM TrainTeamCoach ttc INNER JOIN TrainCoach tc ON ttc.`Train_coach_id` = tc.`ID` 
+		WHERE ttc.Train_team_id = #{teamId,jdbcType=VARCHAR} AND tc.`Member_id` = #{memberId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tc.*,ttc.`Teach_type` ttcTeach_type FROM TrainTeamCoach ttc INNER JOIN TrainCoach tc ON ttc.`Train_coach_id` = tc.`ID` WHERE tc.`ID` = #{id,jdbcType=VARCHAR} 
+	</select>
+
+	<select id="countByTeam" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM TrainTeamCoach ttc INNER JOIN 
+		TrainCoach tc WHERE ttc.Train_team_id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tc.*,vc.ID vcID, vc.Price vcPrice,vc.Type_flag vcType_flag FROM TrainCoach tc 
+		INNER JOIN TrainTeamCoach ttc ON tc.`ID` = ttc.`Train_coach_id` 
+		LEFT JOIN (SELECT * FROM VenueCoach WHERE `Venue_id` = #{venueid}) vc ON tc.`ID` = vc.`Train_coach_id` 
+	</select>
+	
+	<select id="selectByDefault" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM TrainCoach WHERE `ID` = #{id,jdbcType=VARCHAR} 
+	</select>
+
+	<select id="selectByTeamManager" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tc.* FROM TrainCoach tc INNER JOIN TrainTeamCoach ttc ON tc.`ID` = ttc.`Train_coach_id` WHERE ttc.`Manager`=1 AND ttc.`Train_team_id` = #{trainTeamId}
+	</select>
+	
+	<select id="selectByMemberTeamManager" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT tc.* FROM TrainTeamCoach ttc INNER JOIN TrainCoach tc ON ttc.`Train_coach_id` = tc.`ID` 
+		WHERE ttc.`Train_team_id` = #{teamId,jdbcType=VARCHAR}  AND tc.`Member_id` = #{memberId,jdbcType=VARCHAR}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from TrainCoach
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.TrainCoach">
+		insert into TrainCoach (ID, Create_time, Modify_time,
+		Member_id, Name, Sex,
+		Working_age, Head_image, Lecture_style,
+		Vitae, Education, Honor
+		)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
+		#{memberId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER},
+		#{workingAge,jdbcType=INTEGER}, #{headImage,jdbcType=VARCHAR}, #{lectureStyle,jdbcType=VARCHAR},
+		#{vitae,jdbcType=VARCHAR}, #{education,jdbcType=VARCHAR}, #{honor,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.TrainCoach">
+		insert into TrainCoach
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="modifyTime != null">
+				Modify_time,
+			</if>
+			<if test="memberId != null">
+				Member_id,
+			</if>
+			<if test="name != null">
+				Name,
+			</if>
+			<if test="sex != null">
+				Sex,
+			</if>
+			<if test="workingAge != null">
+				Working_age,
+			</if>
+			<if test="headImage != null">
+				Head_image,
+			</if>
+			<if test="lectureStyle != null">
+				Lecture_style,
+			</if>
+			<if test="vitae != null">
+				Vitae,
+			</if>
+			<if test="education != null">
+				Education,
+			</if>
+			<if test="honor != null">
+				Honor,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				#{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="memberId != null">
+				#{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=INTEGER},
+			</if>
+			<if test="workingAge != null">
+				#{workingAge,jdbcType=INTEGER},
+			</if>
+			<if test="headImage != null">
+				#{headImage,jdbcType=VARCHAR},
+			</if>
+			<if test="lectureStyle != null">
+				#{lectureStyle,jdbcType=VARCHAR},
+			</if>
+			<if test="vitae != null">
+				#{vitae,jdbcType=VARCHAR},
+			</if>
+			<if test="education != null">
+				#{education,jdbcType=VARCHAR},
+			</if>
+			<if test="honor != null">
+				#{honor,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.TrainCoach">
+		update TrainCoach
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="memberId != null">
+				Member_id = #{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				Name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				Sex = #{sex,jdbcType=INTEGER},
+			</if>
+			<if test="workingAge != null">
+				Working_age = #{workingAge,jdbcType=INTEGER},
+			</if>
+			<if test="headImage != null">
+				Head_image = #{headImage,jdbcType=VARCHAR},
+			</if>
+			<if test="lectureStyle != null">
+				Lecture_style = #{lectureStyle,jdbcType=VARCHAR},
+			</if>
+			<if test="vitae != null">
+				Vitae = #{vitae,jdbcType=VARCHAR},
+			</if>
+			<if test="education != null">
+				Education = #{education,jdbcType=VARCHAR},
+			</if>
+			<if test="honor != null">
+				Honor = #{honor,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.TrainCoach">
+		update TrainCoach
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+		Member_id = #{memberId,jdbcType=VARCHAR},
+		Name = #{name,jdbcType=VARCHAR},
+		Sex = #{sex,jdbcType=INTEGER},
+		Working_age = #{workingAge,jdbcType=INTEGER},
+		Head_image = #{headImage,jdbcType=VARCHAR},
+		Lecture_style = #{lectureStyle,jdbcType=VARCHAR},
+		Vitae = #{vitae,jdbcType=VARCHAR},
+		Education = #{education,jdbcType=VARCHAR},
+		Honor = #{honor,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

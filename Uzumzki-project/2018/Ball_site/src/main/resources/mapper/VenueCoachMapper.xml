@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.VenueCoachMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.VenueCoach">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+		<result column="Venue_id" jdbcType="VARCHAR" property="venueId" />
+		<result column="Train_coach_id" jdbcType="VARCHAR" property="trainCoachId" />
+		<result column="Type_flag" jdbcType="INTEGER" property="typeFlag" />
+		<result column="Price" jdbcType="DOUBLE" property="price" />
+		<association property="trainCoach" javaType="com.xiaoyi.ssm.model.TrainCoach">
+			<id column="tcID" jdbcType="CHAR" property="id" />
+			<result column="tcName" jdbcType="VARCHAR" property="name" />
+			<result column="tcHead_image" jdbcType="VARCHAR" property="headImage" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Modify_time, Venue_id, Train_coach_id, Type_flag, Price
+	</sql>
+
+	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT vc.*,tc.`ID` tcID , tc.`Name` tcName , tc.`Head_image` tcHead_image
+		FROM VenueCoach vc LEFT JOIN TrainCoach tc ON vc.`Train_coach_id` = tc.`ID` 
+		WHERE Venue_id = #{venueid} AND Type_flag = 1 
+	</select>
+	
+	<select id="countByVenue" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(0) from VenueCoach where Venue_id = #{id,jdbcType=VARCHAR} AND Type_flag = 1
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueCoach
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from VenueCoach
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueCoach">
+		insert into VenueCoach (ID, Create_time, Modify_time,
+		Venue_id, Train_coach_id, Type_flag,
+		Price)
+		values (#{id,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
+		#{venueId,jdbcType=VARCHAR}, #{trainCoachId,jdbcType=VARCHAR}, #{typeFlag,jdbcType=INTEGER},
+		#{price,jdbcType=DOUBLE})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueCoach">
+		insert into VenueCoach
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="modifyTime != null">
+				Modify_time,
+			</if>
+			<if test="venueId != null">
+				Venue_id,
+			</if>
+			<if test="trainCoachId != null">
+				Train_coach_id,
+			</if>
+			<if test="typeFlag != null">
+				Type_flag,
+			</if>
+			<if test="price != null">
+				Price,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				#{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueId != null">
+				#{venueId,jdbcType=VARCHAR},
+			</if>
+			<if test="trainCoachId != null">
+				#{trainCoachId,jdbcType=VARCHAR},
+			</if>
+			<if test="typeFlag != null">
+				#{typeFlag,jdbcType=INTEGER},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=DOUBLE},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.VenueCoach">
+		update VenueCoach
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueId != null">
+				Venue_id = #{venueId,jdbcType=VARCHAR},
+			</if>
+			<if test="trainCoachId != null">
+				Train_coach_id = #{trainCoachId,jdbcType=VARCHAR},
+			</if>
+			<if test="typeFlag != null">
+				Type_flag = #{typeFlag,jdbcType=INTEGER},
+			</if>
+			<if test="price != null">
+				Price = #{price,jdbcType=DOUBLE},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.VenueCoach">
+		update VenueCoach
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+		Venue_id = #{venueId,jdbcType=VARCHAR},
+		Train_coach_id = #{trainCoachId,jdbcType=VARCHAR},
+		Type_flag = #{typeFlag,jdbcType=INTEGER},
+		Price = #{price,jdbcType=DOUBLE}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

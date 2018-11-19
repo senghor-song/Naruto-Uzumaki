@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.AmountMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Amount">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="AmountNO" jdbcType="INTEGER" property="amountno" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="ModifyTime" jdbcType="TIMESTAMP" property="modifytime" />
+		<result column="VenueID" jdbcType="CHAR" property="venueid" />
+		<result column="Amount" jdbcType="INTEGER" property="amount" />
+		<result column="ManagerID" jdbcType="CHAR" property="managerid" />
+		<result column="EstimatedTime" jdbcType="TIMESTAMP" property="estimatedtime" />
+		<result column="Status" jdbcType="INTEGER" property="status" />
+		<association property="venue" javaType="com.xiaoyi.ssm.model.Venue">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="vName" jdbcType="VARCHAR" property="name" />
+			<result column="vAmountBank" jdbcType="VARCHAR" property="amountbank" />
+			<result column="vAmountAccount" jdbcType="VARCHAR" property="amountaccount" />
+			<result column="vAmountAccountNumber" jdbcType="VARCHAR" property="amountaccountnumber" />
+		</association>
+		<association property="city" javaType="com.xiaoyi.ssm.model.City">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="cCity" jdbcType="VARCHAR" property="city" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, AmountNO, CreateTime, ModifyTime, VenueID, Amount, ManagerID, EstimatedTime,
+		Status
+	</sql>
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Amount" resultMap="BaseResultMap">
+		SELECT a.*, v.`Name` vName, v.`AmountBank` vAmountBank, v.`AmountAccount` vAmountAccount, 
+		v.`AmountAccountNumber` vAmountAccountNumber, m.`Name` mName,m.`RealName` mRealName,
+		m.`Type` mType, c.`City` cCity FROM Amount a LEFT JOIN Venue v
+		ON a.`VenueID` = v.`ID` LEFT JOIN Manager m ON a.`ManagerID` = m.`ID`
+		LEFT JOIN City c ON v.`CityID` = c.`ID`
+	</select>
+	
+	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT a.*, v.`Name` vName, v.`AmountBank` vAmountBank, v.`AmountAccount` vAmountAccount, 
+		v.`AmountAccountNumber` vAmountAccountNumber, m.`Name` mName,m.`RealName` mRealName,
+		m.`Type` mType, c.`City` cCity FROM Amount a LEFT JOIN Venue v
+		ON a.`VenueID` = v.`ID` LEFT JOIN Manager m ON a.`ManagerID` = m.`ID`
+		LEFT JOIN City c ON v.`CityID` = c.`ID` WHERE a.VenueID = #{venueid} ORDER BY a.CreateTime DESC LIMIT 1,4 
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT a.*, v.`Name` vName, v.`AmountBank` vAmountBank, v.`AmountAccount` vAmountAccount, 
+		v.`AmountAccountNumber` vAmountAccountNumber, m.`Name` mName,m.`RealName` mRealName,
+		m.`Type` mType, c.`City` cCity FROM Amount a LEFT JOIN Venue v
+		ON a.`VenueID` = v.`ID` LEFT JOIN Manager m ON a.`ManagerID` = m.`ID`
+		LEFT JOIN City c ON v.`CityID` = c.`ID` WHERE a.ID = #{id}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Amount
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Amount">
+		insert into Amount (ID, AmountNO, CreateTime,
+		ModifyTime, VenueID, Amount,
+		ManagerID, EstimatedTime, Status)
+		values (#{id,jdbcType=CHAR}, #{amountno,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP},
+		#{modifytime,jdbcType=TIMESTAMP}, #{venueid,jdbcType=CHAR}, #{amount,jdbcType=INTEGER},
+		#{managerid,jdbcType=CHAR}, #{estimatedtime,jdbcType=TIMESTAMP},
+		#{status,jdbcType=INTEGER})
+	</insert>
+	
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Amount">
+		insert into Amount
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="amountno != null">
+				AmountNO,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="modifytime != null">
+				ModifyTime,
+			</if>
+			<if test="venueid != null">
+				VenueID,
+			</if>
+			<if test="amount != null">
+				Amount,
+			</if>
+			<if test="managerid != null">
+				ManagerID,
+			</if>
+			<if test="estimatedtime != null">
+				EstimatedTime,
+			</if>
+			<if test="status != null">
+				Status,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="amountno != null">
+				#{amountno,jdbcType=INTEGER},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				#{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueid != null">
+				#{venueid,jdbcType=CHAR},
+			</if>
+			<if test="amount != null">
+				#{amount,jdbcType=INTEGER},
+			</if>
+			<if test="managerid != null">
+				#{managerid,jdbcType=CHAR},
+			</if>
+			<if test="estimatedtime != null">
+				#{estimatedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Amount">
+		update Amount
+		<set>
+			<if test="amountno != null">
+				AmountNO = #{amountno,jdbcType=INTEGER},
+			</if>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueid != null">
+				VenueID = #{venueid,jdbcType=CHAR},
+			</if>
+			<if test="amount != null">
+				Amount = #{amount,jdbcType=INTEGER},
+			</if>
+			<if test="managerid != null">
+				ManagerID = #{managerid,jdbcType=CHAR},
+			</if>
+			<if test="estimatedtime != null">
+				EstimatedTime = #{estimatedtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="status != null">
+				Status = #{status,jdbcType=INTEGER},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Amount">
+		update Amount
+		set AmountNO = #{amountno,jdbcType=INTEGER},
+		CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		ModifyTime = #{modifytime,jdbcType=TIMESTAMP},
+		VenueID = #{venueid,jdbcType=CHAR},
+		Amount = #{amount,jdbcType=INTEGER},
+		ManagerID = #{managerid,jdbcType=CHAR},
+		EstimatedTime = #{estimatedtime,jdbcType=TIMESTAMP},
+		Status = #{status,jdbcType=INTEGER}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.ReserveMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.Reserve">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="FieldID" jdbcType="VARCHAR" property="fieldid" />
+		<result column="ReserveTimeFrame" jdbcType="VARCHAR" property="reservetimeframe" />
+		<result column="ReserveAmount" jdbcType="DOUBLE" property="reserveamount" />
+		<result column="OrderID" jdbcType="VARCHAR" property="orderid" />
+		<association property="order" javaType="com.xiaoyi.ssm.model.Order">
+			<id column="oID" jdbcType="VARCHAR" property="id" />
+			<result column="oCreateTime" jdbcType="VARCHAR" property="createtime" />
+			<result column="oType" jdbcType="VARCHAR" property="type" />
+			<result column="oCoachID" jdbcType="VARCHAR" property="coachid" />
+			<result column="oMemberID" jdbcType="VARCHAR" property="memberid" />
+		</association>
+		<association property="field" javaType="com.xiaoyi.ssm.model.Field">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="fName" jdbcType="VARCHAR" property="name" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CreateTime, FieldID, ReserveTimeFrame, ReserveAmount, OrderID
+	</sql>
+
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Reserve" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Reserve
+		<where>
+			<if test="createtime != null">
+				AND CreateTime = #{createtime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="fieldid != null and fieldid != ''">
+				AND FieldID = #{fieldid,jdbcType=VARCHAR}
+			</if>
+			<if test="reservetimeframe != null and reservetimeframe != ''">
+				AND ReserveTimeFrame = #{reservetimeframe,jdbcType=VARCHAR}
+			</if>
+			<if test="reserveamount != null">
+				AND ReserveAmount = #{reserveamount,jdbcType=DOUBLE}
+			</if>
+			<if test="orderid != null">
+				AND OrderID = #{orderid,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectByFieldTemplateDto" parameterType="com.xiaoyi.ssm.dto.FieldTemplateDto" resultMap="BaseResultMap">
+		SELECT r.*,o.`ID` oID , o.`Type` oType,o.`CoachID` oCoachID,o.`MemberID` oMemberID, o.`CreateTime` oCreateTime
+		FROM Reserve r INNER JOIN `Order` o ON r.`OrderID` = o.`ID` WHERE o.`Type` IN (0,1,5,6) 
+		AND o.`OrderDate` = #{date} AND o.`VenueID` = #{venueid} AND r.`FieldID` = #{fieldid}
+	</select>
+
+	<select id="selectByOrder" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT r.*,f.`Name` fName FROM Reserve r INNER JOIN `Field` f ON r.`FieldID` = f.`ID`
+		where OrderID = #{id,jdbcType=CHAR}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Reserve
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from Reserve
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Reserve">
+		insert into Reserve (ID, CreateTime, FieldID,
+		ReserveTimeFrame, ReserveAmount, OrderID
+		)
+		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{fieldid,jdbcType=VARCHAR},
+		#{reservetimeframe,jdbcType=VARCHAR}, #{reserveamount,jdbcType=DOUBLE}, #{orderid,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Reserve">
+		insert into Reserve
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="fieldid != null">
+				FieldID,
+			</if>
+			<if test="reservetimeframe != null">
+				ReserveTimeFrame,
+			</if>
+			<if test="reserveamount != null">
+				ReserveAmount,
+			</if>
+			<if test="orderid != null">
+				OrderID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="fieldid != null">
+				#{fieldid,jdbcType=VARCHAR},
+			</if>
+			<if test="reservetimeframe != null">
+				#{reservetimeframe,jdbcType=VARCHAR},
+			</if>
+			<if test="reserveamount != null">
+				#{reserveamount,jdbcType=DOUBLE},
+			</if>
+			<if test="orderid != null">
+				#{orderid,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.Reserve">
+		update Reserve
+		<set>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="fieldid != null">
+				FieldID = #{fieldid,jdbcType=VARCHAR},
+			</if>
+			<if test="reservetimeframe != null">
+				ReserveTimeFrame = #{reservetimeframe,jdbcType=VARCHAR},
+			</if>
+			<if test="reserveamount != null">
+				ReserveAmount = #{reserveamount,jdbcType=DOUBLE},
+			</if>
+			<if test="orderid != null">
+				OrderID = #{orderid,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.Reserve">
+		update Reserve
+		set CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		FieldID = #{fieldid,jdbcType=VARCHAR},
+		ReserveTimeFrame = #{reservetimeframe,jdbcType=VARCHAR},
+		ReserveAmount = #{reserveamount,jdbcType=DOUBLE},
+		OrderID = #{orderid,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

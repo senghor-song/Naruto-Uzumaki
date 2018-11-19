@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.VenueRefundMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.VenueRefund">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="Amount_sum" jdbcType="DOUBLE" property="amountSum" />
+		<result column="Amount_refund" jdbcType="DOUBLE" property="amountRefund" />
+		<result column="Amount_fee" jdbcType="DOUBLE" property="amountFee" />
+		<result column="Amount_rate" jdbcType="INTEGER" property="amountRate" />
+		<result column="Order_id" jdbcType="VARCHAR" property="orderId" />
+		<result column="Refund_time" jdbcType="TIMESTAMP" property="refundTime" />
+		<result column="Refund_status" jdbcType="INTEGER" property="refundStatus" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Content, Amount_sum, Amount_refund, Amount_fee,
+		Amount_rate, Order_id,
+		Refund_time, Refund_status, Remark
+	</sql>
+
+	<select id="selectByOrder" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueRefund
+		where Order_id = #{orderid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectByVenue" resultMap="BaseResultMap">
+		SELECT vr.* FROM VenueRefund vr INNER JOIN `Order` o ON
+		vr.`Order_id` = o.`ID` WHERE o.`VenueID` = #{venueid,jdbcType=VARCHAR}
+		AND vr.`Create_time` &gt;= #{dateStart} AND vr.`Create_time` &lt;= #{dateEnd}
+	</select>
+
+	<select id="countByVenue" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM VenueRefund vr INNER JOIN `Order` o ON
+		vr.`Order_id` = o.`ID` WHERE o.`VenueID` = #{venueid,jdbcType=VARCHAR} AND vr.Refund_status = 0
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueRefund
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from VenueRefund
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueRefund">
+		insert into VenueRefund (ID, Create_time, Content,
+		Amount_sum, Amount_refund, Amount_fee,
+		Amount_rate, Order_id, Refund_time,
+		Refund_status, Remark)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+		#{content,jdbcType=VARCHAR},
+		#{amountSum,jdbcType=DOUBLE}, #{amountRefund,jdbcType=DOUBLE}, #{amountFee,jdbcType=DOUBLE},
+		#{amountRate,jdbcType=INTEGER}, #{orderId,jdbcType=VARCHAR},
+		#{refundTime,jdbcType=TIMESTAMP},
+		#{refundStatus,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueRefund">
+		insert into VenueRefund
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+			<if test="amountSum != null">
+				Amount_sum,
+			</if>
+			<if test="amountRefund != null">
+				Amount_refund,
+			</if>
+			<if test="amountFee != null">
+				Amount_fee,
+			</if>
+			<if test="amountRate != null">
+				Amount_rate,
+			</if>
+			<if test="orderId != null">
+				Order_id,
+			</if>
+			<if test="refundTime != null">
+				Refund_time,
+			</if>
+			<if test="refundStatus != null">
+				Refund_status,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="amountSum != null">
+				#{amountSum,jdbcType=DOUBLE},
+			</if>
+			<if test="amountRefund != null">
+				#{amountRefund,jdbcType=DOUBLE},
+			</if>
+			<if test="amountFee != null">
+				#{amountFee,jdbcType=DOUBLE},
+			</if>
+			<if test="amountRate != null">
+				#{amountRate,jdbcType=INTEGER},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="refundTime != null">
+				#{refundTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="refundStatus != null">
+				#{refundStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.VenueRefund">
+		update VenueRefund
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="amountSum != null">
+				Amount_sum = #{amountSum,jdbcType=DOUBLE},
+			</if>
+			<if test="amountRefund != null">
+				Amount_refund = #{amountRefund,jdbcType=DOUBLE},
+			</if>
+			<if test="amountFee != null">
+				Amount_fee = #{amountFee,jdbcType=DOUBLE},
+			</if>
+			<if test="amountRate != null">
+				Amount_rate = #{amountRate,jdbcType=INTEGER},
+			</if>
+			<if test="orderId != null">
+				Order_id = #{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="refundTime != null">
+				Refund_time = #{refundTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="refundStatus != null">
+				Refund_status = #{refundStatus,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.VenueRefund">
+		update VenueRefund
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Content = #{content,jdbcType=VARCHAR},
+		Amount_sum = #{amountSum,jdbcType=DOUBLE},
+		Amount_refund = #{amountRefund,jdbcType=DOUBLE},
+		Amount_fee = #{amountFee,jdbcType=DOUBLE},
+		Amount_rate = #{amountRate,jdbcType=INTEGER},
+		Order_id = #{orderId,jdbcType=VARCHAR},
+		Refund_time = #{refundTime,jdbcType=TIMESTAMP},
+		Refund_status = #{refundStatus,jdbcType=INTEGER},
+		Remark = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

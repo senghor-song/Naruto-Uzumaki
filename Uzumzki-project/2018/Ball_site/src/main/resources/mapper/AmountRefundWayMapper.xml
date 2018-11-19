@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.AmountRefundWayMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.AmountRefundWay">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="Create_Time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Modify_Time" jdbcType="TIMESTAMP" property="modifyTime" />
+		<result column="Fee1" jdbcType="INTEGER" property="fee1" />
+		<result column="Fee2" jdbcType="INTEGER" property="fee2" />
+		<result column="Fee3" jdbcType="INTEGER" property="fee3" />
+		<result column="Weather_start" jdbcType="INTEGER" property="weatherStart" />
+		<result column="weather_end" jdbcType="INTEGER" property="weatherEnd" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_Time, Modify_Time, Fee1, Fee2, Fee3, Weather_start, weather_end
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from AmountRefundWay
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from AmountRefundWay
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.AmountRefundWay">
+		insert into AmountRefundWay (ID, Create_Time, Modify_Time,
+		Fee1, Fee2, Fee3, Weather_start,
+		weather_end)
+		values (#{id,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
+		#{fee1,jdbcType=INTEGER}, #{fee2,jdbcType=INTEGER}, #{fee3,jdbcType=INTEGER},
+		#{weatherStart,jdbcType=INTEGER},
+		#{weatherEnd,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.AmountRefundWay">
+		insert into AmountRefundWay
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_Time,
+			</if>
+			<if test="modifyTime != null">
+				Modify_Time,
+			</if>
+			<if test="fee1 != null">
+				Fee1,
+			</if>
+			<if test="fee2 != null">
+				Fee2,
+			</if>
+			<if test="fee3 != null">
+				Fee3,
+			</if>
+			<if test="weatherStart != null">
+				Weather_start,
+			</if>
+			<if test="weatherEnd != null">
+				weather_end,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				#{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="fee1 != null">
+				#{fee1,jdbcType=INTEGER},
+			</if>
+			<if test="fee2 != null">
+				#{fee2,jdbcType=INTEGER},
+			</if>
+			<if test="fee3 != null">
+				#{fee3,jdbcType=INTEGER},
+			</if>
+			<if test="weatherStart != null">
+				#{weatherStart,jdbcType=INTEGER},
+			</if>
+			<if test="weatherEnd != null">
+				#{weatherEnd,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.AmountRefundWay">
+		update AmountRefundWay
+		<set>
+			<if test="createTime != null">
+				Create_Time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				Modify_Time = #{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="fee1 != null">
+				Fee1 = #{fee1,jdbcType=INTEGER},
+			</if>
+			<if test="fee2 != null">
+				Fee2 = #{fee2,jdbcType=INTEGER},
+			</if>
+			<if test="fee3 != null">
+				Fee3 = #{fee3,jdbcType=INTEGER},
+			</if>
+			<if test="weatherStart != null">
+				Weather_start = #{weatherStart,jdbcType=INTEGER},
+			</if>
+			<if test="weatherEnd != null">
+				weather_end = #{weatherEnd,jdbcType=INTEGER},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.AmountRefundWay">
+		update AmountRefundWay
+		set Create_Time = #{createTime,jdbcType=TIMESTAMP},
+		Modify_Time = #{modifyTime,jdbcType=TIMESTAMP},
+		Fee1 = #{fee1,jdbcType=INTEGER},
+		Fee2 = #{fee2,jdbcType=INTEGER},
+		Fee3 = #{fee3,jdbcType=INTEGER},
+		Weather_start = #{weatherStart,jdbcType=INTEGER},
+		weather_end = #{weatherEnd,jdbcType=INTEGER}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

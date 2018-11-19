@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.OperationLogMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.OperationLog">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Staff_id" jdbcType="VARCHAR" property="staffId" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="Ip" jdbcType="VARCHAR" property="ip" />
+		<association property="staff" javaType="com.xiaoyi.ssm.model.Staff">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="sName" jdbcType="VARCHAR" property="name" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Staff_id, Content, Ip
+	</sql>
+	
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.OperationLog" resultMap="BaseResultMap">
+		SELECT ol.*,s.`Name` sName FROM OperationLog ol INNER JOIN Staff s ON ol.`Staff_id` = s.`ID` ORDER BY ol.`Create_time` DESC
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from OperationLog
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from OperationLog
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.OperationLog">
+		insert into OperationLog (ID, Create_time, Staff_id,
+		Content, Ip)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{staffId,jdbcType=VARCHAR},
+		#{content,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.OperationLog">
+		insert into OperationLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="staffId != null">
+				Staff_id,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+			<if test="ip != null">
+				Ip,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="staffId != null">
+				#{staffId,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="ip != null">
+				#{ip,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.OperationLog">
+		update OperationLog
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="staffId != null">
+				Staff_id = #{staffId,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="ip != null">
+				Ip = #{ip,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.OperationLog">
+		update OperationLog
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Staff_id = #{staffId,jdbcType=VARCHAR},
+		Content = #{content,jdbcType=VARCHAR},
+		Ip = #{ip,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

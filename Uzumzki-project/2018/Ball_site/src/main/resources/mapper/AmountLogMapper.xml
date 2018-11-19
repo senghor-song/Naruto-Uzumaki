@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.AmountLogMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.AmountLog">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="CreateTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="StaffID" jdbcType="VARCHAR" property="staffid" />
+		<result column="Type" jdbcType="INTEGER" property="type" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<association property="staff" javaType="com.xiaoyi.ssm.model.Staff">
+			<id column="ID" jdbcType="VARCHAR" property="id" />
+			<result column="sName" jdbcType="VARCHAR" property="name" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CreateTime, StaffID, Type, Content
+	</sql>
+
+	<select id="selectByAmount" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT al.*,s.`Name` sName FROM
+		AmountLog al LEFT JOIN Staff s ON al.`StaffID` = s.`StaffID` WHERE AmountID = #{id,jdbcType=VARCHAR} ORDER BY CreateTime DESC
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from AmountLog
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from AmountLog
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.AmountLog">
+		insert into AmountLog (ID, CreateTime, AmountID,
+		StaffID, Type, Content
+		)
+		values
+		(#{id,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{amountid,jdbcType=VARCHAR},
+		#{staffid,jdbcType=VARCHAR},
+		#{type,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.AmountLog">
+		insert into AmountLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createtime != null">
+				CreateTime,
+			</if>
+			<if test="amountid != null">
+				AmountID,
+			</if>
+			<if test="staffid != null">
+				StaffID,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="amountid != null">
+				#{amountid,jdbcType=VARCHAR},
+			</if>
+			<if test="staffid != null">
+				#{staffid,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.AmountLog">
+		update AmountLog
+		<set>
+			<if test="createtime != null">
+				CreateTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="amountid != null">
+				AmountID = #{amountid,jdbcType=VARCHAR},
+			</if>
+			<if test="staffid != null">
+				StaffID = #{staffid,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.AmountLog">
+		update AmountLog
+		set CreateTime = #{createtime,jdbcType=TIMESTAMP},
+		AmountID =
+		#{amountid,jdbcType=VARCHAR},
+		StaffID = #{staffid,jdbcType=VARCHAR},
+		Type = #{type,jdbcType=INTEGER},
+		Content =
+		#{content,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

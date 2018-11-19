@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.TrainTeamLogMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.TrainTeamLog">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Train_team_id" jdbcType="VARCHAR" property="trainTeamId" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Train_team_id, Content
+	</sql>
+
+	<select id="countByTeam" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(0) from
+		TrainTeamLog where Train_team_id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectByTeam" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select * from
+		TrainTeamLog where Train_team_id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from TrainTeamLog
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from TrainTeamLog
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.TrainTeamLog">
+		insert into TrainTeamLog (ID, Create_time, Train_team_id,
+		Content)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{trainTeamId,jdbcType=VARCHAR},
+		#{content,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.TrainTeamLog">
+		insert into TrainTeamLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="trainTeamId != null">
+				Train_team_id,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="trainTeamId != null">
+				#{trainTeamId,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.TrainTeamLog">
+		update TrainTeamLog
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="trainTeamId != null">
+				Train_team_id = #{trainTeamId,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.TrainTeamLog">
+		update TrainTeamLog
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Train_team_id = #{trainTeamId,jdbcType=VARCHAR},
+		Content = #{content,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>
