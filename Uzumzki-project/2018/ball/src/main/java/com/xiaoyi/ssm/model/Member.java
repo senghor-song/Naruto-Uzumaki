@@ -54,6 +54,9 @@ public class Member implements Serializable {
     /** 手机号 */
     private String phone;
 
+    /** 封面背景 */
+    private String coverimage;
+
     /** 微信公众号的openid */
     private String openid;
 
@@ -189,6 +192,22 @@ public class Member implements Serializable {
      */
     public void setPhone(String phone) {
         this.phone = phone == null ? null : phone.trim();
+    }
+
+    /**
+     * 封面背景
+     * @return CoverImage 封面背景
+     */
+    public String getCoverimage() {
+        return coverimage;
+    }
+
+    /**
+     * 封面背景
+     * @param coverimage 封面背景
+     */
+    public void setCoverimage(String coverimage) {
+        this.coverimage = coverimage == null ? null : coverimage.trim();
     }
 
     /**

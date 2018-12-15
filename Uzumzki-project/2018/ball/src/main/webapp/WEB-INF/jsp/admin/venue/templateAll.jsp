@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="/WebBackAPI/admin/static/css/site.css" rel="stylesheet">
+    <link href="/admin/static/css/site.css" rel="stylesheet">
     <title>小易运维</title>
 </head>
 <style>
@@ -129,21 +129,20 @@
 	    </div>
 	</div>
     
-	<script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
-	<script src="/WebBackAPI/admin/static/js/layout.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
+	<script src="/admin/static/plugins/jquery/jquery.min.js"></script>
+	<script src="/admin/static/js/layout.js"></script>
+	<script src="/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
 	<script>
 	    $.widget.bridge('uibutton', $.ui.button)
 	</script>
-	<script src="/WebBackAPI/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-	<script src="/WebBackAPI/admin/static/js/raphael-min.js"></script>
-	<script src="/WebBackAPI/admin/static/js/echarts.min.js"></script>
-	<script src="/WebBackAPI/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/layui/layui.all.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
-	<script src="/WebBackAPI/admin/static/js/jq-ext.js"></script>
+	<script src="/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/admin/static/js/raphael-min.js"></script>
+	<script src="/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+	<script src="/admin/static/plugins/layui/layui.all.js"></script>
+	<script src="/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+	<script src="/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+	<script src="/admin/static/js/jq-ext.js"></script>
 	<script type="text/javascript">
 		$(function() {
 			var tableObj = {
@@ -164,7 +163,7 @@
 					self.obj = $.tableObject({
 						tableId : 'tableVenue',
 						tableOption : {
-							url : '/WebBackAPI/admin/venue/venueList',
+							url : '/admin/venue/venueList',
 							page : false,
 							height : $(window).height() - 210,
 							where : {
@@ -231,7 +230,7 @@
 		        }
 				$.ajax({
 					type : "POST", //提交方式  
-					url : "/WebBackAPI/admin/venue/saveVenueTemplateAll",//路径  
+					url : "/admin/venue/saveVenueTemplateAll",//路径  
 					data : {
 						venues : venues,
 						venueAll : venueAll,

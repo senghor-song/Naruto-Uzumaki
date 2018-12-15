@@ -19,9 +19,7 @@ import com.xiaoyi.ssm.model.Order;
 import com.xiaoyi.ssm.model.Reserve;
 import com.xiaoyi.ssm.model.TrainCoach;
 import com.xiaoyi.ssm.model.Venue;
-import com.xiaoyi.ssm.model.VenueEnter;
 import com.xiaoyi.ssm.service.MemberService;
-import com.xiaoyi.ssm.service.OrderLogService;
 import com.xiaoyi.ssm.service.OrderService;
 import com.xiaoyi.ssm.service.ReserveService;
 import com.xiaoyi.ssm.service.TrainCoachService;
@@ -29,7 +27,7 @@ import com.xiaoyi.ssm.service.VenueEnterService;
 import com.xiaoyi.ssm.service.VenueService;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
-import com.xiaoyi.ssm.util.MoblieMessageUtil;
+import com.xiaoyi.ssm.util.PropertiesUtil;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.SpringUtils;
 import com.xiaoyi.ssm.util.StringUtil;
@@ -118,7 +116,7 @@ public class SmsInit implements ApplicationListener<ContextRefreshedEvent> {
 							TrainCoach trainCoach = trainCoachService.selectByMemberTeamManager(venueMember.getId(), venue.getTrainteam());
 							if (trainCoach != null) {
 								// 有权限查看
-								LOGGER.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/user/venueMenu/lock/lock?venueId="+venue.getId(), datajson));
+								LOGGER.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/user/venueMenu/lock/lock?venueId="+venue.getId() + "&title=" + venue.getName(), datajson));
 							}else {
 								LOGGER.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
 							}
@@ -149,18 +147,21 @@ public class SmsInit implements ApplicationListener<ContextRefreshedEvent> {
 					LOGGER.info(orderid+"短信发送失败 ------------------>");
 				}
 				LOGGER.info(orderid+"订单处理成功 ------------------>");
-				VenueEnter venueEnter = (VenueEnter) RedisUtil.getRedisOne(Global.REDIS_VENUE, contentMap.get("phone_number"));
-				if (venueEnter != null) {
-					try {
-						if (venueEnterService.insertSelective(venueEnter) > 0) {
-							LOGGER.info("入驻处理成功 ------------------>");
-							RedisUtil.delRedis(Global.REDIS_VENUE, (String)contentMap.get("phone_number"));
-						}
-					} catch (Exception e) {
-						LOGGER.info("数据已存在 ------------------>");
-						return true;
-					}
-				}
+				
+				
+				// 回复短信则代表愿意入驻
+//				VenueEnter venueEnter = (VenueEnter) RedisUtil.getRedisOne(Global.REDIS_VENUE, contentMap.get("phone_number"));
+//				if (venueEnter != null) {
+//					try {
+//						if (venueEnterService.insertSelective(venueEnter) > 0) {
+//							LOGGER.info("入驻处理成功 ------------------>");
+//							RedisUtil.delRedis(Global.REDIS_VENUE, (String)contentMap.get("phone_number"));
+//						}
+//					} catch (Exception e) {
+//						LOGGER.info("数据已存在 ------------------>");
+//						return true;
+//					}
+//				}
 			} catch (com.google.gson.JsonSyntaxException e) {
 				LOGGER.error("处理失败:" + message.getMessageBodyAsString(), e);
 				// 理论上不会出现格式错误的情况，所以遇见格式错误的消息，只能先delete,否则重新推送也会一直报错
@@ -217,6 +218,12 @@ public class SmsInit implements ApplicationListener<ContextRefreshedEvent> {
 			return;
 		}
 		LOGGER.info("初始开启短信服务回调开始 ------------------>");
+		if (System.getProperties().getProperty("os.name").indexOf("Windows") != -1) {
+			PropertiesUtil.updatePro(Thread.currentThread().getContextClassLoader().getResource("").getPath() + "jdbc.properties", "sqlLogger", "true");
+		} else {
+			PropertiesUtil.updatePro(Thread.currentThread().getContextClassLoader().getResource("").getPath() + "jdbc.properties", "sqlLogger", "false");
+		}
+		
 		ServiceThread serviceThread = new ServiceThread();
 		serviceThread.start();
 		// 顺便保存项目启动时间

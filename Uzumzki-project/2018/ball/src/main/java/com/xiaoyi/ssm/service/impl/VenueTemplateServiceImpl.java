@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.xiaoyi.ssm.dao.VenueTemplateMapper;
 import com.xiaoyi.ssm.model.VenueTemplate;
+import com.xiaoyi.ssm.service.FieldTemplateService;
 import com.xiaoyi.ssm.service.VenueTemplateService;
 
 /**
@@ -19,6 +20,8 @@ public class VenueTemplateServiceImpl extends AbstractService<VenueTemplate, Str
 
 	@Autowired
 	private VenueTemplateMapper venueTemplateMapper;
+	@Autowired
+	private FieldTemplateService fieldTemplateService;
 
 	@Override
 	public void setBaseMapper() {
@@ -46,18 +49,6 @@ public class VenueTemplateServiceImpl extends AbstractService<VenueTemplate, Str
 	}
 
 	/**
-	 * @Description: 将场馆下的模板都设置成非默认模板
-	 * @author 宋高俊
-	 * @param id
-	 * @return
-	 * @date 2018年9月15日 下午2:31:32
-	 */
-	@Override
-	public Integer updateNoDefaultVenue(String id) {
-		return venueTemplateMapper.updateNoDefaultVenue(id);
-	}
-
-	/**
 	 * @Description: 根据场馆馆和模板id查询
 	 * @author 宋高俊
 	 * @param venueid
@@ -68,6 +59,33 @@ public class VenueTemplateServiceImpl extends AbstractService<VenueTemplate, Str
 	@Override
 	public VenueTemplate selectByVenueTemplate(String venueid, String templateid) {
 		return venueTemplateMapper.selectByVenueTemplate(venueid, templateid);
+	}
+
+
+	/**
+	 * @Description: 模板逻辑删除
+	 * @author 宋高俊
+	 * @param venueid
+	 * @param dateStr
+	 * @return
+	 * @date 2018年11月21日 下午8:15:02
+	 */
+	@Override
+	public int updateByVenue(String venueid, String dateStr) {
+		return venueTemplateMapper.updateByVenue(venueid, dateStr);
+	}
+	
+	/**
+	 * @Description: 根据场馆ID和日期查询
+	 * @author 宋高俊
+	 * @param venueid
+	 * @param date
+	 * @return
+	 * @date 2018年11月28日上午10:35:23
+	 */
+	@Override
+	public List<VenueTemplate> selectByVenueDate(String venueid, String date) {
+		return venueTemplateMapper.selectByVenueDate(venueid, date);
 	}
 
 }

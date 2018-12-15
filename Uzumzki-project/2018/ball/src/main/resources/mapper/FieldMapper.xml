@@ -7,15 +7,16 @@
 		<result column="modifyTime" jdbcType="TIMESTAMP" property="modifytime" />
 		<result column="VenueID" jdbcType="VARCHAR" property="venueid" />
 		<result column="Name" jdbcType="VARCHAR" property="name" />
+		<result column="Default_template" jdbcType="VARCHAR" property="defaultTemplate" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, CreateTime, modifyTime, VenueID, Name
+		ID, CreateTime, modifyTime, VenueID, Name, Default_template
 	</sql>
-	
+
 	<select id="countByVenue" parameterType="java.lang.String" resultType="Integer">
 		select count(0) from Field where VenueID = #{id}
 	</select>
-	
+
 	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Field" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -35,7 +36,30 @@
 			</if>
 		</where>
 	</select>
+
+	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Field
+		where VenueID = #{id,jdbcType=CHAR}
+	</select>
+
+	<update id="updateByVenue">
+		update Field set VenueID = #{dateStr} where VenueID = #{venueid}
+	</update>
 	
+	<select id="selectByDefaultVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" /> 
+		from Field where Default_template = #{venueTemplateId} AND venueId = #{venueId}
+	</select>
+	
+	<select id="selectByVenueName" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Field where VenueID = #{venueid} and Name = #{fieldName}
+	</select>
+
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -48,9 +72,11 @@
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.Field">
 		insert into Field (ID, CreateTime, modifyTime,
-		VenueID, Name)
+		VenueID, Name, Default_template
+		)
 		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP},
-		#{venueid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR})
+		#{venueid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{defaultTemplate,jdbcType=VARCHAR}
+		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Field">
 		insert into Field
@@ -70,6 +96,9 @@
 			<if test="name != null">
 				Name,
 			</if>
+			<if test="defaultTemplate != null">
+				Default_template,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -86,6 +115,9 @@
 			</if>
 			<if test="name != null">
 				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="defaultTemplate != null">
+				#{defaultTemplate,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -104,6 +136,9 @@
 			<if test="name != null">
 				Name = #{name,jdbcType=VARCHAR},
 			</if>
+			<if test="defaultTemplate != null">
+				Default_template = #{defaultTemplate,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where ID = #{id,jdbcType=CHAR}
 	</update>
@@ -112,7 +147,8 @@
 		set CreateTime = #{createtime,jdbcType=TIMESTAMP},
 		modifyTime = #{modifytime,jdbcType=TIMESTAMP},
 		VenueID = #{venueid,jdbcType=VARCHAR},
-		Name = #{name,jdbcType=VARCHAR}
+		Name = #{name,jdbcType=VARCHAR},
+		Default_template = #{defaultTemplate,jdbcType=VARCHAR}
 		where ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

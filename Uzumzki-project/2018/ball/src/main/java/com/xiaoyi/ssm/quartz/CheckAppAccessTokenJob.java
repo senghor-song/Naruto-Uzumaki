@@ -24,7 +24,7 @@ public class CheckAppAccessTokenJob {
 	 */
 	@Scheduled(cron = "0 0 0/1 * * ? ")
 //	@Scheduled(cron = "0/10 * * * * ? ")
-	public void getWXAccess_token() {
+	public void checkAppAccessTokenJob() {
 
 		Map<String, Object> listMembers = RedisUtil.getRedisAll(Global.redis_member_app);
 		for (String mem : listMembers.keySet()) {

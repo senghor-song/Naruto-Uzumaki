@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <a href="http://www.ekeae.com" class="brand-link">
-    <img src="/WebBackAPI/admin/static/image/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+    <img src="/admin/static/image/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
     <span class="brand-text font-weight-light">小易运维</span>
 </a>
 
@@ -19,14 +19,14 @@
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-item">
-                <a href="/WebBackAPI/admin/common/index" class="nav-link" id="selectindex_0">
+                <a href="/admin/common/index" class="nav-link" id="selectindex_0">
                     <i class="nav-icon fa fa-area-chart"></i>
                     <p>控制台</p>
                 </a>
             </li>
             <c:forEach var="permission" items="${permissions}">
             	<li class="nav-item has-treeview">
-	                <a href="#" class="nav-link">
+	                <a href="" class="nav-link">
 	                    <i class="${permission.menuIcon}"></i>
 	                    <p>${permission.menuTitle}<i class="fa fa-angle-left right"></i></p>
 	                </a>
@@ -48,17 +48,17 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/inviteBall/listview" class="nav-link" id="selectindex_1" style="padding-left: 65px;">
+                        <a href="/admin/inviteBall/listview" class="nav-link" id="selectindex_1" style="padding-left: 65px;">
                             <p>约球</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/order/listview" class="nav-link" id="selectindex_2" style="padding-left: 65px;">
+                        <a href="/admin/order/listview" class="nav-link" id="selectindex_2" style="padding-left: 65px;">
                             <p>订场</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/train/listview" class="nav-link" id="selectindex_20" style="padding-left: 65px;">
+                        <a href="/admin/train/listview" class="nav-link" id="selectindex_20" style="padding-left: 65px;">
                             <p>培训</p>
                         </a>
                     </li>
@@ -72,17 +72,17 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/member/listview" class="nav-link" id="selectindex_3" style="padding-left: 65px;">
+                        <a href="/admin/member/listview" class="nav-link" id="selectindex_3" style="padding-left: 65px;">
                             <p>用户</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/venue/listview" class="nav-link" id="selectindex_4" style="padding-left: 65px;">
+                        <a href="/admin/venue/listview" class="nav-link" id="selectindex_4" style="padding-left: 65px;">
                             <p>场馆</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/trainTeam/listview" class="nav-link" id="selectindex_21" style="padding-left: 65px;">
+                        <a href="/admin/trainTeam/listview" class="nav-link" id="selectindex_21" style="padding-left: 65px;">
                             <p>机构</p>
                         </a>
                     </li>
@@ -96,22 +96,22 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <!-- <li class="nav-item">
-                        <a href="/WebBackAPI/admin/venue/listview" class="nav-link" id="selectindex_5" style="padding-left: 65px;">
+                        <a href="/admin/venue/listview" class="nav-link" id="selectindex_5" style="padding-left: 65px;">
                             <p>管理</p>
                         </a>
                     </li> -->
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/newsBanner/listview" class="nav-link" id="selectindex_6" style="padding-left: 65px;">
+                        <a href="/admin/newsBanner/listview" class="nav-link" id="selectindex_6" style="padding-left: 65px;">
                             <p>横幅</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/city/listview" class="nav-link" id="selectindex_7" style="padding-left: 65px;">
+                        <a href="/admin/city/listview" class="nav-link" id="selectindex_7" style="padding-left: 65px;">
                             <p>城市</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/news/listview" class="nav-link" id="selectindex_13" style="padding-left: 65px;">
+                        <a href="/admin/news/listview" class="nav-link" id="selectindex_13" style="padding-left: 65px;">
                             <p>资讯</p>
                         </a>
                     </li>
@@ -125,12 +125,12 @@
 	                </a>
 	                <ul class="nav nav-treeview">
 	                    <li class="nav-item">
-	                        <a href="/WebBackAPI/admin/staff/listview" class="nav-link" id="selectindex_10" style="padding-left: 65px;">
+	                        <a href="/admin/staff/listview" class="nav-link" id="selectindex_10" style="padding-left: 65px;">
 	                            <p>伙伴</p>
 	                        </a>
 	                    </li>
 	                    <li class="nav-item">
-	                        <a href="/WebBackAPI/admin/staff/listview" class="nav-link" id="selectindex_11" style="padding-left: 65px;">
+	                        <a href="/admin/staff/listview" class="nav-link" id="selectindex_11" style="padding-left: 65px;">
 	                            <p>ACL</p>
 	                        </a>
 	                    </li>
@@ -144,7 +144,7 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
-                        <a href="/WebBackAPI/admin/amount/listview" class="nav-link" id="selectindex_12" style="padding-left: 65px;">
+                        <a href="/admin/amount/listview" class="nav-link" id="selectindex_12" style="padding-left: 65px;">
                             <p>对账</p>
                         </a>
                     </li>
@@ -292,12 +292,12 @@
 	                    if($('#infoForm').data('bootstrapValidator').isValid()){  
 				            $.ajax({  
 				                type : "POST",  //提交方式  
-				                url : "/WebBackAPI/admin/staff/updatePassword",//路径  
+				                url : "/admin/staff/updatePassword",//路径  
 				                data : $("#infoForm").serialize(),//数据，这里使用的是Json格式进行传输  
 				                dataType:"json",
 				                success : function(result) {//返回数据根据结果进行相应的处理  
 				                    if ( result.code == 200 ) {  
-		                        		window.location.href="/WebBackAPI/admin/common/login";
+		                        		window.location.href="/admin/common/login";
 				                    	layer.closeAll()
 				                    } else {  
 				                		layer.confirm(result.msg, {

@@ -1,38 +1,37 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-    <link href="/WebBackAPI/admin/static/css/site.css" rel="stylesheet">
-	<link rel="stylesheet" href="/WebBackAPI/admin/static/plugins/bootstrap-validator/dist/css/bootstrapValidator.css" />
-	<link rel="stylesheet" href="/WebBackAPI/admin/static/plugins/bootstrap-validator/vendor/bootstrap/css/dataValidator.css" />
-	<script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/layout.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
+    <link href="/admin/static/css/site.css" rel="stylesheet">
+	<link rel="stylesheet" href="/admin/static/plugins/bootstrap-validator/dist/css/bootstrapValidator.css" />
+	<link rel="stylesheet" href="/admin/static/plugins/bootstrap-validator/vendor/bootstrap/css/dataValidator.css" />
+	<script src="/admin/static/plugins/jquery/jquery.min.js"></script>
+    <script src="/admin/static/js/layout.js"></script>
+    <script src="/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
     <script>
         $.widget.bridge('uibutton', $.ui.button)
     </script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/raphael-min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/morris/morris.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/knob/jquery.knob.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/moment/moment.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/fastclick/fastclick.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/js/pages/dashboard.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/js/demo.js"></script>
-    <script src="/WebBackAPI/admin/static/js/echarts.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/layui/layui.all.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/jq-ext.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/layer/layer.js"></script>
+    <script src="/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/static/js/raphael-min.js"></script>
+    <script src="/admin/static/plugins/morris/morris.min.js"></script>
+    <script src="/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
+    <script src="/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="/admin/static/plugins/knob/jquery.knob.js"></script>
+    <script src="/admin/static/plugins/moment/moment.min.js"></script>
+    <script src="/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <script src="/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="/admin/static/plugins/fastclick/fastclick.js"></script>
+    <script src="/admin/static/plugins/js/pages/dashboard.js"></script>
+    <script src="/admin/static/plugins/js/demo.js"></script>
+    <script src="/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+    <script src="/admin/static/plugins/layui/layui.all.js"></script>
+    <script src="/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+    <script src="/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="/admin/static/js/jq-ext.js"></script>
+    <script src="/admin/static/plugins/layer/layer.js"></script>
 
 	<div class="" id="item8">
         <div class="item8-wrap">
@@ -85,10 +84,10 @@
 				            <div class="publicbg-row image1" style="float: left;">
 				                <div class="publicbg-box">
                 				<img src="${headImage}" id="headImage" class="publicbg-img"
-			                      onerror="javascript:this.src='/WebBackAPI/admin/static/image/error.png'"></div>
+			                      onerror="javascript:this.src='/admin/static/image/error.png'"></div>
 				            </div>
 				            <div class="publicbg-title">
-								<button class="layui-btn test" lay-data="{url: '/WebBackAPI/admin/common/uploadImage'}" name="file">上传图片</button>
+								<button class="layui-btn test" lay-data="{url: '/admin/common/uploadImage'}" name="file">上传图片</button>
 							</div>
 	                    </div>
 	                </div>
@@ -128,9 +127,9 @@
     	#edui1_iframeholder{    height: 300px !important;}
     </style>
  	<!-- 配置文件 -->
-    <script type="text/javascript" src="/WebBackAPI/admin/static/js/UEditor/ueditor.config.js"></script>
+    <script type="text/javascript" src="/admin/static/js/UEditor/ueditor.config.js"></script>
     <!-- 编辑器源码文件 -->
-    <script type="text/javascript" src="/WebBackAPI/admin/static/js/UEditor/ueditor.all.js"></script>
+    <script type="text/javascript" src="/admin/static/js/UEditor/ueditor.all.js"></script>
     <!-- 实例化编辑器 -->
     <script type="text/javascript">
         var ue = UE.getEditor('container');
@@ -169,7 +168,7 @@
 	        	var content = UE.getEditor('container').getContent();
 	            $.ajax({  
 	                type : "POST",  //提交方式  
-	                url : "/WebBackAPI/admin/news/saveNews",//路径  
+	                url : "/admin/news/saveNews",//路径  
 	                data : {  
 	                	id : id,
 	                    remark : remark,

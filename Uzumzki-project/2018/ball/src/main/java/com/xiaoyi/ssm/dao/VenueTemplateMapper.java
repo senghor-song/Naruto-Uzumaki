@@ -23,15 +23,6 @@ public interface VenueTemplateMapper extends BaseMapper<VenueTemplate, String>{
 	List<VenueTemplate> selectByVenue(@Param("venueid")String venueid);
 	
 	/**  
-	 * @Description: 将场馆下的模板都设置成非默认模板
-	 * @author 宋高俊  
-	 * @param id
-	 * @return 
-	 * @date 2018年9月15日 下午2:31:32 
-	 */ 
-	Integer updateNoDefaultVenue(@Param("id")String id);
-
-	/**  
 	 * @Description: 根据场馆馆和模板id查询
 	 * @author 宋高俊  
 	 * @param venueid
@@ -40,4 +31,24 @@ public interface VenueTemplateMapper extends BaseMapper<VenueTemplate, String>{
 	 * @date 2018年11月2日 上午9:17:32 
 	 */ 
 	VenueTemplate selectByVenueTemplate(@Param("venueid")String venueid, @Param("templateid")String templateid);
+
+	/**
+	 * @Description: 模板逻辑删除
+	 * @author 宋高俊
+	 * @param venueid
+	 * @param dateStr
+	 * @return
+	 * @date 2018年11月21日 下午8:15:02
+	 */
+	int updateByVenue(@Param("venueid")String venueid, @Param("dateStr")String dateStr);
+
+	/**
+	 * @Description: 根据场馆ID和日期查询
+	 * @author 宋高俊
+	 * @param venueid
+	 * @param date
+	 * @return
+	 * @date 2018年11月28日上午10:35:23
+	 */
+	List<VenueTemplate> selectByVenueDate(@Param("venueid")String venueid, @Param("date")String date);
 }

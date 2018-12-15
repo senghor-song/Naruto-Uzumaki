@@ -49,6 +49,8 @@ import com.xiaoyi.ssm.model.VenueCoach;
 import com.xiaoyi.ssm.model.VenueError;
 import com.xiaoyi.ssm.model.VenueLock;
 import com.xiaoyi.ssm.model.VenueLog;
+import com.xiaoyi.ssm.model.VenueRefund;
+import com.xiaoyi.ssm.model.VenueTemplate;
 import com.xiaoyi.ssm.service.CityService;
 import com.xiaoyi.ssm.service.DistrictService;
 import com.xiaoyi.ssm.service.FieldService;
@@ -64,6 +66,7 @@ import com.xiaoyi.ssm.service.VenueErrorService;
 import com.xiaoyi.ssm.service.VenueLogService;
 import com.xiaoyi.ssm.service.VenueRefundService;
 import com.xiaoyi.ssm.service.VenueService;
+import com.xiaoyi.ssm.service.VenueTemplateService;
 import com.xiaoyi.ssm.util.Arith;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
@@ -104,8 +107,6 @@ public class ApiVenueController {
 	@Autowired
 	private VenueLockMapper venueLockMapper;
 	@Autowired
-	private VenueCoachService coachService;
-	@Autowired
 	private OrderLogMapper orderLogMapper;
 	@Autowired
 	private MemberHabitMapper memberHabitMapper;
@@ -125,6 +126,8 @@ public class ApiVenueController {
 	private TrainTeamCoachService trainTeamCoachService;
 	@Autowired
 	private VenueRefundService venueRefundService;
+	@Autowired
+	private VenueTemplateService venueTemplateService;
 
 	// 获取线程池连接
 	@Autowired
@@ -185,19 +188,34 @@ public class ApiVenueController {
 	 */
 	@RequestMapping(value = "/datelist")
 	@ResponseBody
-	public ApiMessage datelist() {
+	public ApiMessage datelist(String id) {
 		// 当前日期
 		Date date = new Date();
 		// 获取当天的00:00:00时间
 		date = DateUtil.getWeeHours(date, 0);
+
 		List<Map<String, Object>> datelistmap = new ArrayList<>();
-		for (int i = 0; i < 7; i++) {
-			Map<String, Object> datemap = new HashMap<>();
-			datemap.put("date", DateUtil.getFormat(date, "yyyy-MM-dd"));// 日期
-			datemap.put("week", DateUtil.dateToWeek(date));// 星期
-			datelistmap.add(datemap);
-			date = DateUtil.getPreTime(date, 3, 1);
+		if (StringUtil.isBank(id)) {
+			for (int i = 0; i < 7; i++) {
+				Map<String, Object> datemap = new HashMap<>();
+				datemap.put("date", DateUtil.getFormat(date, "yyyy-MM-dd"));// 日期
+				datemap.put("week", DateUtil.dateToWeek(date));// 星期
+				datelistmap.add(datemap);
+				date = DateUtil.getPreTime(date, 3, 1);
+			}
+		}else {
+			// 获取培训机构管理的场馆
+			Venue venue = venueService.selectByPrimaryKey(id);
+			
+			for (int i = 0; i < venue.getMaxDay(); i++) {
+				Map<String, Object> datemap = new HashMap<>();
+				datemap.put("date", DateUtil.getFormat(date, "yyyy-MM-dd"));// 日期
+				datemap.put("week", DateUtil.dateToWeek(date));// 星期
+				datelistmap.add(datemap);
+				date = DateUtil.getPreTime(date, 3, 1);
+			}
 		}
+		
 		return ApiMessage.succeed(datelistmap);
 	}
 	
@@ -224,7 +242,7 @@ public class ApiVenueController {
 			map.put("address", venue.getAddress());// 地址
 			map.put("type", venue.getType());// 球场类型
 			map.put("venueCoachSum", venueCoachService.countByVenue(venue.getId()));// 陪练数量
-			map.put("venueRefundSum", venueRefundService.countByVenue(venue.getId()));// 陪练数量
+			map.put("venueRefundSum", venueRefundService.countByVenue(venue.getId()));// 统计申请数量
 			listmap.add(map);
 		}
 		
@@ -252,13 +270,11 @@ public class ApiVenueController {
 		map.put("city", ObjectUtil.defaultIfNull(city, city.getCity()) + "-" + ObjectUtil.defaultIfNull(district, district.getDistrict())); // 球馆地址-城市
 		map.put("image", venue.getImage()); // 图标
 		map.put("address", venue.getAddress()); // 详细地址
-		map.put("tel", venue.getContactPhone()); // 电话
+		map.put("tel", venue.getInformPhone()); // 通知电话
 		map.put("warmreminder", venue.getWarmreminder()); // 滚动提示
-		map.put("backPayment", "0"); // 允许后付(0=否1=是)
 		map.put("orderverify", venue.getOrderverify()); // 订场确认(0=人工确认1=自动确认)
 
-		map.put("venuelogSum", "0"); // 场馆日志数量
-		map.put("venueManagerSum", "0"); // 管理员数量
+		map.put("maxDay", venue.getMaxDay()); // 管理员数量
 		
 		return new ApiMessage(200, "查询成功", map);
 	}
@@ -271,13 +287,18 @@ public class ApiVenueController {
 	 */
 	@RequestMapping(value = "/updateVenue")
 	@ResponseBody
-	public ApiMessage updateTmplate(String venueid, Venue venue, HttpServletRequest request) {
+	public ApiMessage updateTmplate(String venueid, Venue venue,String tel, HttpServletRequest request) {
 
 		String token = (String) request.getAttribute("token");
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 		
+		if (!Utils.getPhone(tel)) {
+			return new ApiMessage(400, "手机号码不正确");
+		}
+		
 		venue.setId(venueid);
 		venue.setModifytime(new Date());
+		venue.setInformPhone(tel);
 		int flag = venueService.updateByPrimaryKeySelective(venue);
 		if (flag > 0) {
 			
@@ -305,7 +326,7 @@ public class ApiVenueController {
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 
 		// 当前日期
-		Date newDate = DateUtil.getPreTime(new Date(), 2, 1);
+		Date newDate = DateUtil.getPreTime(new Date(), 1, 30);
 		// 查询日期
 		Date date = new Date();
 		int outtime = 0;
@@ -398,11 +419,21 @@ public class ApiVenueController {
 						outDate = DateUtil.getPreTime(outDate, 1, 30);
 					}
 
-					TrainCoach trainCoach = new TrainCoach();
 					String trainCoachName = "";
+					
+					// 判断是否有选择教练数据
 					if (!StringUtil.isBank(reserve.getOrder().getCoachid())) {
-						trainCoach = trainCoachService.selectByPrimaryKey(reserve.getOrder().getCoachid());
-						trainCoachName = trainCoach.getName();
+						VenueCoach venueCoach = venueCoachService.selectByPrimaryKey(reserve.getOrder().getCoachid());
+						// 陪练数据不为空则获取
+						if (venueCoach != null) {
+							TrainCoach trainCoach = trainCoachService.selectByTrainCoachId(venueCoach.getTrainCoachId());
+							// 容错处理
+							if (trainCoach != null) {
+								trainCoachName = trainCoach.getName();
+							} else {
+								trainCoachName = "";
+							}
+						}
 					}
 
 					// 修改时段内的状态
@@ -413,10 +444,22 @@ public class ApiVenueController {
 						timemap.put("flag", "user" + j);
 						timemap.put("coach", trainCoachName);
 						timemap.put("outDate", DateUtil.getFormat(outDate, "HH:mm"));
-						timemap.put("type", reserve.getOrder().getType());
+						
+						VenueRefund venueRefund = venueRefundService.selectByOrder(reserve.getOrder().getId(), 0);
+						if (venueRefund != null && venueRefund.getId() != null) {
+							timemap.put("type", "7");// 退款中
+						} else {
+							timemap.put("type", reserve.getOrder().getType());// 已完成
+						}
 						timemap.put("orderId", reserve.getOrder().getId());
+						
+						// 显示用户数据
 						Member orderMember = memberService.selectByPrimaryKey(reserve.getOrder().getMemberid());
-						timemap.put("memberName", orderMember.getAppnickname());
+						if (orderMember == null) {
+							timemap.put("memberName", "");
+						} else {
+							timemap.put("memberName", orderMember.getAppnickname());
+						}
 						if (member.getId().equals(reserve.getOrder().getMemberid())) {
 							timemap.put("memberFlag", true);
 						}
@@ -541,12 +584,13 @@ public class ApiVenueController {
 					} else {
 						map.put("time", time + ":00-" + time + ":30");
 					}
-					// 小于或等于过期时段的时段状态则修改为已过期
-					if (j <= outtime && !"-1".equals(template[j])) {
-						map.put("price", "-4");
-					} else {
-						map.put("price", template[j]);
-					}
+//					// 小于或等于过期时段的时段状态则修改为已过期
+//					if (j <= outtime && !"-1".equals(template[j])) {
+//						map.put("price", "-4");
+//					} else {
+//						map.put("price", template[j]);
+//					}
+					map.put("price", template[j]);
 					map.put("flag", "");
 					datelistmap.add(map);
 				}
@@ -577,17 +621,28 @@ public class ApiVenueController {
 						timemap.put("id", reserve.getOrderid());
 						timemap.put("price", priceType);
 						timemap.put("flag", "user" + j + priceType);
-						timemap.put("type", reserve.getOrder().getType());
 						timemap.put("orderId", reserve.getOrder().getId());
-
+						// 查询退款中的状态
+						VenueRefund venueRefund = venueRefundService.selectByOrder(reserve.getOrder().getId(), 0);
+						if (venueRefund != null && venueRefund.getId() != null) {
+							timemap.put("venueRefundId", venueRefund.getId());// 退款ID
+							timemap.put("type", "7");// 退款中
+						} else {
+							timemap.put("type", reserve.getOrder().getType());// 已完成
+						}
 						Member orderMember = memberService.selectByPrimaryKey(reserve.getOrder().getMemberid());
 						if (orderMember != null){
 							timemap.put("memberName", orderMember.getAppnickname());
+						}else {
+							timemap.put("memberName", "");
 						}
 						if(!StringUtil.isBank(reserve.getOrder().getCoachid())){
-							TrainCoach trainCoach = trainCoachService.selectByPrimaryKey(reserve.getOrder().getCoachid());
+							VenueCoach venueCoach = venueCoachService.selectByPrimaryKey(reserve.getOrder().getCoachid());
+							TrainCoach trainCoach = trainCoachService.selectByTrainCoachId(venueCoach.getTrainCoachId());
 							if (trainCoach != null){
 								timemap.put("coachName", trainCoach.getName());
+							}else {
+								timemap.put("coachName", "");
 							}
 						}
 						datelistmap.set(flag, timemap);
@@ -741,47 +796,6 @@ public class ApiVenueController {
 		}
 	}
 
-	/**
-	 * @Description: 订单详情
-	 * @author 宋高俊
-	 * @param orderid
-	 * @param response
-	 * @param request
-	 * @return
-	 * @date 2018年9月7日 下午8:36:15
-	 */
-	/*@SuppressWarnings("unused")
-	@RequestMapping(value = "/order/details")
-	@ResponseBody
-	public ApiMessage orderdetails(String orderid) {
-		Order order = orderService.selectByPrimaryKey(orderid);
-		Map<String, Object> map = new HashMap<>();
-		map.put("id", order.getId());// id
-		map.put("createTime", DateUtil.getFormat(order.getCreatetime()));// 订场时间
-		map.put("member", order.getMember().getName());// 订场会员
-		map.put("phone", order.getMember().getPhone());// 会员电话
-		map.put("venue", order.getVenue().getName());// 场馆
-		FieldTemplateDto fieldTemplateDto = new FieldTemplateDto();
-		List<Reserve> reserves = reserveService.selectByFieldTemplateDto(fieldTemplateDto);
-		// 修改时段状态
-		for (int j = 0; j < reserves.size(); j++) {
-			Reserve reserve = reserves.get(j);
-			map.put("field", order.getId());// 场地
-			map.put("id", order.getId());// 使用时间
-			map.put("id", order.getId());// 场地费用
-		}
-		
-		Coach coach = coachService.selectByPrimaryKey(order.getCoachid());
-		if (coach != null) {
-			map.put("coach", coach.getName());// 服务人员
-			map.put("coachamount", order.getCoachamount());// 服务费用
-		}else {
-			map.put("coach", "无");// 服务人员
-			map.put("coachamount", "0");// 服务费用
-		}
-		return new ApiMessage(200, "查询成功", map);
-	}*/
-	
 	/**  
 	 * @Description: 常用场馆列表
 	 * @author 宋高俊  
@@ -803,7 +817,6 @@ public class ApiVenueController {
 			map.put("image", venue.getImage());// 图片
 			map.put("name", venue.getName());// 名称
 			map.put("address", venue.getAddress());// 地址
-			map.put("phone", venue.getContactPhone());// 电话
 			map.put("warmreminder", venue.getWarmreminder());// 温馨提示
 			map.put("type", venue.getType());// 球场类型
 			listmap.add(map);
@@ -821,28 +834,40 @@ public class ApiVenueController {
 	@ResponseBody
 	public ApiMessage selectCoach(String venueid) {
 		
-		
+		Venue venue = venueService.selectByPrimaryKey(venueid);
 		List<VenueCoach> list = venueCoachService.selectByVenue(venueid);
 		List<Map<String, Object>> listmap = new ArrayList<>();
 		if (list.size() > 0) {
 			for (int i = 0; i < list.size(); i++) {
 				VenueCoach venueCoach = list.get(i);
-				Map<String, Object> map = new HashMap<>();
-				map.put("id", venueCoach.getTrainCoachId()); // 陪练ID
-				map.put("coachid", venueCoach.getId()); // 陪练ID
-				map.put("name", venueCoach.getTrainCoach().getName()); // 姓名
-				map.put("price", venueCoach.getPrice()); // 价格
-				map.put("image", venueCoach.getTrainCoach().getHeadImage()); // 图片
-				listmap.add(map);
+				TrainTeamCoach trainTeamCoach = trainTeamCoachService.selectByCoachTeam(venueCoach.getTrainCoachId(), venue.getTrainteam());
+				if (trainTeamCoach != null) {
+					Map<String, Object> map = new HashMap<>();
+					map.put("id", venueCoach.getTrainCoachId()); // 陪练ID
+					map.put("coachid", venueCoach.getId()); // 陪练ID
+					map.put("name", venueCoach.getTrainCoach().getName()); // 姓名
+					map.put("price", venueCoach.getPrice()); // 价格
+					map.put("image", venueCoach.getTrainCoach().getHeadImage()); // 图片
+					map.put("manager", trainTeamCoach.getTeachType()); // 教学身份1=主教练2=教练3=助教4=其他
+					map.put("defaultCoach", false); // 是否是缺省陪练
+
+					String[] labels = new String[]{};
+					if (!StringUtil.isBank(venueCoach.getLabel())) {
+						labels = venueCoach.getLabel().split(",");
+					}
+					map.put("label", labels);// 教练标签
+					listmap.add(map);
+				}
 			}
 		}else {
-			Venue venue = venueService.selectByPrimaryKey(venueid);
 			Map<String, Object> map = new HashMap<>();
 			TrainCoach trainCoach = trainCoachService.selectByDefault(venue.getCityid());
 			map.put("coachid", trainCoach.getId()); // 陪练ID
 			map.put("name", trainCoach.getName()); // 姓名
 			map.put("price", trainCoach.getMemberId()); // 由于没有用户保存价格
 			map.put("image", trainCoach.getHeadImage()); // 图片
+			map.put("manager", 1); // 教学身份1=主教练2=教练3=助教4=其他
+			map.put("defaultCoach", true); // 是否是缺省陪练
 			listmap.add(map);
 		}
 		return ApiMessage.succeed(listmap);
@@ -851,23 +876,42 @@ public class ApiVenueController {
 	/**
 	 * @Description: 保存订单接口
 	 * @author 宋高俊
-	 * @date 2018年8月21日 下午3:51:35
+	 * @param date 日期
+	 * @param timestr 时间店
+	 * @param venueid 场馆ID
+	 * @param coachid 教练ID
+	 * @param isAmount 是否收费
+	 * @param request
+	 * @return
+	 * @date 2018年11月30日上午9:05:27
 	 */
 	@RequestMapping(value = "/saveorder")
 	@ResponseBody
-	public ApiMessage saveorder(String date, String timestr, String venueid, String coachid, HttpServletRequest request){
+	public ApiMessage saveorder(String date, String timestr, String venueid, String coachid, HttpServletRequest request, String isAmount, boolean defaultCoach){
+		boolean amountFlag = true;
+		if ("false".equals(isAmount)) {
+			amountFlag = false;
+		}
 
 		String token = (String) request.getAttribute("token");
 		final Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		
+		Map<String, Object> dayCountMap = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_DAY_REFUND_COUNT, member.getId());
+		String dateStr = DateUtil.getFormat(new Date(), "yyyy-MM-dd");
+		// 判断是否有过统计次数
+		if (dayCountMap != null && dateStr.equals(dayCountMap.get("date").toString())) {
+			// 有统计过则加1
+			Integer count = (Integer) dayCountMap.get("count");
+			if (count >= 5) {
+				return new ApiMessage(400, "取消订单已达5次，今日不能再订场");
+			}
+		}
 
 		if (StringUtil.isBank(date, timestr, venueid)) {
 			return new ApiMessage(400, "参数不完整");
 		}
 		// 订单开始时间
 		Date datetime = new Date();
-		if (member == null) {
-			return new ApiMessage(400, "请登录后操作");
-		}
 		// 订单数据
 		Order order = new Order();
 		// 订单ID
@@ -880,7 +924,7 @@ public class ApiVenueController {
 		order.setMemberid(member.getId());
 		order.setType(0);
 
-		List<String> datalist = new ArrayList<>();// 保存多个订场时间段详情数据
+//		List<String> datalist = new ArrayList<>();// 保存多个订场时间段详情数据
 
 		double timesum = 0;// 小时数
 		double price = 0;// 价格总数
@@ -889,7 +933,7 @@ public class ApiVenueController {
 		JSONArray jsonArray = JSONArray.parseArray(timestr);
 		for (int i = 0; i < jsonArray.size(); i++) {
 			// 预约时间段详情
-			String datastr = "";
+//			String datastr = "";
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
 			// 场地数据
 			Field field = fieldService.selectByPrimaryKey(jsonObject.get("fieldid").toString());
@@ -926,15 +970,15 @@ public class ApiVenueController {
 					orderDto.setTime(time[j]);
 					Integer flag = orderService.selectIsOrder(orderDto);
 					if (flag > 0) {
-						return new ApiMessage(400, "抱歉," + StringUtil.timeToTimestr(time[j]) + "该时间段已被预约");
+						return new ApiMessage(401, "抱歉," + StringUtil.timeToTimestr(time[j]) + "该时间段已被预约");
 					}
 					// 计算总价格
 					int timeflag = Integer.valueOf(time[j]) - 1;
 					reserveamount = Arith.add(reserveamount, Double.valueOf(template[timeflag]));
 				}
 				// 生成预约时段数据
-				datastr = field.getName() + "(" + date + " " + StringUtil.timeToTimestr(time) + ")";
-				datalist.add(datastr);
+//				datastr = field.getName() + "(" + date + " " + StringUtil.timeToTimestr(time) + ")";
+//				datalist.add(datastr);
 
 				Reserve reserve = new Reserve();
 				reserve.setId(Utils.getUUID());
@@ -951,15 +995,48 @@ public class ApiVenueController {
 			}
 		}
 		if (!StringUtil.isBank(coachid)) {
-			VenueCoach venueCoach = venueCoachService.selectByPrimaryKey(coachid);
-			if (venueCoach != null) {
+			if (defaultCoach) {
+				TrainCoach trainCoach = trainCoachService.selectByTrainCoachId(coachid);
+				
+				// 判断是否已经添加过默认陪练了
+				VenueCoach venueCoach = venueCoachService.selectByTrainCoachId(coachid);
+				if (venueCoach == null) {
+					venueCoach = new VenueCoach();
+					venueCoach.setId(coachid);
+					venueCoach.setCreateTime(new Date());
+					venueCoach.setModifyTime(new Date());
+					venueCoach.setPrice(Double.valueOf(trainCoach.getMemberId()));// 教练表的默认陪练数据用户ID就是价格
+					venueCoach.setTrainCoachId(trainCoach.getId());
+					venueCoach.setTypeFlag(1);
+					venueCoachService.insertSelective(venueCoach);
+				} else {
+					venueCoach.setPrice(Double.valueOf(trainCoach.getMemberId()));
+					venueCoachService.updateByPrimaryKeySelective(venueCoach);
+				}
+
 				order.setCoachid(coachid);
 				// 半小时价格乘2
 				order.setCoachamount(venueCoach.getPrice() * 2 * timesum);
 				price = Arith.add(price, order.getCoachamount());
+			} else {
+				VenueCoach venueCoach = venueCoachService.selectByPrimaryKey(coachid);
+				if (venueCoach != null) {
+					order.setCoachid(coachid);
+					// 半小时价格乘2
+					order.setCoachamount(venueCoach.getPrice() * 2 * timesum);
+					price = Arith.add(price, order.getCoachamount());
+				}
 			}
 		}
-		order.setPrice(price);
+		order.setPriceFee(Arith.mul(price, 0.01));
+		price = Arith.add(price, order.getPriceFee());
+		if (amountFlag) {
+			order.setPrice(price);
+		} else {
+			order.setPrice(0.0);
+			order.setType(5);
+		}
+		order.setShowPrice(price);
 		order.setTimesum(timesum);
 		// 保存订单数据
 		orderService.insertSelective(order);
@@ -969,7 +1046,11 @@ public class ApiVenueController {
 		orderLog.setCreatetime(datetime);
 		orderLog.setOrderid(orderid);
 		orderLog.setType(0);
-		orderLog.setContent("创建订单,等待支付");
+		if (amountFlag) {
+			orderLog.setContent("创建订单,等待支付");
+		} else {
+			orderLog.setContent("创建订单,免支付");
+		}
 		orderLogMapper.insert(orderLog);
 		
 		MemberHabit oldMemberHabit = memberHabitMapper.selectByMemberVenue(member.getId(), venueid);
@@ -999,83 +1080,118 @@ public class ApiVenueController {
 //				DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd"), time);
 		// 场馆
 		Member venueMember = memberService.selectByPhone(venue.getContactPhone());
-		final String openId = venueMember.getOpenid();
 		
+		String openId = "";
+		if (venueMember != null) {
+			openId = venueMember.getOpenid();
+		}
+		final String sendOpenId = openId;
+
 		// 订单数据
 		Order newOrder = orderService.selectByPrimaryKey(orderid);
-		// 预定通知消息
-		JSONObject datajson = new JSONObject();
-		datajson.put("first", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(new Date()) + "\"}"));
-		datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + newOrder.getOrderno() + "\"}"));
-		datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"网球场预定\"}"));
-		datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"待支付\"}"));
-		datajson.put( "remark",
-				JSONObject.parseObject("{\"value\":\"球友" + member.getAppnickname() + "(手机" + member.getPhone() + ")申请预约球场" + area + "，日期"
-						+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + time + "用场，等待完成支付。\"}"));
-		if (!StringUtil.isBank(venue.getTrainteam())) {
-			TrainCoach trainCoach = trainCoachService.selectByMemberTeamManager(venueMember.getId(), venue.getTrainteam());
-			if (trainCoach != null) {
-				// 有权限查看
-				logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/user/venueMenu/lock/lock?venueId="+venue.getId(), datajson));
+		if (amountFlag) {
+			if (venueMember != null) {
+				// 预定通知消息
+				JSONObject datajson = new JSONObject();
+				datajson.put("first", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(new Date()) + "\"}"));
+				datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + newOrder.getOrderno() + "\"}"));
+				datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"网球场预定\"}"));
+				datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"待支付\"}"));
+				datajson.put( "remark",
+						JSONObject.parseObject("{\"value\":\"球友" + member.getAppnickname() + "(手机" + member.getPhone() + ")申请预约球场" + area + "，日期"
+								+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + time + "用场，等待完成支付。\"}"));
+				if (!StringUtil.isBank(venue.getTrainteam())) {
+					TrainCoach trainCoach = trainCoachService.selectByMemberTeamManager(venueMember.getId(), venue.getTrainteam());
+					if (trainCoach != null) {
+						// 有权限查看
+						logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/user/venueMenu/lock/lock?venueId="+venue.getId() + "&title=" + venue.getName(), datajson));
+					}else {
+						logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
+					}
+				}else {
+					logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
+				}
+			}
+			
+			// 开启线程处理延时任务
+			new Timer(order.getId() + "订单支付超时，已关闭").schedule(new TimerTask() {
+				@Override
+				public void run() {
+					Order order = orderService.selectByPrimaryKey(orderid);
+					OrderLog orderLog = new OrderLog();
+					orderLog.setOrderid(orderid);
+					orderLog.setType(0);
+					if (order.getType() != 0) {
+						// 记录日志
+						orderLog.setId(Utils.getUUID());
+						orderLog.setCreatetime(new Date());
+						orderLog.setContent("订单支付时间结束，检查订单已支付成功");
+						orderLogMapper.insertSelective(orderLog);
+					} else {
+						Order neworder = new Order();
+						neworder.setId(orderid);
+						neworder.setModifytime(new Date());
+						neworder.setType(3);
+						orderService.updateByPrimaryKeySelective(neworder);
+						// 记录日志
+						orderLog.setId(Utils.getUUID());
+						orderLog.setCreatetime(new Date());
+						orderLog.setContent("订单支付时间结束，检查订单未支付成功，处理为支付超时");
+						orderLogMapper.insertSelective(orderLog);
+						
+						
+						// 预定通知消息
+						JSONObject datajson = new JSONObject();
+						datajson.put("first", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(new Date()) + "\"}"));
+						datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + order.getOrderno() + "\"}"));
+						datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"网球场预定\"}"));
+						datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"支付超时\"}"));
+						
+						// 支付超时，发给场馆
+						if (!StringUtil.isBank(sendOpenId)) {
+							datajson.put( "remark",
+									JSONObject.parseObject("{\"value\":\"球友" + member.getAppnickname() + "(手机" + member.getPhone() + ")申请预约球场" + area2 + "，日期"
+											+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + time2 + "用场，支付超时。\"}"));
+							logger.info(WXPayUtil.sendWXappTemplate(sendOpenId, WXConfig.wxTemplateId, "/pages/index/index", datajson));
+						}
+						
+						// 支付超时，发给用户
+						if (!StringUtil.isBank(member.getOpenid())) {
+							datajson.put( "remark",
+									JSONObject.parseObject("{\"value\":\"您预约的" + area2 + "，日期"
+											+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + time2 + "用场，因支付超时已被取消。\"}"));
+							logger.info(WXPayUtil.sendWXappTemplate(member.getOpenid(), WXConfig.wxTemplateId, "/pages/index/index", datajson));
+						}
+					}
+				}
+			}, 300000);
+		} else {
+			Order order2 = orderService.selectByPrimaryKey(orderid);
+			// 预定通知消息
+			JSONObject datajson = new JSONObject();
+			datajson.put("first", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(new Date()) + "\"}"));
+			datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + order2.getOrderno() + "\"}"));
+			datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"网球场预定\"}"));
+			datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"支付完成\"}"));
+			datajson.put( "remark",
+					JSONObject.parseObject("{\"value\":\"球友" + member.getAppnickname() + "(手机" + member.getPhone() + ")申请预约球场" + area + "，日期"
+							+ DateUtil.getFormat(order2.getOrderdate(), "yyyy-MM-dd") + "，时段" + time + "用场，已支付待确认，已支付"+order2.getPrice()+"元。请25分钟内确认用场信息，超时将自动取消，费用原路返回球友。\"}"));
+			
+			if (!StringUtil.isBank(venue.getTrainteam())) {
+				TrainCoach trainCoach = trainCoachService.selectByMemberTeamManager(venueMember.getId(), venue.getTrainteam());
+				if (trainCoach != null) {
+					// 有权限查看
+					logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/user/venueMenu/lock/lock?venueId="+venue.getId() + "&title=" + venue.getName(), datajson));
+				}else {
+					logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
+				}
 			}else {
 				logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
 			}
-		}else {
-			logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
 		}
 		
-		// 开启线程处理延时任务
-		new Timer(order.getId() + "订单支付超时，已关闭").schedule(new TimerTask() {
-			@Override
-			public void run() {
-				Order order = orderService.selectByPrimaryKey(orderid);
-				OrderLog orderLog = new OrderLog();
-				orderLog.setOrderid(orderid);
-				orderLog.setType(0);
-				if (order.getType() == 5 || order.getType() == 6) {
-					// 记录日志
-					orderLog.setId(Utils.getUUID());
-					orderLog.setCreatetime(new Date());
-					orderLog.setContent("订单支付时间结束，检查订单已支付成功");
-					orderLogMapper.insertSelective(orderLog);
-				} else {
-					Order neworder = new Order();
-					neworder.setId(orderid);
-					neworder.setModifytime(new Date());
-					neworder.setType(3);
-					orderService.updateByPrimaryKeySelective(neworder);
-					// 记录日志
-					orderLog.setId(Utils.getUUID());
-					orderLog.setCreatetime(new Date());
-					orderLog.setContent("订单支付时间结束，检查订单未支付成功，处理为支付超时");
-					orderLogMapper.insertSelective(orderLog);
-					
-
-					// 预定通知消息
-					JSONObject datajson = new JSONObject();
-					datajson.put("first", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(new Date()) + "\"}"));
-					datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + order.getOrderno() + "\"}"));
-					datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"网球场预定\"}"));
-					datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"支付超时\"}"));
-					
-					// 支付超时，发给场馆
-					if (!StringUtil.isBank(openId)) {
-						datajson.put( "remark",
-								JSONObject.parseObject("{\"value\":\"球友" + member.getAppnickname() + "(手机" + member.getPhone() + ")申请预约球场" + area2 + "，日期"
-										+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + time2 + "用场，支付超时。\"}"));
-						logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "/pages/index/index", datajson));
-					}
-
-					// 支付超时，发给用户
-					if (!StringUtil.isBank(member.getOpenid())) {
-						datajson.put( "remark",
-								JSONObject.parseObject("{\"value\":\"您预约的" + area2 + "，日期"
-										+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + time2 + "用场，因支付超时已被取消。\"}"));
-						logger.info(WXPayUtil.sendWXappTemplate(member.getOpenid(), WXConfig.wxTemplateId, "/pages/index/index", datajson));
-					}
-				}
-			}
-		}, 300000);
+		
+		
 //		taskExecutor.execute(new Runnable() {
 //			@Override
 //			public void run() {
@@ -1176,9 +1292,20 @@ public class ApiVenueController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("name", venue.getName());// 获取场馆名
 		map.put("address", venue.getAddress());// 获取场馆地址
-		map.put("tel", venue.getContactPhone());// 获取场馆电话
+		map.put("warmreminder", venue.getWarmreminder());// 获取场馆温馨提示
 		map.put("lng", venue.getLongitude());// 获取经度
 		map.put("lat", venue.getLatitude());// 获取纬度
+		map.put("reserveShow", venue.getReserveShow());// 订场入口(0=否1=是)
+		
+		
+		if (venue.getTrainteam() != null) {
+			TrainTeam trainTeam = trainTeamService.selectByPrimaryKey(venue.getTrainteam());
+			if (trainTeam != null) {
+				map.put("title", trainTeam.getTitle());// 机构名称
+			}else {
+				map.put("title", "");// 机构名称
+			}
+		}
 		
 		MemberHabit memberHabit = memberHabitMapper.selectByMemberVenue(member.getId(), venue.getId());
 		if (memberHabit != null) {
@@ -1186,6 +1313,7 @@ public class ApiVenueController {
 		}else {
 			map.put("often", "0");// 是否是常用
 		}
+		map.put("ballType", venue.getType());// 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场)
 		return new ApiMessage(200, "查询成功", map);
 	}
 	
@@ -1317,6 +1445,9 @@ public class ApiVenueController {
 		List<Map<String, Object>> venueListMap = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < venues.size(); i++) {
 			Venue venue = venues.get(i);
+			if (venue.getShowflag() == 2) {
+				continue;
+			}
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("id", venue.getId());// ID
 			map.put("image", venue.getImage());// 封面
@@ -1324,13 +1455,21 @@ public class ApiVenueController {
 			map.put("address", venue.getAddress());// 地址
 			map.put("ballType", venue.getType());// 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场)
 			if (StringUtil.isBank(venue.getTrainteam())) {
-				map.put("enterFalg", false);// 是否入驻 true为是false为否
+				map.put("enterFlag", false);// 是否入驻 true为是false为否
 			} else {
 				TrainTeam trainTeam = trainTeamService.selectByPrimaryKey(venue.getTrainteam());
-				map.put("enterFalg", true);// 是否入驻 true为是false为否
+				map.put("enterFlag", true);// 是否入驻 true为是false为否
 				map.put("enterTeamName", trainTeam.getTitle());// 入驻机构名
 				map.put("owner", venue.getOwner());// 联系人
+				
+				List<TrainTeam> trainTeams = trainTeamService.selectByMember(member.getId());
+				for (TrainTeam trainTeam2 : trainTeams) {
+					if (trainTeam2.getId().equals(venue.getTrainteam())) {
+						map.put("isMemberEnterFlag", true);// 是否是当前用户入驻
+					}
+				}
 			}
+			map.put("showflag", venue.getShowflag());// 场馆禁用状态
 			venueListMap.add(map);
 		}
 		return new ApiMessage(200, "获取成功", venueListMap);
@@ -1358,61 +1497,106 @@ public class ApiVenueController {
 	}
 	
 	/**
-	 * @Description: 入驻场馆
+	 * @Description: 快捷入驻场馆
 	 * @param request
 	 * @return
 	 * @date 2018年11月15日20:27:37
 	 */
 	@RequestMapping(value = "/getMatchingVenue/enter")
 	@ResponseBody
-	public ApiMessage getMatchingVenueEnter(HttpServletRequest request, String venueId, String owner, Integer ballSum, String trainTeamName) {
+	public ApiMessage getMatchingVenueEnter(HttpServletRequest request, String venueId, String owner, Integer ballSum, String trainTeamName,String trainTeamId) {
 		String token = (String) request.getAttribute("token");
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 		
+		// 场馆数据
 		Venue venue = venueService.selectByPrimaryKey(venueId);
+		
 		// 新建培训机构
 		TrainTeam trainTeam = new TrainTeam();
-		trainTeam.setId(Utils.getUUID());
-		trainTeam.setCreateTime(new Date());
-		trainTeam.setModifyTime(new Date());
-		trainTeam.setAddress(venue.getAddress());
-		trainTeam.setCityId(venue.getCityid());
-		trainTeam.setTitle(trainTeamName);
-		trainTeam.setPhone(member.getPhone());
-		trainTeam.setHeadImage(venue.getImage());
-		trainTeam.setLongitude(venue.getLongitude());
-		trainTeam.setLatitude(venue.getLatitude());
-		trainTeam.setTeachClass(venue.getType() == 1 ? "网球" : venue.getType() == 2 ? "足球" : venue.getType() == 3 ? "羽毛球" : "篮球");
-		trainTeam.setTypeFlag(1);
+		// 是否已经有机构
+		if (StringUtil.isBank(trainTeamId)) {
+			// 无机构则新增机构
+			trainTeam.setId(Utils.getUUID());
+			trainTeam.setCreateTime(new Date());
+			trainTeam.setModifyTime(new Date());
+			trainTeam.setAddress(venue.getAddress());
+			trainTeam.setCityId(venue.getCityid());
+			trainTeam.setTitle(trainTeamName);
+			trainTeam.setPhone(member.getPhone());
+			trainTeam.setHeadImage(venue.getImage());
+			trainTeam.setLongitude(venue.getLongitude());
+			trainTeam.setLatitude(venue.getLatitude());
+			trainTeam.setTeachClass(venue.getType() == 1 ? "网球" : venue.getType() == 2 ? "足球" : venue.getType() == 3 ? "羽毛球" : "篮球");
+			trainTeam.setTypeFlag(1);
+			
+			// 查询是否已经成为教练
+			TrainCoach oldTrainCoach = trainCoachService.selectByMember(member.getId());
+			if (oldTrainCoach == null) {
+				// 生成教练数据
+				oldTrainCoach = new TrainCoach();
+				oldTrainCoach.setId(Utils.getUUID());
+				oldTrainCoach.setCreateTime(new Date());
+				oldTrainCoach.setModifyTime(new Date());
+				oldTrainCoach.setMemberId(member.getId());
+				oldTrainCoach.setName(member.getAppnickname());
+				oldTrainCoach.setHeadImage(member.getAppavatarurl());
+				trainCoachService.insertSelective(oldTrainCoach);
+			}
+			
+			trainTeam.setTrainCoachId(oldTrainCoach.getId());
+			venue.setTrainteam(trainTeam.getId());
+			trainTeamService.insertSelective(trainTeam);
+			
 
-		TrainCoach oldTrainCoach = trainCoachService.selectByMember(member.getId());
-		
-		if (oldTrainCoach == null) {
-			// 生成教练数据
-			TrainCoach trainCoach = new TrainCoach();
-			trainCoach.setId(Utils.getUUID());
-			trainCoach.setCreateTime(new Date());
-			trainCoach.setModifyTime(new Date());
-			trainCoach.setMemberId(member.getId());
-			trainCoach.setName(member.getAppnickname());
-			trainCoach.setHeadImage(member.getAppavatarurl());
-			trainCoachService.insertSelective(trainCoach);
-
-			// 添加教练身份
+			// 添加馆长身份
 			TrainTeamCoach trainTeamCoach = new TrainTeamCoach();
 			trainTeamCoach.setId(Utils.getUUID());
 			trainTeamCoach.setManager(1);
 			trainTeamCoach.setShowFlag(1);
 			trainTeamCoach.setTeachType(1);
-			trainTeamCoach.setTrainCoachId(trainCoach.getId());
 			trainTeamCoach.setTrainTeamId(trainTeam.getId());
+			trainTeamCoach.setTrainCoachId(oldTrainCoach.getId());
 			trainTeamCoachService.insertSelective(trainTeamCoach);
-			
-			trainTeam.setTrainCoachId(trainCoach.getId());
-		} else {
-			trainTeam.setTrainCoachId(oldTrainCoach.getId());
+		}else {
+			trainTeam.setId(trainTeamId);
+			venue.setTrainteam(trainTeamId);
 		}
-		trainTeamService.insertSelective(trainTeam);
+		
+		// 修改场馆的入驻信息
+		venue.setOwner(owner);
+		venue.setBallsum(ballSum);
+		venueService.updateByPrimaryKeySelective(venue);
+
+		if (ballSum > 1) {
+			VenueTemplate venueTemplate = venueTemplateService.selectByVenueTemplate(venueId, venueId);
+			for (int i = 1; i < ballSum; i++) {
+				// 导入新增默认1号场
+				Field field = new Field();
+				field.setId(Utils.getUUID());
+				field.setCreatetime(new Date());
+				field.setModifytime(new Date());
+				field.setVenueid(venue.getId());
+				field.setName((i+1)+"号场");
+				fieldService.insertSelective(field);
+				
+				// 场地使用模板数据
+				FieldTemplate fieldTemplate = new FieldTemplate();
+				fieldTemplate.setCreatetime(new Date());
+				fieldTemplate.setFieldid(field.getId());
+				fieldTemplate.setTemplateid(venueTemplate.getId());
+				fieldTemplate.setVenueid(venue.getId());
+				
+				// 新增三十天的模板
+				Date nowDate = new Date();
+				for (int j = 0; j < 7; j++) {
+					fieldTemplate.setId(Utils.getUUID());
+					fieldTemplate.setFieldtime(nowDate);
+					fieldTemplateService.insertSelective(fieldTemplate);
+					
+					nowDate = DateUtil.getPreTime(nowDate, 3, 1);
+				}
+			}
+		}
 		return new ApiMessage(200, "获取成功");
 	}
 	
@@ -1453,6 +1637,75 @@ public class ApiVenueController {
 			return new ApiMessage(200, "验证码正确", true);
 		}else {
 			return new ApiMessage(200, "验证码错误", false);
+		}
+	}
+	
+	/**
+	 * @Description: 场馆统计数据
+	 * @author 宋高俊
+	 * @date 2018年8月22日 下午7:21:28
+	 */
+	@RequestMapping(value = "/venueCount")
+	@ResponseBody
+	public ApiMessage venueCount(HttpServletRequest request , String venueid) {
+
+		List<Order> orders1 = orderService.selectByVenueAll(venueid, 1);
+		List<Order> orders2 = orderService.selectByVenueAll(venueid, 2);
+		Map<String, Object> map = new LinkedHashMap<>();
+		map.put("orders1", orders1.size()); // 待确认
+		map.put("orders2", orders2.size()); // 退款中
+		
+		List<VenueTemplate> venueTemplates = venueTemplateService.selectByVenueDate(venueid, DateUtil.getFormat(new Date(), "yyyy-MM-dd"));
+		String venueTemplateName = "";
+		for (int i = 0; i < venueTemplates.size(); i++) {
+			venueTemplateName += venueTemplates.get(i).getName();
+			if (i != venueTemplates.size() -1) {
+				venueTemplateName += "/";
+			}
+		}
+		map.put("venueTemplateName", venueTemplateName); // 今日模板
+		
+		return new ApiMessage(200, "查询成功", map);
+	}
+	
+	/**  
+	 * @Description: 根据场馆ID获取手机号
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年9月26日 上午9:30:47 
+	 */ 
+	@RequestMapping(value = "/getPhone")
+	@ResponseBody
+	public ApiMessage venueGetPhone(HttpServletRequest request,String id) {
+		String token = (String) request.getAttribute("token");
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		Venue venue = venueService.selectByPrimaryKey(id);
+		if (venue != null) {
+
+			Map<String, Object> dayCountMap = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_DAY_GETPHONE_COUNT, member.getId());
+			String date = DateUtil.getFormat(new Date(), "yyyy-MM-dd");
+
+			// 判断是否有过统计次数
+			if (dayCountMap != null && date.equals(dayCountMap.get("date").toString())) {
+				Integer count = (Integer) dayCountMap.get("count");
+				if (count > 20) {
+					return new ApiMessage(400, "您可查看次数已达上限");
+				}
+				count++;
+				dayCountMap.put("count", count);
+			} else {
+				// 无统计过则初始化次数
+				dayCountMap = new HashMap<String, Object>();
+				dayCountMap.put("date", date);
+				dayCountMap.put("count", 1);
+			}
+			RedisUtil.addRedis(Global.REDIS_DAY_GETPHONE_COUNT, member.getId(), dayCountMap);
+			
+			
+			return new ApiMessage(200, "查询成功", venue.getContactPhone());
+		}else {
+			return new ApiMessage(400, "场馆不存在");
 		}
 	}
 }

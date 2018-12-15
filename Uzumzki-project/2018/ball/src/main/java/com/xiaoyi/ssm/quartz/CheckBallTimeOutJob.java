@@ -31,7 +31,7 @@ public class CheckBallTimeOutJob {
 	 * @date 2018年9月20日 下午8:35:13
 	 */
 	@Scheduled(cron = "0 0/1 * * * ? ")
-	public void getWXAccess_token() {
+	public void checkBallTimeOutJob() {
 		InviteBallService inviteBallService = SpringUtils.getBean("inviteBallServiceImpl", InviteBallService.class);
 		InviteJoinMapper inviteJoinMapper = SpringUtils.getBean("inviteJoinMapper", InviteJoinMapper.class);
 		List<InviteBall> list = inviteBallService.selectByTimeOut(new Date());

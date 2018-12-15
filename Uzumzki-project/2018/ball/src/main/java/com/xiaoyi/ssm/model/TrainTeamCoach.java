@@ -8,22 +8,27 @@ import java.io.Serializable;
 public class TrainTeamCoach implements Serializable {
 	private TrainCoach trainCoach;
 	private TrainTeam trainTeam;
+	private Member member;
 	
     public TrainTeam getTrainTeam() {
 		return trainTeam;
 	}
-
 	public void setTrainTeam(TrainTeam trainTeam) {
 		this.trainTeam = trainTeam;
 	}
-
 	public TrainCoach getTrainCoach() {
 		return trainCoach;
 	}
-
 	public void setTrainCoach(TrainCoach trainCoach) {
 		this.trainCoach = trainCoach;
 	}
+	public Member getMember() {
+		return member;
+	}
+	public void setMember(Member member) {
+		this.member = member;
+	}
+
 
 	/** ID */
     private String id;
@@ -34,13 +39,13 @@ public class TrainTeamCoach implements Serializable {
     /** 教练ID */
     private String trainCoachId;
 
-    /** 教练所属机构身份0=普通教练1=创建人2=管理员 */
+    /** 教练所属机构身份0=外聘1=馆长2=管理 */
     private Integer manager;
 
     /** 是否允许进入培训机构0=禁用1=正常 */
     private Integer showFlag;
 
-    /** 教学身份1=主教2=助教3=内勤 */
+    /** 教学身份1=主教练2=教练3=助教4=其他 */
     private Integer teachType;
 
     /**
@@ -97,16 +102,16 @@ public class TrainTeamCoach implements Serializable {
     }
 
     /**
-     * 教练所属机构身份0=普通教练1=创建人2=管理员
-     * @return Manager 教练所属机构身份0=普通教练1=创建人2=管理员
+     * 教练所属机构身份0=外聘1=馆长2=管理
+     * @return Manager 教练所属机构身份0=外聘1=馆长2=管理
      */
     public Integer getManager() {
         return manager;
     }
 
     /**
-     * 教练所属机构身份0=普通教练1=创建人2=管理员
-     * @param manager 教练所属机构身份0=普通教练1=创建人2=管理员
+     * 教练所属机构身份0=外聘1=馆长2=管理
+     * @param manager 教练所属机构身份0=外聘1=馆长2=管理
      */
     public void setManager(Integer manager) {
         this.manager = manager;
@@ -129,16 +134,16 @@ public class TrainTeamCoach implements Serializable {
     }
 
     /**
-     * 教学身份1=主教2=助教3=内勤
-     * @return Teach_type 教学身份1=主教2=助教3=内勤
+     * 教学身份1=主教练2=教练3=助教4=其他
+     * @return Teach_type 教学身份1=主教练2=教练3=助教4=其他
      */
     public Integer getTeachType() {
         return teachType;
     }
 
     /**
-     * 教学身份1=主教2=助教3=内勤
-     * @param teachType 教学身份1=主教2=助教3=内勤
+     * 教学身份1=主教练2=教练3=助教4=其他
+     * @param teachType 教学身份1=主教练2=教练3=助教4=其他
      */
     public void setTeachType(Integer teachType) {
         this.teachType = teachType;

@@ -7,11 +7,11 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>登录</title>
+    <title>小易信息</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
-    <link rel="stylesheet" href="/WebBackAPI/admin/static/css/site.css">
+	<link rel="icon" href="/admin/static/image/logo.png" type="image/x-icon"/>
+    <link rel="stylesheet" href="/admin/static/css/site.css">
     <style>
         body .login0{background:#e9ecef}
         body .login1{background:#fff;border-radius:5px;}
@@ -21,7 +21,7 @@
     </style>
 </head>
 
-<body class="h-100 login0" style="background: url(/WebBackAPI/admin/static/image/bg2.jpg) no-repeat center center;" onmousedown="holdDown()" onmouseup="holdUp()">
+<body class="h-100 login0" style="background: url(/admin/static/image/bg2.jpg) no-repeat center center;" onmousedown="holdDown()" onmouseup="holdUp()">
     <div class="login-box shadow-lg h-100 login1" style="margin: 13% auto !important;width: 269px;">
         <div class="login-wrap">
 	        <div id="wxQRcode" class="login4">
@@ -31,11 +31,11 @@
     <span id="date">${dateFlag}</span>
 
     <!-- jQuery -->
-    <script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/verify/js/verify.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/jq-ext.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/layer/layer.js"></script>
+    <script src="/admin/static/plugins/jquery/jquery.min.js"></script>
+    <script src="/admin/static/plugins/verify/js/verify.min.js"></script>
+    <script src="/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+    <script src="/admin/static/js/jq-ext.js"></script>
+    <script src="/admin/static/plugins/layer/layer.js"></script>
     <script src="https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
     <script>
 		$(function() {
@@ -50,7 +50,7 @@
 				id : "wxQRcode",
 				appid : "wxa6c95fe48935f880",
 				scope : "snsapi_login",
-				redirect_uri : "https://ball.ekeae.com/WebBackAPI/admin/common/authLogin",
+				redirect_uri : "https://beta.ball.ekeae.com/admin/common/authLogin",
 				state : "",
 				style : "black",
 				href : ""
@@ -73,7 +73,7 @@
 				if (timeEnd - timeStart > 1000)//如果此时检测到的时间与第一次获取的时间差有1000毫秒
 				{
 					clearInterval(time);//便不再继续重复此函数 （clearInterval取消周期性执行）
-            		window.location.href="/WebBackAPI/admin/common/register";
+            		window.location.href="/admin/common/register";
 				}
 			}, 100);
 		}

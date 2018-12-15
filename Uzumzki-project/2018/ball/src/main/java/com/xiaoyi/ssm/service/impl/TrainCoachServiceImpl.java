@@ -79,8 +79,8 @@ public class TrainCoachServiceImpl extends AbstractService<TrainCoach,String> im
 	 * @date 2018年11月5日 下午4:52:39 
 	 */ 
 	@Override
-	public List<TrainCoach> selectByVenue(String venueid) {
-		return trainCoachMapper.selectByVenue(venueid);
+	public List<TrainCoach> selectByVenue(String venueid, String trainTeamId) {
+		return trainCoachMapper.selectByVenue(venueid, trainTeamId);
 	}
 
 	/**  
@@ -96,7 +96,7 @@ public class TrainCoachServiceImpl extends AbstractService<TrainCoach,String> im
 	}
 
 	/**
-	 * @Description: 查询机构的店长
+	 * @Description: 查询机构的馆长
 	 * @author 宋高俊
 	 * @param trainTeamId
 	 * @return
@@ -116,6 +116,18 @@ public class TrainCoachServiceImpl extends AbstractService<TrainCoach,String> im
 	@Override
 	public TrainCoach selectByMemberTeamManager(String memberId, String teamId) {
 		return trainCoachMapper.selectByMemberTeamManager(memberId, teamId);
+	}
+
+	/**
+	 * @Description: 根据ID查询教练
+	 * @author 宋高俊
+	 * @param coachid
+	 * @return
+	 * @date 2018年12月6日下午8:54:20
+	 */
+	@Override
+	public TrainCoach selectByTrainCoachId(String coachid) {
+		return trainCoachMapper.selectByTrainCoachId(coachid);
 	}
 
 }

@@ -9,8 +9,8 @@
     <title>小易运维</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
-    <link href="/WebBackAPI/admin/static/css/site.css" rel="stylesheet">
+	<link rel="icon" href="/admin/static/image/logo.png" type="image/x-icon"/>
+    <link href="/admin/static/css/site.css" rel="stylesheet">
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -48,34 +48,33 @@
         </aside>
         <!-- /.control-sidebar -->
     </div>
-    <script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/layout.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
+    <script src="/admin/static/plugins/jquery/jquery.min.js"></script>
+    <script src="/admin/static/js/layout.js"></script>
+    <script src="https://lib.baomitu.com/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script>
         $.widget.bridge('uibutton', $.ui.button)
     </script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/raphael-min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/morris/morris.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/knob/jquery.knob.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/moment/moment.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/fastclick/fastclick.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/js/pages/dashboard.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/js/demo.js"></script>
-    <script src="/WebBackAPI/admin/static/js/echarts.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/layui/layui.all.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/jq-ext.js"></script>
+    <script src="/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/static/js/raphael-min.js"></script>
+    <script src="/admin/static/plugins/morris/morris.min.js"></script>
+    <script src="/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
+    <script src="/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="/admin/static/plugins/knob/jquery.knob.js"></script>
+    <script src="/admin/static/plugins/moment/moment.min.js"></script>
+    <script src="/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <script src="/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="/admin/static/plugins/fastclick/fastclick.js"></script>
+    <script src="/admin/static/plugins/js/pages/dashboard.js"></script>
+    <script src="/admin/static/plugins/js/demo.js"></script>
+    <script src="/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+    <script src="/admin/static/plugins/layui/layui.all.js"></script>
+    <script src="/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+    <script src="/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="/admin/static/js/jq-ext.js"></script>
     <script>
         $(function () {
             var tableObj = {
@@ -96,7 +95,7 @@
                     self.obj = $.tableObject({
                         tableId: 'tableList',
                         tableOption: {
-                            url: '/WebBackAPI/admin/common/operationLog/list',
+                            url: '/admin/common/operationLog/list',
                             page: true,
                             height: $(window).height() - 90,
                             where: {

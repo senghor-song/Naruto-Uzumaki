@@ -9,13 +9,13 @@
 	 .anchorBL{display:none;}
 	</style>
 	<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=${key}"></script>
-	<script type="text/javascript" src="/WebBackAPI/admin/static/js/GeoUtils.js"></script>
+	<script type="text/javascript" src="/admin/static/js/GeoUtils.js"></script>
 	<title>地图展示</title>
 </head>
 <body>
 	<div id="allmap"></div>
 </body>
-    <script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
+    <script src="/admin/static/plugins/jquery/jquery.min.js"></script>
 	<script type="text/javascript">
 		var marker1 = new Array();
 		var marker2 = new Array();
@@ -81,27 +81,27 @@
 
 		for (var i = 0; i < 10; i ++) {
 			var pt1 = new BMap.Point(sw.lng + lngSpan * (Math.random() * 0.7), ne.lat - latSpan * (Math.random() * 0.7));
-			var myIcon1 = new BMap.Icon("/WebBackAPI/admin/static/image/img1.png", new BMap.Size(128,128));
+			var myIcon1 = new BMap.Icon("/admin/static/image/img1.png", new BMap.Size(128,128));
 			var marker1 = new BMap.Marker(pt1,{icon:myIcon1});  // 创建标注
 			map.addOverlay(marker1); // 将标注添加到地图中
 		}
 		for (var i = 0; i < 10; i ++) {
 			var pt1 = new BMap.Point(sw.lng + lngSpan * (Math.random() * 0.7), ne.lat - latSpan * (Math.random() * 0.7));
-			var myIcon1 = new BMap.Icon("/WebBackAPI/admin/static/image/img2.png", new BMap.Size(128,128));
-			var marker1 = new BMap.Marker(pt1,{icon:myIcon1});  // 创建标注
-			map.addOverlay(marker1); // 将标注添加到地图中
-		}
-
-		for (var i = 0; i < 10; i ++) {
-			var pt1 = new BMap.Point(sw.lng + lngSpan * (Math.random() * 0.7), ne.lat - latSpan * (Math.random() * 0.7));
-			var myIcon1 = new BMap.Icon("/WebBackAPI/admin/static/image/img3.png", new BMap.Size(128,128));
+			var myIcon1 = new BMap.Icon("/admin/static/image/img2.png", new BMap.Size(128,128));
 			var marker1 = new BMap.Marker(pt1,{icon:myIcon1});  // 创建标注
 			map.addOverlay(marker1); // 将标注添加到地图中
 		}
 
 		for (var i = 0; i < 10; i ++) {
 			var pt1 = new BMap.Point(sw.lng + lngSpan * (Math.random() * 0.7), ne.lat - latSpan * (Math.random() * 0.7));
-			var myIcon1 = new BMap.Icon("/WebBackAPI/admin/static/image/img4.png", new BMap.Size(128,128));
+			var myIcon1 = new BMap.Icon("/admin/static/image/img3.png", new BMap.Size(128,128));
+			var marker1 = new BMap.Marker(pt1,{icon:myIcon1});  // 创建标注
+			map.addOverlay(marker1); // 将标注添加到地图中
+		}
+
+		for (var i = 0; i < 10; i ++) {
+			var pt1 = new BMap.Point(sw.lng + lngSpan * (Math.random() * 0.7), ne.lat - latSpan * (Math.random() * 0.7));
+			var myIcon1 = new BMap.Icon("/admin/static/image/img4.png", new BMap.Size(128,128));
 			var marker1 = new BMap.Marker(pt1,{icon:myIcon1});  // 创建标注
 			map.addOverlay(marker1); // 将标注添加到地图中
 		} */
@@ -135,7 +135,7 @@
 
 		$.ajax({  
             type : "POST",  //提交方式  
-            url : "/WebBackAPI/admin/baiduMap/index/getTopLngLat",//路径  
+            url : "/admin/baiduMap/index/getTopLngLat",//路径  
             data : {},//数据，这里使用的是Json格式进行传输  
             dataType:"json",
             async:false, 
@@ -147,7 +147,7 @@
             	for (var i = 0; i < list0.length; i ++) {
             		if(!(list0[i].lng == 0 && list0[i].lat == 0)){
 	        			var pt1 = new BMap.Point(list0[i].lng, list0[i].lat);
-	        			var myIcon1 = new BMap.Icon("/WebBackAPI/admin/static/image/img1.png", new BMap.Size(40,40));
+	        			var myIcon1 = new BMap.Icon("/admin/static/image/img1.png", new BMap.Size(40,40));
 	        			var marker = new BMap.Marker(pt1,{icon:myIcon1});  // 创建标注
 	        			var label = new BMap.Label("1");
 	        			label.setStyle({ 
@@ -163,7 +163,7 @@
             	for (var i = 0; i < list1.length; i ++) {
             		if(!(list1[i].lng == 0 && list1[i].lat == 0)){
 	        			var pt1 = new BMap.Point(list1[i].lng, list1[i].lat);
-	        			var myIcon1 = new BMap.Icon("/WebBackAPI/admin/static/image/img2.png", new BMap.Size(40,40));
+	        			var myIcon1 = new BMap.Icon("/admin/static/image/img2.png", new BMap.Size(40,40));
 	        			var marker = new BMap.Marker(pt1,{icon:myIcon1});  // 创建标注
 	        			var label = new BMap.Label("2");
 	        			label.setStyle({ 
@@ -179,7 +179,7 @@
             	for (var i = 0; i < list2.length; i ++) {
             		if(!(list2[i].lng == 0 && list2[i].lat == 0)){
 	        			var pt1 = new BMap.Point(list2[i].lng, list2[i].lat);
-	        			var myIcon1 = new BMap.Icon("/WebBackAPI/admin/static/image/img3.png", new BMap.Size(40,40));
+	        			var myIcon1 = new BMap.Icon("/admin/static/image/img3.png", new BMap.Size(40,40));
 	        			var marker = new BMap.Marker(pt1,{icon:myIcon1});  // 创建标注
 	        			var label = new BMap.Label("3");
 	        			label.setStyle({ 
@@ -195,7 +195,7 @@
             	for (var i = 0; i < list3.length; i ++) {
             		if(!(list3[i].lng == 0 && list3[i].lat == 0)){
 	        			var pt1 = new BMap.Point(list3[i].lng, list3[i].lat);
-	        			var myIcon1 = new BMap.Icon("/WebBackAPI/admin/static/image/img4.png", new BMap.Size(40,40));
+	        			var myIcon1 = new BMap.Icon("/admin/static/image/img4.png", new BMap.Size(40,40));
 	        			var marker = new BMap.Marker(pt1,{icon:myIcon1});  // 创建标注
 	        			var label = new BMap.Label("4");
 	        			label.setStyle({ 
@@ -322,7 +322,7 @@
 		function show(id){
 			$.ajax({  
 	            type : "POST",  //提交方式  
-	            url : "/WebBackAPI/admin/baiduMap/index/getTopLngLatById",//路径  
+	            url : "/admin/baiduMap/index/getTopLngLatById",//路径  
 	            data : {id:id},//数据，这里使用的是Json格式进行传输  
 	            dataType:"json",
 	            async:false, 
@@ -331,7 +331,7 @@
 	            	for (var i = 0; i < list.length; i ++) {
 	            		if(!(list[i].lng == 0 && list[i].lat == 0)){
 		        			var pt1 = new BMap.Point(list[i].lng, list[i].lat);
-		        			var myIcon1 = new BMap.Icon("/WebBackAPI/admin/static/image/img"+id+".png", new BMap.Size(40,40));
+		        			var myIcon1 = new BMap.Icon("/admin/static/image/img"+id+".png", new BMap.Size(40,40));
 		        			var marker1 = new BMap.Marker(pt1,{icon:myIcon1});  // 创建标注
 		        			var label = new BMap.Label(id);
 		        			label.setStyle({ 

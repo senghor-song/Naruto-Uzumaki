@@ -37,6 +37,9 @@ public class VenueEnter implements Serializable {
     /** 来源0=客户端1=短信 */
     private Integer sourceFlag;
 
+    /** 场馆ID */
+    private String venueId;
+
     /** 球场名称 */
     private String title;
 
@@ -49,11 +52,11 @@ public class VenueEnter implements Serializable {
     /** 地址 */
     private String address;
 
-    /** 审核状态0=待审核1=审核通过2=审核拒绝 */
-    private Integer checkFlag;
-
     /** 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场) */
     private Integer ballType;
+
+    /** 审核状态0=待审核1=审核通过2=审核拒绝 */
+    private Integer checkFlag;
 
     /** 审核时间 */
     private Date checkTime;
@@ -61,17 +64,20 @@ public class VenueEnter implements Serializable {
     /** 审核人 */
     private String checkStaff;
 
-    /** 负责人 */
-    private String mainName;
-
-    /** 负责人电话 */
-    private String mainPhone;
-
-    /** 球场片数 */
-    private String ballSum;
-
     /** 审核意见 */
     private String content;
+
+    /** 其他联系人 */
+    private String mainName;
+
+    /** 其他联系人电话 */
+    private String mainPhone;
+
+    /** 联系人关系(1=负责人2=同事3=业主或其他) */
+    private Integer mainFlag;
+
+    /** 球场片数 */
+    private Integer ballSum;
 
     /** 封面图 */
     private String headImage;
@@ -79,17 +85,20 @@ public class VenueEnter implements Serializable {
     /** 城市名 */
     private String cityName;
 
+    /** 区县名称 */
+    private String districtName;
+
     /** 机构名称 */
     private String trainTeamName;
 
     /** 机构ID */
     private String trainTeamId;
 
-    /** 城市ID */
-    private String cityId;
+    /** 用户位置经度 */
+    private Double userLng;
 
-    /** 区县ID */
-    private String districtId;
+    /** 用户位置纬度 */
+    private Double userLat;
 
     /**
      * VenueEnter
@@ -161,6 +170,22 @@ public class VenueEnter implements Serializable {
     }
 
     /**
+     * 场馆ID
+     * @return Venue_id 场馆ID
+     */
+    public String getVenueId() {
+        return venueId;
+    }
+
+    /**
+     * 场馆ID
+     * @param venueId 场馆ID
+     */
+    public void setVenueId(String venueId) {
+        this.venueId = venueId == null ? null : venueId.trim();
+    }
+
+    /**
      * 球场名称
      * @return Title 球场名称
      */
@@ -225,22 +250,6 @@ public class VenueEnter implements Serializable {
     }
 
     /**
-     * 审核状态0=待审核1=审核通过2=审核拒绝
-     * @return Check_flag 审核状态0=待审核1=审核通过2=审核拒绝
-     */
-    public Integer getCheckFlag() {
-        return checkFlag;
-    }
-
-    /**
-     * 审核状态0=待审核1=审核通过2=审核拒绝
-     * @param checkFlag 审核状态0=待审核1=审核通过2=审核拒绝
-     */
-    public void setCheckFlag(Integer checkFlag) {
-        this.checkFlag = checkFlag;
-    }
-
-    /**
      * 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场)
      * @return Ball_type 球场类型(1=网球场2=足球场3=羽毛球馆4=篮球场)
      */
@@ -254,6 +263,22 @@ public class VenueEnter implements Serializable {
      */
     public void setBallType(Integer ballType) {
         this.ballType = ballType;
+    }
+
+    /**
+     * 审核状态0=待审核1=审核通过2=审核拒绝
+     * @return Check_flag 审核状态0=待审核1=审核通过2=审核拒绝
+     */
+    public Integer getCheckFlag() {
+        return checkFlag;
+    }
+
+    /**
+     * 审核状态0=待审核1=审核通过2=审核拒绝
+     * @param checkFlag 审核状态0=待审核1=审核通过2=审核拒绝
+     */
+    public void setCheckFlag(Integer checkFlag) {
+        this.checkFlag = checkFlag;
     }
 
     /**
@@ -289,54 +314,6 @@ public class VenueEnter implements Serializable {
     }
 
     /**
-     * 负责人
-     * @return Main_name 负责人
-     */
-    public String getMainName() {
-        return mainName;
-    }
-
-    /**
-     * 负责人
-     * @param mainName 负责人
-     */
-    public void setMainName(String mainName) {
-        this.mainName = mainName == null ? null : mainName.trim();
-    }
-
-    /**
-     * 负责人电话
-     * @return Main_phone 负责人电话
-     */
-    public String getMainPhone() {
-        return mainPhone;
-    }
-
-    /**
-     * 负责人电话
-     * @param mainPhone 负责人电话
-     */
-    public void setMainPhone(String mainPhone) {
-        this.mainPhone = mainPhone == null ? null : mainPhone.trim();
-    }
-
-    /**
-     * 球场片数
-     * @return Ball_sum 球场片数
-     */
-    public String getBallSum() {
-        return ballSum;
-    }
-
-    /**
-     * 球场片数
-     * @param ballSum 球场片数
-     */
-    public void setBallSum(String ballSum) {
-        this.ballSum = ballSum == null ? null : ballSum.trim();
-    }
-
-    /**
      * 审核意见
      * @return Content 审核意见
      */
@@ -350,6 +327,70 @@ public class VenueEnter implements Serializable {
      */
     public void setContent(String content) {
         this.content = content == null ? null : content.trim();
+    }
+
+    /**
+     * 其他联系人
+     * @return Main_name 其他联系人
+     */
+    public String getMainName() {
+        return mainName;
+    }
+
+    /**
+     * 其他联系人
+     * @param mainName 其他联系人
+     */
+    public void setMainName(String mainName) {
+        this.mainName = mainName == null ? null : mainName.trim();
+    }
+
+    /**
+     * 其他联系人电话
+     * @return Main_phone 其他联系人电话
+     */
+    public String getMainPhone() {
+        return mainPhone;
+    }
+
+    /**
+     * 其他联系人电话
+     * @param mainPhone 其他联系人电话
+     */
+    public void setMainPhone(String mainPhone) {
+        this.mainPhone = mainPhone == null ? null : mainPhone.trim();
+    }
+
+    /**
+     * 联系人关系(1=负责人2=同事3=业主或其他)
+     * @return Main_flag 联系人关系(1=负责人2=同事3=业主或其他)
+     */
+    public Integer getMainFlag() {
+        return mainFlag;
+    }
+
+    /**
+     * 联系人关系(1=负责人2=同事3=业主或其他)
+     * @param mainFlag 联系人关系(1=负责人2=同事3=业主或其他)
+     */
+    public void setMainFlag(Integer mainFlag) {
+        this.mainFlag = mainFlag;
+    }
+
+    /**
+     * 球场片数
+     * @return Ball_sum 球场片数
+     */
+    public Integer getBallSum() {
+        return ballSum;
+    }
+
+    /**
+     * 球场片数
+     * @param ballSum 球场片数
+     */
+    public void setBallSum(Integer ballSum) {
+        this.ballSum = ballSum;
     }
 
     /**
@@ -385,6 +426,22 @@ public class VenueEnter implements Serializable {
     }
 
     /**
+     * 区县名称
+     * @return District_name 区县名称
+     */
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    /**
+     * 区县名称
+     * @param districtName 区县名称
+     */
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName == null ? null : districtName.trim();
+    }
+
+    /**
      * 机构名称
      * @return Train_team_name 机构名称
      */
@@ -417,34 +474,34 @@ public class VenueEnter implements Serializable {
     }
 
     /**
-     * 城市ID
-     * @return City_id 城市ID
+     * 用户位置经度
+     * @return User_lng 用户位置经度
      */
-    public String getCityId() {
-        return cityId;
+    public Double getUserLng() {
+        return userLng;
     }
 
     /**
-     * 城市ID
-     * @param cityId 城市ID
+     * 用户位置经度
+     * @param userLng 用户位置经度
      */
-    public void setCityId(String cityId) {
-        this.cityId = cityId == null ? null : cityId.trim();
+    public void setUserLng(Double userLng) {
+        this.userLng = userLng;
     }
 
     /**
-     * 区县ID
-     * @return District_id 区县ID
+     * 用户位置纬度
+     * @return User_lat 用户位置纬度
      */
-    public String getDistrictId() {
-        return districtId;
+    public Double getUserLat() {
+        return userLat;
     }
 
     /**
-     * 区县ID
-     * @param districtId 区县ID
+     * 用户位置纬度
+     * @param userLat 用户位置纬度
      */
-    public void setDistrictId(String districtId) {
-        this.districtId = districtId == null ? null : districtId.trim();
+    public void setUserLat(Double userLat) {
+        this.userLat = userLat;
     }
 }

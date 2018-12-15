@@ -88,12 +88,12 @@
                 <div class="col-lg-12">
                 	<img src="${headImage}" id="image"
                      style="width: 180px;height: 180px; border:1px solid #eee;"
-                      onerror="javascript:this.src='/WebBackAPI/admin/static/image/error.png'">
+                      onerror="javascript:this.src='/admin/static/image/error.png'">
                 </div>
                 <div class="col-lg-12">
                     <input type="hidden" value="${headImage}" name="headImage" id="headImage">
 		            <div class="publicbg-title">
-						<button class="layui-btn test" lay-data="{url: '/WebBackAPI/admin/common/uploadImage'}" name="file">上传图片</button>
+						<button class="layui-btn test" lay-data="{url: '/admin/common/uploadImage'}" name="file">上传图片</button>
 					</div>
                 </div>
             </div>
@@ -113,7 +113,7 @@
 					});
 				},
 				done: function(res, index, upload) {
-					layer.close(index);
+				    layer.closeAll('loading'); //关闭loading
 					layer.msg("上传成功");
 					$("#headImage").val(res.data);
 					$("#image").attr("src", res.data);
@@ -135,7 +135,7 @@
 			var typeFlag = $('#typeFlag').val();
            	$.ajax({  
                 type : "POST",  //提交方式  
-                url : "/WebBackAPI/admin/trainTeam/update",//路径  
+                url : "/admin/trainTeam/update",//路径  
                 data : {id : id, cityId : cityId, level : level, title : title, phone : phone, headImage : headImage, brandContent : brandContent, typeFlag : typeFlag},//数据，这里使用的是Json格式进行传输 
                 dataType:"json",
                 success : function(result) {//返回数据根据结果进行相应的处理  

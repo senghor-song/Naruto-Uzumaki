@@ -110,6 +110,42 @@ public class MemberServiceImpl extends AbstractService<Member,String> implements
 	public int updateByMemberOpenID(String id) {
 		return memberMapper.updateByMemberOpenID(id);
 	}
+
+	/**
+	 * @Description: 根据用户编号查询用户
+	 * @author 宋高俊
+	 * @param memberno
+	 * @return
+	 * @date 2018年11月28日上午11:18:43
+	 */
+	@Override
+	public Member selectByMemberno(Integer memberno) {
+		return memberMapper.selectByMemberno(memberno);
+	}
 	
+	/**
+	 * @Description: 根据场馆ID查询机构回款人信息
+	 * @author 宋高俊
+	 * @param venueid
+	 * @return
+	 * @date 2018年11月30日下午5:01:25
+	 */
+	@Override
+	public Member selectByVenueId(String venueId) {
+		return memberMapper.selectByVenueId(venueId);
+	}
+
+	/**
+	 * @Description: 根据日期查询回款用户
+	 * @author 宋高俊
+	 * @param date
+	 * @return
+	 * @date 2018年12月4日下午5:23:03
+	 */
+	@Override
+	public List<Member> selectByDateOut(String date) {
+		return memberMapper.selectByDateOut(date);
+	}
+
 	
 }

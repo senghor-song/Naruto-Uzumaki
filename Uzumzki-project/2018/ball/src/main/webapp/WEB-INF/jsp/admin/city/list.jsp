@@ -9,8 +9,8 @@
     <title>小易运维</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
-    <link href="/WebBackAPI/admin/static/css/site.css" rel="stylesheet">
+	<link rel="icon" href="/admin/static/image/logo.png" type="image/x-icon"/>
+    <link href="/admin/static/css/site.css" rel="stylesheet">
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -49,34 +49,33 @@
 </div>
 
 <!-- jQuery -->
-<script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
-<script src="/WebBackAPI/admin/static/js/layout.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
+<script src="/admin/static/plugins/jquery/jquery.min.js"></script>
+<script src="/admin/static/js/layout.js"></script>
+<script src="/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
 <script>
     $.widget.bridge('uibutton', $.ui.button)
 </script>
-<script src="/WebBackAPI/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="/WebBackAPI/admin/static/js/raphael-min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/morris/morris.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/knob/jquery.knob.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/moment/moment.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/fastclick/fastclick.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/js/pages/dashboard.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/js/demo.js"></script>
-<script src="/WebBackAPI/admin/static/js/echarts.min.js"></script>
-<script src="/WebBackAPI/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/layui/layui.all.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
-<script src="/WebBackAPI/admin/static/js/jq-ext.js"></script>
+<script src="/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/admin/static/js/raphael-min.js"></script>
+<script src="/admin/static/plugins/morris/morris.min.js"></script>
+<script src="/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
+<script src="/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+<script src="/admin/static/plugins/knob/jquery.knob.js"></script>
+<script src="/admin/static/plugins/moment/moment.min.js"></script>
+<script src="/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+<script src="/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<script src="/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<script src="/admin/static/plugins/fastclick/fastclick.js"></script>
+<script src="/admin/static/plugins/js/pages/dashboard.js"></script>
+<script src="/admin/static/plugins/js/demo.js"></script>
+<script src="/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+<script src="/admin/static/plugins/layui/layui.all.js"></script>
+<script src="/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+<script src="/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="/admin/static/js/jq-ext.js"></script>
 <script>
     $(function () {
 
@@ -98,7 +97,7 @@
                 self.obj = $.tableObject({
                     tableId: 'tableList',
                     tableOption: {
-                        url: '/WebBackAPI/admin/city/list',
+                        url: '/admin/city/list',
                         page: true,
                         height: $(window).height() - 92,
                         where: {
@@ -114,14 +113,18 @@
                        			{field: 'id', title: 'id', hide:true},
                                 {field: 'initial', title: '字母', sort: true, width:80},
                                 {field: 'hotflag', title: '热门', width:80, sort: true},
-                                {field: 'city', title: '城市', sort: true},
+                                {field: 'city', title: '城市', width:120, sort: true},
                                 {field: 'mapflag', title: '地图', width:80, sort: true},
-                                {field: 'distinct', title: '下属区县', sort: true, width:120},
+                                {field: 'distinct', title: '区县', sort: true, width:120},
                                 {field: 'cityLogSum', title: '日志', sort: true, width:80},
-                                {field: 'coachPrice', title: '缺省网球陪练(元)', edit : "text"},
+                                {field: 'coachPrice', title: '缺省网球陪练(元)', width:150, sort: true},
+                                {field: 'ball1', title: '场馆-网球', width:110, sort: true},
+                                {field: 'ball2', title: '场馆-足球', width:110, sort: true},
+                                {field: 'ball3', title: '场馆-羽毛球', width:140, sort: true},
+                                {field: 'ball4', title: '场馆-蓝球', width:110, sort: true},
                                 {field: 'cityflag', title: '入口', width:100, sort: true},
         						<c:if test="${btn323 == 1}">
-                                	{fixed: 'right', title: '操作', align:'center', toolbar: '#cityBar'}
+                                	{fixed: 'right', title: '操作', align:'center', toolbar: '#cityBar',width:320}
                                 </c:if>
                             ]
                         ]
@@ -130,18 +133,21 @@
 						<c:if test="${btn321 == 1}">
                     	item0: {
                             name: "区县", callback: function (key, opt) {
+                            	$("#cityid").val($(this).find("td").eq(0).attr('title'));
                                 $.showContentMenu(key, opt)
                                 $.tableObject({
                                     tableId: 'tableDistrictList',
                                     tableOption: {
-                                        url: '/WebBackAPI/admin/city/district/list?id=' + $(this).find("td").eq(0).attr('title'),
+                                        url: '/admin/city/district/list?id=' + $(this).find("td").eq(0).attr('title'),
                                         page: false,
                                         height: $("#tableDistrictList").parents(".layui-layer-content").height() - 30,
                                         where: {},
                                         cols: [
                                             [
+                                       			{ field: 'id', title: 'ID', hide:true},
                                              	{ field: 'districtno', title: '编号', sort: true },
-                                                { field: 'district', title: '区县名', sort: true },
+                                                { field: 'district', title: '区县名', edit : "text"},
+                                            	{ fixed: 'right', title: '操作', align:'center', toolbar: '#districtBar', width:80}
                                             ]
                                         ]
                                     }
@@ -156,7 +162,7 @@
                                 $.tableObject({
                                     tableId: 'tableCityLog',
                                     tableOption: {
-                                        url: '/WebBackAPI/admin/city/cityLog/list?id=' + $(this).find("td").eq(0).attr('title'),
+                                        url: '/admin/city/cityLog/list?id=' + $(this).find("td").eq(0).attr('title'),
                                         page: false,
                                         height: $("#tableCityLog").parents(".layui-layer-content").height() - 30,
                                         where: {},
@@ -181,7 +187,7 @@
         layui.table.on('edit(tableList)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
        		$.ajax({
 				type : "POST", //提交方式  
-				url : "/WebBackAPI/admin/city/updateCoach",//路径  
+				url : "/admin/city/updateCoach",//路径  
 				data : {
 					id : obj.data.id,
 					price : obj.value
@@ -197,8 +203,6 @@
    			var layEvent = obj.event;
    			var tr = obj.tr;
 			var check = 0;
-			var logSum = data.cityLogSum + 1;
-			obj.update({ cityLogSum: logSum });
 			if (layEvent == 'yesHot' || layEvent == 'noHot') {
 				if (layEvent == 'yesHot') {
 					obj.update({ hotflag: '是' });
@@ -215,14 +219,15 @@
    				} 
 				$.ajax({
   					type : "POST", //提交方式  
-  					url : "/WebBackAPI/admin/city/uodateHot",//路径  
+  					url : "/admin/city/uodateHot",//路径  
   					data : {
   						id : data.id,
   						check : check
   					},//数据，这里使用的是Json格式进行传输  
   					dataType : "json",
   					success : function(result) {//返回数据根据结果进行相应的处理  
-  	
+  						var logSum = data.cityLogSum + 1;
+  						obj.update({ cityLogSum: logSum });
   					}
    				});
 			} else if (layEvent == 'yesMap' || layEvent == 'noMap') {
@@ -241,14 +246,15 @@
    				}
 				$.ajax({
   					type : "POST", //提交方式  
-  					url : "/WebBackAPI/admin/city/uodateMap",//路径  
+  					url : "/admin/city/uodateMap",//路径  
   					data : {
   						id : data.id,
   						check : check
   					},//数据，这里使用的是Json格式进行传输  
   					dataType : "json",
   					success : function(result) {//返回数据根据结果进行相应的处理  
-  	
+  						var logSum = data.cityLogSum + 1;
+  						obj.update({ cityLogSum: logSum });
   					}
    				});
 			} else if (layEvent == 'yesCity' || layEvent == 'noCity') {
@@ -271,30 +277,148 @@
        					tr.find("td").eq(9).find("div").find("a").eq(1).attr("lay-event","yesHot");
                         $.ajax({
           					type : "POST", //提交方式  
-          					url : "/WebBackAPI/admin/city/uodateHot",//路径  
+          					url : "/admin/city/uodateHot",//路径  
           					data : {
           						id : data.id,
           						check : 0
           					},//数据，这里使用的是Json格式进行传输  
           					dataType : "json",
           					success : function(result) {//返回数据根据结果进行相应的处理  
-          	
           					}
            				});
                     }
                 }
                 $.ajax({
                     type : "POST", //提交方式
-                    url : "/WebBackAPI/admin/city/uodateCityFlag",//路径
+                    url : "/admin/city/uodateCityFlag",//路径
                     data : {
                         id : data.id,
                         check : check
                     },//数据，这里使用的是Json格式进行传输
                     dataType : "json",
                     success : function(result) {//返回数据根据结果进行相应的处理
-
                     }
                 });
+				var logSum = data.cityLogSum + 1;
+				obj.update({ cityLogSum: logSum });
+            }else if (layEvent == 'updatePrice') {
+            	layer.open({
+           		  	type: 1,
+           		 	shadeClose:true,
+           		 	resize:true,
+           		 	title:"修改陪练价格",
+           		  	skin: 'layui-layer-rim', //加上边框
+           	  		area: ['300px', '200px'], //宽高
+           		  	content: '<div style="padding: 10px;"> <input class="form-control" type="text" placeholder="价格" value="'+data.coachPrice+'" id="price"> </div>',
+           		  	btn: ['提交', '取消'], 
+           		  	yes: function (layero, index) {
+           		  		var price = $('#price').val();
+	           		  	$.ajax({
+	        				type : "POST", //提交方式  
+	        				url : "/admin/city/updateCoach",//路径  
+	        				data : {
+	        					id : data.id,
+	        					price : price
+	        				},//数据，这里使用的是Json格式进行传输  
+	        				dataType : "json",
+	        				success : function(result) {//返回数据根据结果进行相应的处理  
+								if(result.code == 200){
+									layer.msg("修改成功");
+									obj.update({ coachPrice: price });
+									layer.closeAll();
+								}else if(result.code == 400){
+									layer.msg(result.msg);
+								}
+	        				}
+	        			});
+	                }, btn2: function () {
+	                    var index = parent.layer.getFrameIndex(window.name);
+	                    parent.layer.close(index);
+	                }
+           		});
+            }
+        });
+
+        $("#saveDistrict").on("click", function () {
+        	var cityid = $("#cityid").val();
+        	var district = $("#district").val();
+        	if(district == ""){
+            	layer.msg("请填写名称");
+            	return;
+        	}
+        	var url = '/admin/city/district/list?id='+cityid;
+        	$.ajax({
+                type : "POST", //提交方式
+                url : "/admin/city/district/add",//路径
+                data : {
+                    cityid : cityid,
+                    name : district
+                },//数据，这里使用的是Json格式进行传输
+                dataType : "json",
+                success : function(result) {//返回数据根据结果进行相应的处理
+                	if(result.code == 200){
+	                	layer.msg("添加成功");
+	                	$("#district").val("");
+	                	layui.table.reload("tableDistrictList", { url: url,where: {}})
+                	}else {
+	                	layer.msg(result.msg);
+                	}
+                }
+            });
+        });
+        
+        layui.table.on('edit(tableDistrictList)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+        	var districtName = obj.tr.find("td").eq(2).attr("title");
+        	layer.confirm('确定要将区县' + districtName + '修改为' + obj.value, function(index){
+			     layer.close(index);
+			     //向服务端发送删除指令
+			     $.ajax({
+					type : "POST", //提交方式  
+					url : "/admin/city/district/update",//路径  
+					data : {
+						districtid : obj.data.id,
+						name : obj.value
+					},//数据，这里使用的是Json格式进行传输  
+					dataType : "json",
+					success : function(result) {//返回数据根据结果进行相应的处理  
+						if(result.code == 400){
+		                	layer.msg(result.msg);
+		    				obj.tr.find("td").eq(2).find('input').val(districtName);
+		    				obj.tr.find("td").eq(2).find('div').html(districtName);
+		                	obj.update({ district: districtName });
+	                	}
+					}
+				});
+			},function(index){
+				obj.tr.find("td").eq(2).find('input').val(districtName);
+				obj.tr.find("td").eq(2).find('div').html(districtName);
+            	obj.update({ district: districtName });
+			    layer.close(index);
+			});
+       		
+       	});
+        
+        layui.table.on('tool(tableDistrictList)', function(obj) {
+   			var data = obj.data;
+   			var layEvent = obj.event;
+			if (layEvent == 'delDistrict') {
+				layer.confirm('真的删除行么', function(index){
+				     obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+				     layer.close(index);
+				     //向服务端发送删除指令
+				     $.ajax({
+	  					type : "POST", //提交方式  
+	  					url : "/admin/city/district/del",//路径  
+	  					data : {
+	  						districtid : data.id,
+	  					},//数据，这里使用的是Json格式进行传输  
+	  					dataType : "json",
+	  					success : function(result) {//返回数据根据结果进行相应的处理  
+		                	layer.msg("删除成功");
+	  						obj.del();
+	  					}
+	   				});
+				});
             }
         });
     });
@@ -319,9 +443,28 @@
   {{# if(d.mapflag == '是'){ }}
     <a class="layui-btn layui-btn-xs" lay-event="noMap" style="color: #fff;">取消地图</a>
   {{# } }}
+  <a class="layui-btn layui-btn-xs" lay-event="updatePrice" style="color: #fff;">编辑价格</a>
 </script>
+
+<script type="text/html" id="districtBar">
+	<a class="layui-btn layui-btn-xs" lay-event="delDistrict" style="color: #fff;">删除</a>
+</script>
+
 <div class="contextMenuDialog hide" id="item0">
     <div class="card-body">
+		<div class="card-tools" style="padding-bottom:  10px;">
+			<div class="input-group input-group-sm" style="width: 350px;">
+				<input id="cityid" type="hidden" >
+				区县：
+				<input class="form-control float-right" id="district" name="district" type="text" placeholder="区县名">
+
+				<div class="input-group-append">
+					<button class="btn btn-default" id="saveDistrict" type="button">
+						<i class="fa fa-plus"></i> 新增
+					</button>
+				</div>
+			</div>
+		</div>
         <div class="row">
             <table id="tableDistrictList"></table>
         </div>
@@ -329,8 +472,8 @@
 </div>
 
 <div class="contextMenuDialog hide" id="item1">
-    <div class="card-body">
-        <div class="row">
+	<div class="card-body">
+		<div class="row">
             <table id="tableCityLog"></table>
         </div>
     </div>

@@ -49,4 +49,10 @@ public class AmountController {
 		model.addAttribute("date", DateUtil.formatDate(date));
 		return "admin/checkAccount/list";
 	}
+	
+	@RequestMapping(value = "/testView")
+	public String testView(Model model) {
+		model.addAttribute("date", com.xiaoyi.ssm.util.DateUtil.getFormat(com.xiaoyi.ssm.util.DateUtil.getPreTime(new Date(), 3, -1), "yyyy-MM-dd"));
+		return "admin/testView/list";
+	}
 }

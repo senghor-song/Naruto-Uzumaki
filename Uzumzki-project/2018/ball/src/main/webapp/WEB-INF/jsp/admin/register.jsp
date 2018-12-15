@@ -8,8 +8,8 @@
     <title>注册</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
-    <link rel="stylesheet" href="/WebBackAPI/admin/static/css/site.css">
+	<link rel="icon" href="/admin/static/image/logo.png" type="image/x-icon"/>
+    <link rel="stylesheet" href="/admin/static/css/site.css">
     <style>
         body .login0 { background: #e9ecef; }
         body .login1 {
@@ -69,7 +69,7 @@
     </style>
 </head>
 
-<body class="h-100 login0" style="background: url(/WebBackAPI/admin/static/image/bg2.jpg) no-repeat center center;">
+<body class="h-100 login0" style="background: url(/admin/static/image/bg2.jpg) no-repeat center center;">
     <div class="login-box shadow-lg h-100 login1">
         <div class="clearfix login2">
             <div class="text-center login3">后台注册</div>
@@ -78,7 +78,7 @@
 	        <div id="wxQRcode" class="loginWxQRcode">
 	        </div>
         </div>
-        <form action="/WebBackAPI/admin/staff/register" method="post" class="login4" >
+        <form action="/admin/staff/register" method="post" class="login4" >
             <div class="has-feedback clearfix login5">
 				<input type="text" class="form-control login6" placeholder="真实姓名" id="name">
                 <label class="login7">真实姓名</label>
@@ -106,11 +106,11 @@
     </div>
 
     <!-- jQuery -->
-    <script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/verify/js/verify.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/jq-ext.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/layer/layer.js"></script>
+    <script src="/admin/static/plugins/jquery/jquery.min.js"></script>
+    <script src="/admin/static/plugins/verify/js/verify.min.js"></script>
+    <script src="/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+    <script src="/admin/static/js/jq-ext.js"></script>
+    <script src="/admin/static/plugins/layer/layer.js"></script>
     <script src="https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
     <script>
     var phoneReg = /(^1[3|4|5|7|8]\d{9}$)|(^09\d{8}$)/;//手机号正则 
@@ -129,7 +129,7 @@
 		var phone = $("#phone").val();
     	$.ajax({  
             type : "POST",  //提交方式  
-            url : "/WebBackAPI/admin/common/getSMSCode",//路径  
+            url : "/admin/common/getSMSCode",//路径  
             data : {  
                 "phone" : phone
             },//数据这里使用的是Json格式进行传输  
@@ -168,7 +168,7 @@
 			id : "wxQRcode",
 			appid : "wxa6c95fe48935f880",
 			scope : "snsapi_login",
-			redirect_uri : "https://ball.ekeae.com/WebBackAPI/admin/common/authLogin",
+			redirect_uri : "https://beta.ball.ekeae.com/admin/common/authLogin",
 			state : "${state}",
 			style : "black",
 			href : ""
@@ -198,7 +198,7 @@
         	}
             $.ajax({  
                 type : "POST",  //提交方式  
-                url : "/WebBackAPI/admin/staff/register",//路径  
+                url : "/admin/staff/register",//路径  
                 data : {  
                     "name" : name,
                     "tel" : phone,
@@ -210,7 +210,7 @@
                 success : function(result) {//返回数据根据结果进行相应的处理  
                     if ( result.code == 200 ) {  
                 		layer.msg(result.msg);
-                		window.location.href="/WebBackAPI/admin/common/login";
+                		window.location.href="/admin/common/login";
                     } else {  
                 		layer.confirm(result.msg, {
                 			btn: ['确定'] //按钮

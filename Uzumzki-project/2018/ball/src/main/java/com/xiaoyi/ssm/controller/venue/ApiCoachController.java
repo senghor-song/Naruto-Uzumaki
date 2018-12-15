@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -59,17 +58,24 @@ public class ApiCoachController {
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 		Venue venue = venueService.selectByPrimaryKey(venueid);
 		
-		List<TrainCoach> list = trainCoachService.selectByVenue(venueid);
+		List<TrainCoach> list = trainCoachService.selectByVenue(venueid, venue.getTrainteam());
 		List<Map<String, Object>> listMaps = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < list.size(); i++) {
+			TrainCoach trainCoach = list.get(i);
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("trainCoachId", list.get(i).getId());// 教练名称
-			map.put("trainCoachName", list.get(i).getName());// 教练名称
+			map.put("trainCoachId", trainCoach.getId());// 教练名称
+			map.put("trainCoachName", trainCoach.getName());// 教练名称
 			map.put("ballType", venue.getType() == 1 ? "网球" : venue.getType() == 2 ? "足球" : venue.getType() == 3 ? "羽毛球" : "篮球");// 类别
 			if (list.get(i).getVenueCoach() != null) {
-				map.put("venueCoachId", list.get(i).getVenueCoach().getId());// 陪练ID
-				map.put("price", list.get(i).getVenueCoach().getPrice());// 价格
-				map.put("typeFlag", list.get(i).getVenueCoach().getTypeFlag());// 状态0=禁用1=正常
+				map.put("venueCoachId", trainCoach.getVenueCoach().getId());// 陪练ID
+				map.put("price", trainCoach.getVenueCoach().getPrice());// 价格
+				map.put("typeFlag", trainCoach.getVenueCoach().getTypeFlag());// 状态0=禁用1=正常
+
+				String[] labels = new String[]{};
+				if (!StringUtil.isBank(trainCoach.getVenueCoach().getLabel())) {
+					labels = trainCoach.getVenueCoach().getLabel().split(",");
+				}
+				map.put("label", labels);// 教练标签
 			}else {
 				map.put("venueCoachId", "");// 陪练ID
 				map.put("price", "");// 价格
@@ -91,7 +97,7 @@ public class ApiCoachController {
 	 */ 
 	@RequestMapping(value = "/updateCoach")
 	@ResponseBody
-	public ApiMessage updateCoach(HttpServletRequest request, String venueCoachId, Double price, Integer typeFlag, String venueId, String trainCoachId) {
+	public ApiMessage updateCoach(HttpServletRequest request, String venueCoachId, Double price, Integer typeFlag, String venueId, String trainCoachId, String labelStr) {
 
 		String token = (String) request.getAttribute("token");
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
@@ -105,6 +111,7 @@ public class ApiCoachController {
 			venueCoach.setTypeFlag(typeFlag);
 			venueCoach.setVenueId(venueId);
 			venueCoach.setTrainCoachId(trainCoachId);
+			venueCoach.setLabel(labelStr);
 			int flag = venueCoachService.insertSelective(venueCoach);
 			if (flag > 0) {
 				return new ApiMessage(200, "新增成功");
@@ -116,6 +123,7 @@ public class ApiCoachController {
 			venueCoach.setModifyTime(new Date());
 			venueCoach.setPrice(price);
 			venueCoach.setTypeFlag(typeFlag);
+			venueCoach.setLabel(labelStr);
 			int flag = venueCoachService.updateByPrimaryKeySelective(venueCoach);
 			if (flag > 0) {
 				return new ApiMessage(200, "修改成功");

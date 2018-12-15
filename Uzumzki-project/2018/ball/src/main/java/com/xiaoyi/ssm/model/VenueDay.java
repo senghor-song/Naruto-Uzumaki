@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 实体
+ * 场馆每天统计收入金额实体
  */
 public class VenueDay implements Serializable {
-    /** 每天统计场馆收入 */
+    /** ID */
     private String id;
 
     /** 编号 */
@@ -25,17 +25,32 @@ public class VenueDay implements Serializable {
     /** 统计日期 */
     private Date countDay;
 
-    /** 金额 */
-    private Double countAmount;
+    /** 应付金额 */
+    private Double oughtAmount;
+
+    /** 实付金额 */
+    private Double realityAmount;
+
+    /** 扣除手续费金额 */
+    private Double countFee;
+
+    /** 订单总数 */
+    private Integer countOrder;
 
     /** 回款人ID */
     private String memberId;
 
-    /** 状态(0=申请中1=提现成功2=提现失败) */
-    private Integer typeFlag;
+    /** 剩余额度 */
+    private Double memberFee;
 
     /** 备注 */
     private String remark;
+
+    /** 操作状态(0=提现中1=提现成功2=提现失败) */
+    private Integer typeFlag;
+
+    /** 补贴金额 */
+    private Double paySubsidy;
 
     /**
      * VenueDay
@@ -43,16 +58,16 @@ public class VenueDay implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 每天统计场馆收入
-     * @return ID 每天统计场馆收入
+     * ID
+     * @return ID ID
      */
     public String getId() {
         return id;
     }
 
     /**
-     * 每天统计场馆收入
-     * @param id 每天统计场馆收入
+     * ID
+     * @param id ID
      */
     public void setId(String id) {
         this.id = id == null ? null : id.trim();
@@ -139,19 +154,67 @@ public class VenueDay implements Serializable {
     }
 
     /**
-     * 金额
-     * @return Count_amount 金额
+     * 应付金额
+     * @return Ought_amount 应付金额
      */
-    public Double getCountAmount() {
-        return countAmount;
+    public Double getOughtAmount() {
+        return oughtAmount;
     }
 
     /**
-     * 金额
-     * @param countAmount 金额
+     * 应付金额
+     * @param oughtAmount 应付金额
      */
-    public void setCountAmount(Double countAmount) {
-        this.countAmount = countAmount;
+    public void setOughtAmount(Double oughtAmount) {
+        this.oughtAmount = oughtAmount;
+    }
+
+    /**
+     * 实付金额
+     * @return Reality_amount 实付金额
+     */
+    public Double getRealityAmount() {
+        return realityAmount;
+    }
+
+    /**
+     * 实付金额
+     * @param realityAmount 实付金额
+     */
+    public void setRealityAmount(Double realityAmount) {
+        this.realityAmount = realityAmount;
+    }
+
+    /**
+     * 扣除手续费金额
+     * @return Count_fee 扣除手续费金额
+     */
+    public Double getCountFee() {
+        return countFee;
+    }
+
+    /**
+     * 扣除手续费金额
+     * @param countFee 扣除手续费金额
+     */
+    public void setCountFee(Double countFee) {
+        this.countFee = countFee;
+    }
+
+    /**
+     * 订单总数
+     * @return Count_order 订单总数
+     */
+    public Integer getCountOrder() {
+        return countOrder;
+    }
+
+    /**
+     * 订单总数
+     * @param countOrder 订单总数
+     */
+    public void setCountOrder(Integer countOrder) {
+        this.countOrder = countOrder;
     }
 
     /**
@@ -171,19 +234,19 @@ public class VenueDay implements Serializable {
     }
 
     /**
-     * 状态(0=申请中1=提现成功2=提现失败)
-     * @return Type_flag 状态(0=申请中1=提现成功2=提现失败)
+     * 剩余额度
+     * @return Member_fee 剩余额度
      */
-    public Integer getTypeFlag() {
-        return typeFlag;
+    public Double getMemberFee() {
+        return memberFee;
     }
 
     /**
-     * 状态(0=申请中1=提现成功2=提现失败)
-     * @param typeFlag 状态(0=申请中1=提现成功2=提现失败)
+     * 剩余额度
+     * @param memberFee 剩余额度
      */
-    public void setTypeFlag(Integer typeFlag) {
-        this.typeFlag = typeFlag;
+    public void setMemberFee(Double memberFee) {
+        this.memberFee = memberFee;
     }
 
     /**
@@ -200,5 +263,37 @@ public class VenueDay implements Serializable {
      */
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    /**
+     * 操作状态(0=提现中1=提现成功2=提现失败)
+     * @return Type_flag 操作状态(0=提现中1=提现成功2=提现失败)
+     */
+    public Integer getTypeFlag() {
+        return typeFlag;
+    }
+
+    /**
+     * 操作状态(0=提现中1=提现成功2=提现失败)
+     * @param typeFlag 操作状态(0=提现中1=提现成功2=提现失败)
+     */
+    public void setTypeFlag(Integer typeFlag) {
+        this.typeFlag = typeFlag;
+    }
+
+    /**
+     * 补贴金额
+     * @return Pay_subsidy 补贴金额
+     */
+    public Double getPaySubsidy() {
+        return paySubsidy;
+    }
+
+    /**
+     * 补贴金额
+     * @param paySubsidy 补贴金额
+     */
+    public void setPaySubsidy(Double paySubsidy) {
+        this.paySubsidy = paySubsidy;
     }
 }

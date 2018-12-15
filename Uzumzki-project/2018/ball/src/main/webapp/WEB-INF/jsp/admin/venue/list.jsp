@@ -10,8 +10,8 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
-	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
-    <link href="/WebBackAPI/admin/static/css/site.css" rel="stylesheet">
+	<link rel="icon" href="/admin/static/image/logo.png" type="image/x-icon"/>
+    <link href="/admin/static/css/site.css" rel="stylesheet">
     <style type="text/css">
 	    .contextMenuDialog .listrow {
 	    	padding-top: 10px;
@@ -62,6 +62,7 @@
 												<option value="0">城市</option>
 												<option value="1">场馆名</option>
 												<option value="2">编号</option>
+												<option value="3">入驻机构</option>
 											</select> 
 											<input class="form-control float-right" id="venueKeyword" name="table_search" type="text" 
 												placeholder="请输入关键字" maxlength="20">
@@ -98,34 +99,33 @@
 </div>
 
 <!-- jQuery -->
-	<script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
-	<script src="/WebBackAPI/admin/static/js/layout.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
+	<script src="/admin/static/plugins/jquery/jquery.min.js"></script>
+	<script src="/admin/static/js/layout.js"></script>
+	<script src="/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
 	<script>
 	    $.widget.bridge('uibutton', $.ui.button)
 	</script>
-	<script src="/WebBackAPI/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-	<script src="/WebBackAPI/admin/static/js/raphael-min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/morris/morris.min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/knob/jquery.knob.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/moment/moment.min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/fastclick/fastclick.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/js/pages/dashboard.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/js/demo.js"></script>
-	<script src="/WebBackAPI/admin/static/js/echarts.min.js"></script>
-	<script src="/WebBackAPI/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/layui/layui.all.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
-	<script src="/WebBackAPI/admin/static/js/jq-ext.js"></script>
+	<script src="/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/admin/static/js/raphael-min.js"></script>
+	<script src="/admin/static/plugins/morris/morris.min.js"></script>
+	<script src="/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
+	<script src="/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+	<script src="/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+	<script src="/admin/static/plugins/knob/jquery.knob.js"></script>
+	<script src="/admin/static/plugins/moment/moment.min.js"></script>
+	<script src="/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
+	<script src="/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+	<script src="/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+	<script src="/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+	<script src="/admin/static/plugins/fastclick/fastclick.js"></script>
+	<script src="/admin/static/plugins/js/pages/dashboard.js"></script>
+	<script src="/admin/static/plugins/js/demo.js"></script>
+	<script src="/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+	<script src="/admin/static/plugins/layui/layui.all.js"></script>
+	<script src="/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+	<script src="/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+	<script src="/admin/static/js/jq-ext.js"></script>
 	<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ITcG0S4URK9aokGSOhTNnSXCO9o7fK8D"></script>
 <script>
 	var map=null;
@@ -154,7 +154,7 @@
                 self.obj = $.tableObject({
                     tableId: 'tableList',
                     tableOption: {
-                        url: '/WebBackAPI/admin/venue/list',
+                        url: '/admin/venue/list',
                         page: true,
                         height: $(window).height() - 150,
                         where: {
@@ -170,20 +170,21 @@
                     			{field: 'id', title: 'id', hide:true},
                  				{field: 'lng', title: 'lng', hide:true},
                  				{field: 'lat', title: 'lat', hide:true},
-                                {field: 'city', title: '城市', sort: true},
-                                {field: 'district', title: '区县', sort: true},
-                                {field: 'name', title: '场馆', sort: true},
-                                {field: 'venueno', title: '编号', sort: true},
-                                {field: 'type', title: '类型', sort: true},
-                                {field: 'trainName', title: '入驻机构', sort: true},
-                                {field: 'reserveShow', title: '订场入口', sort: true},
-                                {field: 'reservePaySms', title: '订场支付短信', sort: true},
-                                {field: 'lnglat', title: '坐标', sort: true},
-                                {field: 'contactPhone', title: '联系电话', sort: true},
-                                {field: 'informPhone', title: '通知电话', sort: true},
-                                {field: 'venueError', title: '报错', sort: true},
-                                {field: 'venuelogSum', title: '日志', sort: true},
-                                {field: 'showflag', title: '状态', sort: true},
+                                {field: 'modifytime', title: '修改时间', sort: true, width:180},
+                                {field: 'city', title: '城市', sort: true, width:100},
+                                {field: 'district', title: '区县', sort: true, width:100},
+                                {field: 'name', title: '场馆', sort: true, width:200},
+                                {field: 'venueno', title: '编号', sort: true, width:100},
+                                {field: 'type', title: '类型', sort: true, width:80},
+                                {field: 'trainName', title: '入驻机构', sort: true, width:200},
+                                {field: 'reserveShow', title: '订场入口', sort: true, width:100},
+                                {field: 'reservePaySms', title: '订场支付短信', sort: true, width:140},
+                                {field: 'lnglat', title: '坐标', sort: true, width:80},
+                                {field: 'contactPhone', title: '订场电话', sort: true, width:120},
+                                {field: 'informPhone', title: '订场短信通知', sort: true, width:140},
+                                {field: 'venueError', title: '报错', sort: true, width:80},
+                                {field: 'venuelogSum', title: '日志', sort: true, width:80},
+                                {field: 'showflag', title: '状态', sort: true, width:80},
                             ]
                         ]
                     },
@@ -191,8 +192,8 @@
 						<c:if test="${btn221 == 1}">
                         item1: {
                             name: "编辑", callback: function (key, opt) {
-                            	$.showAjaxContent("编辑", "40%", "/WebBackAPI/admin/venue/update/view", $(this).find("td").eq(0).attr('title'));
-                            	var mapFlag = $(this).find("td").eq(11).attr('title');
+                            	$.showAjaxContent("编辑", "40%", "/admin/venue/update/view", $(this).find("td").eq(0).attr('title'));
+                            	var mapFlag = $(this).find("td").eq(12).attr('title');
                             	var lng = $(this).find("td").eq(1).attr('title');
                             	var lat = $(this).find("td").eq(2).attr('title');
                             	$("#citymapDiv").removeClass("hide");
@@ -244,15 +245,23 @@
 	               	   			        	var point = new BMap.Point(lng, lat);
 	               	   			      		map.centerAndZoom(point, 16);
 	               	   			      		var marker = new BMap.Marker(point);// 创建标注
+		               	   			      	var venueIcon = new BMap.Icon("https://ekeae-image.oss-cn-shenzhen.aliyuncs.com/baseImage/map-venue1-100.png", new BMap.Size(36,36));
+		               	   			      	venueIcon.setInfoWindowAnchor(new BMap.Size(12,0));
+		               	   			        venueIcon.setImageSize(new BMap.Size(36,36));
+	               	    			      	var marker = new BMap.Marker(point,{icon:venueIcon});// 创建标注
 	               	   			      		mapmarker = marker;
 	               	   			      		map.addOverlay(marker);// 将标注添加到地图中
                 					  		venueLng = lng;//存贮点击的经度
                 					  		venueLat = lat;//存贮点击的维度
+                					  		
 	               	   			      		geoc.getLocation(point, function(rs){
-		          					            //addressComponents对象可以获取到详细的地址信息
-		          					            var addComp = rs.addressComponents;
-		                  						$("#addressStrEdit").text(addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber);
-		          					        });  
+	          					           	 	//addressComponents对象可以获取到详细的地址信息
+	          					            	var addComp = rs.addressComponents;
+	          					            	var site = addComp.city + ", " + addComp.district;
+	          					            	cityName = addComp.city;
+	          					            	districtName = addComp.district;
+	                  							$("#addressStrEdit").text(addComp.city + addComp.district + addComp.street + addComp.streetNumber);
+          					        		});  
                 					  		
 	               	   			   			// 定义一个控件类,即function
 											function ZoomControl(){
@@ -301,7 +310,7 @@
                 					  		venueLng = e.point.lng;//存贮点击的经度
                 					  		venueLat = e.point.lat;//存贮点击的维度
                 					  		map.centerAndZoom(point, map.getZoom());
-                                            var myIcon = new BMap.Icon("/WebBackAPI/admin/static/image/updateVenue.png", new BMap.Size(24,36));
+                                            var myIcon = new BMap.Icon("/admin/static/image/updateVenue.png", new BMap.Size(24,36));
                                             myIcon.setInfoWindowAnchor(new BMap.Size(12,0));
                                             var marker = new BMap.Marker(point,{icon:myIcon});// 创建标注
                                             updateMarker = marker;//存贮marker对象,方便后续点击删除上一次点击的标注
@@ -315,8 +324,8 @@
                 					            var site = addComp.city + ", " + addComp.district;
                 					            cityName = addComp.city;
                 					            districtName = addComp.district;
-                        						$("#addressEdit").val(addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber);
-                        						$("#addressStrEdit").text(addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber);
+                        						$("#addressEdit").val(addComp.city + addComp.district + addComp.street + addComp.streetNumber);
+                        						$("#addressStrEdit").text(addComp.city + addComp.district + addComp.street + addComp.streetNumber);
                 					        });  
                 						});
 
@@ -337,7 +346,7 @@
                                 $.tableObject({
                                     tableId: 'tablevenuelog',
                                     tableOption: {
-                                        url: '/WebBackAPI/admin/venue/venueloglist?venueid='+$(this).find("td").eq(0).attr('title'),
+                                        url: '/admin/venue/venueloglist?venueid='+$(this).find("td").eq(0).attr('title'),
                                         page: false,
                                         height: $("#tablevenuelog").parents(".layui-layer-content").height() - 30,
                                         where: {},
@@ -358,7 +367,7 @@
                                 $.tableObject({
                                     tableId: 'tableVenueError',
                                     tableOption: {
-                                        url: '/WebBackAPI/admin/venue/venueErrorList?venueid='+$(this).find("td").eq(0).attr('title'),
+                                        url: '/admin/venue/venueErrorList?venueid='+$(this).find("td").eq(0).attr('title'),
                                         page: false,
                                         height: $("#tableVenueError").parents(".layui-layer-content").height() - 30,
                                         where: {},
@@ -385,15 +394,91 @@
                                     resize: true,
                                     anim: 1,
                                     shadeClose : true,
-                                    content: "/WebBackAPI/admin/venue/venueTemplate?venueid="+$(this).find("td").eq(0).attr('title'),
+                                    content: "/admin/venue/venueTemplate?venueid="+$(this).find("td").eq(0).attr('title'),
                                     cancel: function (index, layero) {
                                     },
                                     end: function () {
                     	        	}
                                 });
                             }
-                        }
+                        },
                         </c:if>
+                        item5: {
+                            name: "解除入驻", callback: function (key, opt) {
+                            	var venueid = $(this).find("td").eq(0).attr('title');
+                            	var phone = "${phone}";
+                            	if($(this).find("td").eq(9).attr('title') != ""){
+                            		//加载层-风格4
+
+                            		var indexCodeLoad = layer.msg('验证码发送中...', {
+                            		  icon: 16 ,
+                            		  shade: 0.01,
+                                      time:false //取消自动关闭
+                            		});
+                            		$.ajax({
+            	        				type : "POST", //提交方式  
+            	        				url : "/admin/venue/getSMSCode",//路径  
+            	        				data : {phone:phone,venueid:venueid},//数据，这里使用的是Json格式进行传输  
+            	        				dataType : "json",
+            	        				success : function(result) {//返回数据根据结果进行相应的处理  
+   		   	                   				layer.msg(result.msg);
+		  	                   				layer.close(indexCodeLoad);
+			  	                   			var indexOpen = layer.open({
+		                               		  	type: 1,
+		                               		 	shadeClose:true,
+		                               		 	resize:true,
+		                               		 	title:"解除入驻",
+		                               		  	skin: 'layui-layer-rim', //加上边框
+		                               	  		area: ['300px', '200px'], //宽高
+		                               		  	content: '<div style="padding: 10px;"> <input class="form-control" type="text" placeholder="请输入4位短信验证码" value="" id="phoneCode"> </div>',
+		                               		  	btn: ['提交', '取消'], 
+		                               		  	yes: function (layero, index) {
+			                               		  	var indexVenueLoad = layer.msg('场馆初始化中...', {
+			                                  		  icon: 16 , shade: 0.01, time:false //取消自动关闭
+			                                  		});
+		                               		  		var phoneCode = $('#phoneCode').val();
+		                               		  		
+		                    	           		  	$.ajax({
+		                    	        				type : "POST", //提交方式  
+		                    	        				url : "/admin/venue/relieveVenue",//路径  
+		                    	        				data : {
+		                    	        					venueid : venueid,
+		                    	        					phoneCode : phoneCode
+		                    	        				},//数据，这里使用的是Json格式进行传输  
+		                    	        				dataType : "json",
+		                    	        				success : function(result) {//返回数据根据结果进行相应的处理  
+		                    	        					if (result.code == 200) {
+			    	   		   	                   				layer.msg("解除成功!");
+			    			  	                   				layer.close(indexOpen);
+			    			  	                   				layer.close(indexVenueLoad);
+			    			                        			$.reload(self.obj);
+															} else {
+			    	   		   	                   				layer.msg(result.msg);
+			    			  	                   				layer.close(indexVenueLoad);
+															}
+		    	   	                   					},
+		    	   	                   					error : function(e) {//返回数据根据结果进行相应的处理  
+		    			  	                   				layer.close(indexload);
+		    	   		   	                   				layer.msg("系统繁忙!");
+		    			  	                   				layer.close(indexVenueLoad);
+		    	   	                        			    $.reload(self.obj);
+		    	   	                   					}
+		                    	        			});
+		                    	                }, btn2: function () {
+		                    	                    var index = parent.layer.getFrameIndex(window.name);
+		                    	                    parent.layer.close(index);
+		                    	                }
+		                               		});
+   	                   					},error:function(){
+   		   	                   				layer.msg("系统繁忙");
+		  	                   				layer.close(indexCodeLoad);
+   	                   					}
+            	        			});
+                            	}else{
+	   	                   			layer.msg("该场馆暂无机构入驻！");
+                            	}
+                            }
+                        }
                     }
                 });
             }
@@ -401,6 +486,54 @@
         tableObj.init();
 
         $("#venueSave").on("click", function () {
+        	$("#citymapDiv").removeClass("hide");
+        	
+        	layer.open({
+         	  title: "位置", 
+			  type: 1,
+			  anim: 1,
+			  shade: 0.3,
+			  closeBtn: 0,
+			  offset: '20px',
+			  title: false,
+			  move: false,
+              shadeClose : true,
+			  resize: false,
+			  area: ['30%', '40%'],
+			  content: $('#citymap'),
+              cancel: function (index, layero) {
+            	  layer.closeAll();
+                  $(".contextMenuDialog").addClass("hide");
+      			  $.reload(self.obj);
+              },
+              end: function () {
+            	  layer.closeAll();
+                  $(".contextMenuDialog").addClass("hide");
+      			  $.reload(self.obj);
+              },
+			  success: function(){
+	        	map = new BMap.Map("citymap");    // 创建Map实例
+				map.centerAndZoom(new BMap.Point(114.056386, 22.592976), 15);  // 初始化地图,设置中心点坐标和地图级别
+				//添加地图类型控件
+				map.addControl(new BMap.MapTypeControl({
+					mapTypes:[
+				        BMAP_NORMAL_MAP,
+				        BMAP_HYBRID_MAP
+				    ]}));	  
+				map.setCurrentCity("深圳");          // 设置地图显示的城市 此项是必须设置的
+				map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+				map.disableDoubleClickZoom();
+	
+				// 获取地址对象
+			    var geoc = new BMap.Geocoder();    
+				
+				// 删除上次使用的标注
+				if(mapmarker != null){
+					map.clearOverlays();
+				}
+			  }
+			});
+			// 表格数据
             var obj = $("#button1");
             obj.removeClass("hide");
             layer.open({
@@ -409,8 +542,8 @@
                 offset: 'b',
                 title: '入驻申请',
                 resize: true,
+  			    shade: 0,
                 anim: 1,
-                shadeClose : true,
                 content: obj,
                 cancel: function (index, layero) {
                     $(".contextMenuDialog").addClass("hide");
@@ -425,7 +558,8 @@
         });
         
         function venueEnterTableInit(checkFlag){
-        	var tableVenueEnter = {
+				$('#venueEnterId').val("");
+        		var tableVenueEnter = {
     	            obj: null,
     	            init: function () {
     	                var self = this;
@@ -443,34 +577,27 @@
                         self.obj = $.tableObject({
                             tableId: 'tableAllVenueEnter',
                             tableOption: {
-                                url: '/WebBackAPI/admin/venue/venueEnter/list?checkFlag='+checkFlag,
+                                url: '/admin/venue/venueEnter/list?checkFlag='+checkFlag,
                                 page: true,
-                                height: 410,
-                                where: {
-                                    selectType: function () {
-                                        return $("#selectType").val()
-                                    },
-                                    keyword: function () {
-                                        return $("#keyword").val()
-                                    }
-                                },
+                                height: 300,
+                                where: {  },
                                 cols: [
                                     [
     	                                {field: 'id', title: 'id', hide:true},
     	                                {field: 'createTime', title: '申请时间', sort: true},
-    	                                {field: 'source', title: '来源'},
     	                                {field: 'appnickname', title: '操作人', sort: true},
-    	                                {field: 'phone', title: '绑定', sort: true},
-    	                                {field: 'title', title: '场馆名', sort: true},
-    	                                {field: 'address', title: '城市', sort: true},
+    	                                {field: 'phone', title: '操作人手机', sort: true},
+    	                                {field: 'title', title: '场馆', sort: true},
+    	                                {field: 'trainTeamFlag', title: '机构添加', sort: true},
+    	                                {field: 'trainTeamName', title: '机构', sort: true},
+    	                                {field: 'cityName', title: '城市', sort: true},
+    	                                {field: 'districtName', title: '区县', sort: true},
     	                                {field: 'mainName', title: '负责人', sort: true},
     	                                {field: 'mainPhone', title: '负责人电话', sort: true},
     	                                {field: 'ballType', title: '类别', sort: true},
     	                                {field: 'checkFlag', title: '审核状态', sort: true},
     	                                {field: 'rname', title: '审核人', sort: true},
-    	                                {field: 'checkTime', title: '审核时间', sort: true},
-    	                                {field: 'content', title: '意见', edit : "text"},
-    	                                {fixed: 'right', title: '操作', align:'center', toolbar: '#venueEnterBar'}
+    	                                {field: 'checkTime', title: '审核时间', sort: true}
                                     ]
                                 ]
                             }
@@ -478,6 +605,8 @@
                     }
                 }
         		tableVenueEnter.init();
+        		
+        	
                 layui.table.on('tool(tableAllVenueEnter)', function(obj) {
     	   			var data = obj.data;
     	   			var layEvent = obj.event;
@@ -494,7 +623,7 @@
            				}
            				$.ajax({
            					type : "POST", //提交方式  
-           					url : "/WebBackAPI/admin/venue/venueEnter/check",//路径  
+           					url : "/admin/venue/venueEnter/check",//路径  
            					data : {
            						id : data.id,
            						check : check,
@@ -505,7 +634,10 @@
            						if(result.code == 200){
                    					layer.msg("操作成功");
            						}else {
-                   					layer.msg(result.msg);
+           							layer.confirm(result.msg, {
+           								btn : [ '确定' ]
+           							//按钮
+           							});
            						}
            					}
            				});
@@ -514,9 +646,151 @@
     	   				layer.msg("请填写意见后操作!");
     	   			}
                 });
+   			  	
+   			  	var myZoomCtrl = null;
+                
+                //监听行单击事件
+   				layui.table.on('row(tableAllVenueEnter)', function(obj){
+   					$('#venueEnterId').val(obj.data.id);
+   					
+   					$.ajax({
+   						type : "POST", //提交方式  
+   						url : "/admin/venue/getVenueEnter",//路径  
+   						data : {
+   							id : obj.data.id
+   						},//数据，这里使用的是Json格式进行传输  
+   						dataType : "json",
+   						success : function(result) {//返回数据根据结果进行相应的处理  
+   		   	        		$('#contactPhoneEnter').val(result.data.contactPhone);
+   		   	        		$('#informPhoneEnter').val(result.data.informPhone);
+   		   	        		$('#venueAddressEnter').val(result.data.venueAddress);
+   		   	        		$('#checkContentEnter').val(result.data.checkContent);
+   		   	        		$('#trainTeamNameEnter').val(result.data.trainTeamName);
+   		   	        		
+	   		   	        	var mainFlags = $("#mainFlag").find("option");
+				            for(var i=0;i<mainFlags.length;i++){
+				            	var mainFlagOption = mainFlags.eq(i);
+				            	if($(mainFlagOption).val() == result.data.mainFlag){
+									$(mainFlagOption).attr("selected",true);
+				            	}else{
+									$(mainFlagOption).attr("selected",false);
+				            	}
+				            }
+				            var ballSums = $("#ballSum").find("option");
+				            for(var i=0;i<ballSums.length;i++){
+				            	var ballSumOption = ballSums.eq(i);
+								if($(ballSumOption).val() == result.data.ballSum){
+									$(ballSumOption).attr("selected",true);
+				            	}else{
+									$(ballSumOption).attr("selected",false);
+				            	}
+				            }
+   						}
+   					});
+   					
+   					
+   					if(mapmarker != null){
+   				     	map.clearOverlays();
+   					}
+   					// 百度坐标系坐标(地图中需要使用这个)
+   				    var bPoints = new Array();
+   					
+  			      	var point = new BMap.Point(obj.data.lng, obj.data.lat);
+  			      	var venueIcon = new BMap.Icon("https://ekeae-image.oss-cn-shenzhen.aliyuncs.com/baseImage/map-venue1-100.png", new BMap.Size(36,36));
+  			      	venueIcon.setInfoWindowAnchor(new BMap.Size(12,0));
+  			        venueIcon.setImageSize(new BMap.Size(36,36));
+   			      	var marker = new BMap.Marker(point,{icon:venueIcon});// 创建标注
+   			      	map.addOverlay(marker);// 将标注添加到地图中
+  			        bPoints.push(point);
+
+   			      	
+  			      	var point1 = new BMap.Point(obj.data.userLng, obj.data.userLat);
+  			      	var userIcon = new BMap.Icon("https://ekeae-image.oss-cn-shenzhen.aliyuncs.com/baseImage/map-user3.png", new BMap.Size(36,36));
+  			      	userIcon.setInfoWindowAnchor(new BMap.Size(12,0));
+  			      	userIcon.setImageSize(new BMap.Size(36,36));
+  			      	
+   			      	var marker1 = new BMap.Marker(point1,{icon:userIcon});// 创建标注
+   			      	map.addOverlay(marker1);// 将标注添加到地图中
+  			        bPoints.push(point1);
+
+   			      	mapmarker = marker;
+   			      	
+   			  		// 根据点的数组自动调整缩放级别
+					function setZoom(bPoints) {
+						var view = map.getViewport(eval(bPoints));
+						var mapZoom = view.zoom;
+						var centerPoint = view.center;
+						map.centerAndZoom(centerPoint, mapZoom);
+					}
+					setTimeout(function () {
+				        setZoom(bPoints);
+				    }, 1000)
+				    
+					// 通过JavaScript的prototype属性继承于BMap.Control
+	   			  	ZoomControl.prototype = new BMap.Control();
+	   			  	
+					if (myZoomCtrl != null) {
+						// 删除控件
+	   	   			  	map.removeControl(myZoomCtrl);
+					}
+					
+				 	// 定义一个控件类,即function
+					function ZoomControl(){
+						// 默认停靠位置和偏移量
+						this.defaultAnchor = BMAP_ANCHOR_BOTTOM_LEFT;
+						this.defaultOffset = new BMap.Size(10, 10);
+					}
+
+   	   			  	// 自定义控件必须实现自己的initialize方法,并且将控件的DOM元素返回
+   	   			  	// 在本方法中创建个div元素作为控件的容器,并将其添加到地图容器中
+   	   			  	ZoomControl.prototype.initialize = function(map){
+						// 创建一个DOM元素
+						var div = document.createElement("div");
+						// 添加文字说明
+						
+						var area = map.getDistance(point ,point1);
+						div.appendChild(document.createTextNode("直线距离:"+parseInt(area)+"米"));
+						// 设置样式
+						div.style.cursor = "pointer";
+						div.style.border = "1px solid gray";
+						div.style.backgroundColor = "white";
+   	   			  	  
+       	   			  	div.onclick = function(even){
+       	   			  		map.panTo(point, false);
+       	   			  	};
+   	   			  	    // 添加DOM元素到地图中
+   	   			  	    map.getContainer().appendChild(div);
+   	   			  	    // 将DOM元素返回
+   	   			  	    return div;
+   	   			  	}
+	   			  	// 创建控件
+   	   			  	myZoomCtrl = new ZoomControl();
+   	   			  	// 添加到地图当中
+   	   			  	map.addControl(myZoomCtrl);
+   				});
         	}
 
 		$("#selectVenueEnterType").on("change", function () {
+			var venueEnterType = $(this).val();
+			if (venueEnterType != 0) {
+        		$('#contactPhoneEnter').attr("readonly","readonly");
+        		$('#informPhoneEnter').attr("readonly","readonly");
+        		$('#venueAddressEnter').attr("readonly","readonly");
+        		$('#checkContentEnter').attr("readonly","readonly");
+        		$('#mainFlagEnter').attr("readonly","readonly");
+        		$('#ballSumEnter').attr("readonly","readonly");
+        		$('#checkEnterPass').attr("disabled","disabled");
+        		$('#checkEnterDisable').attr("disabled","disabled");
+			} else {
+        		$('#contactPhoneEnter').removeAttr("readonly");
+        		$('#informPhoneEnter').removeAttr("readonly");
+        		$('#venueAddressEnter').removeAttr("readonly");
+        		$('#checkContentEnter').removeAttr("readonly");
+        		$('#mainFlagEnter').removeAttr("readonly");
+        		$('#ballSumEnter').removeAttr("readonly");
+        		$('#checkEnterPass').removeAttr("disabled");
+        		$('#checkEnterDisable').removeAttr("disabled");
+			}
 			venueEnterTableInit($("#selectVenueEnterType").val());
         });
         
@@ -565,7 +839,7 @@
                         self.obj = $.tableObject({
                             tableId: 'tableVenueCheck',
                             tableOption: {
-                                url: '/WebBackAPI/admin/venue/venueCheckList',
+                                url: '/admin/venue/venueCheckList',
                                 page: true,
                                 height: 410,
                                 where: {
@@ -636,7 +910,7 @@
 	   				}
 	   				$.ajax({
 	   					type : "POST", //提交方式  
-	   					url : "/WebBackAPI/admin/venue/venueCheck",//路径  
+	   					url : "/admin/venue/venueCheck",//路径  
 	   					data : {
 	   						id : data.id,
 	   						check : check
@@ -648,6 +922,7 @@
 	   				});
 	   				$.reload(tableLog.obj);
 	            });
+            	
    				//监听行单击事件
    				layui.table.on('row(tableVenueCheck)', function(obj){
    					if(mapmarker != null){
@@ -701,7 +976,7 @@
                     self.obj = $.tableObject({
                         tableId: 'tableAllLog',
                         tableOption: {
-                            url: '/WebBackAPI/admin/venue/venuelogAllList',
+                            url: '/admin/venue/venuelogAllList',
                             page: true,
                             height: 370,
                             where: {
@@ -737,7 +1012,7 @@
                 resize: true,
                 anim: 1,
                 shadeClose : true,
-                content: "/WebBackAPI/admin/venue/importView",
+                content: "/admin/venue/importView",
                 cancel: function (index, layero) {
                 },
                 end: function () {
@@ -754,7 +1029,7 @@
                 resize: true,
                 anim: 1,
                 shadeClose : true,
-                content: "/WebBackAPI/admin/venue/venueTemplateAll",
+                content: "/admin/venue/venueTemplateAll",
                 cancel: function (index, layero) {
                 },
                 end: function () {
@@ -770,7 +1045,7 @@
                 resize: true,
                 anim: 1,
                 shadeClose : true,
-                content: "/WebBackAPI/admin/venue/venueAnalyze",
+                content: "/admin/venue/venueAnalyze",
                 cancel: function (index, layero) {
                 },
                 end: function () {
@@ -778,7 +1053,7 @@
             });
         });
         $("#venueInsert").on("click", function () {
-        	$.showAjaxContent("新增", "40%", "/WebBackAPI/admin/venue/add/view", "");
+        	$.showAjaxContent("新增", "40%", "/admin/venue/add/view", "");
         	$("#citymapDiv").removeClass("hide");
         	layer.open({
          	  title: "位置", 
@@ -845,8 +1120,8 @@
 				            var addComp = rs.addressComponents;
 				            cityName = addComp.city;
 				            districtName = addComp.district;
-      						$("#addressStrAdd").text(addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber);
-      						$("#addressAdd").val(addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber);
+      						$("#addressStrAdd").text(addComp.city + addComp.district + addComp.street + addComp.streetNumber);
+      						$("#addressAdd").val(addComp.city + addComp.district + addComp.street + addComp.streetNumber);
 				            /* var citys = $("#cityid").find("option");
 				            for(var i=0;i<citys.length;i++){
 				            	var city = citys.eq(i);
@@ -858,7 +1133,7 @@
 									$(city).attr("selected",true);
 									$.ajax({
 										type : "POST",
-										url : "/WebBackAPI/admin/city/district/list",
+										url : "/admin/city/district/list",
 										data : {
 											id : $(city).val()
 										},
@@ -895,6 +1170,92 @@
 			 	}
 			});
         });
+
+        $("#checkEnterPass").on("click", function () {
+        	var venueEnterId = $('#venueEnterId').val();
+        	if(venueEnterId == ""){
+        		layer.msg("请选择要操作的申请");
+        		return;
+        	}
+        	var contactPhone = $('#contactPhone').val();
+        	var informPhone = $('#informPhone').val();
+        	var venueAddress = $('#venueAddress').val();
+        	var checkContent = $('#checkContent').val();
+        	var mainFlag = $('#mainFlag').val();
+        	var ballSum = $('#ballSum').val();
+        	if(contactPhone == ""){
+        		layer.msg("请输入场馆订场电话");
+        		return;
+        	}
+        	if(informPhone == ""){
+        		layer.msg("请输入订场短信通知");
+        		return;
+        	}
+        	if(venueAddress == ""){
+        		layer.msg("请输入场馆地址");
+        		return;
+        	}
+        	if(checkContent == ""){
+        		layer.msg("请输入审核意见");
+        		return;
+        	}
+        	var indexLoad = layer.load();
+        	$.ajax({
+				type : "POST", //提交方式  
+				url : "/admin/venue/venueEnter/check",//路径  
+				data : {
+					id : venueEnterId,
+					check : 1,
+					contactPhone : contactPhone ,
+	        		informPhone : informPhone,
+	        		venueAddress : venueAddress,
+	        		mainFlag : mainFlag,
+	        		ballSum : ballSum,
+	        		checkContent : checkContent
+				},//数据，这里使用的是Json格式进行传输  
+				dataType : "json",
+				success : function(result) {//返回数据根据结果进行相应的处理  
+					if (result.code == 200) {
+						layer.msg("通过审核");
+						venueEnterTableInit($("#selectVenueEnterType").val());
+					} else {
+						layer.msg(result.msg);
+					}
+					layer.close(indexLoad);
+				},
+				error : function(){
+					layer.close(indexLoad);
+				}
+			});
+        });
+        $("#checkEnterDisable").on("click", function () {
+        	var venueEnterId = $('#venueEnterId').val();
+        	if(venueEnterId == ""){
+        		layer.msg("请选择要操作的申请");
+        		return;
+        	}
+        	var checkContent = $('#checkContent').val();
+        	if(checkContent == ""){
+        		layer.msg("请输入审核意见");
+        		return;
+        	}
+        	
+        	$.ajax({
+				type : "POST", //提交方式  
+				url : "/admin/venue/venueEnter/check",//路径  
+				data : {
+					id : venueEnterId,
+					check : 2,
+	        		checkContent : checkContent
+				},//数据，这里使用的是Json格式进行传输  
+				dataType : "json",
+				success : function(result) {//返回数据根据结果进行相应的处理  
+					layer.msg("已处理为无效申请");
+					venueEnterTableInit($("#selectVenueEnterType").val());
+				}
+			});
+        });
+        
     });
 </script>
 
@@ -921,16 +1282,40 @@
 </script>
 
 <div class="contextMenuDialog hide" id="button1">
-
     <div class="card-body">
 		<div class="card-tools" style="padding-bottom: 10px;">
-			<div class="input-group input-group-sm" style="width: 150px;">
-				审核状态: <select class="form-control float-right" id="selectVenueEnterType">
+			当前入驻机构:<input class="form-control " style="display: table-row;width:200px;margin-bottom: 20px;" id="trainTeamNameEnter" name="trainTeamNameEnter" readonly="readonly" type="text"  placeholder="当前入驻机构" maxlength="30">
+			<div class=" float-left" style="line-height: 38px;">
+				审核状态: <select class="form-control float-right" id="selectVenueEnterType" style="display: table-row;width:150px" >
 					<option value="0">待核</option>
 					<option value="1">通过</option>
 					<option value="2">无效</option>
 				</select>
 			</div>
+			<br/>
+			
+			<div class=" float-left" style="line-height: 38px;">
+				其他联系人关系: <select class="form-control float-right" id="mainFlagEnter" style="display: table-row;width:150px" >
+					<option value="1">负责人</option>
+					<option value="2">同事</option>
+					<option value="3">业主或其他</option>
+				</select>
+			</div>
+			<div class=" float-left" style="line-height: 38px;">
+				球场片数: <select class="form-control float-right" id="ballSumEnter" style="display: table-row;width:150px" >
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+				</select>
+			</div>
+			场馆订场电话:<input class="form-control " style="display: table-row;width:150px" id="contactPhoneEnter" name="contactPhoneEnter" type="text"  placeholder="场馆订场电话" maxlength="30">
+			订场短信通知:<input class="form-control " style="display: table-row;width:150px" id="informPhoneEnter" name="informPhoneEnter" type="text"  placeholder="订场短信通知" maxlength="20">
+			场馆地址:<input class="form-control " style="display: table-row;width:200px" id="venueAddressEnter" name="venueAddressEnter" type="text"  placeholder="场馆地址" maxlength="100">
+			审核意见:<input class="form-control " style="display: table-row;width:200px" id="checkContentEnter" name="checkContentEnter" type="text"  placeholder="审核意见" maxlength="100">
+			<input id="venueEnterId" type="hidden" value="" >
+			<button class="btn btn-primary btn-sm" id="checkEnterPass">通过</button>
+			<button class="btn btn-primary btn-sm" id="checkEnterDisable">无效</button>
 		</div>
 		<div class="row">
 			<table id="tableAllVenueEnter"></table>
@@ -957,7 +1342,10 @@
 				</div>
 			</div>
 			<div class="row">
-            <table id="tableAllLog"></table>
+            <div class="card-body table-responsive p-0">
+                <table id="tableAllLog">
+                </table>
+            </div>
         </div>
     </div>
 </div>

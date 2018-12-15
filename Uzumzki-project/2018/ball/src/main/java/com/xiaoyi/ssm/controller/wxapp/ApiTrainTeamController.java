@@ -32,12 +32,10 @@ import com.xiaoyi.ssm.model.TrainTeamPhone;
 import com.xiaoyi.ssm.model.Venue;
 import com.xiaoyi.ssm.model.VenueCheck;
 import com.xiaoyi.ssm.model.VenueEnter;
-import com.xiaoyi.ssm.service.MemberService;
 import com.xiaoyi.ssm.service.TrainCoachService;
 import com.xiaoyi.ssm.service.TrainCourseService;
 import com.xiaoyi.ssm.service.TrainEnterService;
 import com.xiaoyi.ssm.service.TrainOrderCommentService;
-import com.xiaoyi.ssm.service.TrainOrderService;
 import com.xiaoyi.ssm.service.TrainTeamCoachService;
 import com.xiaoyi.ssm.service.TrainTeamCollectService;
 import com.xiaoyi.ssm.service.TrainTeamFeedbackService;
@@ -45,15 +43,16 @@ import com.xiaoyi.ssm.service.TrainTeamImageService;
 import com.xiaoyi.ssm.service.TrainTeamLogService;
 import com.xiaoyi.ssm.service.TrainTeamPhoneService;
 import com.xiaoyi.ssm.service.TrainTeamService;
-import com.xiaoyi.ssm.service.TrainTrialService;
 import com.xiaoyi.ssm.service.VenueCheckService;
 import com.xiaoyi.ssm.service.VenueEnterService;
 import com.xiaoyi.ssm.service.VenueService;
 import com.xiaoyi.ssm.util.Arith;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
+import com.xiaoyi.ssm.util.HttpUtils;
 import com.xiaoyi.ssm.util.MapUtils;
 import com.xiaoyi.ssm.util.RedisUtil;
+import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
 
 /**
@@ -75,10 +74,6 @@ public class ApiTrainTeamController {
 	private TrainCourseService trainCourseService;
 	@Autowired
 	private TrainTeamImageService trainTeamImageService;
-	@Autowired
-	private TrainOrderService trainOrderService;
-	@Autowired
-	private TrainTrialService trainTrialService;
 	@Autowired
 	private TrainTeamFeedbackService trainTeamFeedbackService;
 	@Autowired
@@ -121,7 +116,7 @@ public class ApiTrainTeamController {
 		map.put("headImage", trainTeam.getHeadImage()); // 机构封面
 		map.put("title", trainTeam.getTitle()); // 机构名称
 		map.put("name", trainTeamCoach.getTrainCoach().getName()); // 当前教练姓名
-		map.put("type", trainTeamCoach.getTeachType());// 当前教练身份1=主教2助教
+		map.put("type", trainTeamCoach.getTeachType());// 教学身份1=主教练2=教练3=助教4=其他
 		map.put("manager", trainTeamCoach.getManager()); // 教练所属机构身份0=普通教练1=创建人2=管理员
 
 		return new ApiMessage(200, "获取成功", map);
@@ -473,7 +468,39 @@ public class ApiTrainTeamController {
 		// 用户数据
 		String token = (String) request.getAttribute("token");
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		
+		
+		// 使用百度地图根据经纬度获取地址信息
+		String jsonString = HttpUtils.sendGet("http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=" + venueEnter.getLatitude() + "," + venueEnter.getLongitude()
+				+ "&output=json&pois=0&ak=" + Global.Baidu_Map_KRY, null);
+		if (!StringUtil.isBank(jsonString)) {
+			try {
+				jsonString = jsonString.replace("renderReverse&&renderReverse(", "");
+				jsonString = jsonString.substring(0, jsonString.length() - 1);
+				JSONObject jsonObject = JSONObject.parseObject(jsonString);
 
+				String cityName = jsonObject.getJSONObject("result").getJSONObject("addressComponent").getString("city");
+				String districtName = jsonObject.getJSONObject("result").getJSONObject("addressComponent").getString("district");
+				
+				if (!StringUtil.isBank(cityName)) {
+					cityName = cityName.substring(0, cityName.length() - 1);
+				} else {
+					return new ApiMessage(400, "城市不存在");
+				}
+				
+				if (StringUtil.isBank(districtName)) {
+					districtName = cityName;
+				} else {
+					districtName = districtName.substring(0, districtName.length() - 1);
+				}
+				
+				venueEnter.setCityName(cityName);
+				venueEnter.setDistrictName(districtName);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		venueEnter.setId(Utils.getUUID());
 		venueEnter.setCreateTime(new Date());
 		venueEnter.setMemberId(member.getId());
@@ -701,7 +728,8 @@ public class ApiTrainTeamController {
 		jsonObject.put("name", trainCoach.getName()); // 姓名
 		TrainTeamCoach trainTeamCoach = trainTeamCoachService.selectByCoachTeam(trainCoach.getId(), trainCourse.getTrainTeamId());
 		// 教练身份
-		jsonObject.put("type", trainTeamCoach.getTeachType() == 1 ? "主教" : "助教"); // 类型
+		jsonObject.put("type", trainTeamCoach.getTeachType() == 1 ? "主教练" : trainTeamCoach.getTeachType() == 2 ? "教练" : trainTeamCoach.getTeachType() == 3 ? "助教" : "其他"); // 类型
+		
 		jsonObject.put("workingAge", trainCoach.getWorkingAge()); // 教龄
 		map.put("trainCoach", jsonObject); // 授课教练
 
@@ -830,6 +858,12 @@ public class ApiTrainTeamController {
         // 用户数据
         String token = (String) request.getAttribute("token");
         Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+
+        // 判断是否是机构的教练
+		TrainTeamCoach trainTeamCoach =  trainTeamCoachService.selectByMemberTeam(member.getId(), trainTeamId);
+		if (trainTeamCoach == null) {
+			return new ApiMessage(400, "您不是该机构的教练");
+		}
         
 		TrainTeam trainTeam = trainTeamService.selectByPrimaryKey(trainTeamId);
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -851,7 +885,10 @@ public class ApiTrainTeamController {
 
 		TrainCoach trainCoachManager = trainCoachService.selectByTeamManager(trainTeamId);
 
-		map.put("trainCoachManagerId", trainCoachManager.getId());// 店长ID
+		map.put("trainCoachManagerId", trainCoachManager.getId());// 馆长ID
+		
+		map.put("manager", trainTeamCoach.getManager());// 教练身份0=外聘1=馆长2=管理
+		
 		return new ApiMessage(200, "获取成功", map);
 	}
 	
@@ -884,7 +921,7 @@ public class ApiTrainTeamController {
 	}
 
 	/**
-	 * @Description: 转让店长接口
+	 * @Description: 转让馆长接口
 	 * @author 宋高俊
 	 * @param request
 	 * @return
@@ -897,7 +934,7 @@ public class ApiTrainTeamController {
 		String token = (String) request.getAttribute("token");
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 
-		// 查询当前身份是否是店长
+		// 查询当前身份是否是馆长
 		TrainTeamCoach trainTeamCoach = trainTeamCoachService.selectByMemberTeam(member.getId(), trainTeamId);
 		if (trainTeamCoach != null) {
 			if (trainTeamCoach.getManager() == 1) {

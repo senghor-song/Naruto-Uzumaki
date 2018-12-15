@@ -60,7 +60,7 @@ public class MemberAppApiInterceptor extends HandlerInterceptorAdapter {
 		response.setContentType("application/json; charset=utf-8");
 		PrintWriter out = null;
 		JSONObject json = new JSONObject();
-		json.put("code", "500");
+		json.put("code", 500);
 		json.put("msg", "请登录后操作");
 		out = response.getWriter();
 		out.append(json.toString());

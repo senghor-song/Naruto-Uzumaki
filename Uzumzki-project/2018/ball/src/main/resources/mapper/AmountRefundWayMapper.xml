@@ -14,6 +14,11 @@
 	<sql id="Base_Column_List">
 		ID, Create_Time, Modify_Time, Fee1, Fee2, Fee3, Weather_start, weather_end
 	</sql>
+	
+	<update id="updateByVenue" >
+		update AmountRefundWay set ID = #{dateStr} where ID = #{venueid}
+	</update>
+	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />

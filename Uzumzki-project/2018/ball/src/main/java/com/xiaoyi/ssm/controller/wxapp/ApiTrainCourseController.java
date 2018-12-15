@@ -46,7 +46,6 @@ import com.xiaoyi.ssm.service.TrainOrderCommentService;
 import com.xiaoyi.ssm.service.TrainOrderLogService;
 import com.xiaoyi.ssm.service.TrainOrderService;
 import com.xiaoyi.ssm.service.TrainTeamCoachService;
-import com.xiaoyi.ssm.service.TrainTeamImageService;
 import com.xiaoyi.ssm.service.TrainTeamService;
 import com.xiaoyi.ssm.service.TrainTrialService;
 import com.xiaoyi.ssm.service.VenueService;
@@ -79,8 +78,6 @@ public class ApiTrainCourseController {
     private TrainCoachService trainCoachService;
     @Autowired
     private TrainCourseService trainCourseService;
-    @Autowired
-    private TrainTeamImageService trainTeamImageService;
     @Autowired
     private TrainOrderService trainOrderService;
     @Autowired
@@ -586,7 +583,7 @@ public class ApiTrainCourseController {
             map.put("tramTitle", trainTeamCoach.getTrainTeam().getTitle()); // 培训机构名称
             map.put("ballType", trainOrders.get(i).getTrainCourse().getBallType()); // 类别(1=网球2=足球3=羽毛球)
             map.put("name", trainTeamCoach.getTrainCoach().getName()); // 教练名称
-            map.put("type", trainTeamCoach.getTeachType()); // 教学身份1=主教2=助教3=内勤
+            map.put("type", trainTeamCoach.getTeachType()); // 教学身份1=主教练2=教练3=助教4=其他
             map.put("title", trainOrders.get(i).getTrainCourse().getTitle()); // 课程名称
             map.put("hourSum", trainOrders.get(i).getClassHourSum()); // 课时数量
 
@@ -668,7 +665,7 @@ public class ApiTrainCourseController {
         map.put("tramTitle", trainTeamCoach.getTrainTeam().getTitle()); // 培训机构名称
         map.put("ballType", trainOrder.getTrainCourse().getBallType()); // 类别(1=网球2=足球3=羽毛球)
         map.put("name", trainTeamCoach.getTrainCoach().getName()); // 教练名称
-        map.put("type", trainTeamCoach.getTeachType()); // 教练身份1=主教2助教
+        map.put("type", trainTeamCoach.getTeachType()); // 教学身份1=主教练2=教练3=助教4=其他
         map.put("title", trainOrder.getTrainCourse().getTitle()); // 课程名称
         map.put("hourSum", trainOrder.getClassHourSum()); // 课时数量
 
@@ -741,6 +738,10 @@ public class ApiTrainCourseController {
             map.put("id", trainCourses.get(i).getId()); // 课程ID
             
             TrainTeamCoach trainTeamCoach = trainTeamCoachService.selectByCoachTeam(trainCourses.get(i).getTrainCoachId(), trainCourses.get(i).getTrainTeamId());
+            
+            if (trainTeamCoach == null) {
+				continue;
+			}
             
             map.put("headImage", trainTeamCoach.getTrainCoach().getHeadImage()); // 教练头像
             map.put("tramTitle", trainTeamCoach.getTrainTeam().getTitle()); // 培训机构名称

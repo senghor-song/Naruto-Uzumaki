@@ -9,11 +9,17 @@
     <title>小易运维</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
-    <link href="/WebBackAPI/admin/static/css/site.css" rel="stylesheet">
+	<link rel="icon" href="/admin/static/image/logo.png" type="image/x-icon"/>
+    <link href="/admin/static/css/site.css" rel="stylesheet">
 </head>
 
 <body class="hold-transition sidebar-mini">
+
+<form enctype="multipart/form-data"  name="media" method="post" action="https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=16_d3tk5AqOGL9ptIMchbzJXvnOPqzRIn1FLOyK2y-9QaY0qUeG_tIr98GhfgxOX3yAAlKdXpKHebkzmfljL0Ia2IMYSwN_EZqJRw5ktey0rTcYfp9nAOVdU_0L3blcF_uJdwF3if3av2tDzSCuFIWiAAAVYM&type=image" id="media">
+<input type="file">
+<input type="submit">
+</form>
+
     <div class="wrapper">
         <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom" id="topSidebar"></nav>
         <aside class="main-sidebar sidebar-dark-primary elevation-4" id="leftSidebar" data-selectindex="10"></aside>
@@ -59,34 +65,33 @@
         </aside>
         <!-- /.control-sidebar -->
     </div>
-    <script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/layout.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
+    <script src="/admin/static/plugins/jquery/jquery.min.js"></script>
+    <script src="/admin/static/js/layout.js"></script>
+    <script src="/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
     <script>
         $.widget.bridge('uibutton', $.ui.button)
     </script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/raphael-min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/morris/morris.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/knob/jquery.knob.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/moment/moment.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/fastclick/fastclick.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/js/pages/dashboard.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/js/demo.js"></script>
-    <script src="/WebBackAPI/admin/static/js/echarts.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/layui/layui.all.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/jq-ext.js"></script>
+    <script src="/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/static/js/raphael-min.js"></script>
+    <script src="/admin/static/plugins/morris/morris.min.js"></script>
+    <script src="/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
+    <script src="/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="/admin/static/plugins/knob/jquery.knob.js"></script>
+    <script src="/admin/static/plugins/moment/moment.min.js"></script>
+    <script src="/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <script src="/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="/admin/static/plugins/fastclick/fastclick.js"></script>
+    <script src="/admin/static/plugins/js/pages/dashboard.js"></script>
+    <script src="/admin/static/plugins/js/demo.js"></script>
+    <script src="/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+    <script src="/admin/static/plugins/layui/layui.all.js"></script>
+    <script src="/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+    <script src="/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="/admin/static/js/jq-ext.js"></script>
     <script>
         $(function () {
             var tableObj = {
@@ -107,7 +112,7 @@
                     self.obj = $.tableObject({
                         tableId: 'tableList',
                         tableOption: {
-                            url: '/WebBackAPI/admin/staff/list',
+                            url: '/admin/staff/list',
                             page: true,
                             height: $(window).height() - 150,
                             where: {
@@ -143,7 +148,7 @@
                                         title: "变更",
                                         resize: true,
                                         anim: 1,
-                                        content: "/WebBackAPI/admin/staff/editStaff?id="+$(this).find("td").eq(0).attr('title'),
+                                        content: "/admin/staff/editStaff?id="+$(this).find("td").eq(0).attr('title'),
                                         maxmin: false,
                                         shadeClose: true,
                                         cancel: function (index, layero) {
@@ -165,7 +170,7 @@
                                         yes: function (index) {
                                         	$.ajax({  
                                                 type : "POST",  //提交方式  
-                                                url : "/WebBackAPI/admin/staff/delStaff",//路径  
+                                                url : "/admin/staff/delStaff",//路径  
                                                 data : {staffId: staffId},//数据，这里使用的是Json格式进行传输  
                                                 dataType:"json",
                                                 success : function(result) {//返回数据根据结果进行相应的处理 
@@ -224,7 +229,7 @@
                         self.obj = $.tableObject({
                             tableId: 'applyStaffTable',
                             tableOption: {
-                                url: '/WebBackAPI/admin/staff/staffApply/list?checkFlag='+checkFlag,
+                                url: '/admin/staff/staffApply/list?checkFlag='+checkFlag,
                                 page: true,
                                 height: 370,
                                 where: {
@@ -277,7 +282,7 @@
 		   				}
 		   				$.ajax({
 		   					type : "POST", //提交方式  
-		   					url : "/WebBackAPI/admin/staff/checkStaffApply",//路径  
+		   					url : "/admin/staff/checkStaffApply",//路径  
 		   					data : {
 		   						id : data.id,
 		   						checkFlag : check,

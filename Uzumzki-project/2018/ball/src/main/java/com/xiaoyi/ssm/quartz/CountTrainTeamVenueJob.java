@@ -16,11 +16,11 @@ public class CountTrainTeamVenueJob {
 	private static Logger logger = Logger.getLogger(CountTrainTeamVenueJob.class.getName());
 
 	/**
-	 * 定时任务，每天0:00:01执行统计金额任务
+	 * 定时任务，每天1:00:01执行统计金额任务
 	 */
-	 @Scheduled(cron = "1 0 0 1/1 * ? ")
+	 @Scheduled(cron = "1 0 1 1/1 * ? ")
 //	@Scheduled(cron = "0 0/1 * * * ? ")
-	public void countOneDayAmount() {
+	public void countTrainTeamVenueJob() {
 //		logger.info("开始执行统计培训机构拥有场馆数据------------------->");
 		
 		TrainTeamService trainTeamService = SpringUtils.getBean("trainTeamServiceImpl", TrainTeamService.class);

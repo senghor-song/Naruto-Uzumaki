@@ -57,9 +57,9 @@ public class WXPayWxappUtil extends WXPayUtil{
 		packageParams.put("time_expire", DateUtil.getFormat(DateUtil.getPreTime(new Date(), 1, 6), "yyyyMMddHHmmss"));// 交易结束时间
 		packageParams.put("notify_url", notify_url);// 通知地址
 		packageParams.put("trade_type", "JSAPI");// 交易类型
+//		packageParams.put("attach", "测试附加数据");// 附加数据
 		packageParams.put("openid", openid);// 用户标识
 		
-
 		// 获取支付签名,统一使用微信商户号秘钥
 		String sign = WXPayUtil.createSign(packageParams, WXConfig.paternerKey);
 		logger.info("签名 = " + sign);

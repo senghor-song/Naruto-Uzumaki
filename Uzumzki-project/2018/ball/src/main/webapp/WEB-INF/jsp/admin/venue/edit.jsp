@@ -3,12 +3,13 @@
 <style type="text/css">
 	.contextMenuDialog .listrow{border: none}
 </style>
-<script src="/WebBackAPI/admin/static/js/lc_switch.js" type="text/javascript"></script>
-<link rel="stylesheet" href="/WebBackAPI/admin/static/css/lc_switch.css">
+<script src="/admin/static/js/lc_switch.js" type="text/javascript"></script>
+<link rel="stylesheet" href="/admin/static/css/lc_switch.css">
 <div class="contextMenuDialog" id="item1">
     <div class="card-body">
         <div class="row">
             <div class="input-group col-lg-9">
+                <input type="hidden" value="${venueid}" name="id" id="id" >
                 <div class="row">
                     <div class="col-lg-4 listrow ">
                         <span class="nti">场馆编号：</span>
@@ -19,7 +20,8 @@
                     <div class="col-lg-4 listrow">
                         <span class="nti">场馆：</span>
                         <span class="ncon" style="width: 60%;">
-                            <input class="form-control" type="text" value="${name}" name="venueName" id="venueName" placeholder="场馆名称" maxlength="100">
+                            <input class="form-control" type="text" value="${name}" name="venueName" id="venueName" placeholder="场馆名称" maxlength="100" readonly="readonly"
+                             onmousedown="holdDown()" onmouseup="holdUp()">
                         </span>
                     </div>
                     <div class="col-lg-4 listrow ">
@@ -32,9 +34,9 @@
                         </span>
                     </div>
                     <div class="col-lg-4 listrow">
-                        <span class="nti">原始ID：</span>
+                        <span class="nti">入驻机构：</span>
                         <span class="ncon" style="width: 60%;">
-                            <input class="form-control" type="text" value="${venueid}" name="id" id="id" readonly="readonly">
+                            <input class="form-control" type="text" value="${trainTeamName}" readonly="readonly">
                         </span>
                     </div>
                     <div class="col-lg-4 listrow">
@@ -60,9 +62,13 @@
                         </span>
                     </div> --%>
                     <div class="col-lg-4 listrow">
-                        <span class="nti">入驻机构：</span>
-                        <span class="ncon" style="width: 60%;">
-                            <input class="form-control" type="text" value="${trainTeamName}" readonly="readonly">
+                        <span class="nti">订场入口:</span>
+                        <span class="ncon">
+                            <input type="checkbox" name="check-3" class="lcs_check" <c:if test="${reserveShow == 1}">checked="checked"</c:if> autocomplete="off" id="reserveShow"/>
+                        </span>
+                        <span class="nti">订场支付短信:</span>
+                        <span class="ncon">
+                            <input type="checkbox" name="check-3" class="lcs_check" <c:if test="${reservePaySms == 1}">checked="checked"</c:if> autocomplete="off" id="reservePaySms"/>
                         </span>
                     </div>
                     
@@ -84,14 +90,8 @@
                         <span class="nti" id="addressStrEdit"></span>
                     </div>
                     <div class="col-lg-4 listrow">
-                        <span class="nti">订场入口:</span>
-                        <span class="ncon">
-                            <input type="checkbox" name="check-3" class="lcs_check" <c:if test="${reserveShow == 1}">checked="checked"</c:if> autocomplete="off" id="reserveShow"/>
-                        </span>
-                        <span class="nti">订场支付短信:</span>
-                        <span class="ncon">
-                            <input type="checkbox" name="check-3" class="lcs_check" <c:if test="${reservePaySms == 1}">checked="checked"</c:if> autocomplete="off" id="reservePaySms"/>
-                        </span>
+                        <span class="nti">&nbsp;</span>
+                        <button class="form-control btn btn-primary w-25" id="saveVenue">保存</button>
                     </div>
                     <div class="col-lg-4 listrow">
                         <span class="nti">短信通知电话：</span>
@@ -121,22 +121,18 @@
                             <input class="form-control" type="text" name="lnglat" id="lnglat" maxlength="50" placeholder="114.056386,22.592976">
                         </span>
                     </div>
-                    <div class="col-lg-4 listrow">
-                        <span class="nti">&nbsp;</span>
-                        <button class="form-control btn btn-primary w-25" id="saveVenue">保存</button>
-                    </div>
                 </div>
             </div>
             <div class="col-lg-3 text-center">
                 <div class="col-lg-12">
                 	<img src="${image}" id="headImage"
                      style="width: 200px;height: 200px; border:1px solid #eee;"
-                      onerror="javascript:this.src='/WebBackAPI/admin/static/image/error.png'">
+                      onerror="javascript:this.src='/admin/static/image/error.png'">
                 </div>
                 <div class="col-lg-12">
                     <input type="hidden" value="${image}" name="image" id="image">
 		            <div class="publicbg-title">
-						<button class="layui-btn test" lay-data="{url: '/WebBackAPI/admin/common/uploadImage'}" name="file">上传图片</button>
+						<button class="layui-btn test" lay-data="{url: '/admin/common/uploadImage'}" name="file">上传图片</button>
 						<button class="layui-btn" id="getImage">生成图片</button>
 					</div>
                 </div>
@@ -146,7 +142,32 @@
 </div>
 <script>
 
+	var timeStart, timeEnd, time;//申明全局变量
+	
+	function getTimeNow()//获取此刻时间
+	{
+		var now = new Date();
+		return now.getTime();
+	}
+	
+	function holdDown()//鼠标按下时触发
+	{
+		timeStart = getTimeNow();//获取鼠标按下时的时间
+		time = setInterval(function()//setInterval会每100毫秒执行一次
+		{
+			timeEnd = getTimeNow();//也就是每100毫秒获取一次时间
+			if (timeEnd - timeStart > 1000)//如果此时检测到的时间与第一次获取的时间差有1000毫秒
+			{
+				clearInterval(time);//便不再继续重复此函数 （clearInterval取消周期性执行）
+        		$('#venueName').removeAttr("readonly");
+			}
+		}, 100);
+	}
+	function holdUp() {
+		clearInterval(time);//如果按下时间不到1000毫秒便弹起，
+	}
 	$(function(){
+		
 		$('input').lc_switch();
 		layui.use('upload', function() {
 			var upload = layui.upload;
@@ -159,7 +180,7 @@
 					});
 				},
 				done: function(res, index, upload) {
-					layer.close(index);
+				    layer.closeAll('loading'); //关闭loading
 					layer.msg("上传成功");
 					$("#image").val(res.data);
 					$("#headImage").attr("src", res.data);
@@ -189,7 +210,7 @@
             var urlStr = "https://api.map.baidu.com/staticimage?center="+lng+","+lat+"&markers="+markerLng+","+markerLat+"&zoom="+zoom+"&width=450&height=450";
             $.ajax({
                 type : "POST",  //提交方式  
-                url : "/WebBackAPI/admin/common/getImageHttpUrl",//路径  
+                url : "/admin/common/getImageHttpUrl",//路径  
 				data : {
 					urlStr : urlStr,
 				},//数据，这里使用的是Json格式进行传输 
@@ -232,7 +253,7 @@
             venueLng = lng;//存贮点击的经度
             venueLat = lat;//存贮点击的维度
             map.centerAndZoom(point, map.getZoom());
-            var myIcon = new BMap.Icon("/WebBackAPI/admin/static/image/updateVenue.png", new BMap.Size(24,36));
+            var myIcon = new BMap.Icon("/admin/static/image/updateVenue.png", new BMap.Size(24,36));
             myIcon.setInfoWindowAnchor(new BMap.Size(12,0));
             var marker = new BMap.Marker(point,{icon:myIcon});// 创建标注
             updateMarker = marker;//存贮marker对象,方便后续点击删除上一次点击的标注
@@ -277,10 +298,6 @@
 				layer.msg("场地地址不能为空");
         		return;
 			}
-			if(owner == ''){
-				layer.msg("联系人不能为空");
-        		return;
-			}
 			if(contactPhone == ''){
 				layer.msg("联系电话不能为空");
         		return;
@@ -289,17 +306,9 @@
 				layer.msg("通知电话不能为空");
         		return;
 			}
-			if(informPhone.length != 11){
-				layer.msg("通知电话必须为11位");
-        		return;
-			}
-			if(informPhone.slice(0,1) != '1'){
-				layer.msg("通知电话必须为1开头");
-        		return;
-			}
            	$.ajax({
                 type : "POST",  //提交方式  
-                url : "/WebBackAPI/admin/venue/update/venue",//路径  
+                url : "/admin/venue/update/venue",//路径  
 				data : {
 					id : id,
 					/* cityid : cityid,
@@ -344,7 +353,7 @@
 			var cityid = $('#cityid').val();
 			$.ajax({
 				type : "POST",
-				url : "/WebBackAPI/admin/city/district/list",
+				url : "/admin/city/district/list",
 				data : {
 					id : cityid
 				},

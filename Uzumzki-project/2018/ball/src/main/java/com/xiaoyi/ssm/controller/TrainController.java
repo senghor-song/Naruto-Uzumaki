@@ -29,7 +29,6 @@ import com.xiaoyi.ssm.service.PermissionService;
 import com.xiaoyi.ssm.service.TrainCoachService;
 import com.xiaoyi.ssm.service.TrainOrderLogService;
 import com.xiaoyi.ssm.service.TrainOrderService;
-import com.xiaoyi.ssm.service.TrainTeamCoachService;
 import com.xiaoyi.ssm.service.TrainTeamService;
 import com.xiaoyi.ssm.util.DateUtil;
 
@@ -50,8 +49,6 @@ public class TrainController {
 	private CityService cityService;
 	@Autowired
 	private TrainOrderLogService trainOrderLogService;
-	@Autowired
-	private TrainTeamCoachService trainTeamCoachService;
 	@Autowired
 	private TrainTeamService trainTeamService;
 	@Autowired

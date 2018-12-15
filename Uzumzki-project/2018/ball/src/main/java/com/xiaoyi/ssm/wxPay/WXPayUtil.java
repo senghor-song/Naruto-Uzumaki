@@ -1,9 +1,14 @@
 package com.xiaoyi.ssm.wxPay;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -37,13 +42,16 @@ import org.apache.log4j.Logger;
 import org.jdom.JDOMException;
 
 import com.alibaba.fastjson.JSONObject;
-import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.AmountRefund;
+import com.xiaoyi.ssm.model.WXBill;
 import com.xiaoyi.ssm.model.WXCompanyPayment;
+import com.xiaoyi.ssm.model.WXFundflow;
 import com.xiaoyi.ssm.service.AmountRefundService;
-import com.xiaoyi.ssm.service.InviteBallService;
+import com.xiaoyi.ssm.service.WXBillService;
 import com.xiaoyi.ssm.service.WXCompanyPaymentService;
+import com.xiaoyi.ssm.service.WXFundflowService;
 import com.xiaoyi.ssm.util.Arith;
+import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.SpringUtils;
@@ -129,7 +137,7 @@ public class WXPayUtil {
 			}
 		}
 		sb.append("key=" + AppKey);
-		logger.info(sb.toString());
+//		logger.info(sb.toString());
 		String sign = MD5Util.MD5Encode(sb.toString(), "UTF-8").toUpperCase();
 		return sign;
 	}
@@ -153,7 +161,7 @@ public class WXPayUtil {
 			}
 		}
 		sb.append("key=" + AppKey);
-		logger.info(sb.toString());
+//		slogger.info(sb.toString());
 		String sign = "";
 		try {
 			sign = HMACSHA256(sb.toString(), AppKey);
@@ -342,7 +350,7 @@ public class WXPayUtil {
 	 * @date 2018年9月7日 下午2:43:59
 	 */
 	@SuppressWarnings("rawtypes")
-	public static Map weiXinRefund(String id, Double total_fee, Double refund_fee, String content, Integer refundSource) {
+	public static boolean weiXinRefund(String id, Double total_fee, Double refund_fee, String content, Integer refundSource) {
 
 		SortedMap<Object, Object> parameters = new TreeMap<Object, Object>();
 		String nonceStr = Utils.getUUID();// 随机字符串
@@ -352,7 +360,7 @@ public class WXPayUtil {
 		parameters.put("nonce_str", nonceStr);// 随机字符串
 		parameters.put("out_trade_no", id);// 商户订单号
 		parameters.put("transaction_id", "");//
-		parameters.put("out_refund_no", out_refund_no);// 商户退款单号
+		parameters.put("out_refund_no", id);// 商户退款单号
 		parameters.put("fee_type", "CNY");// 退款货币种类
 		parameters.put("total_fee", String.valueOf(Utils.doubleToInt(total_fee)));// 订单金额
 		parameters.put("refund_fee", String.valueOf(Utils.doubleToInt(refund_fee)));// 退款金额
@@ -379,7 +387,6 @@ public class WXPayUtil {
 		try {
 			logger.info("返回参数：" + result);
 			map = XMLUtil.doXMLParse(result);
-			return map;
 		} catch (JDOMException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -406,13 +413,15 @@ public class WXPayUtil {
 			// 退款成功
 			amountRefund.setRefundTime(new Date());
 			amountRefund.setRefundStatus(1);
+			amountRefundService.insertSelective(amountRefund);
+			return true;
 		} else {
 			// 退款失败
 			// 新增退款记录数据
 			amountRefund.setRefundStatus(2);
+			amountRefundService.insertSelective(amountRefund);
+			return false;
 		}
-		amountRefundService.insertSelective(amountRefund);
-		return map;
 	}
 
 	/**
@@ -426,7 +435,7 @@ public class WXPayUtil {
 	 * @date 2018年9月27日 下午8:56:15 
 	 */ 
 	@SuppressWarnings({ "rawtypes" })
-	public static boolean wxCompanyPayment(String partner_trade_no,String openid, double amount, String desc) {
+	public static WXCompanyPayment wxCompanyPayment(String partner_trade_no,String openid, double amount, String desc) {
 
 		// String openid = "oozuywt6GdCgM-Z4Kk9CrvvTAkJo";
 		// String re_user_name = "宋高俊";
@@ -469,7 +478,7 @@ public class WXPayUtil {
 		wxCompanyPayment.setOrderId(partner_trade_no);
 		wxCompanyPayment.setOpenid(openid);
 		wxCompanyPayment.setAmount(amount);
-		wxCompanyPayment.setDesc(desc);
+		wxCompanyPayment.setDescContent(desc);
 		
 		Map map = new HashMap<>();
 		try {
@@ -503,7 +512,7 @@ public class WXPayUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return flag;
+		return wxCompanyPayment;
 	}
 	
 	/**
@@ -512,23 +521,19 @@ public class WXPayUtil {
 	 * @return
 	 * @date 2018年9月12日 下午3:02:14
 	 */
-	public static String downloadbill() {
+	public static void downloadbill(String date) {
 
 		SortedMap<Object, Object> parameters = new TreeMap<Object, Object>();
 		String nonceStr = Utils.getUUID();// 随机字符串
 		parameters.put("appid", WXConfig.appid);// 公众账号ID
 		parameters.put("mch_id", WXConfig.mch_id);// 商户号
 		parameters.put("nonce_str", nonceStr);// 随机字符串
-		parameters.put("bill_date", "20180911");// 对账单日期
+		parameters.put("bill_date", date);// 对账单日期
 		parameters.put("bill_type", "ALL");// 账单类型
 		// parameters.put("tar_type", "GZIP");// 压缩账单
-
 		parameters.put("sign", WXPayUtil.createSign(parameters, WXConfig.paternerKey));
-
 		String xml = XMLUtil.mapToXml(parameters);
-
-		logger.info(xml);
-
+//		logger.info(xml);
 		String result = "";
 		try {
 			File file = new File(Thread.currentThread().getContextClassLoader().getResource("").getPath() + "cert/apiclient_cert.p12");
@@ -536,38 +541,101 @@ public class WXPayUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		if (result.indexOf(">") > 0) {
+			Map map = new HashMap<>();
+			try {
+				map = XMLUtil.doXMLParse(result);
+				// 系统超时,再次尝试
+				if ("SYSTEMERROR".equals(map.get("err_code"))) {
+					downloadbill(date);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}else {
 
-		logger.info("返回参数：" + result);
-
-		return result;
+			WXBillService wxBillService = SpringUtils.getBean("wxBillServiceImpl", WXBillService.class);
+			// 保存所有返回字符串数据
+			List<String> results = new ArrayList<>();
+			BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(result.getBytes(Charset.forName("utf8"))), Charset.forName("utf8")));
+			String line;
+			// 每行解析出来
+			try {
+				while ((line = br.readLine()) != null) {
+					if (!line.trim().equals("")) {
+						results.add(line);
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			for (int i = 1; i < results.size() -2 ; i++) {
+				String[] linestr = results.get(i).split(",");
+				for (int j = 0; j < linestr.length; j++) {
+					linestr[j] = linestr[j].replace("`", "");
+				}
+				WXBill wxBill = new WXBill();
+				wxBill.setId(Utils.getUUID());
+				wxBill.setDealTime(DateUtil.getParse(linestr[0]));
+				wxBill.setWxAppid(linestr[1]);
+				wxBill.setWxMchid(linestr[2]);
+				wxBill.setSonMchid(linestr[3]);
+				wxBill.setDeviceInfo(linestr[4]);
+				wxBill.setWxOrderid(linestr[5]);
+				wxBill.setStoreOrderid(linestr[6]);
+				wxBill.setUserFlag(linestr[7]);
+				wxBill.setPayType(linestr[8]);
+				wxBill.setPayStatus(linestr[9]);
+				wxBill.setPaymentBank(linestr[10]);
+				wxBill.setCurrencyType(linestr[11]);
+				wxBill.setOughtOrderAmount(new BigDecimal(linestr[12]));
+				wxBill.setCashCoupon(new BigDecimal(linestr[13]));
+				wxBill.setWxRefundOrderid(linestr[14]);
+				wxBill.setStoreRefundOrderid(linestr[15]);
+				wxBill.setRefundAmount(new BigDecimal(linestr[16]));
+				wxBill.setCashCouponRefund(new BigDecimal(linestr[17]));
+				wxBill.setRefundType(linestr[18]);
+				wxBill.setRefundStatus(linestr[19]);
+				wxBill.setGoodsName(linestr[20]);
+				wxBill.setStoreData(linestr[21]);
+				wxBill.setFeeAmount(new BigDecimal(linestr[22]));
+				wxBill.setRate(linestr[23]);
+				if (linestr.length == 24) {
+					wxBillService.insertSelective(wxBill);
+					continue;
+				}
+				wxBill.setOrderAmount(new BigDecimal(linestr[24]));
+				wxBill.setApplyRefundAmount(new BigDecimal(linestr[25]));
+				wxBill.setRateRemark(linestr[26]);
+				wxBillService.insertSelective(wxBill);
+			}
+		}
 	}
 
 	/**
 	 * @Description: 下载资金对账账单
 	 * @author 宋高俊
-	 * @return
-	 * @date 2018年9月12日 下午3:02:14
+	 * @param date
+	 * @param accountType 基本账户Basic 运营账户Operation 手续费账户Fees 
+	 * @date 2018年11月29日下午7:35:58
 	 */
 	@SuppressWarnings("rawtypes")
-	public static String downloadfundflow() {
+	public static void downloadfundflow(String date, String accountType) {
 
 		SortedMap<Object, Object> parameters = new TreeMap<Object, Object>();
 		String nonceStr = Utils.getUUID();// 随机字符串
 		parameters.put("appid", WXConfig.appid);// 公众账号ID
 		parameters.put("mch_id", WXConfig.mch_id);// 商户号
 		parameters.put("nonce_str", nonceStr);// 随机字符串
-		parameters.put("bill_date", "20180907");// 对账单日期
-		parameters.put("account_type", "Basic");// 账单类型
+		parameters.put("bill_date", date);// 对账单日期
+		parameters.put("account_type", accountType);// 账单类型
 		parameters.put("sign_type", "HMAC-SHA256");// 签名类型
-
 		String sign = WXPayUtil.createSign2(parameters, WXConfig.paternerKey);
-		logger.info("sign:" + sign);
+//		logger.info("sign:" + sign);
 		parameters.put("sign", sign);
-
 		String xml = XMLUtil.mapToXml(parameters);
-
-		logger.info(xml);
-
+//		logger.info(xml);
 		String result = "";
 		try {
 			File file = new File(Thread.currentThread().getContextClassLoader().getResource("").getPath() + "cert/apiclient_cert.p12");
@@ -576,23 +644,63 @@ public class WXPayUtil {
 			e.printStackTrace();
 		}
 
-		logger.info("返回参数：" + result);
+//		logger.info("返回参数：" + result);
 		if (result.indexOf(">") > 0) {
 			Map map = new HashMap<>();
 			try {
 				map = XMLUtil.doXMLParse(result);
 				// 系统超时,再次尝试
-				if (map.get("err_code").equals("SYSTEMERROR")) {
-					downloadfundflow();
+				if ("SYSTEMERROR".equals(map.get("err_code"))) {
+					downloadfundflow(date,accountType);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else {
+		}else {
 
+			WXFundflowService wxFundflowService = SpringUtils.getBean("wxFundflowServiceImpl", WXFundflowService.class);
+			// 保存所有返回字符串数据
+			List<String> results = new ArrayList<>();
+			BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(result.getBytes(Charset.forName("utf8"))), Charset.forName("utf8")));
+			String line;
+			// 每行解析出来
+			try {
+				while ((line = br.readLine()) != null) {
+					if (!line.trim().equals("")) {
+						results.add(line);
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			for (int i = 1; i < results.size() -2 ; i++) {
+				String[] linestr = results.get(i).split(",");
+				for (int j = 0; j < linestr.length; j++) {
+					linestr[j] = linestr[j].replace("`", "");
+				}
+				WXFundflow wxFundflow = new WXFundflow();
+				wxFundflow.setId(Utils.getUUID());
+				wxFundflow.setRecordTime(DateUtil.getParse(linestr[0]));
+				wxFundflow.setWxPayOrderid(linestr[1]);
+				wxFundflow.setWxFundflowId(linestr[2]);
+				wxFundflow.setWorkName(linestr[3]);
+				wxFundflow.setWorkType(linestr[4]);
+				wxFundflow.setDealType(linestr[5]);
+				wxFundflow.setDealAmount(new BigDecimal(linestr[6]));
+				wxFundflow.setAccountAmount(new BigDecimal(linestr[7]));
+				wxFundflow.setApplyUser(linestr[8]);
+				wxFundflow.setRemark(linestr[9]);
+				wxFundflow.setWorkId(linestr[10]);
+				if ("Basic".equals(accountType)) {
+					wxFundflow.setAccountType(1);
+				} else if ("Operation".equals(accountType)) {
+					wxFundflow.setAccountType(2);
+				} else if ("Fees".equals(accountType)) {
+					wxFundflow.setAccountType(3);
+				}
+				wxFundflowService.insertSelective(wxFundflow);
+			}
 		}
-
-		return result;
 	}
 
 	/**  
@@ -654,9 +762,13 @@ public class WXPayUtil {
 
 	public static void main(String[] args) {
 //		System.out.println(WXPayUtil.wxOrderQuery("76e09798d5ad457da9c6e4b173787b23"));
-		String uuidString = Utils.getUUID();
-		System.out.println(uuidString);
-		System.out.println(WXPayUtil.weiXinRefund("e12e917aa0514184a0871136c47db95b", 0.1,0.1, "测试", 2));
+//		System.out.println(WXPayUtil.weiXinRefund("fe337cc54b644047a72a15b448a5a511", 0.5,0.5, "测试", 2));
+		Date date = new Date();
+		for (int i = 1; i <= 7; i++) {
+			String datestr = DateUtil.getFormat(DateUtil.getPreTime(date, 3, -i), "yyyyMMdd");
+			System.out.println(datestr);
+			downloadfundflow(datestr,"");
+		}
 	}
 
 }

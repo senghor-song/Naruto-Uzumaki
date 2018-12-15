@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.VenueDayLogMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.VenueDayLog">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Venue_day_id" jdbcType="VARCHAR" property="venueDayId" />
+		<result column="Staff_id" jdbcType="VARCHAR" property="staffId" />
+		<result column="Type_flag" jdbcType="INTEGER" property="typeFlag" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Venue_day_id, Staff_id, Type_flag
+	</sql>
+
+	<select id="countVenueDay" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select COUNT(0) from VenueDayLog
+		where Venue_day_id =
+		#{venueDayId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectByVenueDay" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueDayLog
+		where Venue_day_id = #{venueDayId,jdbcType=VARCHAR} ORDER BY `Create_time` DESC
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueDayLog
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from VenueDayLog
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueDayLog">
+		insert into VenueDayLog (ID, Create_time, Venue_day_id,
+		Staff_id, Type_flag)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{venueDayId,jdbcType=VARCHAR},
+		#{staffId,jdbcType=VARCHAR}, #{typeFlag,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueDayLog">
+		insert into VenueDayLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="venueDayId != null">
+				Venue_day_id,
+			</if>
+			<if test="staffId != null">
+				Staff_id,
+			</if>
+			<if test="typeFlag != null">
+				Type_flag,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueDayId != null">
+				#{venueDayId,jdbcType=VARCHAR},
+			</if>
+			<if test="staffId != null">
+				#{staffId,jdbcType=VARCHAR},
+			</if>
+			<if test="typeFlag != null">
+				#{typeFlag,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.VenueDayLog">
+		update VenueDayLog
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueDayId != null">
+				Venue_day_id = #{venueDayId,jdbcType=VARCHAR},
+			</if>
+			<if test="staffId != null">
+				Staff_id = #{staffId,jdbcType=VARCHAR},
+			</if>
+			<if test="typeFlag != null">
+				Type_flag = #{typeFlag,jdbcType=INTEGER},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.VenueDayLog">
+		update VenueDayLog
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Venue_day_id = #{venueDayId,jdbcType=VARCHAR},
+		Staff_id = #{staffId,jdbcType=VARCHAR},
+		Type_flag = #{typeFlag,jdbcType=INTEGER}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

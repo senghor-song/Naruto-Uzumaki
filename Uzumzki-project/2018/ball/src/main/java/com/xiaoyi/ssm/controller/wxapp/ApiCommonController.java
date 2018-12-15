@@ -7,8 +7,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +24,8 @@ import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
 import com.xiaoyi.ssm.wxPay.WXConfig;
+
+import net.sf.json.JSONObject;
 
 /**
  * @Description: 微信小程序公共接口
@@ -52,6 +52,7 @@ public class ApiCommonController {
 	public ApiMessage code2accessToken(HttpServletRequest request, HttpServletResponse response, String code) {
 		logger.info("开始获取微信小程序openid");
 		JSONObject getCodeResultJson = null;
+		// 登录返回数据
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
 			logger.info("开始根据code获取微信小程序openid");
@@ -72,18 +73,24 @@ public class ApiCommonController {
 			// 将openid作为key存储登录信息
 			RedisUtil.addRedis(Global.REDIS_WXAPP_SESSION, getCodeResultJson.getString("unionid"), getCodeResultJson);
 			map.put("token", getCodeResultJson.getString("unionid"));
+
 			if (member != null) {
 				// 用户基本信息
 				map.put("appavatarurl", member.getAppavatarurl());
 				map.put("appnickname", member.getAppnickname());
+				logger.info("老用户登入：session_key="+getCodeResultJson.getString("session_key"));
 				member.setSessionKey(getCodeResultJson.getString("session_key"));// 将session_key存入缓存
-				RedisUtil.addRedis(Global.redis_member, getCodeResultJson.getString("unionid"), member);
 
 				member.setUnionid(getCodeResultJson.getString("unionid"));
 				member.setAppopenid(getCodeResultJson.getString("openid"));
 				// 返回小程序的openid
 				map.put("openid", getCodeResultJson.getString("openid"));
 				memberService.updateByPrimaryKeySelective(member);
+				
+				RedisUtil.addRedis(Global.redis_member, getCodeResultJson.getString("unionid"), member);
+				logger.info("老用户登入");
+			} else {
+				logger.info("新用户登入");
 			}
 		} catch (Exception e) {
 			logger.error("", e);
@@ -106,10 +113,20 @@ public class ApiCommonController {
 
 		if (member != null) {
 			member.setModifytime(new Date());
-			member.setAppavatarurl(avatarUrl);
-			member.setAppnickname(nickName);
-			member.setAppgender(gender);
+			if (!StringUtil.isBank(avatarUrl)) {
+				member.setAppavatarurl(avatarUrl);
+			}
+			if (!StringUtil.isBank(nickName)) {
+				member.setAppnickname(nickName);
+			}
+			if (gender != null) {
+				member.setAppgender(gender);
+			}
 			memberService.updateByPrimaryKeySelective(member);
+			
+			member.setSessionKey(jsonObject.getString("session_key"));// 将session_key存入缓存
+			RedisUtil.addRedis(Global.redis_member, jsonObject.getString("unionid"), member);
+			logger.info("老用户修改用户数据：session_key="+jsonObject.getString("session_key"));
 			return new ApiMessage(200, "修改成功");
 		} else {
 			member = new Member();
@@ -122,6 +139,10 @@ public class ApiCommonController {
 			member.setUnionid(jsonObject.getString("unionid"));
 			member.setAppopenid(jsonObject.getString("openid"));
 			memberService.insertSelective(member);
+
+			member.setSessionKey(jsonObject.getString("session_key"));// 将session_key存入缓存
+			RedisUtil.addRedis(Global.redis_member, jsonObject.getString("unionid"), member);
+			logger.info("新用户修改用户数据：session_key="+jsonObject.getString("session_key"));
 			return new ApiMessage(200, "创建成功");
 		}
 	}

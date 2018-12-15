@@ -93,6 +93,7 @@
 				</if>
 			</if>
 		</where>
+		ORDER BY Modify_time DESC
 	</select>
 
 	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -123,8 +124,7 @@
 
 	<select id="selectByNearbyMapTrainTeamType" resultMap="BaseResultMap">
 		SELECT * FROM TrainTeam WHERE `Longitude` &gt; #{begLng} AND `Longitude` &lt; #{endLng} AND
-		`Latitude`
-		&gt; #{begLat} AND `Latitude` &lt; #{endLat}
+		`Latitude` &gt; #{begLat} AND `Latitude` &lt; #{endLat}
 		<if test="ballType != null">
 			<if test="ballType == 1">
 				AND Teach_class like "%网球%"
@@ -136,6 +136,7 @@
 				AND Teach_class like "%羽毛球%"
 			</if>
 		</if>
+		AND Type_flag = 1
 	</select>
 
 	<select id="selectByMember" resultMap="BaseResultMap">

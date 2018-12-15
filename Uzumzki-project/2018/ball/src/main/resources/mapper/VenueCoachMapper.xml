@@ -9,6 +9,7 @@
 		<result column="Train_coach_id" jdbcType="VARCHAR" property="trainCoachId" />
 		<result column="Type_flag" jdbcType="INTEGER" property="typeFlag" />
 		<result column="Price" jdbcType="DOUBLE" property="price" />
+		<result column="Label" jdbcType="VARCHAR" property="label" />
 		<association property="trainCoach" javaType="com.xiaoyi.ssm.model.TrainCoach">
 			<id column="tcID" jdbcType="CHAR" property="id" />
 			<result column="tcName" jdbcType="VARCHAR" property="name" />
@@ -16,17 +17,34 @@
 		</association>
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, Create_time, Modify_time, Venue_id, Train_coach_id, Type_flag, Price
+		ID, Create_time, Modify_time, Venue_id, Train_coach_id, Type_flag, Price, Label
 	</sql>
 
 	<select id="selectByVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT vc.*,tc.`ID` tcID , tc.`Name` tcName , tc.`Head_image` tcHead_image
-		FROM VenueCoach vc LEFT JOIN TrainCoach tc ON vc.`Train_coach_id` = tc.`ID` 
-		WHERE Venue_id = #{venueid} AND Type_flag = 1 
+		FROM VenueCoach vc 
+		LEFT JOIN TrainCoach tc ON vc.`Train_coach_id` = tc.`ID`
+		INNER JOIN Member m ON tc.`Member_id` = m.`ID`
+		WHERE Venue_id = #{venueid} AND Type_flag = 1
 	</select>
-	
+
 	<select id="countByVenue" parameterType="java.lang.String" resultType="java.lang.Integer">
-		select count(0) from VenueCoach where Venue_id = #{id,jdbcType=VARCHAR} AND Type_flag = 1
+		SELECT COUNT(0) FROM TrainCoach tc INNER JOIN Member m ON tc.`Member_id` = m.`ID` INNER JOIN (SELECT * FROM VenueCoach WHERE `Venue_id` = #{id,jdbcType=VARCHAR}) vc
+		ON tc.`ID` = vc.`Train_coach_id` WHERE vc.Type_flag = 1
+	</select>
+
+	<update id="updateByDeleteCoach">
+		UPDATE VenueCoach vc INNER JOIN (SELECT * FROM Venue WHERE `TrainTeam` = #{trainTeamId}) v
+		ON vc.`Venue_id` = v.ID SET vc.`Venue_id` = #{dateStr} WHERE vc.`Train_coach_id` = #{trainCoachId}
+	</update>
+
+	<update id="updateByVenue">
+		update VenueCoach set Venue_id = #{dateStr} where Venue_id = #{venueid}
+	</update>
+
+
+	<select id="selectByTrainCoachId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM VenueCoach WHERE `Train_coach_id` = #{trainCoachId}
 	</select>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -42,10 +60,10 @@
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueCoach">
 		insert into VenueCoach (ID, Create_time, Modify_time,
 		Venue_id, Train_coach_id, Type_flag,
-		Price)
+		Price, Label)
 		values (#{id,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
 		#{venueId,jdbcType=VARCHAR}, #{trainCoachId,jdbcType=VARCHAR}, #{typeFlag,jdbcType=INTEGER},
-		#{price,jdbcType=DOUBLE})
+		#{price,jdbcType=DOUBLE}, #{label,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueCoach">
 		insert into VenueCoach
@@ -71,6 +89,9 @@
 			<if test="price != null">
 				Price,
 			</if>
+			<if test="label != null">
+				Label,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -93,6 +114,9 @@
 			</if>
 			<if test="price != null">
 				#{price,jdbcType=DOUBLE},
+			</if>
+			<if test="label != null">
+				#{label,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -117,6 +141,9 @@
 			<if test="price != null">
 				Price = #{price,jdbcType=DOUBLE},
 			</if>
+			<if test="label != null">
+				Label = #{label,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where ID = #{id,jdbcType=CHAR}
 	</update>
@@ -127,7 +154,8 @@
 		Venue_id = #{venueId,jdbcType=VARCHAR},
 		Train_coach_id = #{trainCoachId,jdbcType=VARCHAR},
 		Type_flag = #{typeFlag,jdbcType=INTEGER},
-		Price = #{price,jdbcType=DOUBLE}
+		Price = #{price,jdbcType=DOUBLE},
+		Label = #{label,jdbcType=VARCHAR}
 		where ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

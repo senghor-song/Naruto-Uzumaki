@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.MemberDayLogMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.MemberDayLog">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Member_day_id" jdbcType="VARCHAR" property="memberDayId" />
+		<result column="Staff_id" jdbcType="VARCHAR" property="staffId" />
+		<result column="Type_flag" jdbcType="INTEGER" property="typeFlag" />
+		<result column="Member_day_type" jdbcType="INTEGER" property="memberDayType" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Member_day_id, Staff_id, Type_flag, Member_day_type, Content
+	</sql>
+
+	<select id="countMemberDay" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select COUNT(0) from MemberDayLog
+		where Member_day_id =
+		#{memberDayId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectByMemberDay" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MemberDayLog
+		where Member_day_id = #{memberDayId,jdbcType=VARCHAR} ORDER BY `Create_time` DESC
+	</select>
+	
+	<select id="selectByNowDate" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MemberDayLog
+		where Member_day_id = #{memberDayId,jdbcType=VARCHAR} ORDER BY `Create_time` DESC limit 1
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from MemberDayLog
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from MemberDayLog
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.MemberDayLog">
+		insert into MemberDayLog (ID, Create_time, Member_day_id,
+		Staff_id, Type_flag, Member_day_type,
+		Content)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{memberDayId,jdbcType=VARCHAR},
+		#{staffId,jdbcType=VARCHAR}, #{typeFlag,jdbcType=INTEGER}, #{memberDayType,jdbcType=INTEGER},
+		#{content,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.MemberDayLog">
+		insert into MemberDayLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="memberDayId != null">
+				Member_day_id,
+			</if>
+			<if test="staffId != null">
+				Staff_id,
+			</if>
+			<if test="typeFlag != null">
+				Type_flag,
+			</if>
+			<if test="memberDayType != null">
+				Member_day_type,
+			</if>
+			<if test="content != null">
+				Content,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="memberDayId != null">
+				#{memberDayId,jdbcType=VARCHAR},
+			</if>
+			<if test="staffId != null">
+				#{staffId,jdbcType=VARCHAR},
+			</if>
+			<if test="typeFlag != null">
+				#{typeFlag,jdbcType=INTEGER},
+			</if>
+			<if test="memberDayType != null">
+				#{memberDayType,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.MemberDayLog">
+		update MemberDayLog
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="memberDayId != null">
+				Member_day_id = #{memberDayId,jdbcType=VARCHAR},
+			</if>
+			<if test="staffId != null">
+				Staff_id = #{staffId,jdbcType=VARCHAR},
+			</if>
+			<if test="typeFlag != null">
+				Type_flag = #{typeFlag,jdbcType=INTEGER},
+			</if>
+			<if test="memberDayType != null">
+				Member_day_type = #{memberDayType,jdbcType=INTEGER},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.MemberDayLog">
+		update MemberDayLog
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Member_day_id = #{memberDayId,jdbcType=VARCHAR},
+		Staff_id = #{staffId,jdbcType=VARCHAR},
+		Type_flag = #{typeFlag,jdbcType=INTEGER},
+		Member_day_type = #{memberDayType,jdbcType=INTEGER},
+		Content = #{content,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

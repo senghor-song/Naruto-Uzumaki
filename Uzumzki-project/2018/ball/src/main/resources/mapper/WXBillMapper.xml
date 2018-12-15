@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.WXBillMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.WXBill">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Deal_time" jdbcType="TIMESTAMP" property="dealTime" />
+		<result column="WX_appid" jdbcType="VARCHAR" property="wxAppid" />
+		<result column="WX_mchid" jdbcType="VARCHAR" property="wxMchid" />
+		<result column="Son_mchid" jdbcType="VARCHAR" property="sonMchid" />
+		<result column="Device_info" jdbcType="VARCHAR" property="deviceInfo" />
+		<result column="WX_orderid" jdbcType="VARCHAR" property="wxOrderid" />
+		<result column="Store_orderid" jdbcType="VARCHAR" property="storeOrderid" />
+		<result column="User_flag" jdbcType="VARCHAR" property="userFlag" />
+		<result column="Pay_type" jdbcType="VARCHAR" property="payType" />
+		<result column="Pay_status" jdbcType="VARCHAR" property="payStatus" />
+		<result column="Payment_bank" jdbcType="VARCHAR" property="paymentBank" />
+		<result column="Currency_type" jdbcType="VARCHAR" property="currencyType" />
+		<result column="Ought_order_amount" jdbcType="DECIMAL" property="oughtOrderAmount" />
+		<result column="Cash_coupon" jdbcType="DECIMAL" property="cashCoupon" />
+		<result column="WX_refund_orderid" jdbcType="VARCHAR" property="wxRefundOrderid" />
+		<result column="Store_refund_orderid" jdbcType="VARCHAR" property="storeRefundOrderid" />
+		<result column="Refund_amount" jdbcType="DECIMAL" property="refundAmount" />
+		<result column="Cash_coupon_refund" jdbcType="DECIMAL" property="cashCouponRefund" />
+		<result column="Refund_type" jdbcType="VARCHAR" property="refundType" />
+		<result column="Refund_status" jdbcType="VARCHAR" property="refundStatus" />
+		<result column="Goods_name" jdbcType="VARCHAR" property="goodsName" />
+		<result column="Store_data" jdbcType="VARCHAR" property="storeData" />
+		<result column="Fee_amount" jdbcType="DECIMAL" property="feeAmount" />
+		<result column="Rate" jdbcType="VARCHAR" property="rate" />
+		<result column="Order_amount" jdbcType="DECIMAL" property="orderAmount" />
+		<result column="Apply_refund_amount" jdbcType="DECIMAL" property="applyRefundAmount" />
+		<result column="Rate_remark" jdbcType="VARCHAR" property="rateRemark" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Deal_time, WX_appid, WX_mchid, Son_mchid, Device_info, WX_orderid, Store_orderid, User_flag, Pay_type, Pay_status, Payment_bank, Currency_type,
+		Ought_order_amount, Cash_coupon, WX_refund_orderid, Store_refund_orderid, Refund_amount, Cash_coupon_refund, Refund_type, Refund_status, Goods_name, Store_data, Fee_amount, Rate,
+		Order_amount, Apply_refund_amount, Rate_remark
+	</sql>
+
+	<select id="selectByAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from WXBill ORDER BY Deal_time DESC
+	</select>
+
+	<select id="selectByNowDate" parameterType="java.lang.String" resultType="com.xiaoyi.ssm.dto.WXBillDto">
+		SELECT wxOrderid,soreOrderid,orderAmount,refundAmount,m.MemberNo memberNo,o.PayTime payTime,o.OrderDate orderDate,o.Price_fee orderFee,v.VenueNO venueNo FROM
+		(SELECT SUM(Ought_order_amount) orderAmount,SUM(Refund_amount) refundAmount,WX_orderid wxOrderid,Store_orderid soreOrderid FROM WXBill GROUP BY WX_orderid) bill INNER JOIN
+		(SELECT ID,PayTime,OrderDate,VenueID,MemberID,Price_fee FROM `Order` WHERE OrderDate = #{dateStr}) o ON o.ID = bill.soreOrderid INNER JOIN Venue v ON v.ID = o.VenueID INNER JOIN Member m ON
+		m.ID = o.MemberID
+	</select>
+	
+	<select id="countByDate" parameterType="java.lang.String" resultType="java.lang.Double">
+		SELECT (SUM(Ought_order_amount) - SUM(Refund_amount)) amount FROM `WXBill` wx INNER JOIN `Order` o ON wx.Store_orderid = o.`ID` WHERE o.OrderDate = #{dateStr}
+	</select>
+	
+	<select id="countByDateFlag" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0) FROM `WXBill` WHERE `Deal_time` &gt;= #{dateStart} AND `Deal_time` &lt; #{dateEnd}
+	</select>
+	
+	<delete id="deleteByDate" parameterType="java.lang.String">
+		DELETE FROM `WXBill` WHERE `Deal_time` &gt;= #{dateStart} AND `Deal_time` &lt; #{dateEnd}
+	</delete>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from WXBill
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from WXBill
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.WXBill">
+		insert into WXBill (ID, Create_time, Deal_time,
+		WX_appid, WX_mchid, Son_mchid,
+		Device_info, WX_orderid, Store_orderid,
+		User_flag, Pay_type,
+		Pay_status,
+		Payment_bank, Currency_type, Ought_order_amount,
+		Cash_coupon, WX_refund_orderid, Store_refund_orderid,
+		Refund_amount,
+		Cash_coupon_refund, Refund_type,
+		Refund_status,
+		Goods_name, Store_data,
+		Fee_amount,
+		Rate, Order_amount,
+		Apply_refund_amount, Rate_remark)
+		values
+		(#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+		#{dealTime,jdbcType=TIMESTAMP},
+		#{wxAppid,jdbcType=VARCHAR},
+		#{wxMchid,jdbcType=VARCHAR},
+		#{sonMchid,jdbcType=VARCHAR},
+		#{deviceInfo,jdbcType=VARCHAR}, #{wxOrderid,jdbcType=VARCHAR},
+		#{storeOrderid,jdbcType=VARCHAR},
+		#{userFlag,jdbcType=VARCHAR},
+		#{payType,jdbcType=VARCHAR}, #{payStatus,jdbcType=VARCHAR},
+		#{paymentBank,jdbcType=VARCHAR},
+		#{currencyType,jdbcType=VARCHAR},
+		#{oughtOrderAmount,jdbcType=DECIMAL},
+		#{cashCoupon,jdbcType=DECIMAL},
+		#{wxRefundOrderid,jdbcType=VARCHAR}, #{storeRefundOrderid,jdbcType=VARCHAR},
+		#{refundAmount,jdbcType=DECIMAL}, #{cashCouponRefund,jdbcType=DECIMAL}, #{refundType,jdbcType=VARCHAR},
+		#{refundStatus,jdbcType=VARCHAR},
+		#{goodsName,jdbcType=VARCHAR},
+		#{storeData,jdbcType=VARCHAR},
+		#{feeAmount,jdbcType=DECIMAL}, #{rate,jdbcType=VARCHAR}, #{orderAmount,jdbcType=DECIMAL},
+		#{applyRefundAmount,jdbcType=DECIMAL},
+		#{rateRemark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.WXBill">
+		insert into WXBill
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="dealTime != null">
+				Deal_time,
+			</if>
+			<if test="wxAppid != null">
+				WX_appid,
+			</if>
+			<if test="wxMchid != null">
+				WX_mchid,
+			</if>
+			<if test="sonMchid != null">
+				Son_mchid,
+			</if>
+			<if test="deviceInfo != null">
+				Device_info,
+			</if>
+			<if test="wxOrderid != null">
+				WX_orderid,
+			</if>
+			<if test="storeOrderid != null">
+				Store_orderid,
+			</if>
+			<if test="userFlag != null">
+				User_flag,
+			</if>
+			<if test="payType != null">
+				Pay_type,
+			</if>
+			<if test="payStatus != null">
+				Pay_status,
+			</if>
+			<if test="paymentBank != null">
+				Payment_bank,
+			</if>
+			<if test="currencyType != null">
+				Currency_type,
+			</if>
+			<if test="oughtOrderAmount != null">
+				Ought_order_amount,
+			</if>
+			<if test="cashCoupon != null">
+				Cash_coupon,
+			</if>
+			<if test="wxRefundOrderid != null">
+				WX_refund_orderid,
+			</if>
+			<if test="storeRefundOrderid != null">
+				Store_refund_orderid,
+			</if>
+			<if test="refundAmount != null">
+				Refund_amount,
+			</if>
+			<if test="cashCouponRefund != null">
+				Cash_coupon_refund,
+			</if>
+			<if test="refundType != null">
+				Refund_type,
+			</if>
+			<if test="refundStatus != null">
+				Refund_status,
+			</if>
+			<if test="goodsName != null">
+				Goods_name,
+			</if>
+			<if test="storeData != null">
+				Store_data,
+			</if>
+			<if test="feeAmount != null">
+				Fee_amount,
+			</if>
+			<if test="rate != null">
+				Rate,
+			</if>
+			<if test="orderAmount != null">
+				Order_amount,
+			</if>
+			<if test="applyRefundAmount != null">
+				Apply_refund_amount,
+			</if>
+			<if test="rateRemark != null">
+				Rate_remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="dealTime != null">
+				#{dealTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="wxAppid != null">
+				#{wxAppid,jdbcType=VARCHAR},
+			</if>
+			<if test="wxMchid != null">
+				#{wxMchid,jdbcType=VARCHAR},
+			</if>
+			<if test="sonMchid != null">
+				#{sonMchid,jdbcType=VARCHAR},
+			</if>
+			<if test="deviceInfo != null">
+				#{deviceInfo,jdbcType=VARCHAR},
+			</if>
+			<if test="wxOrderid != null">
+				#{wxOrderid,jdbcType=VARCHAR},
+			</if>
+			<if test="storeOrderid != null">
+				#{storeOrderid,jdbcType=VARCHAR},
+			</if>
+			<if test="userFlag != null">
+				#{userFlag,jdbcType=VARCHAR},
+			</if>
+			<if test="payType != null">
+				#{payType,jdbcType=VARCHAR},
+			</if>
+			<if test="payStatus != null">
+				#{payStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentBank != null">
+				#{paymentBank,jdbcType=VARCHAR},
+			</if>
+			<if test="currencyType != null">
+				#{currencyType,jdbcType=VARCHAR},
+			</if>
+			<if test="oughtOrderAmount != null">
+				#{oughtOrderAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="cashCoupon != null">
+				#{cashCoupon,jdbcType=DECIMAL},
+			</if>
+			<if test="wxRefundOrderid != null">
+				#{wxRefundOrderid,jdbcType=VARCHAR},
+			</if>
+			<if test="storeRefundOrderid != null">
+				#{storeRefundOrderid,jdbcType=VARCHAR},
+			</if>
+			<if test="refundAmount != null">
+				#{refundAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="cashCouponRefund != null">
+				#{cashCouponRefund,jdbcType=DECIMAL},
+			</if>
+			<if test="refundType != null">
+				#{refundType,jdbcType=VARCHAR},
+			</if>
+			<if test="refundStatus != null">
+				#{refundStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="goodsName != null">
+				#{goodsName,jdbcType=VARCHAR},
+			</if>
+			<if test="storeData != null">
+				#{storeData,jdbcType=VARCHAR},
+			</if>
+			<if test="feeAmount != null">
+				#{feeAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="rate != null">
+				#{rate,jdbcType=VARCHAR},
+			</if>
+			<if test="orderAmount != null">
+				#{orderAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="applyRefundAmount != null">
+				#{applyRefundAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="rateRemark != null">
+				#{rateRemark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.WXBill">
+		update WXBill
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="dealTime != null">
+				Deal_time = #{dealTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="wxAppid != null">
+				WX_appid = #{wxAppid,jdbcType=VARCHAR},
+			</if>
+			<if test="wxMchid != null">
+				WX_mchid = #{wxMchid,jdbcType=VARCHAR},
+			</if>
+			<if test="sonMchid != null">
+				Son_mchid = #{sonMchid,jdbcType=VARCHAR},
+			</if>
+			<if test="deviceInfo != null">
+				Device_info = #{deviceInfo,jdbcType=VARCHAR},
+			</if>
+			<if test="wxOrderid != null">
+				WX_orderid = #{wxOrderid,jdbcType=VARCHAR},
+			</if>
+			<if test="storeOrderid != null">
+				Store_orderid = #{storeOrderid,jdbcType=VARCHAR},
+			</if>
+			<if test="userFlag != null">
+				User_flag = #{userFlag,jdbcType=VARCHAR},
+			</if>
+			<if test="payType != null">
+				Pay_type = #{payType,jdbcType=VARCHAR},
+			</if>
+			<if test="payStatus != null">
+				Pay_status = #{payStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentBank != null">
+				Payment_bank = #{paymentBank,jdbcType=VARCHAR},
+			</if>
+			<if test="currencyType != null">
+				Currency_type = #{currencyType,jdbcType=VARCHAR},
+			</if>
+			<if test="oughtOrderAmount != null">
+				Ought_order_amount = #{oughtOrderAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="cashCoupon != null">
+				Cash_coupon = #{cashCoupon,jdbcType=DECIMAL},
+			</if>
+			<if test="wxRefundOrderid != null">
+				WX_refund_orderid = #{wxRefundOrderid,jdbcType=VARCHAR},
+			</if>
+			<if test="storeRefundOrderid != null">
+				Store_refund_orderid = #{storeRefundOrderid,jdbcType=VARCHAR},
+			</if>
+			<if test="refundAmount != null">
+				Refund_amount = #{refundAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="cashCouponRefund != null">
+				Cash_coupon_refund = #{cashCouponRefund,jdbcType=DECIMAL},
+			</if>
+			<if test="refundType != null">
+				Refund_type = #{refundType,jdbcType=VARCHAR},
+			</if>
+			<if test="refundStatus != null">
+				Refund_status = #{refundStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="goodsName != null">
+				Goods_name = #{goodsName,jdbcType=VARCHAR},
+			</if>
+			<if test="storeData != null">
+				Store_data = #{storeData,jdbcType=VARCHAR},
+			</if>
+			<if test="feeAmount != null">
+				Fee_amount = #{feeAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="rate != null">
+				Rate = #{rate,jdbcType=VARCHAR},
+			</if>
+			<if test="orderAmount != null">
+				Order_amount = #{orderAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="applyRefundAmount != null">
+				Apply_refund_amount = #{applyRefundAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="rateRemark != null">
+				Rate_remark = #{rateRemark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.WXBill">
+		update WXBill
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Deal_time =
+		#{dealTime,jdbcType=TIMESTAMP},
+		WX_appid =
+		#{wxAppid,jdbcType=VARCHAR},
+		WX_mchid = #{wxMchid,jdbcType=VARCHAR},
+		Son_mchid = #{sonMchid,jdbcType=VARCHAR},
+		Device_info = #{deviceInfo,jdbcType=VARCHAR},
+		WX_orderid =
+		#{wxOrderid,jdbcType=VARCHAR},
+		Store_orderid =
+		#{storeOrderid,jdbcType=VARCHAR},
+		User_flag =
+		#{userFlag,jdbcType=VARCHAR},
+		Pay_type = #{payType,jdbcType=VARCHAR},
+		Pay_status =
+		#{payStatus,jdbcType=VARCHAR},
+		Payment_bank =
+		#{paymentBank,jdbcType=VARCHAR},
+		Currency_type = #{currencyType,jdbcType=VARCHAR},
+		Ought_order_amount =
+		#{oughtOrderAmount,jdbcType=DECIMAL},
+		Cash_coupon = #{cashCoupon,jdbcType=DECIMAL},
+		WX_refund_orderid = #{wxRefundOrderid,jdbcType=VARCHAR},
+		Store_refund_orderid =
+		#{storeRefundOrderid,jdbcType=VARCHAR},
+		Refund_amount =
+		#{refundAmount,jdbcType=DECIMAL},
+		Cash_coupon_refund =
+		#{cashCouponRefund,jdbcType=DECIMAL},
+		Refund_type =
+		#{refundType,jdbcType=VARCHAR},
+		Refund_status =
+		#{refundStatus,jdbcType=VARCHAR},
+		Goods_name = #{goodsName,jdbcType=VARCHAR},
+		Store_data =
+		#{storeData,jdbcType=VARCHAR},
+		Fee_amount =
+		#{feeAmount,jdbcType=DECIMAL},
+		Rate = #{rate,jdbcType=VARCHAR},
+		Order_amount = #{orderAmount,jdbcType=DECIMAL},
+		Apply_refund_amount =
+		#{applyRefundAmount,jdbcType=DECIMAL},
+		Rate_remark = #{rateRemark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

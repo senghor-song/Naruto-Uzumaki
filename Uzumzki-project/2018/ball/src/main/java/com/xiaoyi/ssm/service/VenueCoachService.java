@@ -27,4 +27,34 @@ public interface VenueCoachService extends BaseService<VenueCoach, String> {
 	 */ 
 	List<VenueCoach> selectByVenue(String venueid);
 
+	/**
+	 * @Description: 逻辑删除
+	 * @author 宋高俊
+	 * @param dateStr
+	 * @param trainTeamId
+	 * @param trainCoachId
+	 * @return
+	 * @date 2018年11月21日 下午5:07:52
+	 */
+	int updateByDeleteCoach(String dateStr, String trainTeamId, String trainCoachId);
+
+	/**
+	 * @Description: 陪练数据逻辑删除
+	 * @author 宋高俊
+	 * @param venueid
+	 * @param dateStr
+	 * @return
+	 * @date 2018年11月21日 下午8:55:36
+	 */
+	int updateByVenue(String venueid, String dateStr);
+
+	/**
+	 * @Description: 
+	 * @author 宋高俊
+	 * @param coachid
+	 * @return
+	 * @date 2018年12月6日下午8:37:23
+	 */
+	VenueCoach selectByTrainCoachId(String trainCoachId);
+
 }

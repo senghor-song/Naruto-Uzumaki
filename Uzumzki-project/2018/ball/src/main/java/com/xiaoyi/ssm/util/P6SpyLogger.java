@@ -32,7 +32,7 @@ public class P6SpyLogger extends StdoutLogger {
 		}
     	if (flag) {
 			if(!Category.COMMIT.equals(category) && !prepared.startsWith("select count(")){
-		        this.logText(this.strategy.formatMessage(connectionId, now, elapsed, category.toString(), "-prepared-", sql));
+		        this.logText(this.strategy.formatMessage(connectionId, "", elapsed, category.toString(), "-prepared-", sql));
 			}
 		}
     }

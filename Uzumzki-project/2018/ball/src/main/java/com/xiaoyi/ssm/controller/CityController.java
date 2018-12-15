@@ -115,6 +115,11 @@ public class CityController {
 			if (trainCoach != null) {
 				map.put("coachPrice", trainCoach.getMemberId());// 教练价格
 			}
+
+			map.put("ball1", city.getBall1());// 网球
+			map.put("ball2", city.getBall2());// 足球
+			map.put("ball3", city.getBall3());// 羽毛球
+			map.put("ball4", city.getBall4());// 蓝球
 			
 			listMap.add(map);
 		}
@@ -168,6 +173,110 @@ public class CityController {
 			listMap.add(map);
 		}
 		return new AdminMessage(pageInfo.getTotal(), listMap);
+	}
+	
+	/**  
+	 * @Description: 新增区县数据
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年10月16日 上午9:43:22 
+	 */ 
+	@RequestMapping(value = "/district/add")
+	@ResponseBody
+	public ApiMessage districtAdd(String cityid,String name, HttpServletRequest request) {
+		// 登录用户
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		
+		District oldDistrict = districtService.selectByName(name);
+		if (oldDistrict != null) {
+			return new ApiMessage(400, "已有同名的区县");
+		}
+		District district = new District();
+		district.setId(Utils.getUUID());
+		district.setDistrict(name);
+		district.setCityid(cityid);
+		districtService.insertSelective(district);
+		
+		CityLog cityLog = new CityLog();
+		cityLog.setId(Utils.getUUID());
+		cityLog.setCreatetime(new Date());
+		cityLog.setStaffid(staff.getId());
+		cityLog.setCityid(cityid);
+		cityLog.setContent("新增区县"+name);
+		cityLogMapper.insertSelective(cityLog);
+		
+		operationLogService.saveLog(staff.getId(), "新增区县"+name, Utils.getIpAddr(request));
+		
+		return new ApiMessage(200, "新增成功");
+	}
+	
+	/**  
+	 * @Description: 删除区县数据
+	 * @author 宋高俊  
+	 * @param id
+	 * @return 
+	 * @date 2018年10月16日 上午9:43:22 
+	 */ 
+	@RequestMapping(value = "/district/del")
+	@ResponseBody
+	public ApiMessage districtDel(String districtid, HttpServletRequest request) {
+		// 登录用户
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		
+		District district = districtService.selectByPrimaryKey(districtid);
+		// 删除区县
+		districtService.deleteByPrimaryKey(districtid);
+
+		CityLog cityLog = new CityLog();
+		cityLog.setId(Utils.getUUID());
+		cityLog.setCreatetime(new Date());
+		cityLog.setStaffid(staff.getId());
+		cityLog.setCityid(district.getCityid());
+		cityLog.setContent("删除区县"+district.getDistrict());
+		cityLogMapper.insertSelective(cityLog);
+		
+		operationLogService.saveLog(staff.getId(), "删除区县"+district.getDistrict(), Utils.getIpAddr(request));
+		
+		return new ApiMessage(200, "删除成功");
+	}
+	
+	/**
+	 * @Description: 修改区县名
+	 * @author 宋高俊
+	 * @param districtid
+	 * @param name
+	 * @return
+	 * @date 2018年11月18日 下午4:46:51
+	 */
+	@RequestMapping(value = "/district/update")
+	@ResponseBody
+	public ApiMessage districtUpdate(String districtid,String name, HttpServletRequest request) {
+		// 登录用户
+		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
+		// 查询是否有同名的区县
+		District districtLikeName = districtService.selectByName(name);
+		if (districtLikeName != null) {
+			return new ApiMessage(400, "已有同名的区县", districtLikeName.getDistrict());
+		}
+		// 查询区县旧数据
+		District oldDistrict = districtService.selectByPrimaryKey(districtid);
+		
+		District district = new District();
+		district.setId(districtid);
+		district.setDistrict(name);
+		districtService.updateByPrimaryKeySelective(district);
+		
+		CityLog cityLog = new CityLog();
+		cityLog.setId(Utils.getUUID());
+		cityLog.setCreatetime(new Date());
+		cityLog.setStaffid(staff.getId());
+		cityLog.setCityid(oldDistrict.getCityid());
+		cityLog.setContent("修改区县名,旧值:" + oldDistrict.getDistrict() + ",新值:" + district.getDistrict());
+		cityLogMapper.insertSelective(cityLog);
+		
+		operationLogService.saveLog(staff.getId(), "修改区县名,旧值:" + oldDistrict.getDistrict() + ",新值:" + district.getDistrict(), Utils.getIpAddr(request));
+		return new ApiMessage(200, "修改成功");
 	}
 	
 	/**  
@@ -285,6 +394,12 @@ public class CityController {
 	@ResponseBody
 	public ApiMessage updateCoach(String id, String price) {
 		TrainCoach trainCoach = trainCoachService.selectByDefault(id);
+		try {
+			Integer.valueOf(price);
+		} catch (Exception e) {
+			return new ApiMessage(400, "请输入正确价格");
+		}
+		
 		if (trainCoach != null) {
 			trainCoach.setMemberId(price);
 			trainCoachService.updateByPrimaryKeySelective(trainCoach);

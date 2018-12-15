@@ -9,11 +9,11 @@
     <title>小易运维</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
-    <link href="/WebBackAPI/admin/static/css/site.css" rel="stylesheet">
-	<link rel="stylesheet" href="/WebBackAPI/admin/static/plugins/bootstrap-validator/dist/css/bootstrapValidator.css" />
-	<link rel="stylesheet" href="/WebBackAPI/admin/static/plugins/bootstrap-validator/vendor/bootstrap/css/dataValidator.css" />
-    <link href="/WebBackAPI/admin/static/plugins/webuploader/webuploader.css" rel="stylesheet">
+	<link rel="icon" href="/admin/static/image/logo.png" type="image/x-icon"/>
+    <link href="/admin/static/css/site.css" rel="stylesheet">
+	<link rel="stylesheet" href="/admin/static/plugins/bootstrap-validator/dist/css/bootstrapValidator.css" />
+	<link rel="stylesheet" href="/admin/static/plugins/bootstrap-validator/vendor/bootstrap/css/dataValidator.css" />
+    <link href="/admin/static/plugins/webuploader/webuploader.css" rel="stylesheet">
     <style>
         #tblist .layui-table-body .layui-table-cell {
             height: 150px !important;
@@ -86,38 +86,37 @@
         </aside>
         <!-- /.control-sidebar -->
     </div>
-    <script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/layout.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
+    <script src="/admin/static/plugins/jquery/jquery.min.js"></script>
+    <script src="/admin/static/js/layout.js"></script>
+    <script src="/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
     <script>
         $.widget.bridge('uibutton', $.ui.button)
     </script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/raphael-min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/morris/morris.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/knob/jquery.knob.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/moment/moment.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/fastclick/fastclick.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/js/pages/dashboard.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/js/demo.js"></script>
-    <script src="/WebBackAPI/admin/static/js/echarts.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/layui/layui.all.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
-    <script src="/WebBackAPI/admin/static/js/jq-ext.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/layer/layer.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/webuploader/webuploader.js"></script>
-	<script type="text/javascript" src="/WebBackAPI/admin/static/plugins/bootstrap-validator/vendor/bootstrap/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="/WebBackAPI/admin/static/plugins/bootstrap-validator/dist/js/bootstrapValidator.js"></script>
+    <script src="/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/static/js/raphael-min.js"></script>
+    <script src="/admin/static/plugins/morris/morris.min.js"></script>
+    <script src="/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
+    <script src="/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="/admin/static/plugins/knob/jquery.knob.js"></script>
+    <script src="/admin/static/plugins/moment/moment.min.js"></script>
+    <script src="/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <script src="/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="/admin/static/plugins/fastclick/fastclick.js"></script>
+    <script src="/admin/static/plugins/js/pages/dashboard.js"></script>
+    <script src="/admin/static/plugins/js/demo.js"></script>
+    <script src="/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+    <script src="/admin/static/plugins/layui/layui.all.js"></script>
+    <script src="/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+    <script src="/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="/admin/static/js/jq-ext.js"></script>
+    <script src="/admin/static/plugins/layer/layer.js"></script>
+    <script src="/admin/static/plugins/webuploader/webuploader.js"></script>
+	<script type="text/javascript" src="/admin/static/plugins/bootstrap-validator/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/admin/static/plugins/bootstrap-validator/dist/js/bootstrapValidator.js"></script>
     <script>
         $(function () {
             var tableObj = {
@@ -138,7 +137,7 @@
                     self.obj = $.tableObject({
                         tableId: 'tableList',
                         tableOption: {
-                            url: '/WebBackAPI/admin/newsBanner/list',
+                            url: '/admin/newsBanner/list',
                             page: true,
                             height: $(window).height() - 92,
                             where: {
@@ -151,6 +150,7 @@
                             },
                             cols: [
                                 [
+                     				{field: 'id', title: 'id', hide:true},
                                     { field: 'bannerno', title: '编号', sort: true},
                                     { field: 'coverpath', title: '横幅', align: "center",width: 300, height: 150, templet: '<div><img src="{{d.coverpath}}" alt="" style="width:300px; height:150px;"></div>'},
                                     { field: 'content', title: '容器', sort: true },
@@ -166,7 +166,7 @@
                                 name: "编辑", callback: function (key, opt) {
                                 	 $.ajax({  
                                          type : "POST",  //提交方式  
-                                         url : "/WebBackAPI/admin/newsBanner/edit",//路径  
+                                         url : "/admin/newsBanner/edit",//路径  
                                          data : {  
                                              "id" : $(this).find("td").eq(0).attr('title'),
                                          },//数据这里使用的是Json格式进行传输  
@@ -203,7 +203,7 @@
                                     $.tableObject({
                                         tableId: 'tablelog',
                                         tableOption: {
-                                            url: '/WebBackAPI/admin/newsBanner/newsBannerLog/list?id=' + $(this).find("td").eq(0).attr('title'),
+                                            url: '/admin/newsBanner/newsBannerLog/list?id=' + $(this).find("td").eq(0).attr('title'),
                                             page: false,
                                             height: $("#tablelog").parents(".layui-layer-content").height() - 30,
                                             where: {},
@@ -230,7 +230,7 @@
     </script>
 
     <script id="titleTpl" type="text/html">
-    <img src="/WebBackAPI/admin/static/image/u78455.jpg" alt="" style="width200px; height:100px;">
+    <img src="/admin/static/image/u78455.jpg" alt="" style="width200px; height:100px;">
   	</script>
 
     <div class="contextMenuDialog hide" id="dataContent">

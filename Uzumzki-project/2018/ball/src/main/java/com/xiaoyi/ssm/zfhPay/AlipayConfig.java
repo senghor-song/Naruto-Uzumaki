@@ -42,8 +42,8 @@ public class AlipayConfig {
 //	/** 字符编码格式 目前支持 gbk 或 utf-8 */
 //	public static String input_charset = "UTF-8";
 	/** 设置回跳页面地址 */
-	public static String return_url = "https://ball.ekeae.com/WebBackAPI/admin/common/login";
+	public static String return_url = "https://beta.ball.ekeae.com/admin/common/login";
 	/** 设置通知结果地址 */
-	public static String notify_url = "https://ball.ekeae.com/WebBackAPI/api/common/aliPayCallBack";
+	public static String notify_url = "https://beta.ball.ekeae.com/api/common/aliPayCallBack";
 	
 }

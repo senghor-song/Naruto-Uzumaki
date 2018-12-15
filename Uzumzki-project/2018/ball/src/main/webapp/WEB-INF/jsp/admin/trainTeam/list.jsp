@@ -9,8 +9,8 @@
     <title>小易运维</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
-    <link href="/WebBackAPI/admin/static/css/site.css" rel="stylesheet">
+	<link rel="icon" href="/admin/static/image/logo.png" type="image/x-icon"/>
+    <link href="/admin/static/css/site.css" rel="stylesheet">
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -75,34 +75,33 @@
 </div>
 
 <!-- jQuery -->
-<script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
-<script src="/WebBackAPI/admin/static/js/layout.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
+<script src="/admin/static/plugins/jquery/jquery.min.js"></script>
+<script src="/admin/static/js/layout.js"></script>
+<script src="/admin/static/plugins/jQueryUI/jquery-ui.min.js"></script>
 <script>
     $.widget.bridge('uibutton', $.ui.button)
 </script>
-<script src="/WebBackAPI/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="/WebBackAPI/admin/static/js/raphael-min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/morris/morris.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/knob/jquery.knob.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/moment/moment.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/fastclick/fastclick.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/js/pages/dashboard.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/js/demo.js"></script>
-<script src="/WebBackAPI/admin/static/js/echarts.min.js"></script>
-<script src="/WebBackAPI/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/layui/layui.all.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
-<script src="/WebBackAPI/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
-<script src="/WebBackAPI/admin/static/js/jq-ext.js"></script>
+<script src="/admin/static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/admin/static/js/raphael-min.js"></script>
+<script src="/admin/static/plugins/morris/morris.min.js"></script>
+<script src="/admin/static/plugins/sparkline/jquery.sparkline.min.js"></script>
+<script src="/admin/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="/admin/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+<script src="/admin/static/plugins/knob/jquery.knob.js"></script>
+<script src="/admin/static/plugins/moment/moment.min.js"></script>
+<script src="/admin/static/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="/admin/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+<script src="/admin/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<script src="/admin/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<script src="/admin/static/plugins/fastclick/fastclick.js"></script>
+<script src="/admin/static/plugins/js/pages/dashboard.js"></script>
+<script src="/admin/static/plugins/js/demo.js"></script>
+<script src="/admin/static/js/jqBootstrapValidation-1.3.7.min.js"></script>
+<script src="/admin/static/plugins/layui/layui.all.js"></script>
+<script src="/admin/static/plugins/jQuery-contextMenu/jquery.contextMenu.min.js"></script>
+<script src="/admin/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="/admin/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="/admin/static/js/jq-ext.js"></script>
 <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ITcG0S4URK9aokGSOhTNnSXCO9o7fK8D"></script>
 <script>
 var map=null;
@@ -127,7 +126,7 @@ var mapmarker=null;
                 self.obj = $.tableObject({
                     tableId: 'tableList',
                     tableOption: {
-                        url: '/WebBackAPI/admin/trainTeam/list',
+                        url: '/admin/trainTeam/list',
                         page: true,
                         height: $(window).height() - 140,
                         where: {
@@ -141,21 +140,23 @@ var mapmarker=null;
                         cols: [
                             [
                     			{field: 'id', title: 'id', hide:true},
-                                {field: 'city', title: '城市', sort: true},
-                                {field: 'title', title: '机构', sort: true},
-                                {field: 'typeFlag', title: '状态', sort: true},
-                                {field: 'lngAndLat', title: '经纬', sort: true},
-                                {field: 'phone', title: '电话', sort: true},
-                                {field: 'level', title: '评级', sort: true},
-                                {field: 'levelTime', title: '当前评级', sort: true},
+                                {field: 'modifyTime', title: '修改时间', sort: true, width:170},
+                                {field: 'city', title: '城市', sort: true, width:80},
+                                {field: 'title', title: '机构', sort: true, width:200},
+                                {field: 'typeFlag', title: '状态', sort: true, width:80},
+                                {field: 'venueSum', title: '场馆', sort: true, width:80},
+                                {field: 'lngAndLat', title: '经纬', sort: true, width:80},
+                                {field: 'phone', title: '电话', sort: true, width:80},
+                                {field: 'level', title: '评级', sort: true, width:80},
+                                {field: 'levelTime', title: '当前评级', sort: true, width:110},
                                 {field: 'teachClass', title: '类型', hide:true},
-                                {field: 'trainCoachSum', title: '教练', sort: true},
-                                {field: 'trainCourseSum', title: '课程', sort: true},
-                                {field: 'dayPhoneSum', title: '近60日电话', sort: true},
-                                {field: 'trainTeamFeedbackSum', title: '线下报名反馈', sort: true},
-                                {field: 'dayCommentSum', title: '近60日评价', sort: true},
-                                {field: 'trainTeamLogSum', title: '日志', sort: true},
-                                {field: 'dayUseSum', title: '平台概合', sort: true},
+                                {field: 'trainCoachSum', title: '教练', sort: true, width:80},
+                                {field: 'trainCourseSum', title: '课程', sort: true, width:80},
+                                {field: 'dayPhoneSum', title: '近60日电话', sort: true, width:110},
+                                {field: 'trainTeamFeedbackSum', title: '线下报名反馈', sort: true, width:120},
+                                {field: 'dayCommentSum', title: '近60日评价', sort: true, width:110},
+                                {field: 'trainTeamLogSum', title: '日志', sort: true, width:80},
+                                {field: 'dayUseSum', title: '平台概合', sort: true, width:100},
                  				{field: 'lng', title: 'lng', hide:true},
                  				{field: 'lat', title: 'lat', hide:true},
                             ]
@@ -169,7 +170,7 @@ var mapmarker=null;
                                 $.tableObject({
                                     tableId: 'tableTrainTeamLog',
                                     tableOption: {
-                                        url: '/WebBackAPI/admin/trainTeam/log/list?id='+$(this).find("td").eq(0).attr('title'),
+                                        url: '/admin/trainTeam/log/list?id='+$(this).find("td").eq(0).attr('title'),
                                         page: false,
                                         height: $("#tableTrainTeamLog").parents(".layui-layer-content").height() - 30,
                                         where: {},
@@ -192,7 +193,7 @@ var mapmarker=null;
                                 $.tableObject({
                                     tableId: 'tableTrainTeamFeedback',
                                     tableOption: {
-                                        url: '/WebBackAPI/admin/trainTeam/feedback/list?id='+$(this).find("td").eq(0).attr('title'),
+                                        url: '/admin/trainTeam/feedback/list?id='+$(this).find("td").eq(0).attr('title'),
                                         page: false,
                                         height: $("#tableTrainTeamFeedback").parents(".layui-layer-content").height() - 30,
                                         where: {},
@@ -213,7 +214,7 @@ var mapmarker=null;
                             name: "调整评级", callback: function (key, opt) {
                             	$.ajax({  
                                     type : "POST",  //提交方式  
-                                    url : "/WebBackAPI/admin/trainTeam/updateLevel",//路径  
+                                    url : "/admin/trainTeam/updateLevel",//路径  
                                     data : {  
                                         "id" : $(this).find("td").eq(0).attr('title'),
                                     },//数据这里使用的是Json格式进行传输  
@@ -248,9 +249,9 @@ var mapmarker=null;
 						<c:if test="${btn234 == 1}">
                         item4: {
                             name: "编辑", callback: function (key, opt) {
-                            	$.showAjaxContent("编辑", "35%", "/WebBackAPI/admin/trainTeam/edit", $(this).find("td").eq(0).attr('title'));
-                            	var lng = $(this).find("td").eq(16).attr('title');
-                            	var lat = $(this).find("td").eq(17).attr('title');
+                            	$.showAjaxContent("编辑", "35%", "/admin/trainTeam/edit", $(this).find("td").eq(0).attr('title'));
+                            	var lng = $(this).find("td").eq(18).attr('title');
+                            	var lat = $(this).find("td").eq(19).attr('title');
                             	$("#citymapDiv").removeClass("hide");
                             	layer.open({
                              	  title: "位置", 
@@ -307,14 +308,16 @@ var mapmarker=null;
                                 $.tableObject({
                                     tableId: 'tableTrainTeamCoach',
                                     tableOption: {
-                                        url: '/WebBackAPI/admin/trainTeam/coach/list?id='+$(this).find("td").eq(0).attr('title'),
+                                        url: '/admin/trainTeam/coach/list?id='+$(this).find("td").eq(0).attr('title'),
                                         page: false,
                                         height: $("#tableTrainTeamCoach").parents(".layui-layer-content").height() - 30,
                                         where: {},
                                         cols: [
                                             [
+	                                             { field: 'memberNo', title: '用户编号', sort: true },
 	                                             { field: 'coachName', title: '教练', sort: true },
 	                                             { field: 'manager', title: '身份', sort: true },
+	                                             { field: 'amountFlag', title: '回款人', sort: true },
                                             ]
                                         ]
                                     }
@@ -322,6 +325,26 @@ var mapmarker=null;
                             }
                         },
                         </c:if>
+                        item6: {
+                            name: "场馆名册", callback: function (key, opt) {
+                                $.showContentMenu(key, opt)
+                                $.tableObject({
+                                    tableId: 'tableTrainTeamVenue',
+                                    tableOption: {
+                                        url: '/admin/trainTeam/venue/list?trainTeamId='+$(this).find("td").eq(0).attr('title'),
+                                        page: false,
+                                        height: $("#tableTrainTeamVenue").parents(".layui-layer-content").height() - 30,
+                                        where: {},
+                                        cols: [
+                                            [
+	                                             { field: 'venueNo', title: '场馆编号', sort: true },
+	                                             { field: 'venueName', title: '场馆', sort: true },
+                                            ]
+                                        ]
+                                    }
+                                });
+                            }
+                        },
                     }
                 });
             }
@@ -370,7 +393,7 @@ var mapmarker=null;
                        self.obj = $.tableObject({
                            tableId: 'tableAllTrainEnter',
                            tableOption: {
-                               url: '/WebBackAPI/admin/trainTeam/trainEnter/list?checkFlag='+checkFlag,
+                               url: '/admin/trainTeam/trainEnter/list?checkFlag='+checkFlag,
                                page: true,
                                height: 370,
                                where: {
@@ -441,15 +464,13 @@ var mapmarker=null;
 		   			if (content != '') {
 		   				var check = 0;
 		   				if (layEvent == 'yes') {
-		   					layer.msg("通过审核");
 		   					check = 1;
 		   				} else if (layEvent == 'no') {
-		   					layer.msg("无效机构");
 		   					check = 2;
 		   				}
 		   				$.ajax({
 		   					type : "POST", //提交方式  
-		   					url : "/WebBackAPI/admin/trainTeam/trainEnter/check",//路径  
+		   					url : "/admin/trainTeam/trainEnter/check",//路径  
 		   					data : {
 		   						id : data.id,
 		   						check : check,
@@ -457,10 +478,17 @@ var mapmarker=null;
 		   					},//数据，这里使用的是Json格式进行传输  
 		   					dataType : "json",
 		   					success : function(result) {//返回数据根据结果进行相应的处理  
-		   	
+		   						if(result.code == 200){
+				   					layer.msg("审核完成");
+					   				$.reload(tableTrainEnter.obj);
+		   						}else{
+		   							layer.confirm(result.msg, {
+		   								btn : [ '确定' ]
+		   							//按钮
+		   							});
+		   						}
 		   					}
 		   				});
-		   				$.reload(tableTrainEnter.obj);
 		   			} else {
 		   				layer.msg("请填写意见后操作!");
 		   			}
@@ -550,6 +578,14 @@ var mapmarker=null;
     <div class="card-body">
         <div class="row">
             <table id="tableTrainTeamCoach"></table>
+        </div>
+    </div>
+</div>
+
+<div class="contextMenuDialog hide" id="item6">
+    <div class="card-body">
+        <div class="row">
+            <table id="tableTrainTeamVenue"></table>
         </div>
     </div>
 </div>

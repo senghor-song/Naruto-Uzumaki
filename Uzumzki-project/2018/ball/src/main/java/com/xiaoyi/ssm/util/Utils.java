@@ -298,8 +298,12 @@ public class Utils {
 	 * @Description: 验证手机号是否正确
 	 * @author song  
 	 * @date 2018年7月9日 上午10:37:00 
-	 */ 
+	 * @return 正确返回true 错误返回false
+	 */
 	public static boolean getPhone(String phone) {
+		if (StringUtil.isBank(phone)) {
+            return false;
+		}
         String regex = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[013678])|(18[0,5-9]))\\d{8}$";
         if(phone.length() != 11){
             return false;

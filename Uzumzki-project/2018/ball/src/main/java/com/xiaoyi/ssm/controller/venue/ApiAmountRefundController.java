@@ -19,21 +19,22 @@ import com.alibaba.fastjson.JSONObject;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.model.Member;
 import com.xiaoyi.ssm.model.Order;
+import com.xiaoyi.ssm.model.OrderLog;
 import com.xiaoyi.ssm.model.Reserve;
 import com.xiaoyi.ssm.model.Venue;
 import com.xiaoyi.ssm.model.VenueRefund;
 import com.xiaoyi.ssm.service.MemberService;
+import com.xiaoyi.ssm.service.OrderLogService;
 import com.xiaoyi.ssm.service.OrderService;
 import com.xiaoyi.ssm.service.ReserveService;
 import com.xiaoyi.ssm.service.VenueRefundService;
 import com.xiaoyi.ssm.service.VenueService;
-import com.xiaoyi.ssm.service.VenueStatisService;
-import com.xiaoyi.ssm.service.VenueTemplateService;
 import com.xiaoyi.ssm.util.Arith;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.RedisUtil;
 import com.xiaoyi.ssm.util.StringUtil;
+import com.xiaoyi.ssm.util.Utils;
 import com.xiaoyi.ssm.wxPay.WXConfig;
 import com.xiaoyi.ssm.wxPay.WXPayUtil;
 import com.xiaoyi.ssm.wxPay.WXPayWxappUtil;
@@ -54,15 +55,13 @@ public class ApiAmountRefundController {
 	@Autowired
 	private VenueService venueService;
 	@Autowired
-	private VenueStatisService venueStatisService;
-	@Autowired
-	private VenueTemplateService venueTemplateService;
-	@Autowired
 	private VenueRefundService venueRefundService;
 	@Autowired
 	private OrderService orderService;
 	@Autowired
 	private ReserveService reserveService;
+	@Autowired
+	private OrderLogService orderLogService;
 
 	/**
 	 * @Description: 申请订场退款列表
@@ -73,13 +72,18 @@ public class ApiAmountRefundController {
 	 */
 	@RequestMapping(value = "/applyList")
 	@ResponseBody
-	public ApiMessage applyList(HttpServletRequest request, String venueid) {
+	public ApiMessage applyList(HttpServletRequest request, String venueid, String dateStr) {
 		
 		String token = (String) request.getAttribute("token");
 		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 		
+		Date date = DateUtil.getParse(dateStr, "yyyy-MM-dd");
+		Date dateStart = DateUtil.getWeeHours(date, 0);
+		Date dateEnd = DateUtil.getWeeHours(date, 1);
+		
+		
 		// 获取申请订场退款的数据
-		List<VenueRefund> list = venueRefundService.selectByVenue(venueid);
+		List<VenueRefund> list = venueRefundService.selectByVenue(venueid, dateStart, dateEnd);
 		List<Map<String, Object>> listMaps = new ArrayList<Map<String,Object>>();
 		for (VenueRefund venueRefund : list) {
 			Order order = orderService.selectByPrimaryKey(venueRefund.getOrderId());
@@ -87,6 +91,7 @@ public class ApiAmountRefundController {
 			
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", venueRefund.getId());// id
+			map.put("applyDate", DateUtil.getFormat(venueRefund.getCreateTime()));// 用户名称
 			map.put("appnickname", orderMember.getAppnickname());// 用户名称
 			map.put("price", order.getPrice());// 预收金额
 			map.put("refundStatus", venueRefund.getRefundStatus());// 退款状态(0=申请中1=退款成功2=退款失败)
@@ -153,6 +158,7 @@ public class ApiAmountRefundController {
 		map.put("amountRate", venueRefund.getAmountRate());// 费率
 		map.put("amountRefund", venueRefund.getAmountRefund());// 可退金额
 		map.put("amountFee", venueRefund.getAmountFee());// 扣费金额
+		map.put("amountSum", venueRefund.getAmountSum());// 扣费金额
 		
 		
 		return new ApiMessage(200, "查询成功", map);
@@ -174,16 +180,25 @@ public class ApiAmountRefundController {
 
 		// 获取申请订场退款的数据
 		VenueRefund venueRefund = venueRefundService.selectByPrimaryKey(venueRefundId);
+		
+
 		venueRefund.setAmountRefund(Arith.sub(venueRefund.getAmountSum(), price));
 		venueRefund.setAmountFee(price);
 		venueRefund.setRemark(content);
 		venueRefund.setRefundStatus(1);
 		venueRefundService.updateByPrimaryKeySelective(venueRefund);
 
-		// 大于6小时
-		WXPayWxappUtil.weiXinRefund(venueRefund.getOrderId(), venueRefund.getAmountSum(), venueRefund.getAmountRefund(), "审核通过退款", 0);
-		
+		// 修改订单状态
 		Order order = orderService.selectByPrimaryKey(venueRefund.getOrderId());
+		
+		// 大于6小时
+		WXPayWxappUtil.weiXinRefund(venueRefund.getOrderId(), order.getPrice(), venueRefund.getAmountRefund(), "审核通过退款", 0);
+
+		order.setType(4);
+		order.setModifytime(new Date());
+		order.setRefundtime(new Date());
+		orderService.updateByPrimaryKeySelective(order);
+		
 		Venue venue = venueService.selectByPrimaryKey(order.getVenueid());
 		Member orderMember = memberService.selectByPrimaryKey(order.getMemberid());
 		// 通知内容
@@ -207,6 +222,15 @@ public class ApiAmountRefundController {
 							+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + timeStr + "用场，退款成功。\"}"));
 			logger.info(WXPayUtil.sendWXappTemplate(orderMember.getOpenid(), WXConfig.wxTemplateId, "/pages/index/index", datajson));
 		}
+		
+		OrderLog orderLog = new OrderLog();
+		orderLog.setId(Utils.getUUID());
+		orderLog.setCreatetime(new Date());
+		orderLog.setOrderid(order.getId());
+		orderLog.setType(0);
+		orderLog.setContent("场馆受理退款申请");
+		orderLogService.insertSelective(orderLog);
+		
 		return new ApiMessage(200, "审核成功");
 	}
 

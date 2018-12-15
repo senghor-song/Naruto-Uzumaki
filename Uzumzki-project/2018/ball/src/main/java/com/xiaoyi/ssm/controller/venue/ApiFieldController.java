@@ -1,7 +1,20 @@
 package com.xiaoyi.ssm.controller.venue;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.xiaoyi.ssm.dto.ApiMessage;
+import com.xiaoyi.ssm.model.Field;
+import com.xiaoyi.ssm.service.FieldService;
 
 /**  
  * @Description: 球场管理控制器
@@ -12,45 +25,45 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("venue/manager/field")
 public class ApiFieldController {
 
-//	@Autowired
-//	private VenueTemplateService venueTemplateService;
-//	@Autowired
-//	private VenueService venueService;
-//	@Autowired
-//	private FieldService fieldService;
-//
-//	/**  
-//	 * @Description: 
-//	 * @author 宋高俊  
-//	 * @return 
-//	 * @date 2018年9月6日 下午8:01:11 
-//	 */ 
-//	@RequestMapping(value = "/list")
-//	@ResponseBody
-//	public ApiMessage list(HttpServletRequest request) {
-//		
-//		HttpSession session = request.getSession();
-//		String openid = (String) session.getAttribute("openid");
-//		Manager manager = (Manager) RedisUtil.getRedisOne(Global.redis_manager, openid);
-//		Venue venue = venueService.selectByManager(manager.getId());
-//		//判断是否有场馆
-//		if (venue == null) {
-//			return new ApiMessage(400, "请先新建场馆");
-//		}
-//		//判断是否有球场
-//		Field f = new Field();
-//		f.setVenueid(venue.getId());
-//		List<Field> list = fieldService.selectByAll(f);
-//		List<Map<String, Object>> listmap = new ArrayList<>();
-//		for (Field field : list) {
-//			Map<String, Object> map = new HashMap<>();
-//			map.put("id", field.getId());// id
-//			map.put("name", field.getName());// 模板名称
-//			listmap.add(map);
-//		}
-//		return new ApiMessage(200, "查询成功", listmap);
-//	}
-//	
+	@Autowired
+	private FieldService fieldService;
+
+	/**  
+	 * @Description: 场地列表
+	 * @author 宋高俊  
+	 * @return 
+	 * @date 2018年9月6日 下午8:01:11 
+	 */ 
+	@RequestMapping(value = "/list")
+	@ResponseBody
+	public ApiMessage list(HttpServletRequest request, String venueid) {
+		List<Field> list = fieldService.selectByVenue(venueid);
+		List<Map<String, Object>> maps = new ArrayList<>();
+		for (int i = 0; i < list.size(); i++) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("fieldId", list.get(i).getId());// ID
+			map.put("fieldName", list.get(i).getName());//场地名
+			maps.add(map);
+		}
+		return new ApiMessage(200, "修改成功", maps);
+	}
+	
+	/**  
+	 * @Description: 修改场地名称
+	 * @author 宋高俊  
+	 * @return 
+	 * @date 2018年9月6日 下午8:01:11 
+	 */ 
+	@RequestMapping(value = "/updateFieldName")
+	@ResponseBody
+	public ApiMessage updateFieldName(HttpServletRequest request, String fieldid, String fieldName) {
+		Field field = fieldService.selectByPrimaryKey(fieldid);
+		field.setName(fieldName);
+		fieldService.updateByPrimaryKeySelective(field);
+		return new ApiMessage(200, "修改成功");
+	}
+	
+	
 //	/**  
 //	 * @Description: 模板详情
 //	 * @author 宋高俊  

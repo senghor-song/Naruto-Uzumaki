@@ -26,9 +26,6 @@ public class VenueTemplate implements Serializable {
     /** 时段价格字符串(逗号隔开,不可预订为-1已预约为0) */
     private String price;
 
-    /** 是否为默认模板(0=否1=是) */
-    private Integer defaultflag;
-
     /**
      * VenueTemplate
      */
@@ -130,19 +127,4 @@ public class VenueTemplate implements Serializable {
         this.price = price == null ? null : price.trim();
     }
 
-    /**
-     * 是否为默认模板(0=否1=是)
-     * @return DefaultFlag 是否为默认模板(0=否1=是)
-     */
-    public Integer getDefaultflag() {
-        return defaultflag;
-    }
-
-    /**
-     * 是否为默认模板(0=否1=是)
-     * @param defaultflag 是否为默认模板(0=否1=是)
-     */
-    public void setDefaultflag(Integer defaultflag) {
-        this.defaultflag = defaultflag;
-    }
 }

@@ -50,10 +50,11 @@ public interface TrainCoachService extends BaseService<TrainCoach, String> {
 	 * @Description: 根据场馆查询陪练
 	 * @author 宋高俊  
 	 * @param venueid
+	 * @param trainTeamId 
 	 * @return 
 	 * @date 2018年11月5日 下午4:52:39 
 	 */ 
-	List<TrainCoach> selectByVenue(String venueid);
+	List<TrainCoach> selectByVenue(String venueid, String trainTeamId);
 
 	/**  
 	 * @Description: 查询默认陪练
@@ -65,7 +66,7 @@ public interface TrainCoachService extends BaseService<TrainCoach, String> {
 	TrainCoach selectByDefault(String cityId);
 
     /**
-     * @Description: 查询机构的店长
+     * @Description: 查询机构的馆长
      * @author 宋高俊
      * @param trainTeamId
      * @return
@@ -80,4 +81,13 @@ public interface TrainCoachService extends BaseService<TrainCoach, String> {
 	 * @date 2018年10月8日 下午7:07:42 
 	 */ 
 	TrainCoach selectByMemberTeamManager(String memberId, String teamId);
+
+	/**
+	 * @Description: 根据ID查询教练
+	 * @author 宋高俊
+	 * @param coachid
+	 * @return
+	 * @date 2018年12月6日下午8:54:20
+	 */
+	TrainCoach selectByTrainCoachId(String coachid);
 }

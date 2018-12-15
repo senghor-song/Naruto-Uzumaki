@@ -33,17 +33,17 @@ public class WXConfig {
 	public static final String paternerKey = "ekeEKE00000000000000000000000000";
 
 	/** 小程序订场支付通知地址 */
-	public static final String NOTIFY_URL1 = "https://ball.ekeae.com/WebBackAPI/venue/manager/order/weixinNotify";
+	public static final String NOTIFY_URL1 = "https://beta.ball.ekeae.com/venue/manager/order/weixinNotify";
 	/** 公众号约球支付通知地址 */
-	public static final String NOTIFY_URL2 = "https://ball.ekeae.com/WebBackAPI/venue/manager/order/weixinNotify";
+	public static final String NOTIFY_URL2 = "https://beta.ball.ekeae.com/venue/manager/order/weixinNotify";
 	/** 小程序约球支付通知地址 */
-	public static final String APPNOTIFY_URL = "https://ball.ekeae.com/WebBackAPI/wxapp/inviteBall/weixinNotify";
+	public static final String APPNOTIFY_URL = "https://beta.ball.ekeae.com/wxapp/inviteBall/weixinNotify";
 	
 	/** AA退费补录支付通知地址 */
-	public static final String NOTIFY_URL3 = "https://ball.ekeae.com/WebBackAPI/wxapp/inviteBall/weixinAANotify";
+	public static final String NOTIFY_URL3 = "https://beta.ball.ekeae.com/wxapp/inviteBall/weixinAANotify";
 	
 	/** 培训支付通知地址 */
-	public static final String NOTIFY_URL4 = "https://ball.ekeae.com/WebBackAPI/wxapp/train/course/weixinNotify";
+	public static final String NOTIFY_URL4 = "https://beta.ball.ekeae.com/wxapp/train/course/weixinNotify";
 	
 
 	/** 统一下单 https://api.mch.weixin.qq.com/pay/unifiedorder */
@@ -98,7 +98,15 @@ public class WXConfig {
 	 * remark<br>
 	 **/
 	public static final String wxTemplateId = "k5a271O9L4aW1JGxeUroqGpLn0bJhz-f6JNciftAkIc";
-	
+	/** 
+	 * 订单进度提醒<br>
+	 * first<br>
+	 * 提现金额keyword1<br>
+	 * 提现时间keyword2<br>
+	 * 到账时间keyword2<br>
+	 * remark<br>
+	 **/
+	public static final String wxTemplateId2 = "W5AxbImf9rn_gtpBc7PunEaCIITAgclgTV2V2yLmotg";
 	
 	// 获取ip
 	public static String getIP(HttpServletRequest request) {

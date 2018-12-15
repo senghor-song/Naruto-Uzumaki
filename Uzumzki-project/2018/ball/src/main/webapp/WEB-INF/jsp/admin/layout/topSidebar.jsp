@@ -9,22 +9,22 @@
 
     <!-- <li class="nav-item d-none d-sm-inline-block nav-item-img">
         <a href="index.html" class="nav-link" title="巡检，分辨率必须=1920*1080，全屏模式">
-            <img src="/WebBackAPI/admin/static/image/5.png" alt=""/>
+            <img src="/admin/static/image/5.png" alt=""/>
         </a>
     </li>
     <li class="nav-item d-none d-sm-inline-block nav-item-img">
-        <a href="/WebBackAPI/admin/baiduMap/index" class="nav-link mymap" title="沙盘">
-            <img src="/WebBackAPI/admin/static/image/6.png" alt=""/>
+        <a href="/admin/baiduMap/index" class="nav-link mymap" title="沙盘">
+            <img src="/admin/static/image/6.png" alt=""/>
         </a>
     </li>
     <li class="nav-item d-none d-sm-inline-block nav-item-img">
         <a href="index.html" class="nav-link mymessage" title="OM">
-            <img src="/WebBackAPI/admin/static/image/7.png" alt=""/>
+            <img src="/admin/static/image/7.png" alt=""/>
         </a>
     </li>
     <li class="nav-item d-none d-sm-inline-block nav-item-img">
         <a href="index.html" class="nav-link mymessage" title="短信">
-            <img src="/WebBackAPI/admin/static/image/8h.png" alt=""/>
+            <img src="/admin/static/image/8h.png" alt=""/>
         </a>
     </li> -->
 </ul>
@@ -33,15 +33,15 @@
 <ul class="navbar-nav ml-auto">
     <li class="nav-item dropdown">
         <a class="nav-link nav-item-img" data-toggle="dropdown" href="#" 
-        onclick="window.location.href='/WebBackAPI/admin/venue/listview'" title="待审核教学场地（机构自行添加）">
-            <img src="/WebBackAPI/admin/static/image/11h.png" alt=""/>
+        onclick="window.location.href='/admin/venue/listview'" title="待审核教学场地（机构自行添加）">
+            <img src="/admin/static/image/11h.png" alt=""/>
             <span class="badge badge-danger navbar-badge" id="venueCheckSum">0</span>
         </a>
     </li>
     <li class="nav-item dropdown">
         <a class="nav-link nav-item-img" data-toggle="dropdown" href="#"
-        onclick="window.location.href='/WebBackAPI/admin/venue/listview'" title="场馆认领入驻">
-            <img src="/WebBackAPI/admin/static/image/13h.png" alt=""/>
+        onclick="window.location.href='/admin/venue/listview'" title="场馆入驻">
+            <img src="/admin/static/image/13h.png" alt=""/>
             <span class="badge badge-warning navbar-badge" id="venueEnterSum">0</span>
         </a>
     </li>
@@ -50,7 +50,7 @@
             <div class="input-group input-group-sm">
                 <input class="form-control form-control-navbar" type="search" placeholder="" aria-label="Search"/>
                 <div class="input-group-append">
-                    <button class="btn btn-navbar" type="submit">
+                    <button class="btn btn-navbar" type="button">
                         <i class="fa fa-search"></i>
                     </button>
                 </div>
@@ -59,27 +59,27 @@
     </li>
     <li class="nav-item dropdown">
         <a class="nav-link nav-item-img" data-toggle="dropdown" href="#" 
-        onclick="window.location.href='/WebBackAPI/admin/trainTeam/listview'" title="培训机构入驻">
-            <img src="/WebBackAPI/admin/static/image/10h.png" alt=""/>
+        onclick="window.location.href='/admin/trainTeam/listview'" title="培训机构入驻">
+            <img src="/admin/static/image/10h.png" alt=""/>
             <span class="badge badge-danger navbar-badge" id="trainEnterSum">0</span>
         </a>
     </li>
     <!-- <li class="nav-item dropdown">
         <a class="nav-link nav-item-img" data-toggle="dropdown" href="#" title="公盘">
-            <img src="/WebBackAPI/admin/static/image/10h.png" alt=""/>
+            <img src="/admin/static/image/10h.png" alt=""/>
             <span class="badge badge-danger navbar-badge">0</span>
         </a>
     </li>
     <li class="nav-item dropdown">
         <a class="nav-link nav-item-img" data-toggle="dropdown" href="#" title="合作续期" 
-        onclick="window.location.href='/WebBackAPI/admin/store/listview'">
-            <img src="/WebBackAPI/admin/static/image/12h.png" alt=""/>
+        onclick="window.location.href='/admin/store/listview'">
+            <img src="/admin/static/image/12h.png" alt=""/>
             <span class="badge badge-danger navbar-badge" id="empStoreVerifySum">0</span>
         </a>
     </li> -->
     <li class="nav-item dropdown">
         <a class="nav-link nav-item-img out-margin-left" href="javascript:;" data-href="login.html" id="logout" >
-            <img src="/WebBackAPI/admin/static/image/u5427.png" alt="" title="注销"/>
+            <img src="/admin/static/image/u5427.png" alt="" title="注销"/>
         </a>
     </li>
 </ul>
@@ -130,7 +130,6 @@
 
 <div id="mapDiv" class="otherDialog hide">
     <div style=" position: relative; top: 0px;">
-        <img src="/WebBackAPI/admin/static/image/123.jpg" class="w-100" alt=""/>
     </div>
 
     <div style="position: absolute;

@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 实体
+ * 用户订单表实体
  */
 public class Order implements Serializable {
 	/** 订场详情 */
@@ -19,6 +19,9 @@ public class Order implements Serializable {
 
 	/** 城市 */
 	private City city;
+
+	/** 城市 */
+	private VenueRefund venueRefund;
 
 	public List<Reserve> getReserves() {
 		return reserves;
@@ -52,6 +55,13 @@ public class Order implements Serializable {
 		this.city = city;
 	}
 
+	public VenueRefund getVenueRefund() {
+		return venueRefund;
+	}
+
+	public void setVenueRefund(VenueRefund venueRefund) {
+		this.venueRefund = venueRefund;
+	}
     /** 订场-订单表 */
     private String id;
 
@@ -82,17 +92,38 @@ public class Order implements Serializable {
     /** 订单总金额 */
     private Double price;
 
+    /** 展示金额 */
+    private Double showPrice;
+
+    /** 平台费用 */
+    private Double priceFee;
+
     /** 订单总小时数 */
     private Double timesum;
 
     /** 订单状态(0=待支付1=已消费2=支付取消3=支付超时4=已退款5=支付成功待确认6=已支付待消费) */
     private Integer type;
 
+    /** 支付时间 */
+    private Date paytime;
+
     /** 支付方式0=支付宝1=微信支付 */
     private Integer paytype;
 
     /** 支付结果内容(仅供效验) */
     private String payremark;
+
+    /** 订单确认时间 */
+    private Date confirmtime;
+
+    /** 订单取消时间 */
+    private Date canceltime;
+
+    /** 订单申请退款时间 */
+    private Date applytime;
+
+    /** 订单完成退款时间 */
+    private Date refundtime;
 
     /** 提现ID */
     private String amountid;
@@ -102,6 +133,9 @@ public class Order implements Serializable {
 
     /** 是否删除0=否1=是 */
     private Integer deleteflag;
+
+    /** 线上线下 */
+    private Integer lineflag;
 
     /**
      * Order
@@ -269,6 +303,38 @@ public class Order implements Serializable {
     }
 
     /**
+     * 展示金额
+     * @return Show_price 展示金额
+     */
+    public Double getShowPrice() {
+        return showPrice;
+    }
+
+    /**
+     * 展示金额
+     * @param showPrice 展示金额
+     */
+    public void setShowPrice(Double showPrice) {
+        this.showPrice = showPrice;
+    }
+
+    /**
+     * 平台费用
+     * @return Price_fee 平台费用
+     */
+    public Double getPriceFee() {
+        return priceFee;
+    }
+
+    /**
+     * 平台费用
+     * @param priceFee 平台费用
+     */
+    public void setPriceFee(Double priceFee) {
+        this.priceFee = priceFee;
+    }
+
+    /**
      * 订单总小时数
      * @return TimeSum 订单总小时数
      */
@@ -301,6 +367,22 @@ public class Order implements Serializable {
     }
 
     /**
+     * 支付时间
+     * @return PayTime 支付时间
+     */
+    public Date getPaytime() {
+        return paytime;
+    }
+
+    /**
+     * 支付时间
+     * @param paytime 支付时间
+     */
+    public void setPaytime(Date paytime) {
+        this.paytime = paytime;
+    }
+
+    /**
      * 支付方式0=支付宝1=微信支付
      * @return PayType 支付方式0=支付宝1=微信支付
      */
@@ -330,6 +412,70 @@ public class Order implements Serializable {
      */
     public void setPayremark(String payremark) {
         this.payremark = payremark == null ? null : payremark.trim();
+    }
+
+    /**
+     * 订单确认时间
+     * @return ConfirmTime 订单确认时间
+     */
+    public Date getConfirmtime() {
+        return confirmtime;
+    }
+
+    /**
+     * 订单确认时间
+     * @param confirmtime 订单确认时间
+     */
+    public void setConfirmtime(Date confirmtime) {
+        this.confirmtime = confirmtime;
+    }
+
+    /**
+     * 订单取消时间
+     * @return CancelTime 订单取消时间
+     */
+    public Date getCanceltime() {
+        return canceltime;
+    }
+
+    /**
+     * 订单取消时间
+     * @param canceltime 订单取消时间
+     */
+    public void setCanceltime(Date canceltime) {
+        this.canceltime = canceltime;
+    }
+
+    /**
+     * 订单申请退款时间
+     * @return ApplyTime 订单申请退款时间
+     */
+    public Date getApplytime() {
+        return applytime;
+    }
+
+    /**
+     * 订单申请退款时间
+     * @param applytime 订单申请退款时间
+     */
+    public void setApplytime(Date applytime) {
+        this.applytime = applytime;
+    }
+
+    /**
+     * 订单完成退款时间
+     * @return RefundTime 订单完成退款时间
+     */
+    public Date getRefundtime() {
+        return refundtime;
+    }
+
+    /**
+     * 订单完成退款时间
+     * @param refundtime 订单完成退款时间
+     */
+    public void setRefundtime(Date refundtime) {
+        this.refundtime = refundtime;
     }
 
     /**
@@ -378,5 +524,21 @@ public class Order implements Serializable {
      */
     public void setDeleteflag(Integer deleteflag) {
         this.deleteflag = deleteflag;
+    }
+
+    /**
+     * 线上线下
+     * @return LineFlag 线上线下
+     */
+    public Integer getLineflag() {
+        return lineflag;
+    }
+
+    /**
+     * 线上线下
+     * @param lineflag 线上线下
+     */
+    public void setLineflag(Integer lineflag) {
+        this.lineflag = lineflag;
     }
 }

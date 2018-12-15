@@ -81,6 +81,7 @@
 				</if>
 			</if>
 		</where>
+		ORDER BY p2ID
 	</select>
 	
 	<select id="selectIsMenu" resultMap="BaseResultMap">

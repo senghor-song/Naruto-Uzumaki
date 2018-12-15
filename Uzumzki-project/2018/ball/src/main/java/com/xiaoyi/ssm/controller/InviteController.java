@@ -25,7 +25,6 @@ import com.xiaoyi.ssm.model.Permission;
 import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.service.InviteBallService;
 import com.xiaoyi.ssm.service.InviteJoinService;
-import com.xiaoyi.ssm.service.MemberService;
 import com.xiaoyi.ssm.service.PermissionService;
 import com.xiaoyi.ssm.util.DateUtil;
 
@@ -45,8 +44,6 @@ public class InviteController {
 	@Autowired
 	private InviteLogMapper inviteLogMapper;
 	@Autowired
-	private MemberService memberService;
-	@Autowired
 	private PermissionService permissionService;
 
 	/**
@@ -58,7 +55,7 @@ public class InviteController {
 	@RequestMapping(value = "/listview")
 	public String listview(HttpServletRequest request, Model model) {
 		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
-		List<Permission> list = permissionService.selectByBtu(staff.getPower(), "11");
+		List<Permission> list = permissionService.selectByBtu(staff.getPower(), "12");
 		for (int i = 0; i < list.size(); i++) {
 			model.addAttribute("btn"+list.get(i).getId(), "1");
 		}

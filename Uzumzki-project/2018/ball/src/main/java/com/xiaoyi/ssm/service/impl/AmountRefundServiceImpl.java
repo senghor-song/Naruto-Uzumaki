@@ -22,5 +22,17 @@ public class AmountRefundServiceImpl extends AbstractService<AmountRefund,String
 	public void setBaseMapper() {
 	    super.setBaseMapper(amountRefundMapper);
 	}
+	
+	/**
+	 * @Description: 根据订单ID查询最新的退款数据
+	 * @author 宋高俊
+	 * @param id
+	 * @return
+	 * @date 2018年12月13日下午3:37:00
+	 */
+	@Override
+	public AmountRefund selectByNowSourceId(String sourceId) {
+		return amountRefundMapper.selectByNowSourceId(sourceId);
+	}
 
 }

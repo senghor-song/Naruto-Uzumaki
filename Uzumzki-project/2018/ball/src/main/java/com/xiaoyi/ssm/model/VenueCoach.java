@@ -37,6 +37,9 @@ public class VenueCoach implements Serializable {
     /** 每半小时单价 */
     private Double price;
 
+    /** 特色标签 */
+    private String label;
+
     /**
      * VenueCoach
      */
@@ -152,5 +155,21 @@ public class VenueCoach implements Serializable {
      */
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    /**
+     * 特色标签
+     * @return Label 特色标签
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * 特色标签
+     * @param label 特色标签
+     */
+    public void setLabel(String label) {
+        this.label = label == null ? null : label.trim();
     }
 }

@@ -8,10 +8,9 @@
 		<result column="VenueID" jdbcType="VARCHAR" property="venueid" />
 		<result column="Name" jdbcType="VARCHAR" property="name" />
 		<result column="Price" jdbcType="VARCHAR" property="price" />
-		<result column="DefaultFlag" jdbcType="INTEGER" property="defaultflag" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, CreateTime, ModifyTime, VenueID, Name, Price, DefaultFlag
+		ID, CreateTime, ModifyTime, VenueID, Name, Price
 	</sql>
 	
 	<select id="countByVenue" parameterType="java.lang.String" resultType="Integer">
@@ -33,9 +32,15 @@
 		where VenueID = #{venueid,jdbcType=CHAR} and ID = #{templateid,jdbcType=CHAR}
 	</select>
 	
-	<update id="updateNoDefaultVenue" parameterType="java.lang.String" >
-		update VenueTemplate set DefaultFlag = 0 where VenueID = #{id,jdbcType=CHAR}
+	<update id="updateByVenue" >
+		update VenueTemplate set ID = #{dateStr},VenueID = #{dateStr} where VenueID = #{venueid}
 	</update>
+	
+	<select id="selectByVenueDate" resultMap="BaseResultMap">
+	 	SELECT vt.* FROM  VenueTemplate vt INNER JOIN (
+		SELECT ft.TemplateID FROM `Field` f INNER JOIN FieldTemplate ft ON f.`ID` = ft.`FieldID` WHERE f.`VenueID` = #{venueid} AND ft.`FieldTime` = #{date} )
+		ftv ON vt.`ID` =  ftv.TemplateID
+	</select>
 	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
@@ -49,11 +54,9 @@
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueTemplate">
 		insert into VenueTemplate (ID, CreateTime, ModifyTime,
-		VenueID, Name, Price,
-		DefaultFlag)
+		VenueID, Name, Price)
 		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP},
-		#{venueid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{price,jdbcType=VARCHAR},
-		#{defaultflag,jdbcType=INTEGER})
+		#{venueid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{price,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueTemplate">
 		insert into VenueTemplate
@@ -76,9 +79,6 @@
 			<if test="price != null">
 				Price,
 			</if>
-			<if test="defaultflag != null">
-				DefaultFlag,
-			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -98,9 +98,6 @@
 			</if>
 			<if test="price != null">
 				#{price,jdbcType=VARCHAR},
-			</if>
-			<if test="defaultflag != null">
-				#{defaultflag,jdbcType=INTEGER},
 			</if>
 		</trim>
 	</insert>
@@ -122,9 +119,6 @@
 			<if test="price != null">
 				Price = #{price,jdbcType=VARCHAR},
 			</if>
-			<if test="defaultflag != null">
-				DefaultFlag = #{defaultflag,jdbcType=INTEGER},
-			</if>
 		</set>
 		where ID = #{id,jdbcType=CHAR}
 	</update>
@@ -135,7 +129,6 @@
 		VenueID = #{venueid,jdbcType=VARCHAR},
 		Name = #{name,jdbcType=VARCHAR},
 		Price = #{price,jdbcType=VARCHAR},
-		DefaultFlag = #{defaultflag,jdbcType=INTEGER}
 		where ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

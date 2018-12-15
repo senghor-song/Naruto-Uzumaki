@@ -47,4 +47,43 @@ public class VenueCoachServiceImpl extends AbstractService<VenueCoach,String> im
 		return venueCoachMapper.selectByVenue(venueid);
 	}
 
+	/**
+	 * @Description: 逻辑删除
+	 * @author 宋高俊
+	 * @param dateStr
+	 * @param trainTeamId
+	 * @param trainCoachId
+	 * @return
+	 * @date 2018年11月21日 下午5:07:52
+	 */
+	@Override
+	public int updateByDeleteCoach(String dateStr, String trainTeamId, String trainCoachId) {
+		return venueCoachMapper.updateByDeleteCoach(dateStr, trainTeamId, trainCoachId);
+	}
+
+	/**
+	 * @Description: 陪练数据逻辑删除
+	 * @author 宋高俊
+	 * @param venueid
+	 * @param dateStr
+	 * @return
+	 * @date 2018年11月21日 下午8:55:36
+	 */
+	@Override
+	public int updateByVenue(String venueid, String dateStr) {
+		return venueCoachMapper.updateByVenue(venueid, dateStr);
+	}
+
+	/**
+	 * @Description: 
+	 * @author 宋高俊
+	 * @param coachid
+	 * @return
+	 * @date 2018年12月6日下午8:37:23
+	 */
+	@Override
+	public VenueCoach selectByTrainCoachId(String trainCoachId) {
+		return venueCoachMapper.selectByTrainCoachId(trainCoachId);
+	}
+
 }

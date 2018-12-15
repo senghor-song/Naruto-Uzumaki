@@ -1,5 +1,7 @@
 package com.xiaoyi.ssm.util;
 
+import org.apache.log4j.Logger;
+
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByTtsRequest;
@@ -7,7 +9,6 @@ import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByTtsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
-import org.apache.log4j.Logger;
 
 /**
  * 发送语音通知消息工具类
@@ -104,6 +105,6 @@ public class MoblieVoiceUtil {
 	public static void main(String[] args) {
 		System.out.println("语音文本外呼---------------");
 //		 MoblieVoiceUtil.sendVoiceTeamplate("15207108150", "1234");
-		MoblieVoiceUtil.sendVoiceTeamplate("0755 85257570", "1234");
+		MoblieVoiceUtil.sendVoiceTeamplate("075523776616", "1234");
 	}
 }

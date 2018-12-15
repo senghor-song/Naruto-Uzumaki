@@ -17,13 +17,20 @@
 			<id column="ttID" jdbcType="CHAR" property="id" />
 			<result column="ttTitle" jdbcType="VARCHAR" property="title" />
 		</association>
+		<association property="member" javaType="com.xiaoyi.ssm.model.Member">
+			<id column="mmID" jdbcType="CHAR" property="id" />
+			<result column="mmMemberNo" jdbcType="VARCHAR" property="memberno" />
+		</association>
 	</resultMap>
 	<sql id="Base_Column_List">
 		ID, Train_team_id, Train_coach_id, Manager, Show_flag, Teach_type
 	</sql>
 	
 	<select id="selectByTrainTeamID" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT ttc.*,tc.ID tcID , tc.`Name` tcName FROM TrainTeamCoach ttc LEFT JOIN TrainCoach tc ON ttc.`Train_coach_id` = tc.`ID` 
+		SELECT ttc.*,tc.ID tcID , tc.`Name` tcName,mm.`MemberNo` mmMemberNo ,mm.`ID` mmID
+		FROM TrainTeamCoach ttc 
+		LEFT JOIN TrainCoach tc ON ttc.`Train_coach_id` = tc.`ID` 
+		INNER JOIN Member mm ON tc.`Member_id` = mm.`ID`
 		WHERE Train_team_id = #{trainTeamID,jdbcType=VARCHAR}
 	</select>
 	

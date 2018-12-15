@@ -56,7 +56,7 @@
 				            </div>
 				            <div class="publicbg-title">
 	                        	<input id="coverpath" type="hidden" value="${image}">
-								<button class="layui-btn test" lay-data="{url: '/WebBackAPI/admin/common/uploadImage'}" name="file">上传图片</button>
+								<button class="layui-btn test" lay-data="{url: '/admin/common/uploadImage'}" name="file">上传图片</button>
 							</div>
 	                    </div>
 	                </div>
@@ -94,10 +94,20 @@
 			var upload = layui.upload;
 			upload.render({
 				elem: '.test',
+				before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+					//加载层-风格4
+					layer.msg('上传中', {
+					  icon: 16,shade: 0.01
+					});
+				},
 				done: function(res, index, upload) {
+				    layer.closeAll('loading'); //关闭loading
 					layer.msg("上传成功");
 					$('.image1').html("<div class=\"publicbg-box\"><img class=\"publicbg-img\" src=\""+res.data+"\"></div>");
 					$('#coverpath').val(res.data);
+				},
+				error: function(index, upload){
+				    layer.closeAll('loading'); //关闭loading
 				}
 			})
 		});
@@ -109,7 +119,7 @@
 	        	var coverpath = $('#coverpath').val();
 	            $.ajax({  
 	                type : "POST",  //提交方式  
-	                url : "/WebBackAPI/admin/newsBanner/saveNewsBanner",//路径  
+	                url : "/admin/newsBanner/saveNewsBanner",//路径  
 	                data : {  
 	                	id : id,
 	                    remark : remark,
@@ -120,7 +130,7 @@
 	                success : function(result) {//返回数据根据结果进行相应的处理  
 	                    if ( result.code == 200 ) {  
 	                		layer.msg("保存成功");/* 
-                        	parent.window.location.href="/WebBackAPI/admin/newsBanner/listview"; */
+                        	parent.window.location.href="/admin/newsBanner/listview"; */
 	                    } else {
 	                		layer.confirm(result.msg, {
 	                			btn: ['确定'] //按钮

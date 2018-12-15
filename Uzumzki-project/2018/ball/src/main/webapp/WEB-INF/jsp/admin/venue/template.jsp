@@ -86,8 +86,8 @@
 		    <button class="" id="saveVenueTemplate">保存</button>
 		</div>
     </table>
-	<script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
-	<script src="/WebBackAPI/admin/static/plugins/layui/layui.all.js"></script>
+	<script src="/admin/static/plugins/jquery/jquery.min.js"></script>
+	<script src="/admin/static/plugins/layui/layui.all.js"></script>
 	<script type="text/javascript">
 	$(function(){
 		$("#saveVenueTemplate").click(function () {
@@ -99,7 +99,7 @@
 			var venueid = "${venueid}";
 	       	$.ajax({  
 	            type : "POST",  //提交方式  
-	            url : "/WebBackAPI/admin/venue/saveVenueTemplate",//路径  
+	            url : "/admin/venue/saveVenueTemplate",//路径  
 	            data : {priceArr : priceArr, venueid : venueid},//数据，这里使用的是Json格式进行传输 
 	            dataType:"json",
 	            success : function(result) {//返回数据根据结果进行相应的处理  

@@ -20,8 +20,12 @@
 		Refund_status, Refund_remark, Refund_fee
 	</sql>
 
-	<select id="selectByPrimaryKey" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
+	<select id="selectByNowSourceId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM `AmountRefund` WHERE `Source_id` = #{sourceId} ORDER BY
+		`Refund_time` DESC LIMIT 1
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from AmountRefund
@@ -38,10 +42,12 @@
 		Refund_remark, Refund_fee)
 		values (#{id,jdbcType=CHAR}, #{content,jdbcType=VARCHAR},
 		#{amountSum,jdbcType=DOUBLE},
-		#{amount,jdbcType=DOUBLE}, #{sourceId,jdbcType=VARCHAR}, #{refundTime,jdbcType=TIMESTAMP},
+		#{amount,jdbcType=DOUBLE}, #{sourceId,jdbcType=VARCHAR},
+		#{refundTime,jdbcType=TIMESTAMP},
 		#{refundSource,jdbcType=INTEGER}, #{refundPayType,jdbcType=INTEGER},
 		#{refundStatus,jdbcType=INTEGER},
-		#{refundRemark,jdbcType=VARCHAR}, #{refundFee,jdbcType=DOUBLE})
+		#{refundRemark,jdbcType=VARCHAR},
+		#{refundFee,jdbcType=DOUBLE})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.AmountRefund">
 		insert into AmountRefund
@@ -156,14 +162,16 @@
 		update AmountRefund
 		set Content = #{content,jdbcType=VARCHAR},
 		Amount_sum = #{amountSum,jdbcType=DOUBLE},
-		Amount = #{amount,jdbcType=DOUBLE},
+		Amount =
+		#{amount,jdbcType=DOUBLE},
 		Source_id = #{sourceId,jdbcType=VARCHAR},
 		Refund_time = #{refundTime,jdbcType=TIMESTAMP},
 		Refund_source = #{refundSource,jdbcType=INTEGER},
 		Refund_pay_type = #{refundPayType,jdbcType=INTEGER},
 		Refund_status = #{refundStatus,jdbcType=INTEGER},
 		Refund_remark = #{refundRemark,jdbcType=VARCHAR},
-		Refund_fee = #{refundFee,jdbcType=DOUBLE}
+		Refund_fee =
+		#{refundFee,jdbcType=DOUBLE}
 		where ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

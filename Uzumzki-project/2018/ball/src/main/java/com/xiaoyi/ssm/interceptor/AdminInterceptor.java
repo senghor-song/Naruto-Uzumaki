@@ -29,7 +29,7 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
 		String contextPath = request.getContextPath();
 		String url = requestUri.substring(contextPath.length());
 
-		if ("/WebBackAPI/admin/common/login".equals(requestUri)) {
+		if ("/admin/common/login".equals(requestUri)) {
 			return true;
 		}
 
@@ -40,7 +40,7 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
 			logger.info("url:" + url);
 			logger.info("非法请求：跳转到登录页面！");
 			response.setCharacterEncoding("UTF-8");
-			response.sendRedirect("/WebBackAPI/admin/common/login");
+			response.sendRedirect("/admin/common/login");
 			return false;
 		} else {
 			String[] strings = requestUri.split("/");
@@ -49,7 +49,7 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
 				Permission permission = permissionService.selectIsMenu(staff.getPower(), requestUri);
 				if (permission == null) {
 					response.setCharacterEncoding("UTF-8");
-					response.sendRedirect("/WebBackAPI/admin/common/index");
+					response.sendRedirect("/admin/common/index");
 					return false;
 				}
 			}

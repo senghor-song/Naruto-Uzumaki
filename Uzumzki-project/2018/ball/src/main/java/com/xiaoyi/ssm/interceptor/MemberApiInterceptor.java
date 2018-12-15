@@ -42,7 +42,7 @@ public class MemberApiInterceptor extends HandlerInterceptorAdapter {
 			logger.info("小程序访问token:" + token);
 		}
 		
-		if ("/WebBackAPI/api/common/member/login".equals(requestUri)) {
+		if ("/api/common/member/login".equals(requestUri)) {
 			return true;
 		}
 		
@@ -59,12 +59,12 @@ public class MemberApiInterceptor extends HandlerInterceptorAdapter {
 		logger.info("requestUri:" + requestUri);
 		logger.info("contextPath:" + contextPath);
 		logger.info("url:" + url);
-//		response.sendRedirect("https://ball.ekeae.com:8443/dist/login");
+//		response.sendRedirect("https://beta.ball.ekeae.com:8443/dist/login");
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json; charset=utf-8");
 		PrintWriter out = null;
 		JSONObject json = new JSONObject();
-		json.put("code", "500");
+		json.put("code", 500);
 		json.put("msg", "请登录后操作");
 		out = response.getWriter();
 		out.append(json.toString());

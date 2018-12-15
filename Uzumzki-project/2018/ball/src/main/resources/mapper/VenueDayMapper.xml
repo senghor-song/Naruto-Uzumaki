@@ -1,153 +1,220 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xiaoyi.ssm.dao.VenueDayMapper">
-  <resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.VenueDay">
-    <id column="ID" jdbcType="VARCHAR" property="id" />
-    <result column="Venue_day_no" jdbcType="INTEGER" property="venueDayNo" />
-    <result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="Modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
-    <result column="Venue_id" jdbcType="CHAR" property="venueId" />
-    <result column="Count_day" jdbcType="DATE" property="countDay" />
-    <result column="Count_amount" jdbcType="DOUBLE" property="countAmount" />
-    <result column="Member_id" jdbcType="VARCHAR" property="memberId" />
-    <result column="Type_flag" jdbcType="INTEGER" property="typeFlag" />
-    <result column="Remark" jdbcType="VARCHAR" property="remark" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    ID, Venue_day_no, Create_time, Modify_time, Venue_id, Count_day, Count_amount, Member_id, 
-    Type_flag, Remark
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from VenueDay
-    where ID = #{id,jdbcType=VARCHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from VenueDay
-    where ID = #{id,jdbcType=VARCHAR}
-  </delete>
-  <insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueDay">
-    insert into VenueDay (ID, Venue_day_no, Create_time, 
-      Modify_time, Venue_id, Count_day, 
-      Count_amount, Member_id, Type_flag, 
-      Remark)
-    values (#{id,jdbcType=VARCHAR}, #{venueDayNo,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{modifyTime,jdbcType=TIMESTAMP}, #{venueId,jdbcType=CHAR}, #{countDay,jdbcType=DATE}, 
-      #{countAmount,jdbcType=DOUBLE}, #{memberId,jdbcType=VARCHAR}, #{typeFlag,jdbcType=INTEGER}, 
-      #{remark,jdbcType=VARCHAR})
-  </insert>
-  <insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueDay">
-    insert into VenueDay
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        ID,
-      </if>
-      <if test="venueDayNo != null">
-        Venue_day_no,
-      </if>
-      <if test="createTime != null">
-        Create_time,
-      </if>
-      <if test="modifyTime != null">
-        Modify_time,
-      </if>
-      <if test="venueId != null">
-        Venue_id,
-      </if>
-      <if test="countDay != null">
-        Count_day,
-      </if>
-      <if test="countAmount != null">
-        Count_amount,
-      </if>
-      <if test="memberId != null">
-        Member_id,
-      </if>
-      <if test="typeFlag != null">
-        Type_flag,
-      </if>
-      <if test="remark != null">
-        Remark,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=VARCHAR},
-      </if>
-      <if test="venueDayNo != null">
-        #{venueDayNo,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modifyTime != null">
-        #{modifyTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="venueId != null">
-        #{venueId,jdbcType=CHAR},
-      </if>
-      <if test="countDay != null">
-        #{countDay,jdbcType=DATE},
-      </if>
-      <if test="countAmount != null">
-        #{countAmount,jdbcType=DOUBLE},
-      </if>
-      <if test="memberId != null">
-        #{memberId,jdbcType=VARCHAR},
-      </if>
-      <if test="typeFlag != null">
-        #{typeFlag,jdbcType=INTEGER},
-      </if>
-      <if test="remark != null">
-        #{remark,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.VenueDay">
-    update VenueDay
-    <set>
-      <if test="venueDayNo != null">
-        Venue_day_no = #{venueDayNo,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null">
-        Create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modifyTime != null">
-        Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="venueId != null">
-        Venue_id = #{venueId,jdbcType=CHAR},
-      </if>
-      <if test="countDay != null">
-        Count_day = #{countDay,jdbcType=DATE},
-      </if>
-      <if test="countAmount != null">
-        Count_amount = #{countAmount,jdbcType=DOUBLE},
-      </if>
-      <if test="memberId != null">
-        Member_id = #{memberId,jdbcType=VARCHAR},
-      </if>
-      <if test="typeFlag != null">
-        Type_flag = #{typeFlag,jdbcType=INTEGER},
-      </if>
-      <if test="remark != null">
-        Remark = #{remark,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where ID = #{id,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.VenueDay">
-    update VenueDay
-    set Venue_day_no = #{venueDayNo,jdbcType=INTEGER},
-      Create_time = #{createTime,jdbcType=TIMESTAMP},
-      Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
-      Venue_id = #{venueId,jdbcType=CHAR},
-      Count_day = #{countDay,jdbcType=DATE},
-      Count_amount = #{countAmount,jdbcType=DOUBLE},
-      Member_id = #{memberId,jdbcType=VARCHAR},
-      Type_flag = #{typeFlag,jdbcType=INTEGER},
-      Remark = #{remark,jdbcType=VARCHAR}
-    where ID = #{id,jdbcType=VARCHAR}
-  </update>
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.VenueDay">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Venue_day_no" jdbcType="INTEGER" property="venueDayNo" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+		<result column="Venue_id" jdbcType="CHAR" property="venueId" />
+		<result column="Count_day" jdbcType="DATE" property="countDay" />
+		<result column="Ought_amount" jdbcType="DOUBLE" property="oughtAmount" />
+		<result column="Reality_amount" jdbcType="DOUBLE" property="realityAmount" />
+		<result column="Count_fee" jdbcType="DOUBLE" property="countFee" />
+		<result column="Count_order" jdbcType="INTEGER" property="countOrder" />
+		<result column="Member_id" jdbcType="VARCHAR" property="memberId" />
+		<result column="Member_fee" jdbcType="DOUBLE" property="memberFee" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<result column="Type_flag" jdbcType="INTEGER" property="typeFlag" />
+		<result column="Pay_subsidy" jdbcType="DOUBLE" property="paySubsidy" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Venue_day_no, Create_time, Modify_time, Venue_id, Count_day, Ought_amount, Reality_amount,
+		Count_fee, Count_order, Member_id, Member_fee, Remark, Type_flag, Pay_subsidy
+	</sql>
+
+	<select id="selectByNowDate" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueDay
+		where Count_day = #{nowDate,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueDay
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from VenueDay
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueDay">
+		insert into VenueDay (ID, Venue_day_no, Create_time,
+		Modify_time, Venue_id, Count_day,
+		Ought_amount, Reality_amount, Count_fee,
+		Count_order, Member_id, Member_fee,
+		Remark, Type_flag, Pay_subsidy
+		)
+		values (#{id,jdbcType=VARCHAR}, #{venueDayNo,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+		#{modifyTime,jdbcType=TIMESTAMP}, #{venueId,jdbcType=CHAR}, #{countDay,jdbcType=DATE},
+		#{oughtAmount,jdbcType=DOUBLE}, #{realityAmount,jdbcType=DOUBLE}, #{countFee,jdbcType=DOUBLE},
+		#{countOrder,jdbcType=INTEGER}, #{memberId,jdbcType=VARCHAR}, #{memberFee,jdbcType=DOUBLE},
+		#{remark,jdbcType=VARCHAR}, #{typeFlag,jdbcType=INTEGER}, #{paySubsidy,jdbcType=DOUBLE}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueDay">
+		insert into VenueDay
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="venueDayNo != null">
+				Venue_day_no,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="modifyTime != null">
+				Modify_time,
+			</if>
+			<if test="venueId != null">
+				Venue_id,
+			</if>
+			<if test="countDay != null">
+				Count_day,
+			</if>
+			<if test="oughtAmount != null">
+				Ought_amount,
+			</if>
+			<if test="realityAmount != null">
+				Reality_amount,
+			</if>
+			<if test="countFee != null">
+				Count_fee,
+			</if>
+			<if test="countOrder != null">
+				Count_order,
+			</if>
+			<if test="memberId != null">
+				Member_id,
+			</if>
+			<if test="memberFee != null">
+				Member_fee,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="typeFlag != null">
+				Type_flag,
+			</if>
+			<if test="paySubsidy != null">
+				Pay_subsidy,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="venueDayNo != null">
+				#{venueDayNo,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				#{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueId != null">
+				#{venueId,jdbcType=CHAR},
+			</if>
+			<if test="countDay != null">
+				#{countDay,jdbcType=DATE},
+			</if>
+			<if test="oughtAmount != null">
+				#{oughtAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="realityAmount != null">
+				#{realityAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="countFee != null">
+				#{countFee,jdbcType=DOUBLE},
+			</if>
+			<if test="countOrder != null">
+				#{countOrder,jdbcType=INTEGER},
+			</if>
+			<if test="memberId != null">
+				#{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="memberFee != null">
+				#{memberFee,jdbcType=DOUBLE},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="typeFlag != null">
+				#{typeFlag,jdbcType=INTEGER},
+			</if>
+			<if test="paySubsidy != null">
+				#{paySubsidy,jdbcType=DOUBLE},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.VenueDay">
+		update VenueDay
+		<set>
+			<if test="venueDayNo != null">
+				Venue_day_no = #{venueDayNo,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venueId != null">
+				Venue_id = #{venueId,jdbcType=CHAR},
+			</if>
+			<if test="countDay != null">
+				Count_day = #{countDay,jdbcType=DATE},
+			</if>
+			<if test="oughtAmount != null">
+				Ought_amount = #{oughtAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="realityAmount != null">
+				Reality_amount = #{realityAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="countFee != null">
+				Count_fee = #{countFee,jdbcType=DOUBLE},
+			</if>
+			<if test="countOrder != null">
+				Count_order = #{countOrder,jdbcType=INTEGER},
+			</if>
+			<if test="memberId != null">
+				Member_id = #{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="memberFee != null">
+				Member_fee = #{memberFee,jdbcType=DOUBLE},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="typeFlag != null">
+				Type_flag = #{typeFlag,jdbcType=INTEGER},
+			</if>
+			<if test="paySubsidy != null">
+				Pay_subsidy = #{paySubsidy,jdbcType=DOUBLE},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.VenueDay">
+		update VenueDay
+		set Venue_day_no = #{venueDayNo,jdbcType=INTEGER},
+		Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+		Venue_id = #{venueId,jdbcType=CHAR},
+		Count_day = #{countDay,jdbcType=DATE},
+		Ought_amount = #{oughtAmount,jdbcType=DOUBLE},
+		Reality_amount = #{realityAmount,jdbcType=DOUBLE},
+		Count_fee = #{countFee,jdbcType=DOUBLE},
+		Count_order = #{countOrder,jdbcType=INTEGER},
+		Member_id = #{memberId,jdbcType=VARCHAR},
+		Member_fee = #{memberFee,jdbcType=DOUBLE},
+		Remark = #{remark,jdbcType=VARCHAR},
+		Type_flag = #{typeFlag,jdbcType=INTEGER},
+		Pay_subsidy = #{paySubsidy,jdbcType=DOUBLE}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
 </mapper>

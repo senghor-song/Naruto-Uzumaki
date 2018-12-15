@@ -123,7 +123,10 @@ public class HttpUtils {
     }
     
     public static void main(String[] args) {
-//    	String jsonString = HttpUtils.sendGet("http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=37.841448998112,112.58027327752&output=json&pois=1&ak="+Global.Baidu_Map_KRY,null);
+    	String par = "kf_account=kf2002@EKEAE-YDC&openid=oozuywt6GdCgM-Z4Kk9CrvvTAkJo";
+    	
+    	String jsonString = HttpUtils.sendPost("https://api.weixin.qq.com/customservice/kfsession/close?access_token=15_chpGmoV1kz_HT9n3W7KuuRs_2737vKticEwHIKOpf3vDtz_fcCYw23T6YHwQ16ZZ7LLqNbQ3IL7EwcKSpacnSwTUkS5pmOrY0OYCQv93MHNoINrBv2s2zjpAetiUDaXYeMw3mDdz6SyH7DgIJZQiAGANDU",par);
+    	System.out.println(jsonString);
 //    	jsonString = jsonString.replace("renderReverse&&renderReverse(","");
 //    	jsonString = jsonString.substring(0, jsonString.length() -1);
 //    	JSONObject jsonObject = JSONObject.fromObject(jsonString);

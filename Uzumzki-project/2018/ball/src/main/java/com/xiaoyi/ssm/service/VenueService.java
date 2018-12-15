@@ -2,7 +2,10 @@ package com.xiaoyi.ssm.service;
 
 import java.util.List;
 
-import com.xiaoyi.ssm.model.Member;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.xiaoyi.ssm.dto.ApiMessage;
+import com.xiaoyi.ssm.model.Staff;
 import com.xiaoyi.ssm.model.TrainTeamVenue;
 import com.xiaoyi.ssm.model.Venue;
 
@@ -139,12 +142,12 @@ public interface VenueService extends BaseService<Venue, String> {
 	List<Venue> selectByVenueSearch(String cityid, Integer sumTemplate, Integer trainAddFlag, Integer ballType);
 
 	/**  
-	 * @Description: 查询订单已消费可以结算的订单
+	 * @Description: 根据时间和状态查询有过订单的场馆
 	 * @author 宋高俊  
 	 * @return 
 	 * @date 2018年11月15日14:23:09
 	 */ 
-	List<Venue> selectByDateOut(String date);
+	List<Venue> selectByDateOut(String date, Integer type);
 
 	/**  
 	 * @Description: 根据手机号查询是否有匹配的场馆
@@ -153,4 +156,96 @@ public interface VenueService extends BaseService<Venue, String> {
 	 * @date 2018年11月15日14:23:09
 	 */ 
 	List<Venue> selectByMatchingVenue(String phone);
+
+	/**
+	 * @Description: 解除结构入驻绑定
+	 * @author 宋高俊
+	 * @param venueid
+	 * @date 2018年11月22日 上午9:59:09
+	 */
+	Venue relieveVenue(String venueid);
+
+	/**
+	 * @Description: 初始化场馆数据
+	 * @author 宋高俊
+	 * @param venue
+	 * @date 2018年11月18日 下午7:26:47
+	 */
+	void initVenue(Venue venue);
+
+	/**
+	 * @Description: 根据用户ID和日期查询场馆
+	 * @author 宋高俊
+	 * @param id
+	 * @param dateStr
+	 * @return
+	 * @date 2018年12月5日下午3:15:14
+	 */
+	List<Venue> selectByMemberAndOrderDate(String memberId, String dateStr);
+
+	/**
+	 * @Description: excel导入数据
+	 * @author 宋高俊
+	 * @param staff
+	 * @param file 
+	 * @param ip 
+	 * @param sessionId 
+	 * @date 2018年12月13日上午10:46:12
+	 */
+	ApiMessage importExcel(Staff staff, MultipartFile file, String sessionId, String ip);
+
+	/**
+	 * @Description: 修改场馆数据
+	 * @author 宋高俊
+	 * @param id
+	 * @param showflag
+	 * @param venueName
+	 * @param contactPhone
+	 * @param informPhone
+	 * @param image
+	 * @param owner
+	 * @param reserveShow
+	 * @param reserveSms
+	 * @param reservePaySms
+	 * @param cityName
+	 * @param districtName
+	 * @param address
+	 * @param lng
+	 * @param lat
+	 * @param staff
+	 * @param ipAddr
+	 * @return
+	 * @date 2018年12月13日上午11:28:40
+	 */
+	ApiMessage updateVenue(String id, Integer showflag, String venueName, String contactPhone, String informPhone,
+			String image, String owner, boolean reserveShow, boolean reserveSms, boolean reservePaySms, String cityName,
+			String districtName, String address, Double lng, Double lat, Staff staff, String ipAddr);
+
+	/**
+	 * @Description: 场馆入驻审核
+	 * @author 宋高俊
+	 * @param staff
+	 * @param check
+	 * @param checkContent
+	 * @param id
+	 * @param contactPhone
+	 * @param informPhone
+	 * @param venueAddress
+	 * @param mainFlag
+	 * @param ballSum
+	 * @return
+	 * @date 2018年12月13日上午11:43:11
+	 */
+	ApiMessage venueEnterCheck(Staff staff, Integer check, String checkContent, String id, String contactPhone,
+			String informPhone, String venueAddress, Integer mainFlag, Integer ballSum);
+
+	/**
+	 * @Description: 根据场馆编号查询场馆
+	 * @author 宋高俊
+	 * @param venueNo
+	 * @return
+	 * @date 2018年12月13日下午7:18:57
+	 */
+	Venue selectByVenueNo(String venueNo);
+
 }

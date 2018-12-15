@@ -7,7 +7,7 @@
 		<result column="Order_id" jdbcType="VARCHAR" property="orderId" />
 		<result column="Openid" jdbcType="VARCHAR" property="openid" />
 		<result column="Amount" jdbcType="DOUBLE" property="amount" />
-		<result column="Desc" jdbcType="VARCHAR" property="desc" />
+		<result column="Desc_content" jdbcType="VARCHAR" property="descContent" />
 		<result column="Pay_type" jdbcType="INTEGER" property="payType" />
 		<result column="Pay_msg" jdbcType="VARCHAR" property="payMsg" />
 		<result column="Payment_no" jdbcType="VARCHAR" property="paymentNo" />
@@ -15,12 +15,19 @@
 		<result column="Return_xml" jdbcType="VARCHAR" property="returnXml" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, Create_time, Order_id, Openid, Amount, Desc, Pay_type, Pay_msg,
-		Payment_no, Payment_time,
-		Return_xml
+		ID, Create_time, Order_id, Openid, Amount, Desc_content, Pay_type, Pay_msg, Payment_no,
+		Payment_time, Return_xml
 	</sql>
-	<select id="selectByPrimaryKey" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
+	
+	<select id="selectByOrder" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM `WXCompanyPayment` WHERE `Order_id` = #{orderid} ORDER BY `Create_time` DESC LIMIT 1
+	</select>
+	
+	<select id="selectByOrderLog" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM WXCompanyPayment WHERE `Order_id` = #{orderid} ORDER BY `Create_time` DESC
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from WXCompanyPayment
@@ -32,14 +39,12 @@
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.WXCompanyPayment">
 		insert into WXCompanyPayment (ID, Create_time, Order_id,
-		Openid, Amount, Desc,
+		Openid, Amount, Desc_content,
 		Pay_type, Pay_msg, Payment_no,
 		Payment_time, Return_xml)
-		values (#{id,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP},
-		#{orderId,jdbcType=VARCHAR},
-		#{openid,jdbcType=VARCHAR}, #{amount,jdbcType=DOUBLE}, #{desc,jdbcType=VARCHAR},
-		#{payType,jdbcType=INTEGER}, #{payMsg,jdbcType=VARCHAR},
-		#{paymentNo,jdbcType=VARCHAR},
+		values (#{id,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{orderId,jdbcType=VARCHAR},
+		#{openid,jdbcType=VARCHAR}, #{amount,jdbcType=DOUBLE}, #{descContent,jdbcType=VARCHAR},
+		#{payType,jdbcType=INTEGER}, #{payMsg,jdbcType=VARCHAR}, #{paymentNo,jdbcType=VARCHAR},
 		#{paymentTime,jdbcType=VARCHAR}, #{returnXml,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.WXCompanyPayment">
@@ -60,8 +65,8 @@
 			<if test="amount != null">
 				Amount,
 			</if>
-			<if test="desc != null">
-				Desc,
+			<if test="descContent != null">
+				Desc_content,
 			</if>
 			<if test="payType != null">
 				Pay_type,
@@ -95,8 +100,8 @@
 			<if test="amount != null">
 				#{amount,jdbcType=DOUBLE},
 			</if>
-			<if test="desc != null">
-				#{desc,jdbcType=VARCHAR},
+			<if test="descContent != null">
+				#{descContent,jdbcType=VARCHAR},
 			</if>
 			<if test="payType != null">
 				#{payType,jdbcType=INTEGER},
@@ -130,8 +135,8 @@
 			<if test="amount != null">
 				Amount = #{amount,jdbcType=DOUBLE},
 			</if>
-			<if test="desc != null">
-				Desc = #{desc,jdbcType=VARCHAR},
+			<if test="descContent != null">
+				Desc_content = #{descContent,jdbcType=VARCHAR},
 			</if>
 			<if test="payType != null">
 				Pay_type = #{payType,jdbcType=INTEGER},
@@ -157,7 +162,7 @@
 		Order_id = #{orderId,jdbcType=VARCHAR},
 		Openid = #{openid,jdbcType=VARCHAR},
 		Amount = #{amount,jdbcType=DOUBLE},
-		Desc = #{desc,jdbcType=VARCHAR},
+		Desc_content = #{descContent,jdbcType=VARCHAR},
 		Pay_type = #{payType,jdbcType=INTEGER},
 		Pay_msg = #{payMsg,jdbcType=VARCHAR},
 		Payment_no = #{paymentNo,jdbcType=VARCHAR},

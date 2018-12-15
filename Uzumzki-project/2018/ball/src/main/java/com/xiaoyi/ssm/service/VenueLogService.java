@@ -34,4 +34,12 @@ public interface VenueLogService extends BaseService<VenueLog, String> {
 	 * @date 2018年10月15日 下午3:12:12 
 	 */ 
 	List<VenueLog> selectBySearch(Integer selectType, String keyword);
+
+	/**
+	 * @Description: 保存日志数据
+	 * @author 宋高俊
+	 * @return
+	 * @date 2018年12月6日下午2:33:45
+	 */
+	int saveLog(String venueid, String managerid, String content);
 }

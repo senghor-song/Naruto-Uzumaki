@@ -30,6 +30,10 @@
 		SELECT <include refid="Base_Column_List" /> FROM VenueLock WHERE LockDate = #{date} AND VenueID = #{venueid} AND FieldID = #{fieldid} AND Setting = 1
 	</select>
 	
+	<update id="updateByVenue" >
+		update VenueLock set VenueID = #{dateStr} where VenueID = #{venueid}
+	</update>
+	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />

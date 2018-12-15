@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.VenueDayStatisMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.VenueDayStatis">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Now_date" jdbcType="DATE" property="nowDate" />
+		<result column="Ought_amount" jdbcType="DOUBLE" property="oughtAmount" />
+		<result column="Reality_amount" jdbcType="DOUBLE" property="realityAmount" />
+		<result column="Pay_subsidy" jdbcType="DOUBLE" property="paySubsidy" />
+		<result column="Profit_amount" jdbcType="DOUBLE" property="profitAmount" />
+		<result column="System_flag" jdbcType="VARCHAR" property="systemFlag" />
+		<result column="User_flag" jdbcType="VARCHAR" property="userFlag" />
+		<result column="Deal_income" jdbcType="DOUBLE" property="dealIncome" />
+		<result column="Deal_refund" jdbcType="DOUBLE" property="dealRefund" />
+		<result column="Deal_fee" jdbcType="DOUBLE" property="dealFee" />
+		<result column="Withdrawal_cash" jdbcType="DOUBLE" property="withdrawalCash" />
+		<result column="Basic_to_operation" jdbcType="DOUBLE" property="basicToOperation" />
+		<result column="Operation_to_basic" jdbcType="DOUBLE" property="operationToBasic" />
+		<result column="Rests_income" jdbcType="DOUBLE" property="restsIncome" />
+		<result column="Account_amount" jdbcType="DOUBLE" property="accountAmount" />
+		<result column="Now_day_amount" jdbcType="DOUBLE" property="nowDayAmount" />
+		<result column="Old_day_amount" jdbcType="DOUBLE" property="oldDayAmount" />
+		<result column="Now_day_order_amount" jdbcType="DOUBLE" property="nowDayOrderAmount" />
+		<result column="Payment_amount_operation" jdbcType="DOUBLE" property="paymentAmountOperation" />
+		<result column="Basic_to_operation_operation" jdbcType="DOUBLE" property="basicToOperationOperation" />
+		<result column="Operation_to_basic_operation" jdbcType="DOUBLE" property="operationToBasicOperation" />
+		<result column="Account_amount_operation" jdbcType="DOUBLE" property="accountAmountOperation" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Now_date, Ought_amount, Reality_amount, Pay_subsidy, Profit_amount,
+		System_flag, User_flag, Deal_income, Deal_refund, Deal_fee, Withdrawal_cash, Basic_to_operation,
+		Operation_to_basic, Rests_income, Account_amount, Now_day_amount, Old_day_amount,
+		Now_day_order_amount, Payment_amount_operation, Basic_to_operation_operation, Operation_to_basic_operation,
+		Account_amount_operation
+	</sql>
+
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.VenueDayStatis" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueDayStatis ORDER BY Create_time DESC
+	</select>
+
+	<select id="selectByNowDate" resultMap="BaseResultMap">
+		SELECT * FROM VenueDayStatis WHERE `Now_date` = #{nowDate} ORDER BY `Create_time` DESC LIMIT 1
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from VenueDayStatis
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from VenueDayStatis
+		where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueDayStatis">
+		insert into VenueDayStatis (ID, Create_time, Now_date,
+		Ought_amount, Reality_amount, Pay_subsidy,
+		Profit_amount, System_flag, User_flag,
+		Deal_income, Deal_refund, Deal_fee,
+		Withdrawal_cash, Basic_to_operation, Operation_to_basic,
+		Rests_income, Account_amount, Now_day_amount,
+		Old_day_amount, Now_day_order_amount, Payment_amount_operation,
+		Basic_to_operation_operation, Operation_to_basic_operation,
+		Account_amount_operation)
+		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{nowDate,jdbcType=DATE},
+		#{oughtAmount,jdbcType=DOUBLE}, #{realityAmount,jdbcType=DOUBLE}, #{paySubsidy,jdbcType=DOUBLE},
+		#{profitAmount,jdbcType=DOUBLE}, #{systemFlag,jdbcType=VARCHAR}, #{userFlag,jdbcType=VARCHAR},
+		#{dealIncome,jdbcType=DOUBLE}, #{dealRefund,jdbcType=DOUBLE}, #{dealFee,jdbcType=DOUBLE},
+		#{withdrawalCash,jdbcType=DOUBLE}, #{basicToOperation,jdbcType=DOUBLE}, #{operationToBasic,jdbcType=DOUBLE},
+		#{restsIncome,jdbcType=DOUBLE}, #{accountAmount,jdbcType=DOUBLE}, #{nowDayAmount,jdbcType=DOUBLE},
+		#{oldDayAmount,jdbcType=DOUBLE}, #{nowDayOrderAmount,jdbcType=DOUBLE}, #{paymentAmountOperation,jdbcType=DOUBLE},
+		#{basicToOperationOperation,jdbcType=DOUBLE}, #{operationToBasicOperation,jdbcType=DOUBLE},
+		#{accountAmountOperation,jdbcType=DOUBLE})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueDayStatis">
+		insert into VenueDayStatis
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="nowDate != null">
+				Now_date,
+			</if>
+			<if test="oughtAmount != null">
+				Ought_amount,
+			</if>
+			<if test="realityAmount != null">
+				Reality_amount,
+			</if>
+			<if test="paySubsidy != null">
+				Pay_subsidy,
+			</if>
+			<if test="profitAmount != null">
+				Profit_amount,
+			</if>
+			<if test="systemFlag != null">
+				System_flag,
+			</if>
+			<if test="userFlag != null">
+				User_flag,
+			</if>
+			<if test="dealIncome != null">
+				Deal_income,
+			</if>
+			<if test="dealRefund != null">
+				Deal_refund,
+			</if>
+			<if test="dealFee != null">
+				Deal_fee,
+			</if>
+			<if test="withdrawalCash != null">
+				Withdrawal_cash,
+			</if>
+			<if test="basicToOperation != null">
+				Basic_to_operation,
+			</if>
+			<if test="operationToBasic != null">
+				Operation_to_basic,
+			</if>
+			<if test="restsIncome != null">
+				Rests_income,
+			</if>
+			<if test="accountAmount != null">
+				Account_amount,
+			</if>
+			<if test="nowDayAmount != null">
+				Now_day_amount,
+			</if>
+			<if test="oldDayAmount != null">
+				Old_day_amount,
+			</if>
+			<if test="nowDayOrderAmount != null">
+				Now_day_order_amount,
+			</if>
+			<if test="paymentAmountOperation != null">
+				Payment_amount_operation,
+			</if>
+			<if test="basicToOperationOperation != null">
+				Basic_to_operation_operation,
+			</if>
+			<if test="operationToBasicOperation != null">
+				Operation_to_basic_operation,
+			</if>
+			<if test="accountAmountOperation != null">
+				Account_amount_operation,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="nowDate != null">
+				#{nowDate,jdbcType=DATE},
+			</if>
+			<if test="oughtAmount != null">
+				#{oughtAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="realityAmount != null">
+				#{realityAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="paySubsidy != null">
+				#{paySubsidy,jdbcType=DOUBLE},
+			</if>
+			<if test="profitAmount != null">
+				#{profitAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="systemFlag != null">
+				#{systemFlag,jdbcType=VARCHAR},
+			</if>
+			<if test="userFlag != null">
+				#{userFlag,jdbcType=VARCHAR},
+			</if>
+			<if test="dealIncome != null">
+				#{dealIncome,jdbcType=DOUBLE},
+			</if>
+			<if test="dealRefund != null">
+				#{dealRefund,jdbcType=DOUBLE},
+			</if>
+			<if test="dealFee != null">
+				#{dealFee,jdbcType=DOUBLE},
+			</if>
+			<if test="withdrawalCash != null">
+				#{withdrawalCash,jdbcType=DOUBLE},
+			</if>
+			<if test="basicToOperation != null">
+				#{basicToOperation,jdbcType=DOUBLE},
+			</if>
+			<if test="operationToBasic != null">
+				#{operationToBasic,jdbcType=DOUBLE},
+			</if>
+			<if test="restsIncome != null">
+				#{restsIncome,jdbcType=DOUBLE},
+			</if>
+			<if test="accountAmount != null">
+				#{accountAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="nowDayAmount != null">
+				#{nowDayAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="oldDayAmount != null">
+				#{oldDayAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="nowDayOrderAmount != null">
+				#{nowDayOrderAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="paymentAmountOperation != null">
+				#{paymentAmountOperation,jdbcType=DOUBLE},
+			</if>
+			<if test="basicToOperationOperation != null">
+				#{basicToOperationOperation,jdbcType=DOUBLE},
+			</if>
+			<if test="operationToBasicOperation != null">
+				#{operationToBasicOperation,jdbcType=DOUBLE},
+			</if>
+			<if test="accountAmountOperation != null">
+				#{accountAmountOperation,jdbcType=DOUBLE},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.VenueDayStatis">
+		update VenueDayStatis
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="nowDate != null">
+				Now_date = #{nowDate,jdbcType=DATE},
+			</if>
+			<if test="oughtAmount != null">
+				Ought_amount = #{oughtAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="realityAmount != null">
+				Reality_amount = #{realityAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="paySubsidy != null">
+				Pay_subsidy = #{paySubsidy,jdbcType=DOUBLE},
+			</if>
+			<if test="profitAmount != null">
+				Profit_amount = #{profitAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="systemFlag != null">
+				System_flag = #{systemFlag,jdbcType=VARCHAR},
+			</if>
+			<if test="userFlag != null">
+				User_flag = #{userFlag,jdbcType=VARCHAR},
+			</if>
+			<if test="dealIncome != null">
+				Deal_income = #{dealIncome,jdbcType=DOUBLE},
+			</if>
+			<if test="dealRefund != null">
+				Deal_refund = #{dealRefund,jdbcType=DOUBLE},
+			</if>
+			<if test="dealFee != null">
+				Deal_fee = #{dealFee,jdbcType=DOUBLE},
+			</if>
+			<if test="withdrawalCash != null">
+				Withdrawal_cash = #{withdrawalCash,jdbcType=DOUBLE},
+			</if>
+			<if test="basicToOperation != null">
+				Basic_to_operation = #{basicToOperation,jdbcType=DOUBLE},
+			</if>
+			<if test="operationToBasic != null">
+				Operation_to_basic = #{operationToBasic,jdbcType=DOUBLE},
+			</if>
+			<if test="restsIncome != null">
+				Rests_income = #{restsIncome,jdbcType=DOUBLE},
+			</if>
+			<if test="accountAmount != null">
+				Account_amount = #{accountAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="nowDayAmount != null">
+				Now_day_amount = #{nowDayAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="oldDayAmount != null">
+				Old_day_amount = #{oldDayAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="nowDayOrderAmount != null">
+				Now_day_order_amount = #{nowDayOrderAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="paymentAmountOperation != null">
+				Payment_amount_operation = #{paymentAmountOperation,jdbcType=DOUBLE},
+			</if>
+			<if test="basicToOperationOperation != null">
+				Basic_to_operation_operation = #{basicToOperationOperation,jdbcType=DOUBLE},
+			</if>
+			<if test="operationToBasicOperation != null">
+				Operation_to_basic_operation = #{operationToBasicOperation,jdbcType=DOUBLE},
+			</if>
+			<if test="accountAmountOperation != null">
+				Account_amount_operation = #{accountAmountOperation,jdbcType=DOUBLE},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.VenueDayStatis">
+		update VenueDayStatis
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Now_date = #{nowDate,jdbcType=DATE},
+		Ought_amount = #{oughtAmount,jdbcType=DOUBLE},
+		Reality_amount = #{realityAmount,jdbcType=DOUBLE},
+		Pay_subsidy = #{paySubsidy,jdbcType=DOUBLE},
+		Profit_amount = #{profitAmount,jdbcType=DOUBLE},
+		System_flag = #{systemFlag,jdbcType=VARCHAR},
+		User_flag = #{userFlag,jdbcType=VARCHAR},
+		Deal_income = #{dealIncome,jdbcType=DOUBLE},
+		Deal_refund = #{dealRefund,jdbcType=DOUBLE},
+		Deal_fee = #{dealFee,jdbcType=DOUBLE},
+		Withdrawal_cash = #{withdrawalCash,jdbcType=DOUBLE},
+		Basic_to_operation = #{basicToOperation,jdbcType=DOUBLE},
+		Operation_to_basic = #{operationToBasic,jdbcType=DOUBLE},
+		Rests_income = #{restsIncome,jdbcType=DOUBLE},
+		Account_amount = #{accountAmount,jdbcType=DOUBLE},
+		Now_day_amount = #{nowDayAmount,jdbcType=DOUBLE},
+		Old_day_amount = #{oldDayAmount,jdbcType=DOUBLE},
+		Now_day_order_amount = #{nowDayOrderAmount,jdbcType=DOUBLE},
+		Payment_amount_operation = #{paymentAmountOperation,jdbcType=DOUBLE},
+		Basic_to_operation_operation = #{basicToOperationOperation,jdbcType=DOUBLE},
+		Operation_to_basic_operation = #{operationToBasicOperation,jdbcType=DOUBLE},
+		Account_amount_operation = #{accountAmountOperation,jdbcType=DOUBLE}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

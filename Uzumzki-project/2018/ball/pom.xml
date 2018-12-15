@@ -11,7 +11,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
 		<spring.version>4.2.0.RELEASE</spring.version>
-		<jackson.version>2.8.5</jackson.version>
+		<!-- <jackson.version>2.8.5</jackson.version> -->
 	</properties>
 
 	<dependencies>
@@ -71,14 +71,16 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-			<version>1.2.8</version>
+			<version>1.2.31</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-validator</artifactId>
 			<version>4.2.0.Final</version>
 		</dependency>
+
 		<!--common end -->
 
 		<!--spring start -->
@@ -168,13 +170,6 @@
 			<version>${spring.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.7.4</version>
-		</dependency>
-		<!--springmvc end -->
-
 		<!--mybatis 数据访问层 start -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -236,7 +231,7 @@
 
 		<!--插件 start -->
 		<!-- jackson -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 			<version>${jackson.version}</version>
@@ -250,12 +245,12 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
 			<version>${jackson.version}</version>
-		</dependency>
+		</dependency> -->
 		<!-- 分页插件 -->
 		<dependency>
 			<groupId>com.github.pagehelper</groupId>
 			<artifactId>pagehelper</artifactId>
-			<version>5.1.4</version>
+			<version>5.1.8</version>
 		</dependency>
 		<!-- sql输出插件 -->
 		<!-- https://mvnrepository.com/artifact/p6spy/p6spy -->

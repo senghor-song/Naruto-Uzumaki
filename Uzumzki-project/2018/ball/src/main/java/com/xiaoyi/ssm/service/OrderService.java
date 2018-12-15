@@ -3,6 +3,7 @@ package com.xiaoyi.ssm.service;
 import java.util.Date;
 import java.util.List;
 
+import com.xiaoyi.ssm.dto.AdminOrderDto;
 import com.xiaoyi.ssm.dto.OrderDto;
 import com.xiaoyi.ssm.model.Order;
 
@@ -89,5 +90,64 @@ public interface OrderService extends BaseService<Order, String> {
 	 * @return
 	 * @date 2018年11月15日14:34:50
 	 */
-	int updateByPayVenue(String venueId, String date);
+	int updateByPayVenue(String memberId, String newDate, String amountId);
+	
+	/**
+	 * @Description: 查询某时间之内的已确认待消费的订单
+	 * @author 宋高俊
+	 * @param dateStart
+	 * @param dateEnd
+	 * @return
+	 * @date 2018年11月20日 上午10:08:31
+	 */
+	List<Order> selectByDateDay(Date date);
+
+	/**
+	 * @Description: 查询当天以后(含当天)所有的订单查询并结算退款
+	 * @author 宋高俊
+	 * @param nowDate
+	 * @param venueid
+	 * @return
+	 * @date 2018年11月22日 上午9:48:35
+	 */
+	List<Order> selectByRelieveVenue(Date nowDate, String venueid);
+
+	/**
+	 * @Description: 根据场馆和状态查询
+	 * @author 宋高俊
+	 * @param venueid
+	 * @param type
+	 * @return
+	 * @date 2018年11月28日上午9:18:36
+	 */
+	List<Order> selectByVenueAll(String venueid, Integer type);
+
+	/**
+	 * @Description: 根据汇款人ID和日期查询订单
+	 * @author 宋高俊
+	 * @param memberId
+	 * @param nowDate
+	 * @return
+	 * @date 2018年12月4日下午7:34:30
+	 */
+	List<Order> selectByMemberDate(String memberId, String nowDate);
+
+	/**
+	 * @Description: 修改昨天待消费订单为已消费
+	 * @author 宋高俊
+	 * @param memberId
+	 * @param nowDate
+	 * @return
+	 * @date 2018年12月5日下午2:11:19
+	 */
+	int updateByOrdertype(String memberId, String nowDate);
+
+	/**
+	 * @Description: 根据查询条件查询订单
+	 * @author 宋高俊
+	 * @param adminOrderDto
+	 * @return
+	 * @date 2018年12月7日下午3:04:38
+	 */
+	List<Order> selectBySearch(AdminOrderDto adminOrderDto);
 }

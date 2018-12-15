@@ -33,7 +33,7 @@
 		}
 
 		var pt = new BMap.Point(lng, lat);
-		var myIcon = new BMap.Icon("/WebBackAPI/admin/static/image/img1.png", new BMap.Size(40,40));
+		var myIcon = new BMap.Icon("/admin/static/image/img1.png", new BMap.Size(40,40));
 		var marker = new BMap.Marker(pt,{icon:myIcon});  // 创建标注
 		map.addOverlay(marker); // 将标注添加到地图中
 		 

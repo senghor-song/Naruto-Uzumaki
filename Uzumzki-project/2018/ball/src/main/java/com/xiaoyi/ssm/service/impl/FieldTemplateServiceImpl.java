@@ -10,11 +10,10 @@ import com.xiaoyi.ssm.dao.FieldTemplateMapper;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.dto.FieldTemplateDto;
 import com.xiaoyi.ssm.model.FieldTemplate;
-import com.xiaoyi.ssm.model.Venue;
-import com.xiaoyi.ssm.model.VenueStatis;
 import com.xiaoyi.ssm.model.VenueTemplate;
 import com.xiaoyi.ssm.service.FieldTemplateService;
-import com.xiaoyi.ssm.service.VenueStatisService;
+import com.xiaoyi.ssm.util.DateUtil;
+import com.xiaoyi.ssm.util.Utils;
 
 /**  
  * @Description: 场馆业务逻辑实现
@@ -26,8 +25,6 @@ public class FieldTemplateServiceImpl extends AbstractService<FieldTemplate,Stri
 
 	@Autowired
 	private FieldTemplateMapper fieldTemplateMapper;
-	@Autowired
-	private VenueStatisService venueStatisService;
 	
 	@Override
 	public void setBaseMapper() {
@@ -44,31 +41,78 @@ public class FieldTemplateServiceImpl extends AbstractService<FieldTemplate,Stri
 		return fieldTemplateMapper.selectByVenueAndField(ftd);
 	}
 
+	/**
+	 * @Description: 修改使用旧模板为使用新模板
+	 * @author 宋高俊
+	 * @param oldId
+	 * @param nowId
+	 * @return
+	 * @date 2018年11月19日 下午3:57:35
+	 */
 	@Override
-	public List<FieldTemplate> selectByVenueAndFieldAll(FieldTemplateDto ftd) {
-		return fieldTemplateMapper.selectByVenueAndFieldAll(ftd);
+	public int updateByTemplate(String oldId, String nowId) {
+		return fieldTemplateMapper.updateByTemplate(oldId, nowId);
+	}
+	
+	/**
+	 * @Description: 场地使用模板逻辑删除
+	 * @author 宋高俊
+	 * @param venueid
+	 * @param dateStr
+	 * @return
+	 * @date 2018年11月21日 下午8:42:17
+	 */
+	@Override
+	public int updateByVenue(String venueid, String dateStr) {
+		return fieldTemplateMapper.updateByVenue(venueid, dateStr);
 	}
 
+	/**
+	 * @Description: 根据场馆和场地ID获取场地所有使用模板
+	 * @author 宋高俊
+	 * @param id
+	 * @param startDate
+	 * @param endDate
+	 * @param fieldid
+	 * @return
+	 * @date 2018年12月14日下午8:44:35
+	 */
 	@Override
-	public ApiMessage saveFieldTemplateStatis(VenueStatis venueStatis, Venue venue,VenueTemplate venueTemplate, Date statisdate) {
-		//修改日历统计使用模板
-		venueStatis.setTemplate(venueTemplate.getName());
-		int flag = venueStatisService.updateByPrimaryKeySelective(venueStatis);
-		if (flag > 0) {
-			//根据场馆ID和日期修改当天使用的模板ID
-			FieldTemplate ft = new FieldTemplate();
-			ft.setVenueid(venue.getId());
-			ft.setFieldtime(statisdate);
-			List<FieldTemplate> fieldTemplates = fieldTemplateMapper.selectByAll(ft);
-			for (int i = 0; i < fieldTemplates.size(); i++) {
-				FieldTemplate fieldTemplate = fieldTemplates.get(i);
-				fieldTemplate.setTemplateid(venueTemplate.getId());
-				fieldTemplateMapper.updateByPrimaryKeySelective(fieldTemplate);
-			}
-			return new ApiMessage(200, "选配模板成功");
-		}else {
-			return new ApiMessage(400, "选配模板失败");
-		}
+	public List<FieldTemplate> selectByNowDate(String id, Date startDate,
+			Date endDate, String fieldid) {
+		return fieldTemplateMapper.selectByNowDate(id, startDate, endDate, fieldid);
 	}
 
+	/**
+	 * @Description: 选配模板
+	 * @author 宋高俊
+	 * @param venueid
+	 * @param venueTemplate
+	 * @param date
+	 * @param fieldid
+	 * @return
+	 * @date 2018年12月15日上午11:32:24
+	 */
+	@Override
+	public ApiMessage saveFieldTemplate(String venueid, VenueTemplate venueTemplate, String date, String fieldid) {
+		FieldTemplateDto ftd = new FieldTemplateDto();
+	    ftd.setDate(DateUtil.getParse(date, "yyyy-MM-dd"));
+	    ftd.setFieldid(fieldid);
+	    ftd.setVenueid(venueid);
+	    FieldTemplate oldFieldTemplate = selectByVenueAndField(ftd);
+	    if (oldFieldTemplate != null) {
+	      oldFieldTemplate.setTemplateid(venueTemplate.getId());
+	      updateByPrimaryKeySelective(oldFieldTemplate);
+	      return new ApiMessage(200, "修改成功");
+	    }
+	    FieldTemplate ft = new FieldTemplate();
+	    ft.setId(Utils.getUUID());
+	    ft.setCreatetime(new Date());
+	    ft.setVenueid(venueid);
+	    ft.setFieldtime(DateUtil.getParse(date, "yyyy-MM-dd"));
+	    ft.setTemplateid(venueTemplate.getId());
+	    ft.setFieldid(fieldid);
+	    insert(ft);
+	    return new ApiMessage(200, "设置成功");
+	}
 }

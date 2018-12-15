@@ -6,24 +6,27 @@
 		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="Member_id" jdbcType="VARCHAR" property="memberId" />
 		<result column="Source_flag" jdbcType="INTEGER" property="sourceFlag" />
+		<result column="Venue_id" jdbcType="VARCHAR" property="venueId" />
 		<result column="Title" jdbcType="VARCHAR" property="title" />
 		<result column="Longitude" jdbcType="DOUBLE" property="longitude" />
 		<result column="Latitude" jdbcType="DOUBLE" property="latitude" />
 		<result column="Address" jdbcType="VARCHAR" property="address" />
-		<result column="Check_flag" jdbcType="INTEGER" property="checkFlag" />
 		<result column="Ball_type" jdbcType="INTEGER" property="ballType" />
+		<result column="Check_flag" jdbcType="INTEGER" property="checkFlag" />
 		<result column="Check_time" jdbcType="TIMESTAMP" property="checkTime" />
 		<result column="Check_staff" jdbcType="VARCHAR" property="checkStaff" />
+		<result column="Content" jdbcType="VARCHAR" property="content" />
 		<result column="Main_name" jdbcType="VARCHAR" property="mainName" />
 		<result column="Main_phone" jdbcType="VARCHAR" property="mainPhone" />
-		<result column="Ball_sum" jdbcType="VARCHAR" property="ballSum" />
-		<result column="Content" jdbcType="VARCHAR" property="content" />
+		<result column="Main_flag" jdbcType="INTEGER" property="mainFlag" />
+		<result column="Ball_sum" jdbcType="INTEGER" property="ballSum" />
 		<result column="Head_image" jdbcType="VARCHAR" property="headImage" />
 		<result column="City_name" jdbcType="VARCHAR" property="cityName" />
+		<result column="District_name" jdbcType="VARCHAR" property="districtName" />
 		<result column="Train_team_name" jdbcType="VARCHAR" property="trainTeamName" />
 		<result column="Train_team_id" jdbcType="VARCHAR" property="trainTeamId" />
-		<result column="City_id" jdbcType="VARCHAR" property="cityId" />
-		<result column="District_id" jdbcType="VARCHAR" property="districtId" />
+		<result column="User_lng" jdbcType="DOUBLE" property="userLng" />
+		<result column="User_lat" jdbcType="DOUBLE" property="userLat" />
 		<association property="member" javaType="com.xiaoyi.ssm.model.Member">
 			<id column="ID" jdbcType="CHAR" property="id" />
 			<result column="mAppNickName" jdbcType="VARCHAR" property="appnickname" />
@@ -35,17 +38,20 @@
 		</association>
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, Create_time, Member_id, Source_flag, Title, Longitude, Latitude, Address, Check_flag,
-		Ball_type, Check_time, Check_staff, Main_name, Main_phone, Ball_sum, Content, Head_image,
-		City_name, Train_team_name, Train_team_id, City_id, District_id
+		ID, Create_time, Member_id, Source_flag, Venue_id, Title, Longitude, Latitude, Address,
+		Ball_type, Check_flag, Check_time, Check_staff, Content, Main_name, Main_phone, Main_flag,
+		Ball_sum, Head_image, City_name, District_name, Train_team_name, Train_team_id, User_lng,
+		User_lat
 	</sql>
 
 	<select id="selectByEnterAll" resultMap="BaseResultMap">
 		SELECT ve.*,m.`AppNickName` mAppNickName, m.`Phone`
-		mPhone ,s.`Name` sName FROM VenueEnter ve LEFT JOIN Member m ON
-		ve.`Member_id` = m.`ID` LEFT JOIN
+		mPhone ,s.`Name` sName FROM VenueEnter ve LEFT JOIN Member m
+		ON ve.`Member_id` =
+		m.`ID` LEFT JOIN
 		Staff s ON ve.`Check_staff` = s.`ID` WHERE Check_flag =
 		#{checkFlag,jdbcType=INTEGER}
+		ORDER BY Create_time DESC
 	</select>
 
 	<select id="countEnter" parameterType="java.lang.String" resultType="java.lang.Integer">
@@ -65,21 +71,23 @@
 	</delete>
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueEnter">
 		insert into VenueEnter (ID, Create_time, Member_id,
-		Source_flag, Title, Longitude,
-		Latitude, Address, Check_flag,
-		Ball_type, Check_time, Check_staff,
-		Main_name, Main_phone, Ball_sum,
-		Content, Head_image, City_name,
-		Train_team_name, Train_team_id, City_id,
-		District_id)
+		Source_flag, Venue_id, Title,
+		Longitude, Latitude, Address,
+		Ball_type, Check_flag, Check_time,
+		Check_staff, Content, Main_name,
+		Main_phone, Main_flag, Ball_sum,
+		Head_image, City_name, District_name,
+		Train_team_name, Train_team_id, User_lng,
+		User_lat)
 		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{memberId,jdbcType=VARCHAR},
-		#{sourceFlag,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE},
-		#{latitude,jdbcType=DOUBLE}, #{address,jdbcType=VARCHAR}, #{checkFlag,jdbcType=INTEGER},
-		#{ballType,jdbcType=INTEGER}, #{checkTime,jdbcType=TIMESTAMP}, #{checkStaff,jdbcType=VARCHAR},
-		#{mainName,jdbcType=VARCHAR}, #{mainPhone,jdbcType=VARCHAR}, #{ballSum,jdbcType=VARCHAR},
-		#{content,jdbcType=VARCHAR}, #{headImage,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR},
-		#{trainTeamName,jdbcType=VARCHAR}, #{trainTeamId,jdbcType=VARCHAR}, #{cityId,jdbcType=VARCHAR},
-		#{districtId,jdbcType=VARCHAR})
+		#{sourceFlag,jdbcType=INTEGER}, #{venueId,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR},
+		#{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, #{address,jdbcType=VARCHAR},
+		#{ballType,jdbcType=INTEGER}, #{checkFlag,jdbcType=INTEGER}, #{checkTime,jdbcType=TIMESTAMP},
+		#{checkStaff,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{mainName,jdbcType=VARCHAR},
+		#{mainPhone,jdbcType=VARCHAR}, #{mainFlag,jdbcType=INTEGER}, #{ballSum,jdbcType=INTEGER},
+		#{headImage,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR}, #{districtName,jdbcType=VARCHAR},
+		#{trainTeamName,jdbcType=VARCHAR}, #{trainTeamId,jdbcType=VARCHAR}, #{userLng,jdbcType=DOUBLE},
+		#{userLat,jdbcType=DOUBLE})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.VenueEnter">
 		insert into VenueEnter
@@ -96,6 +104,9 @@
 			<if test="sourceFlag != null">
 				Source_flag,
 			</if>
+			<if test="venueId != null">
+				Venue_id,
+			</if>
 			<if test="title != null">
 				Title,
 			</if>
@@ -108,11 +119,11 @@
 			<if test="address != null">
 				Address,
 			</if>
-			<if test="checkFlag != null">
-				Check_flag,
-			</if>
 			<if test="ballType != null">
 				Ball_type,
+			</if>
+			<if test="checkFlag != null">
+				Check_flag,
 			</if>
 			<if test="checkTime != null">
 				Check_time,
@@ -120,17 +131,20 @@
 			<if test="checkStaff != null">
 				Check_staff,
 			</if>
+			<if test="content != null">
+				Content,
+			</if>
 			<if test="mainName != null">
 				Main_name,
 			</if>
 			<if test="mainPhone != null">
 				Main_phone,
 			</if>
+			<if test="mainFlag != null">
+				Main_flag,
+			</if>
 			<if test="ballSum != null">
 				Ball_sum,
-			</if>
-			<if test="content != null">
-				Content,
 			</if>
 			<if test="headImage != null">
 				Head_image,
@@ -138,17 +152,20 @@
 			<if test="cityName != null">
 				City_name,
 			</if>
+			<if test="districtName != null">
+				District_name,
+			</if>
 			<if test="trainTeamName != null">
 				Train_team_name,
 			</if>
 			<if test="trainTeamId != null">
 				Train_team_id,
 			</if>
-			<if test="cityId != null">
-				City_id,
+			<if test="userLng != null">
+				User_lng,
 			</if>
-			<if test="districtId != null">
-				District_id,
+			<if test="userLat != null">
+				User_lat,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -164,6 +181,9 @@
 			<if test="sourceFlag != null">
 				#{sourceFlag,jdbcType=INTEGER},
 			</if>
+			<if test="venueId != null">
+				#{venueId,jdbcType=VARCHAR},
+			</if>
 			<if test="title != null">
 				#{title,jdbcType=VARCHAR},
 			</if>
@@ -176,11 +196,11 @@
 			<if test="address != null">
 				#{address,jdbcType=VARCHAR},
 			</if>
-			<if test="checkFlag != null">
-				#{checkFlag,jdbcType=INTEGER},
-			</if>
 			<if test="ballType != null">
 				#{ballType,jdbcType=INTEGER},
+			</if>
+			<if test="checkFlag != null">
+				#{checkFlag,jdbcType=INTEGER},
 			</if>
 			<if test="checkTime != null">
 				#{checkTime,jdbcType=TIMESTAMP},
@@ -188,17 +208,20 @@
 			<if test="checkStaff != null">
 				#{checkStaff,jdbcType=VARCHAR},
 			</if>
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
 			<if test="mainName != null">
 				#{mainName,jdbcType=VARCHAR},
 			</if>
 			<if test="mainPhone != null">
 				#{mainPhone,jdbcType=VARCHAR},
 			</if>
-			<if test="ballSum != null">
-				#{ballSum,jdbcType=VARCHAR},
+			<if test="mainFlag != null">
+				#{mainFlag,jdbcType=INTEGER},
 			</if>
-			<if test="content != null">
-				#{content,jdbcType=VARCHAR},
+			<if test="ballSum != null">
+				#{ballSum,jdbcType=INTEGER},
 			</if>
 			<if test="headImage != null">
 				#{headImage,jdbcType=VARCHAR},
@@ -206,17 +229,20 @@
 			<if test="cityName != null">
 				#{cityName,jdbcType=VARCHAR},
 			</if>
+			<if test="districtName != null">
+				#{districtName,jdbcType=VARCHAR},
+			</if>
 			<if test="trainTeamName != null">
 				#{trainTeamName,jdbcType=VARCHAR},
 			</if>
 			<if test="trainTeamId != null">
 				#{trainTeamId,jdbcType=VARCHAR},
 			</if>
-			<if test="cityId != null">
-				#{cityId,jdbcType=VARCHAR},
+			<if test="userLng != null">
+				#{userLng,jdbcType=DOUBLE},
 			</if>
-			<if test="districtId != null">
-				#{districtId,jdbcType=VARCHAR},
+			<if test="userLat != null">
+				#{userLat,jdbcType=DOUBLE},
 			</if>
 		</trim>
 	</insert>
@@ -232,6 +258,9 @@
 			<if test="sourceFlag != null">
 				Source_flag = #{sourceFlag,jdbcType=INTEGER},
 			</if>
+			<if test="venueId != null">
+				Venue_id = #{venueId,jdbcType=VARCHAR},
+			</if>
 			<if test="title != null">
 				Title = #{title,jdbcType=VARCHAR},
 			</if>
@@ -244,11 +273,11 @@
 			<if test="address != null">
 				Address = #{address,jdbcType=VARCHAR},
 			</if>
-			<if test="checkFlag != null">
-				Check_flag = #{checkFlag,jdbcType=INTEGER},
-			</if>
 			<if test="ballType != null">
 				Ball_type = #{ballType,jdbcType=INTEGER},
+			</if>
+			<if test="checkFlag != null">
+				Check_flag = #{checkFlag,jdbcType=INTEGER},
 			</if>
 			<if test="checkTime != null">
 				Check_time = #{checkTime,jdbcType=TIMESTAMP},
@@ -256,17 +285,20 @@
 			<if test="checkStaff != null">
 				Check_staff = #{checkStaff,jdbcType=VARCHAR},
 			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
 			<if test="mainName != null">
 				Main_name = #{mainName,jdbcType=VARCHAR},
 			</if>
 			<if test="mainPhone != null">
 				Main_phone = #{mainPhone,jdbcType=VARCHAR},
 			</if>
-			<if test="ballSum != null">
-				Ball_sum = #{ballSum,jdbcType=VARCHAR},
+			<if test="mainFlag != null">
+				Main_flag = #{mainFlag,jdbcType=INTEGER},
 			</if>
-			<if test="content != null">
-				Content = #{content,jdbcType=VARCHAR},
+			<if test="ballSum != null">
+				Ball_sum = #{ballSum,jdbcType=INTEGER},
 			</if>
 			<if test="headImage != null">
 				Head_image = #{headImage,jdbcType=VARCHAR},
@@ -274,17 +306,20 @@
 			<if test="cityName != null">
 				City_name = #{cityName,jdbcType=VARCHAR},
 			</if>
+			<if test="districtName != null">
+				District_name = #{districtName,jdbcType=VARCHAR},
+			</if>
 			<if test="trainTeamName != null">
 				Train_team_name = #{trainTeamName,jdbcType=VARCHAR},
 			</if>
 			<if test="trainTeamId != null">
 				Train_team_id = #{trainTeamId,jdbcType=VARCHAR},
 			</if>
-			<if test="cityId != null">
-				City_id = #{cityId,jdbcType=VARCHAR},
+			<if test="userLng != null">
+				User_lng = #{userLng,jdbcType=DOUBLE},
 			</if>
-			<if test="districtId != null">
-				District_id = #{districtId,jdbcType=VARCHAR},
+			<if test="userLat != null">
+				User_lat = #{userLat,jdbcType=DOUBLE},
 			</if>
 		</set>
 		where ID = #{id,jdbcType=VARCHAR}
@@ -294,24 +329,27 @@
 		set Create_time = #{createTime,jdbcType=TIMESTAMP},
 		Member_id = #{memberId,jdbcType=VARCHAR},
 		Source_flag = #{sourceFlag,jdbcType=INTEGER},
+		Venue_id = #{venueId,jdbcType=VARCHAR},
 		Title = #{title,jdbcType=VARCHAR},
 		Longitude = #{longitude,jdbcType=DOUBLE},
 		Latitude = #{latitude,jdbcType=DOUBLE},
 		Address = #{address,jdbcType=VARCHAR},
-		Check_flag = #{checkFlag,jdbcType=INTEGER},
 		Ball_type = #{ballType,jdbcType=INTEGER},
+		Check_flag = #{checkFlag,jdbcType=INTEGER},
 		Check_time = #{checkTime,jdbcType=TIMESTAMP},
 		Check_staff = #{checkStaff,jdbcType=VARCHAR},
+		Content = #{content,jdbcType=VARCHAR},
 		Main_name = #{mainName,jdbcType=VARCHAR},
 		Main_phone = #{mainPhone,jdbcType=VARCHAR},
-		Ball_sum = #{ballSum,jdbcType=VARCHAR},
-		Content = #{content,jdbcType=VARCHAR},
+		Main_flag = #{mainFlag,jdbcType=INTEGER},
+		Ball_sum = #{ballSum,jdbcType=INTEGER},
 		Head_image = #{headImage,jdbcType=VARCHAR},
 		City_name = #{cityName,jdbcType=VARCHAR},
+		District_name = #{districtName,jdbcType=VARCHAR},
 		Train_team_name = #{trainTeamName,jdbcType=VARCHAR},
 		Train_team_id = #{trainTeamId,jdbcType=VARCHAR},
-		City_id = #{cityId,jdbcType=VARCHAR},
-		District_id = #{districtId,jdbcType=VARCHAR}
+		User_lng = #{userLng,jdbcType=DOUBLE},
+		User_lat = #{userLat,jdbcType=DOUBLE}
 		where ID = #{id,jdbcType=VARCHAR}
 	</update>
 </mapper>

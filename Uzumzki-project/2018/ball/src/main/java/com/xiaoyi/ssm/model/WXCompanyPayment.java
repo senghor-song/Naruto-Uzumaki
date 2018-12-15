@@ -23,7 +23,7 @@ public class WXCompanyPayment implements Serializable {
     private Double amount;
 
     /** 付款描述 */
-    private String desc;
+    private String descContent;
 
     /** 支付状态(1=支付成功2=支付失败) */
     private Integer payType;
@@ -127,18 +127,18 @@ public class WXCompanyPayment implements Serializable {
 
     /**
      * 付款描述
-     * @return Desc 付款描述
+     * @return Desc_content 付款描述
      */
-    public String getDesc() {
-        return desc;
+    public String getDescContent() {
+        return descContent;
     }
 
     /**
      * 付款描述
-     * @param desc 付款描述
+     * @param descContent 付款描述
      */
-    public void setDesc(String desc) {
-        this.desc = desc == null ? null : desc.trim();
+    public void setDescContent(String descContent) {
+        this.descContent = descContent == null ? null : descContent.trim();
     }
 
     /**

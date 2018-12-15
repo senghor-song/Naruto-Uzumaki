@@ -44,7 +44,7 @@
 			var level = $('#level').val();
            	$.ajax({  
                 type : "POST",  //提交方式  
-                url : "/WebBackAPI/admin/trainTeam/saveLevel",//路径  
+                url : "/admin/trainTeam/saveLevel",//路径  
                 data : {id : id, level : level},//数据，这里使用的是Json格式进行传输 
                 dataType:"json",
                 success : function(result) {//返回数据根据结果进行相应的处理  

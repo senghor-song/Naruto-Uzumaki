@@ -1,5 +1,6 @@
 package com.xiaoyi.ssm.controller.wxapp;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -10,20 +11,23 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.xiaoyi.ssm.model.*;
-import com.xiaoyi.ssm.util.Global;
-import com.xiaoyi.ssm.util.RedisUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageHelper;
-import com.xiaoyi.ssm.controller.ApiCommonController;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.dto.PageBean;
+import com.xiaoyi.ssm.model.City;
+import com.xiaoyi.ssm.model.TrainCoach;
+import com.xiaoyi.ssm.model.TrainCourse;
+import com.xiaoyi.ssm.model.TrainTeam;
+import com.xiaoyi.ssm.model.TrainTeamCoach;
+import com.xiaoyi.ssm.model.TrainTeamImage;
+import com.xiaoyi.ssm.quartz.EverydayGetBillJob;
+import com.xiaoyi.ssm.quartz.EverydayPayVenueJob;
 import com.xiaoyi.ssm.service.CityService;
 import com.xiaoyi.ssm.service.TrainCoachService;
 import com.xiaoyi.ssm.service.TrainCourseService;
@@ -31,9 +35,9 @@ import com.xiaoyi.ssm.service.TrainOrderCommentService;
 import com.xiaoyi.ssm.service.TrainTeamCoachService;
 import com.xiaoyi.ssm.service.TrainTeamImageService;
 import com.xiaoyi.ssm.service.TrainTeamService;
-import com.xiaoyi.ssm.service.VenueService;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.MapUtils;
+import com.xiaoyi.ssm.wxPay.WXPayUtil;
 
 /**
  * @Description: 培训公共接口控制器
@@ -55,13 +59,30 @@ public class ApiTrainController {
 	@Autowired
 	private TrainTeamImageService trainTeamImageService;
 	@Autowired
-	private VenueService venueService;
-	@Autowired
 	private TrainOrderCommentService trainOrderCommentService;
 	@Autowired
 	private CityService cityService;
 	@Autowired
 	private TrainTeamCoachService trainTeamCoachService;
+
+	@RequestMapping(value = "/oneDayPayVenueJob")
+	@ResponseBody
+	public ApiMessage oneDayPayVenueJob(String date) throws IOException {
+		EverydayPayVenueJob oneDayPayVenueJob = new EverydayPayVenueJob();
+		oneDayPayVenueJob.oneDayPayVenueJob();
+		
+//		EverydayGetBillJob everydayGetBillJob = new EverydayGetBillJob();
+//		everydayGetBillJob.oneHourGetJob();
+		
+//		Date nowdate = new Date();
+//		for (int i = 1; i <= 5; i++) {
+//			String datestr = DateUtil.getFormat(DateUtil.getPreTime(nowdate, 3, -i), "yyyyMMdd");
+//			WXPayUtil.downloadbill(datestr);
+//		}
+		
+		return new ApiMessage(200);
+	}
+	
 	
 	/**  
 	 * @Description: 获取短信上行消息
@@ -162,7 +183,7 @@ public class ApiTrainController {
 			map.put("id", trainTeamCoachs.get(i).getId()); // ID
 			map.put("headImage", trainTeamCoachs.get(i).getTrainCoach().getHeadImage()); // 头像
 			map.put("name", trainTeamCoachs.get(i).getTrainCoach().getName()); // 姓名
-			map.put("type", trainTeamCoachs.get(i).getTeachType() == 1 ? "主教" : "助教"); // 类型
+			map.put("type", trainTeamCoachs.get(i).getTeachType() == 1 ? "主教练" : trainTeamCoachs.get(i).getTeachType() == 2 ? "教练" : trainTeamCoachs.get(i).getTeachType() == 3 ? "助教" : "其他"); // 类型
 			map.put("workingAge", trainTeamCoachs.get(i).getTrainCoach().getWorkingAge()); // 教龄
 			listmap.add(map);
 		}
@@ -180,11 +201,15 @@ public class ApiTrainController {
 	public ApiMessage trainTeamcoachdetails(HttpServletRequest request, String id) {
 
 		TrainCoach trainCoach = trainCoachService.selectByPrimaryKey(id);
+		if (trainCoach == null) {
+			return new ApiMessage(400, "教练不存在");
+		}
+		
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		map.put("id", trainCoach.getId()); // ID
 		map.put("headImage", trainCoach.getHeadImage()); // 头像
 		map.put("name", trainCoach.getName()); // 姓名
-		map.put("type", trainCoach.getTrainTeamCoach().getTeachType() == 1 ? "主教" : "助教"); // 类型
+		map.put("type", trainCoach.getTrainTeamCoach().getTeachType() == 1 ? "主教练" : trainCoach.getTrainTeamCoach().getTeachType() == 2 ? "教练" : trainCoach.getTrainTeamCoach().getTeachType() == 3 ? "助教" : "其他"); // 类型
 		map.put("workingAge", trainCoach.getWorkingAge()); // 教龄
 		map.put("lectureStyle", trainCoach.getLectureStyle()); // 讲课风格
 		map.put("vitae", trainCoach.getVitae()); // 个人简介
@@ -305,6 +330,8 @@ public class ApiTrainController {
 		City city = cityService.selectByName(name);
 		return new ApiMessage(200, "获取成功", city.getMapflag());
 	}
+	
+	
 
 }
 

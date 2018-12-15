@@ -178,6 +178,25 @@ public class MoblieMessageUtil {
 //		return null;
 //	}
 	
+	/**
+	 * @Description: 未关注公众号发送
+	 * @author 宋高俊  
+	 * @param mobile 发送人手机号
+	 * @param name 场馆名
+	 * @param day 日期
+	 * @return 
+	 * @date 2018年11月6日 上午9:35:48 
+	 */
+	public static SendSmsResponse sendTemplateSms6(String mobile, String name, String day) {
+		try {
+			return sendSms(mobile, "{\"name\":\"" + name + "\", \"day\":\"" + day + "\"}",
+					Global.aliyunSMSTempleteCode6, Global.aliyunSMSSignName1);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static void main(String[] args) {
 //		MoblieMessageUtil.sendTemplateSms("15207108156", "小宋", "15207108156", "东边1", "2018-11-08", "12:30-13:30");
 //		MoblieMessageUtil.sendTemplateSms5("14774825972", "小宋", "15207108156", "东边1", "2018-11-08", "12:30-13:30");

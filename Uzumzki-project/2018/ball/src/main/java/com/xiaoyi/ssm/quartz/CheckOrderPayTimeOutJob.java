@@ -33,13 +33,13 @@ public class CheckOrderPayTimeOutJob {
     private static Logger logger = Logger.getLogger(CheckOrderPayTimeOutJob.class.getName());
 
 	/**
-	 * @Description: 定时任务检查5分钟支付时间超时的订单
+	 * @Description: 每分钟检查定时任务检查5分钟支付时间超时的订单
 	 * @author 宋高俊
 	 * @date 2018年9月20日 下午8:35:13
 	 */
 //	@Scheduled(cron = "0 0/1 * * * ? ")
 	@Scheduled(cron = "0 0/1 * * * ? ")
-	public void getCheckTimeOut() {
+	public void checkOrderPayTimeOutJob() {
 		OrderService orderService = SpringUtils.getBean("orderServiceImpl", OrderService.class);
 		OrderLogService orderLogService = SpringUtils.getBean("orderLogServiceImpl", OrderLogService.class);
 		VenueService venueService = SpringUtils.getBean("venueServiceImpl", VenueService.class);
@@ -83,21 +83,23 @@ public class CheckOrderPayTimeOutJob {
 				
 				// 支付超时，发给场馆
 				Member venueMember = memberService.selectByPhone(venue.getContactPhone());
-				String venueOpenId = venueMember.getOpenid();
-				if (!StringUtil.isBank(venueOpenId)) {
-					datajson.put( "remark",
-							JSONObject.parseObject("{\"value\":\"球友" + member.getAppnickname() + "(手机" + member.getPhone() + ")申请预约球场" + area + "，日期"
-									+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + time + "用场，支付超时。\"}"));
-					if (!StringUtil.isBank(venue.getTrainteam())) {
-						TrainCoach trainCoach = trainCoachService.selectByMemberTeamManager(venueMember.getId(), venue.getTrainteam());
-						if (trainCoach != null) {
-							// 有权限查看
-							logger.info(WXPayUtil.sendWXappTemplate(venueOpenId, WXConfig.wxTemplateId, "pages/user/venueMenu/lock/lock?venueId="+venue.getId(), datajson));
+				if (venueMember != null) {
+					String venueOpenId = venueMember.getOpenid();
+					if (!StringUtil.isBank(venueOpenId)) {
+						datajson.put( "remark",
+								JSONObject.parseObject("{\"value\":\"球友" + member.getAppnickname() + "(手机" + member.getPhone() + ")申请预约球场" + area + "，日期"
+										+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + time + "用场，支付超时。\"}"));
+						if (!StringUtil.isBank(venue.getTrainteam())) {
+							TrainCoach trainCoach = trainCoachService.selectByMemberTeamManager(venueMember.getId(), venue.getTrainteam());
+							if (trainCoach != null) {
+								// 有权限查看
+								logger.info(WXPayUtil.sendWXappTemplate(venueOpenId, WXConfig.wxTemplateId, "pages/user/venueMenu/lock/lock?venueId="+venue.getId() + "&title=" + venue.getName(), datajson));
+							}else {
+								logger.info(WXPayUtil.sendWXappTemplate(venueOpenId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
+							}
 						}else {
 							logger.info(WXPayUtil.sendWXappTemplate(venueOpenId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
 						}
-					}else {
-						logger.info(WXPayUtil.sendWXappTemplate(venueOpenId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
 					}
 				}
 				

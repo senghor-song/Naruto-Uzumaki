@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<link href="/WebBackAPI/admin/static/css/site.css" rel="stylesheet">
-<link rel="stylesheet" href="/WebBackAPI/admin/static/plugins/bootstrap-validator/dist/css/bootstrapValidator.css" />
-<link rel="stylesheet" href="/WebBackAPI/admin/static/plugins/bootstrap-validator/vendor/bootstrap/css/dataValidator.css" />
+<link href="/admin/static/css/site.css" rel="stylesheet">
+<link rel="stylesheet" href="/admin/static/plugins/bootstrap-validator/dist/css/bootstrapValidator.css" />
+<link rel="stylesheet" href="/admin/static/plugins/bootstrap-validator/vendor/bootstrap/css/dataValidator.css" />
 <div class="contextMenuDialog" id="createcontent">
         <div class="card-body form-control" style="border:none;">
             <div class="row">
@@ -84,10 +84,10 @@
         </div>
     </div>
     
-    <script src="/WebBackAPI/admin/static/plugins/jquery/jquery.min.js"></script>
-    <script src="/WebBackAPI/admin/static/plugins/layer/layer.js"></script>
-	<script type="text/javascript" src="/WebBackAPI/admin/static/plugins/bootstrap-validator/vendor/bootstrap/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="/WebBackAPI/admin/static/plugins/bootstrap-validator/dist/js/bootstrapValidator.js"></script>
+    <script src="/admin/static/plugins/jquery/jquery.min.js"></script>
+    <script src="/admin/static/plugins/layer/layer.js"></script>
+	<script type="text/javascript" src="/admin/static/plugins/bootstrap-validator/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/admin/static/plugins/bootstrap-validator/dist/js/bootstrapValidator.js"></script>
 <script>
 $(function () {
 	$('#form').bootstrapValidator({
@@ -128,12 +128,12 @@ $(function () {
         if($('#form').data('bootstrapValidator').isValid()){  
         	$.ajax({  
                 type : "POST",  //提交方式  
-                url : "/WebBackAPI/admin/staff/saveStaff",//路径  
+                url : "/admin/staff/saveStaff",//路径  
                 data : $("form").serialize(),//数据，这里使用的是Json格式进行传输  
                 dataType:"json",
                 success : function(result) {//返回数据根据结果进行相应的处理  
                     if ( result.code == 200 ) {  
-                    	parent.window.location.href="/WebBackAPI/admin/staff/listview";
+                    	parent.window.location.href="/admin/staff/listview";
                     } else {  
                 		layer.confirm(result.msg, {
                 			btn: ['确定'] //按钮

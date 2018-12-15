@@ -85,18 +85,6 @@ public class Venue implements Serializable {
     /** 温馨提醒 */
     private String warmreminder;
 
-    /** 回款人 */
-    private String memberId;
-
-    /** 场馆总收入 */
-    private Double amount;
-
-    /** 剩余可提现金额 */
-    private Double balance;
-
-    /** 冻结金额(已预订,但未消费) */
-    private Double freezeamount;
-
     /** 订场确认(0=人工确认1=自动确认) */
     private Integer orderverify;
 
@@ -129,6 +117,9 @@ public class Venue implements Serializable {
 
     /** 订场支付短信(0=否1=是) */
     private Integer reservePaySms;
+
+    /** 最大显示订场天数 */
+    private Integer maxDay;
 
     /**
      * Venue
@@ -360,70 +351,6 @@ public class Venue implements Serializable {
     }
 
     /**
-     * 回款人
-     * @return Member_id 回款人
-     */
-    public String getMemberId() {
-        return memberId;
-    }
-
-    /**
-     * 回款人
-     * @param memberId 回款人
-     */
-    public void setMemberId(String memberId) {
-        this.memberId = memberId == null ? null : memberId.trim();
-    }
-
-    /**
-     * 场馆总收入
-     * @return Amount 场馆总收入
-     */
-    public Double getAmount() {
-        return amount;
-    }
-
-    /**
-     * 场馆总收入
-     * @param amount 场馆总收入
-     */
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
-
-    /**
-     * 剩余可提现金额
-     * @return Balance 剩余可提现金额
-     */
-    public Double getBalance() {
-        return balance;
-    }
-
-    /**
-     * 剩余可提现金额
-     * @param balance 剩余可提现金额
-     */
-    public void setBalance(Double balance) {
-        this.balance = balance;
-    }
-
-    /**
-     * 冻结金额(已预订,但未消费)
-     * @return FreezeAmount 冻结金额(已预订,但未消费)
-     */
-    public Double getFreezeamount() {
-        return freezeamount;
-    }
-
-    /**
-     * 冻结金额(已预订,但未消费)
-     * @param freezeamount 冻结金额(已预订,但未消费)
-     */
-    public void setFreezeamount(Double freezeamount) {
-        this.freezeamount = freezeamount;
-    }
-
-    /**
      * 订场确认(0=人工确认1=自动确认)
      * @return OrderVerify 订场确认(0=人工确认1=自动确认)
      */
@@ -597,5 +524,21 @@ public class Venue implements Serializable {
      */
     public void setReservePaySms(Integer reservePaySms) {
         this.reservePaySms = reservePaySms;
+    }
+
+    /**
+     * 最大显示订场天数
+     * @return Max_day 最大显示订场天数
+     */
+    public Integer getMaxDay() {
+        return maxDay;
+    }
+
+    /**
+     * 最大显示订场天数
+     * @param maxDay 最大显示订场天数
+     */
+    public void setMaxDay(Integer maxDay) {
+        this.maxDay = maxDay;
     }
 }

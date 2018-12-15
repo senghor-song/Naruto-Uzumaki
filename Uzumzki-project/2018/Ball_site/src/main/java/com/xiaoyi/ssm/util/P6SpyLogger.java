@@ -21,7 +21,7 @@ public class P6SpyLogger extends StdoutLogger {
      * @param sql 含参数值的查询语句，如 select * from from table1 where c1=7
      */
     @Override
-    public void logSQL(int connectionId, String now, long elapsed, Category category, String prepared, String sql) {
+    public void logSQL(int connectionId, String now, long elapsed, Category category, String prepared, String sql, String url) {
     	Properties properties = new Properties();
     	Boolean flag = false;
     	try {
@@ -32,7 +32,7 @@ public class P6SpyLogger extends StdoutLogger {
 		}
     	if (flag) {
 			if(!Category.COMMIT.equals(category) && !prepared.startsWith("select count(")){
-		        this.logText(this.strategy.formatMessage(connectionId, now, elapsed, category.toString(), "-prepared-", sql));
+		        this.logText(this.strategy.formatMessage(connectionId, now, elapsed, category.toString(), "-prepared-", sql, url));
 			}
 		}
     }

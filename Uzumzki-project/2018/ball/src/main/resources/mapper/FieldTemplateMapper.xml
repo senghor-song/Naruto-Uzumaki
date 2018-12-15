@@ -66,6 +66,20 @@
 		where ID = #{id,jdbcType=VARCHAR}
 	</select>
 	
+	<update id="updateByTemplate">
+		UPDATE FieldTemplate SET TemplateID = #{nowId} WHERE TemplateID = #{oldId};
+	</update>
+	
+	<update id="updateByVenue" >
+		update FieldTemplate set VenueID = #{dateStr} where VenueID = #{venueid}
+	</update>
+	
+	<select id="selectByNowDate" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" />,vt.`ID` ID, vt.`Name` NAME FROM FieldTemplate ft INNER JOIN VenueTemplate vt ON ft.`TemplateID` = vt.`ID` 
+		WHERE ft.VenueID = #{id} AND ft.FieldID = #{fieldid} AND ft.`FieldTime` &gt;= #{startDate} AND ft.`FieldTime` &lt;= #{endDate}
+	</select>
+	
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
 		delete from FieldTemplate
 		where ID = #{id,jdbcType=VARCHAR}

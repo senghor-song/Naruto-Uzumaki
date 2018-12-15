@@ -24,7 +24,7 @@ public class OneHourGetJob {
 	 */
 	@Scheduled(cron = "0 0 0/1 * * ? ")
 //	@Scheduled(cron = "0/10 * * * * ? ")
-	public void getWXAccess_token() {
+	public void oneHourGetJob() {
 		// 获取微信公众号的access_token
 		String accessTokenDate = HttpUtils.sendGet("https://api.weixin.qq.com/cgi-bin/token",
 				"grant_type=client_credential&appid=" + WXConfig.appid + "&secret=" + WXConfig.appSecret);

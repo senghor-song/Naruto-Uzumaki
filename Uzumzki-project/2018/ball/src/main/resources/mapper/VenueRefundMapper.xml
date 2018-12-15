@@ -20,28 +20,46 @@
 		Refund_time, Refund_status, Remark
 	</sql>
 
-	<select id="selectByOrder" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
+	<select id="selectByOrder" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from VenueRefund
-		where Order_id = #{orderid,jdbcType=VARCHAR}
+		where Order_id = #{orderid,jdbcType=VARCHAR} AND Refund_status = #{status} limit 1
 	</select>
 
-	<select id="selectByVenue" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
+	<select id="selectByVenue" resultMap="BaseResultMap">
 		SELECT vr.* FROM VenueRefund vr INNER JOIN `Order` o ON
-		vr.`Order_id` = o.`ID` WHERE o.`VenueID` = #{venueid,jdbcType=VARCHAR}
+		vr.`Order_id` = o.`ID` WHERE o.`VenueID` =
+		#{venueid,jdbcType=VARCHAR}
+		AND vr.`Create_time` &gt;= #{dateStart} AND vr.`Create_time` &lt;= #{dateEnd}
+	</select>
+	
+	<select id="selectByTimeOut" resultMap="BaseResultMap">
+		SELECT vr.* FROM `Order` o INNER JOIN VenueRefund vr ON o.`ID` = vr.`Order_id` 
+		WHERE vr.Refund_status = 0 AND vr.`Create_time` &gt;= #{dateStart} AND vr.`Create_time` &lt;= #{dateEnd}
 	</select>
 
-	<select id="countByVenue" parameterType="java.lang.String"
-		resultType="java.lang.Integer">
+	<select id="countByVenue" parameterType="java.lang.String" resultType="java.lang.Integer">
 		SELECT COUNT(0) FROM VenueRefund vr INNER JOIN `Order` o ON
-		vr.`Order_id` = o.`ID` WHERE o.`VenueID` = #{venueid,jdbcType=VARCHAR}
+		vr.`Order_id` = o.`ID`
+		WHERE o.`VenueID` = #{venueid,jdbcType=VARCHAR} AND vr.Refund_status = 0
+	</select>
+	
+	<select id="selectBySettleVenue" resultMap="BaseResultMap">
+		SELECT vr.* FROM VenueRefund vr INNER JOIN `Order` o ON
+		vr.`Order_id` = o.`ID` WHERE o.`AmountType` = 0 AND o.`VenueID` =
+		#{venueid,jdbcType=VARCHAR}
+		AND vr.`Create_time` &gt;= #{dateStart} AND vr.`Create_time` &lt;= #{dateEnd}
+	</select>
+	
+	<select id="selectByMemberDate" resultMap="BaseResultMap">
+		SELECT vr.* FROM (
+		SELECT o.ID FROM `Order` o INNER JOIN Venue v ON o.VenueID = v.ID INNER JOIN 
+		(SELECT tt.ID FROM TrainTeam tt INNER JOIN `TrainCoach` tc ON tt.Train_coach_id = tc.`ID` WHERE tc.`Member_id` = #{memberId}) tt ON v.TrainTeam = tt.ID
+		WHERE o.OrderDate = #{nowDate} AND o.AmountType = 0 AND o.`Type` = 4) o INNER JOIN VenueRefund vr ON o.ID = vr.`Order_id` WHERE vr.`Refund_status` = 1
 	</select>
 
-	<select id="selectByPrimaryKey" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from VenueRefund
@@ -54,11 +72,13 @@
 	<insert id="insert" parameterType="com.xiaoyi.ssm.model.VenueRefund">
 		insert into VenueRefund (ID, Create_time, Content,
 		Amount_sum, Amount_refund, Amount_fee,
-		Amount_rate, Order_id, Refund_time,
+		Amount_rate, Order_id,
+		Refund_time,
 		Refund_status, Remark)
 		values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
 		#{content,jdbcType=VARCHAR},
-		#{amountSum,jdbcType=DOUBLE}, #{amountRefund,jdbcType=DOUBLE}, #{amountFee,jdbcType=DOUBLE},
+		#{amountSum,jdbcType=DOUBLE},
+		#{amountRefund,jdbcType=DOUBLE}, #{amountFee,jdbcType=DOUBLE},
 		#{amountRate,jdbcType=INTEGER}, #{orderId,jdbcType=VARCHAR},
 		#{refundTime,jdbcType=TIMESTAMP},
 		#{refundStatus,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
@@ -175,13 +195,16 @@
 	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.VenueRefund">
 		update VenueRefund
 		set Create_time = #{createTime,jdbcType=TIMESTAMP},
-		Content = #{content,jdbcType=VARCHAR},
+		Content =
+		#{content,jdbcType=VARCHAR},
 		Amount_sum = #{amountSum,jdbcType=DOUBLE},
 		Amount_refund = #{amountRefund,jdbcType=DOUBLE},
-		Amount_fee = #{amountFee,jdbcType=DOUBLE},
+		Amount_fee =
+		#{amountFee,jdbcType=DOUBLE},
 		Amount_rate = #{amountRate,jdbcType=INTEGER},
 		Order_id = #{orderId,jdbcType=VARCHAR},
-		Refund_time = #{refundTime,jdbcType=TIMESTAMP},
+		Refund_time =
+		#{refundTime,jdbcType=TIMESTAMP},
 		Refund_status = #{refundStatus,jdbcType=INTEGER},
 		Remark = #{remark,jdbcType=VARCHAR}
 		where ID = #{id,jdbcType=VARCHAR}

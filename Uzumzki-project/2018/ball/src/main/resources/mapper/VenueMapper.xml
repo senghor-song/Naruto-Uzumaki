@@ -16,10 +16,6 @@
 		<result column="BallSum" jdbcType="INTEGER" property="ballsum" />
 		<result column="Image" jdbcType="VARCHAR" property="image" />
 		<result column="WarmReminder" jdbcType="VARCHAR" property="warmreminder" />
-		<result column="Member_id" jdbcType="VARCHAR" property="memberId" />
-		<result column="Amount" jdbcType="DOUBLE" property="amount" />
-		<result column="Balance" jdbcType="DOUBLE" property="balance" />
-		<result column="FreezeAmount" jdbcType="DOUBLE" property="freezeamount" />
 		<result column="OrderVerify" jdbcType="INTEGER" property="orderverify" />
 		<result column="Longitude" jdbcType="DOUBLE" property="longitude" />
 		<result column="Latitude" jdbcType="DOUBLE" property="latitude" />
@@ -31,8 +27,8 @@
 		<result column="Reserve_show" jdbcType="INTEGER" property="reserveShow" />
 		<result column="Reserve_sms" jdbcType="INTEGER" property="reserveSms" />
 		<result column="Reserve_pay_sms" jdbcType="INTEGER" property="reservePaySms" />
-		
-		
+		<result column="Max_day" jdbcType="INTEGER" property="maxDay" />
+
 		<result column="sumTemplate" jdbcType="DOUBLE" property="sumTemplate" />
 		<association property="cityT" javaType="com.xiaoyi.ssm.model.City">
 			<id column="ID" jdbcType="CHAR" property="id" />
@@ -48,34 +44,31 @@
 		</association>
 	</resultMap>
 	<sql id="Base_Column_List">
-		ID, CreateTime, ModifyTime, VenueNO, Name, Address, CityID, DistrictID,
-		Owner, Contact_phone,
-		Inform_phone, BallSum, Image, WarmReminder, Member_id, Amount, Balance,
-		FreezeAmount,
-		OrderVerify, Longitude, Latitude, Type, Train_add_flag, TrainTeam, ShowFlag,
-		Min_amount,
-		Reserve_show, Reserve_sms, Reserve_pay_sms
+		ID, CreateTime, ModifyTime, VenueNO, Name, Address, CityID, DistrictID, Owner, Contact_phone,
+		Inform_phone, BallSum, Image, WarmReminder, OrderVerify, Longitude, Latitude, Type,
+		Train_add_flag, TrainTeam, ShowFlag, Min_amount, Reserve_show, Reserve_sms, Reserve_pay_sms,
+		Max_day
 	</sql>
 
 
-	<select id="selectByOftenMember" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
+
+	<select id="selectByOftenMember" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT v.* FROM
 		Venue v INNER JOIN MemberHabit mh ON v.`ID` =
-		mh.`VenueID` WHERE mh.`MemberID` = #{id} ORDER BY
+		mh.`VenueID`
+		WHERE mh.`MemberID` = #{id} ORDER BY
 		mh.`CreateTime` DESC
 	</select>
 
-	<select id="selectByManager" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
+	<select id="selectByManager" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT v.* FROM
 		Venue v INNER JOIN TrainTeam tt
 		ON
-		v.`TrainTeam` = tt.`ID` WHERE v.`TrainTeam` = #{id}
+		v.`TrainTeam` = tt.`ID` WHERE
+		v.`TrainTeam` = #{id}
 	</select>
 
-	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Venue"
-		resultMap="BaseResultMap">
+	<select id="selectByAll" parameterType="com.xiaoyi.ssm.model.Venue" resultMap="BaseResultMap">
 		SELECT v.*,c.`City` cCity, d.`District` dDistrict FROM Venue v LEFT
 		JOIN City c ON
 		v.`CityID` =
@@ -127,12 +120,13 @@
 		</where>
 	</select>
 
-	<select id="selectByVenueCity" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
+	<select id="selectByVenueCity" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from Venue where Name = #{venueName,jdbcType=CHAR} and CityID =
 		#{id,jdbcType=CHAR}
+		AND ShowFlag = 1
+		limit 1
 	</select>
 
 	<select id="selectByAllVenue" resultMap="BaseResultMap">
@@ -162,11 +156,11 @@
 		</if>
 	</select>
 
-	<select id="selectByTrainTeamID" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
+	<select id="selectByTrainTeamID" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT v.* FROM
 		Venue v INNER JOIN TrainTeamVenue ttv ON
-		v.`ID` = ttv.`Train_venue_id` WHERE
+		v.`ID` =
+		ttv.`Train_venue_id` WHERE
 		ttv.`Train_team_id` =
 		#{id}
 	</select>
@@ -175,7 +169,8 @@
 		delete from
 		TrainTeamVenue where Train_venue_id
 		= #{id,jdbcType=CHAR} AND
-		Train_team_id = #{trainTeamId,jdbcType=CHAR}
+		Train_team_id =
+		#{trainTeamId,jdbcType=CHAR}
 	</delete>
 
 	<insert id="saveTeamVenue" parameterType="com.xiaoyi.ssm.model.TrainTeamVenue">
@@ -184,13 +179,13 @@
 		Train_team_id
 		)
 		values
-		(#{id,jdbcType=VARCHAR}, #{trainVenueId,jdbcType=VARCHAR},
+		(#{id,jdbcType=VARCHAR},
+		#{trainVenueId,jdbcType=VARCHAR},
 		#{trainTeamId,jdbcType=VARCHAR}
 		)
 	</insert>
 
-	<select id="countByTeam" parameterType="java.lang.String"
-		resultType="java.lang.Integer">
+	<select id="countByTeam" parameterType="java.lang.String" resultType="java.lang.Integer">
 		select count(0) from
 		TrainTeamVenue where Train_team_id =
 		#{id,jdbcType=VARCHAR}
@@ -205,8 +200,7 @@
 		</where>
 	</select>
 
-	<select id="selectByName" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
+	<select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT * FROM Venue
 		WHERE Name LIKE
 		concat('%',concat('${venueName}','%'))
@@ -220,6 +214,7 @@
 		<if test="ballType != null">
 			AND Type = #{ballType}
 		</if>
+		AND ShowFlag = 1
 	</select>
 
 	<select id="selectBySearch" resultMap="BaseResultMap">
@@ -228,25 +223,29 @@
 		v.`CityID` =
 		c.`ID` LEFT JOIN District d ON
 		v.`DistrictID` = d.`ID`
-		<where>
-			<if test="selectType != null">
-				<if test="selectType == 0">
-					<if test="keyword != null and keyword != ''">
-						AND c.`City` LIKE concat('%',concat('${keyword}','%'))
-					</if>
-				</if>
-				<if test="selectType == 1">
-					<if test="keyword != null and keyword != ''">
-						AND v.Name LIKE concat('%',concat('${keyword}','%'))
-					</if>
-				</if>
-				<if test="selectType == 2">
-					<if test="keyword != null and keyword != ''">
-						AND v.VenueNO LIKE concat('%',concat('${keyword}','%'))
-					</if>
+		<if test="selectType != null">
+			<if test="selectType == 0">
+				<if test="keyword != null and keyword != ''">
+					where c.`City` LIKE concat('%',concat('${keyword}','%'))
 				</if>
 			</if>
-		</where>
+			<if test="selectType == 1">
+				<if test="keyword != null and keyword != ''">
+					where v.Name LIKE concat('%',concat('${keyword}','%'))
+				</if>
+			</if>
+			<if test="selectType == 2">
+				<if test="keyword != null and keyword != ''">
+					where v.VenueNO LIKE concat('%',concat('${keyword}','%'))
+				</if>
+			</if>
+			<if test="selectType == 3">
+				<if test="keyword != null and keyword != ''">
+					LEFT JOIN TrainTeam tt ON v.`TrainTeam` = tt.`ID` WHERE tt.`Title` LIKE concat('%',concat('${keyword}','%'))
+				</if>
+			</if>
+		</if>
+		ORDER BY ModifyTime DESC
 	</select>
 
 	<select id="selectByVenueSearch" resultMap="BaseResultMap">
@@ -254,7 +253,8 @@
 		cCity, vt.`Price` vtPrice,
 		vt.`ID` vtID FROM Venue v
 		INNER JOIN
-		VenueTemplate vt ON v.`ID` = vt.`VenueID` LEFT JOIN City c ON
+		VenueTemplate vt ON v.`ID` =
+		vt.`VenueID` LEFT JOIN City c ON
 		v.`CityID` = c.`ID`
 		<where>
 			<if test="cityid != null and cityid != ''">
@@ -277,17 +277,37 @@
 			HAVING COUNT(vt.`ID`) = #{sumTemplate}
 		</if>
 	</select>
-	
+
 	<select id="selectByDateOut" resultMap="BaseResultMap">
-		SELECT v.* FROM Venue v INNER JOIN (SELECT DISTINCT VenueID FROM `Order` WHERE `Type` = 6 AND OrderDate &lt; #{date} AND AmountType = 0) ov ON v.`ID` = ov.VenueID
-	</select>
-	
-	<select id="selectByMatchingVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT * FROM Venue WHERE Contact_phone = #{phone} OR Inform_phone = #{phone}
+		SELECT v.* FROM Venue v INNER JOIN (SELECT DISTINCT VenueID FROM `Order`
+		WHERE OrderDate = #{date}
+		AND AmountType = 0
+		<if test="type != -1">
+			AND `Type` = #{type}
+		</if>
+		) ov ON v.`ID` = ov.VenueID
 	</select>
 
-	<select id="selectByPrimaryKey" parameterType="java.lang.String"
-		resultMap="BaseResultMap">
+	<select id="selectByMatchingVenue" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM Venue WHERE Contact_phone = #{phone} OR Inform_phone =
+		#{phone}
+	</select>
+
+	<update id="updateByTrainTeamNull">
+		UPDATE Venue SET TrainTeam = NULL WHERE ID = #{venueid}
+	</update>
+	
+	<select id="selectByMemberAndOrderDate" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT v.* FROM `Order` o INNER JOIN Venue v ON o.VenueID = v.ID INNER JOIN 
+		(SELECT tt.ID FROM TrainTeam tt INNER JOIN `TrainCoach` tc ON tt.Train_coach_id = tc.`ID` WHERE tc.`Member_id` = #{memberId}) tt ON v.TrainTeam = tt.ID
+		WHERE o.OrderDate = #{dateStr} AND o.AmountType = 1 AND o.`Type` IN (1,4) GROUP BY v.`Name`
+	</select>
+	
+	<select id="selectByVenueNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM Venue WHERE VenueNO = #{venueNo}
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from Venue
@@ -302,27 +322,20 @@
 		VenueNO, Name, Address,
 		CityID, DistrictID, Owner,
 		Contact_phone, Inform_phone, BallSum,
-		Image, WarmReminder, Member_id,
-		Amount, Balance, FreezeAmount,
-		OrderVerify, Longitude, Latitude,
-		Type, Train_add_flag, TrainTeam,
-		ShowFlag, Min_amount, Reserve_show,
-		Reserve_sms, Reserve_pay_sms)
-		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP},
-		#{modifytime,jdbcType=TIMESTAMP},
+		Image, WarmReminder, OrderVerify,
+		Longitude, Latitude, Type,
+		Train_add_flag, TrainTeam, ShowFlag,
+		Min_amount, Reserve_show, Reserve_sms,
+		Reserve_pay_sms, Max_day)
+		values (#{id,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, #{modifytime,jdbcType=TIMESTAMP},
 		#{venueno,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
-		#{cityid,jdbcType=VARCHAR}, #{districtid,jdbcType=VARCHAR},
-		#{owner,jdbcType=VARCHAR},
+		#{cityid,jdbcType=VARCHAR}, #{districtid,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR},
 		#{contactPhone,jdbcType=VARCHAR}, #{informPhone,jdbcType=VARCHAR}, #{ballsum,jdbcType=INTEGER},
-		#{image,jdbcType=VARCHAR}, #{warmreminder,jdbcType=VARCHAR},
-		#{memberId,jdbcType=VARCHAR},
-		#{amount,jdbcType=DOUBLE}, #{balance,jdbcType=DOUBLE}, #{freezeamount,jdbcType=DOUBLE},
-		#{orderverify,jdbcType=INTEGER}, #{longitude,jdbcType=DOUBLE},
-		#{latitude,jdbcType=DOUBLE},
-		#{type,jdbcType=INTEGER}, #{trainAddFlag,jdbcType=INTEGER}, #{trainteam,jdbcType=VARCHAR},
-		#{showflag,jdbcType=INTEGER}, #{minAmount,jdbcType=DOUBLE},
-		#{reserveShow,jdbcType=INTEGER},
-		#{reserveSms,jdbcType=INTEGER}, #{reservePaySms,jdbcType=INTEGER})
+		#{image,jdbcType=VARCHAR}, #{warmreminder,jdbcType=VARCHAR}, #{orderverify,jdbcType=INTEGER},
+		#{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, #{type,jdbcType=INTEGER},
+		#{trainAddFlag,jdbcType=INTEGER}, #{trainteam,jdbcType=VARCHAR}, #{showflag,jdbcType=INTEGER},
+		#{minAmount,jdbcType=DOUBLE}, #{reserveShow,jdbcType=INTEGER}, #{reserveSms,jdbcType=INTEGER},
+		#{reservePaySms,jdbcType=INTEGER}, #{maxDay,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.Venue">
 		insert into Venue
@@ -369,18 +382,6 @@
 			<if test="warmreminder != null">
 				WarmReminder,
 			</if>
-			<if test="memberId != null">
-				Member_id,
-			</if>
-			<if test="amount != null">
-				Amount,
-			</if>
-			<if test="balance != null">
-				Balance,
-			</if>
-			<if test="freezeamount != null">
-				FreezeAmount,
-			</if>
 			<if test="orderverify != null">
 				OrderVerify,
 			</if>
@@ -413,6 +414,9 @@
 			</if>
 			<if test="reservePaySms != null">
 				Reserve_pay_sms,
+			</if>
+			<if test="maxDay != null">
+				Max_day,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -458,18 +462,6 @@
 			<if test="warmreminder != null">
 				#{warmreminder,jdbcType=VARCHAR},
 			</if>
-			<if test="memberId != null">
-				#{memberId,jdbcType=VARCHAR},
-			</if>
-			<if test="amount != null">
-				#{amount,jdbcType=DOUBLE},
-			</if>
-			<if test="balance != null">
-				#{balance,jdbcType=DOUBLE},
-			</if>
-			<if test="freezeamount != null">
-				#{freezeamount,jdbcType=DOUBLE},
-			</if>
 			<if test="orderverify != null">
 				#{orderverify,jdbcType=INTEGER},
 			</if>
@@ -502,6 +494,9 @@
 			</if>
 			<if test="reservePaySms != null">
 				#{reservePaySms,jdbcType=INTEGER},
+			</if>
+			<if test="maxDay != null">
+				#{maxDay,jdbcType=INTEGER},
 			</if>
 		</trim>
 	</insert>
@@ -547,18 +542,6 @@
 			<if test="warmreminder != null">
 				WarmReminder = #{warmreminder,jdbcType=VARCHAR},
 			</if>
-			<if test="memberId != null">
-				Member_id = #{memberId,jdbcType=VARCHAR},
-			</if>
-			<if test="amount != null">
-				Amount = #{amount,jdbcType=DOUBLE},
-			</if>
-			<if test="balance != null">
-				Balance = #{balance,jdbcType=DOUBLE},
-			</if>
-			<if test="freezeamount != null">
-				FreezeAmount = #{freezeamount,jdbcType=DOUBLE},
-			</if>
 			<if test="orderverify != null">
 				OrderVerify = #{orderverify,jdbcType=INTEGER},
 			</if>
@@ -592,6 +575,9 @@
 			<if test="reservePaySms != null">
 				Reserve_pay_sms = #{reservePaySms,jdbcType=INTEGER},
 			</if>
+			<if test="maxDay != null">
+				Max_day = #{maxDay,jdbcType=INTEGER},
+			</if>
 		</set>
 		where ID = #{id,jdbcType=CHAR}
 	</update>
@@ -610,10 +596,6 @@
 		BallSum = #{ballsum,jdbcType=INTEGER},
 		Image = #{image,jdbcType=VARCHAR},
 		WarmReminder = #{warmreminder,jdbcType=VARCHAR},
-		Member_id = #{memberId,jdbcType=VARCHAR},
-		Amount = #{amount,jdbcType=DOUBLE},
-		Balance = #{balance,jdbcType=DOUBLE},
-		FreezeAmount = #{freezeamount,jdbcType=DOUBLE},
 		OrderVerify = #{orderverify,jdbcType=INTEGER},
 		Longitude = #{longitude,jdbcType=DOUBLE},
 		Latitude = #{latitude,jdbcType=DOUBLE},
@@ -624,7 +606,8 @@
 		Min_amount = #{minAmount,jdbcType=DOUBLE},
 		Reserve_show = #{reserveShow,jdbcType=INTEGER},
 		Reserve_sms = #{reserveSms,jdbcType=INTEGER},
-		Reserve_pay_sms = #{reservePaySms,jdbcType=INTEGER}
+		Reserve_pay_sms = #{reservePaySms,jdbcType=INTEGER},
+		Max_day = #{maxDay,jdbcType=INTEGER}
 		where ID = #{id,jdbcType=CHAR}
 	</update>
 </mapper>

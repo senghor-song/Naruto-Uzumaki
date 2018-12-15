@@ -150,16 +150,17 @@ public class DateUtil {
 		int hour = cal.get(Calendar.HOUR_OF_DAY);
 		int minute = cal.get(Calendar.MINUTE);
 		int second = cal.get(Calendar.SECOND);
+		int millisecond = cal.get(Calendar.MILLISECOND);
 		// 时分秒（毫秒数）
-		long millisecond = hour * 60 * 60 * 1000 + minute * 60 * 1000 + second * 1000;
+		long times = hour * 60 * 60 * 1000 + minute * 60 * 1000 + second * 1000 + millisecond;
 		// 凌晨00:00:00
-		cal.setTimeInMillis(cal.getTimeInMillis() - millisecond);
+		cal.setTimeInMillis(cal.getTimeInMillis() - times);
 
 		if (flag == 0) {
 			return cal.getTime();
 		} else if (flag == 1) {
 			// 凌晨23:59:59
-			cal.setTimeInMillis(cal.getTimeInMillis() + 23 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000);
+			cal.setTimeInMillis(cal.getTimeInMillis() + 23 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000 + 999);
 		}
 		return cal.getTime();
 	}

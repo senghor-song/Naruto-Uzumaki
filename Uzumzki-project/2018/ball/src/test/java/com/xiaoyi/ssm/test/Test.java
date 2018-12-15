@@ -1,31 +1,125 @@
 package com.xiaoyi.ssm.test;
 
-import java.util.Date;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
-import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
-import com.xiaoyi.ssm.util.Arith;
+import com.xiaoyi.ssm.model.Member;
+import com.xiaoyi.ssm.model.WXFundflow;
+import com.xiaoyi.ssm.service.WXFundflowService;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
 import com.xiaoyi.ssm.util.RedisUtil;
+import com.xiaoyi.ssm.util.SpringUtils;
+import com.xiaoyi.ssm.util.Utils;
 import com.xiaoyi.ssm.wxPay.WXConfig;
 import com.xiaoyi.ssm.wxPay.WXPayUtil;
+import com.xiaoyi.ssm.wxPay.XMLUtil;
 
-import cn.hutool.http.HttpUtil;
-
+class MyRunnable implements Runnable{
+    
+    @Override
+    public void run() {
+    	for (int i = 0; i < 5; i++) {
+    		System.out.println("子线程ID："+Thread.currentThread().getId());
+    		System.out.println(Utils.getUUID());
+		}
+    }
+}
 public class Test {
 
 	private static Logger logger = Logger.getLogger(Test.class);
 
-	
-	
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	private static void createMenu(Map map) {
+//		System.out.println("map >>> "+ menus);
+		Iterator entries = map.entrySet().iterator(); 
+		while (entries.hasNext()) {
+			Map.Entry entry = (Map.Entry) entries.next();
+			String key = (String) entry.getKey();
+			if ("menu".equals(key)) {
+				List<Map> value = (List<Map>) entry.getValue();
+				for (Map sonMap : value) {
+			        createMenu(sonMap);
+				}
+				System.out.println("Key = " + key + ", Value = " + value);
+			} else {
+				Object value = entry.getValue();
+				System.out.println("Key = " + key + ", Value = " + value);
+			}
+			
+		}
+	}
+
 	public static void main(String[] args) throws Exception {
+
+		Member member = (Member) RedisUtil.getRedisOne(Global.redis_member, "omKuewSD7muFIojIEzqwusyK9ZMk");
+		System.out.println(member.getSessionKey());
+//    	Integer count = 0;
+//    	System.out.println(count++);
+//		File xmlFile = ResourceUtils.getFile("classpath:menus.xml");
+//        //xml转map
+//        SAXReader saxReader = new SAXReader();
+////        Document document = saxReader.read(new ByteArrayInputStream(respXml.getBytes()));
+//        Document document = saxReader.read(xmlFile);
+//        Element incomingForm = document.getRootElement();
+//        Map menus =  ParseXMLUtils.Dom2Map(incomingForm, false);
+//        
+////        List<Map> menuList = (List<Map>) menus.get("menu");
+////        for (Map menu : menuList) {
+////			Permission permission = new Permission();
+////			permission.setId(menu.getOrDefault("id", "id").toString());
+////		}
+//        
+//        
+//        Iterator entries = menus.entrySet().iterator(); 
+//		while (entries.hasNext()) {
+//			Map.Entry entry = (Map.Entry) entries.next();
+//			String key = (String) entry.getKey();
+//			List<Map> value = (List<Map>) entry.getValue();
+//			for (Map map : value) {
+//		        createMenu(map);
+//			}
+//			
+//			System.out.println("Key = " + key + ", Value = " + value);
+//		}
 		
-		System.out.println(Arith.round(10/100.0,2));
+		
+//		// 使用百度地图根据经纬度获取地址信息
+//		String jsonString = HttpUtils.sendGet("http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=22.61804,114.04031&output=json&pois=0&ak=" + Global.Baidu_Map_KRY, null);
+//		if (!StringUtil.isBank(jsonString)) {
+//			try {
+//				jsonString = jsonString.replace("renderReverse&&renderReverse(", "");
+//				jsonString = jsonString.substring(0, jsonString.length() - 1);
+//				JSONObject jsonObject = JSONObject.fromObject(jsonString);
+//				System.out.println(jsonString);
+//				System.out.println(jsonObject.getJSONObject("result").getJSONObject("addressComponent").getString("city"));
+//				System.out.println(jsonObject.getJSONObject("result").getJSONObject("addressComponent").getString("district"));
+//				System.out.println(jsonObject.getJSONObject("result").getString("formatted_address"));
+//				
+//			} catch (Exception e) {
+//
+//			}
+//		}
+		
+//		System.out.println(Arith.mul(Arith.sub(amountCollect, 0), 0.01));
+//		System.out.println(Arith.round(Arith.sub(amountCollect, Arith.mul(Arith.sub(amountCollect, 0), 0.01)), 2));
+		
+//		System.out.println("===========操作系统是:" + System.getProperties().getProperty("os.name"));
+//		System.out.println("===========文件的分隔符为file.separator:" + System.getProperties().getProperty("file.separator"));
 		
 //		// 预定通知消息
 //		JSONObject datajson = new JSONObject();
@@ -43,7 +137,7 @@ public class Test {
 //		System.out.println(DateUtil.betweenDay(date1, date2, true));
 //		System.out.println(137/7);
 		
-//		String string = "/WebBackAPI/admin/inviteBall/listview";
+//		String string = "/admin/inviteBall/listview";
 //		String[] strings = string.split("/");
 //		System.err.println();
 //		System.out.println("最终兑换"+maxBox(10)+ "瓶矿泉水");

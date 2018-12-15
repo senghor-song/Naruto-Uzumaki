@@ -41,7 +41,7 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
 			response.setCharacterEncoding("UTF-8");
 			OutputStream ps = response.getOutputStream();
 //			BaseResult<String> result=new BaseResult(false, ex.getMessage());
-			ApiMessage apiMessage = new ApiMessage(400,"服务器正忙,请稍后再试");
+			ApiMessage apiMessage = new ApiMessage(404,"服务器正忙,请稍后再试");
 			ps.write(JSON.toJSONString(apiMessage).getBytes("UTF-8"));
 			ps.flush();
 		} catch (Exception e) {

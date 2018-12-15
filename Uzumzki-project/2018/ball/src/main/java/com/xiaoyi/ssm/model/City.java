@@ -6,7 +6,49 @@ import java.io.Serializable;
  * 城市表实体
  */
 public class City implements Serializable {
-    /** 系统->城市 */
+	
+	// 网球开放数量
+	private Integer ball1;
+	// 足球开放数量
+	private Integer ball2;
+	// 羽毛球开放数量
+	private Integer ball3;
+	// 蓝球开放数量
+	private Integer ball4;
+	
+    public Integer getBall1() {
+		return ball1;
+	}
+
+	public void setBall1(Integer ball1) {
+		this.ball1 = ball1;
+	}
+
+	public Integer getBall2() {
+		return ball2;
+	}
+
+	public void setBall2(Integer ball2) {
+		this.ball2 = ball2;
+	}
+
+	public Integer getBall3() {
+		return ball3;
+	}
+
+	public void setBall3(Integer ball3) {
+		this.ball3 = ball3;
+	}
+
+	public Integer getBall4() {
+		return ball4;
+	}
+
+	public void setBall4(Integer ball4) {
+		this.ball4 = ball4;
+	}
+
+	/** 系统->城市 */
     private String id;
 
     /** 城市编号 */

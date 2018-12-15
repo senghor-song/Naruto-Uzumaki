@@ -34,4 +34,14 @@ public interface VenueLockMapper extends BaseMapper<VenueLock, String> {
 	 * @date 2018年8月20日 下午3:02:24
 	 */
 	Integer selectIsVenueLock(@Param("id") String id, @Param("time") String idtime, @Param("date") Date date);
+
+	/**
+	 * @Description: 场地锁定表逻辑删除
+	 * @author 宋高俊
+	 * @param venueid
+	 * @param dateStr
+	 * @return
+	 * @date 2018年11月21日 下午8:49:33
+	 */
+	int updateByVenue(@Param("venueid")String venueid, @Param("dateStr")String dateStr);
 }

@@ -29,6 +29,7 @@ import com.xiaoyi.ssm.model.TrainTeam;
 import com.xiaoyi.ssm.model.TrainTeamCoach;
 import com.xiaoyi.ssm.model.TrainTeamFeedback;
 import com.xiaoyi.ssm.model.TrainTeamLog;
+import com.xiaoyi.ssm.model.Venue;
 import com.xiaoyi.ssm.service.CityService;
 import com.xiaoyi.ssm.service.MemberService;
 import com.xiaoyi.ssm.service.PermissionService;
@@ -118,6 +119,7 @@ public class TrainTeamController {
 			City city = cityService.selectByPrimaryKey(trainTeam.getCityId());
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("id", trainTeam.getId());// ID
+			map.put("modifyTime", DateUtil.getFormat(trainTeam.getModifyTime()));// ID
 			map.put("city", city != null ? city.getCity() : "");// 城市
 			map.put("lng", trainTeam.getLongitude());// 经度
 			map.put("lat", trainTeam.getLatitude());// 纬度
@@ -145,6 +147,10 @@ public class TrainTeamController {
 			map.put("trainTeamLogSum", trainTeamLogService.countByTeam(trainTeam.getId()));// 日志数量
 			map.put("dayUseSum", Arith.div(dayPhoneSum, dayCommentSum, 2));// 平台依赖指数
 			map.put("trainVenueSum", venueService.countByTeam(trainTeam.getId()));// 编外培训场地数量
+			
+
+			List<Venue> venueList = venueService.selectByManager(trainTeam.getId());
+			map.put("venueSum", venueList.size());// 场馆数量
 			listMap.add(map);
 		}
 		return new AdminMessage(pageInfo.getTotal(), listMap);
@@ -254,6 +260,12 @@ public class TrainTeamController {
 		Staff staff = (Staff) request.getSession().getAttribute("loginStaffInfo");
 		
 		TrainEnter trainEnter = trainEnterService.selectByPrimaryKey(id);
+		City city = cityService.selectByName(trainEnter.getCityName());
+		// 判断城市是否有录入
+		if (city == null) {
+			return new ApiMessage(400, "'"+trainEnter.getCityName()+"'城市不存在");
+		}
+		
 		trainEnter.setContent(content);
 		trainEnter.setCheckFlag(check);
 		trainEnter.setCheckStaff(staff.getId());
@@ -263,22 +275,7 @@ public class TrainTeamController {
 		int flag = trainEnterService.updateByPrimaryKeySelective(trainEnter);
 		if (flag > 0) {
 			if (check == 1) {
-				// 通过审核即创建培训机构
-				TrainTeam trainTeam = new TrainTeam();
-				trainTeam.setId(Utils.getUUID());
-				trainTeam.setCreateTime(new Date());
-				trainTeam.setModifyTime(new Date());
-				trainTeam.setTitle(trainEnter.getTitle());
-				trainTeam.setLongitude(trainEnter.getLongitude());
-				trainTeam.setLatitude(trainEnter.getLatitude());
-				trainTeam.setTeachClass(trainEnter.getTeachClass());
-				trainTeam.setPhone(trainEnter.getMainPhone());
-				City city = cityService.selectByName(trainEnter.getCityName());
-				trainTeam.setCityId(city.getId());
-				trainTeam.setAddress(trainEnter.getAddress());
-				trainTeam.setLevel(12);
-				trainTeam.setLevelTime(new Date());
-				trainTeamService.insertSelective(trainTeam);
+				// 先查询这个人是否已经有过教练身份了 
 				TrainCoach trainCoach = trainCoachService.selectByMember(trainEnter.getMemberId());
 				if (trainCoach == null) {
 					// 新建教练数据
@@ -292,6 +289,26 @@ public class TrainTeamController {
 					trainCoach.setSex(member.getAppgender());
 					trainCoachService.insertSelective(trainCoach);
 				}
+
+				// 通过审核即创建培训机构
+				TrainTeam trainTeam = new TrainTeam();
+				trainTeam.setId(Utils.getUUID());
+				trainTeam.setCreateTime(new Date());
+				trainTeam.setModifyTime(new Date());
+				trainTeam.setTitle(trainEnter.getTitle());
+				trainTeam.setHeadImage(trainEnter.getHeadImage());
+				trainTeam.setLongitude(trainEnter.getLongitude());
+				trainTeam.setLatitude(trainEnter.getLatitude());
+				trainTeam.setTeachClass(trainEnter.getTeachClass());
+				trainTeam.setPhone(trainEnter.getMainPhone());
+				trainTeam.setCityId(city.getId());
+				trainTeam.setAddress(trainEnter.getAddress());
+				trainTeam.setLevel(12);
+				trainTeam.setLevelTime(new Date());
+				trainTeam.setTrainCoachId(trainCoach.getId());
+				trainTeamService.insertSelective(trainTeam);
+				
+				// 创建馆长身份
 				TrainTeamCoach trainTeamCoach = new TrainTeamCoach();
 				trainTeamCoach.setId(Utils.getUUID());
 				trainTeamCoach.setManager(1);
@@ -412,9 +429,40 @@ public class TrainTeamController {
 			TrainTeamCoach trainTeamCoach = list.get(i);
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("coachName", trainTeamCoach.getTrainCoach().getName());// 时间
-			map.put("manager", trainTeamCoach.getManager() == 0 ? "外聘" : trainTeamCoach.getManager() == 1 ? "店长" : "管理");// 内容
+			map.put("manager", trainTeamCoach.getManager() == 0 ? "外聘" : trainTeamCoach.getManager() == 1 ? "馆长" : "管理");// 内容
+			map.put("memberNo", trainTeamCoach.getMember().getMemberno());// 用户编号
+			
+			TrainTeam trainTeam = trainTeamService.selectByPrimaryKey(id);
+			if (trainTeam.getTrainCoachId().equals(trainTeamCoach.getTrainCoach().getId())) {
+				map.put("amountFlag", "是");// 回款人
+			} else {
+				map.put("amountFlag", "否");// 回款人
+			}
+			
 			listMap.add(map);
 		}
 		return new AdminMessage(0, listMap);
+	}
+	
+	/**
+	 * @Description: 获取机构下属场馆
+	 * @author 宋高俊
+	 * @param trainTeamId
+	 * @return
+	 * @date 2018年12月13日上午9:23:36
+	 */
+	@RequestMapping(value = "/venue/list")
+	@ResponseBody
+	public AdminMessage venuelist(String trainTeamId) {
+		List<Venue> list = venueService.selectByManager(trainTeamId);
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < list.size(); i++) {
+			Venue venue = list.get(i);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("venueNo", venue.getVenueno());// 编号
+			map.put("venueName", venue.getName());// 场馆名称
+			listMap.add(map);
+		}
+		return new AdminMessage(list.size(), listMap);
 	}
 }

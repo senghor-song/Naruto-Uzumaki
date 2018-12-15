@@ -22,7 +22,7 @@ public class CheckTrainOrderCommentJob {
 	 */
 	// @Scheduled(cron = "1 0 0 1/1 * ? ")
 	@Scheduled(cron = "0 0/1 * * * ? ")
-	public void countOneDayAmount() {
+	public void checkTrainOrderCommentJob() {
 		// logger.info("开始执行检查是否有超过24小时的评论未评论任务------------------->");
 
 		TrainOrderCommentService trainOrderCommentService = SpringUtils.getBean("trainOrderCommentServiceImpl", TrainOrderCommentService.class);

@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoyi.ssm.dao.WXFundflowMapper">
+	<resultMap id="BaseResultMap" type="com.xiaoyi.ssm.model.WXFundflow">
+		<id column="ID" jdbcType="CHAR" property="id" />
+		<result column="Create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="Record_time" jdbcType="TIMESTAMP" property="recordTime" />
+		<result column="WX_pay_orderid" jdbcType="VARCHAR" property="wxPayOrderid" />
+		<result column="WX_fundflow_id" jdbcType="VARCHAR" property="wxFundflowId" />
+		<result column="Work_name" jdbcType="VARCHAR" property="workName" />
+		<result column="Work_type" jdbcType="VARCHAR" property="workType" />
+		<result column="Deal_type" jdbcType="VARCHAR" property="dealType" />
+		<result column="Deal_amount" jdbcType="DECIMAL" property="dealAmount" />
+		<result column="Account_amount" jdbcType="DECIMAL" property="accountAmount" />
+		<result column="Apply_user" jdbcType="VARCHAR" property="applyUser" />
+		<result column="Remark" jdbcType="VARCHAR" property="remark" />
+		<result column="Work_id" jdbcType="VARCHAR" property="workId" />
+		<result column="Account_type" jdbcType="INTEGER" property="accountType" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, Create_time, Record_time, WX_pay_orderid, WX_fundflow_id, Work_name, Work_type,
+		Deal_type, Deal_amount, Account_amount, Apply_user, Remark, Work_id, Account_type
+	</sql>
+	
+	<select id="countByDateFlag" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(0) FROM `WXFundflow` WHERE `Record_time` &gt;= #{dateStart} AND `Record_time` &lt; #{dateEnd}
+	</select>
+	
+	<delete id="deleteByDate" parameterType="java.lang.String">
+		DELETE FROM `WXFundflow` WHERE `Record_time` &gt;= #{dateStart} AND `Record_time` &lt; #{dateEnd}
+	</delete>
+
+	<select id="selectByAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from WXFundflow ORDER BY Record_time DESC
+	</select>
+	
+	<select id="selectByDate" resultMap="BaseResultMap">
+		SELECT * FROM `WXFundflow` WHERE Record_time &gt;= #{dateStart} AND Record_time &lt; #{dateEnd} LIMIT 1
+	</select>
+
+	<select id="countWXFundflowBasic" resultType="com.xiaoyi.ssm.dto.WXFundflowDto">
+		SELECT * FROM 
+		(SELECT IFNULL(SUM(`Deal_amount`),0) dealIncome FROM WXFundflow WHERE Record_time &gt;= #{dateStart}
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '交易' AND `Work_type` = '交易' AND `Deal_type` = '收入' AND Account_type = 1) a,
+		(SELECT IFNULL(SUM(`Deal_amount`),0) dealRefund FROM WXFundflow WHERE Record_time &gt;= #{dateStart}
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '退款' AND `Work_type` = '退款' AND `Deal_type` = '支出' AND Account_type = 1) b,
+		(SELECT IFNULL(SUM(`Deal_amount`),0) dealFee FROM WXFundflow WHERE Record_time &gt;= #{dateStart}
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '交易' AND `Work_type` = '扣除交易手续费' AND `Deal_type` = '支出' AND Account_type = 1) c,
+		(SELECT IFNULL(SUM(`Deal_amount`),0) withdrawalCash FROM WXFundflow WHERE Record_time &gt;= #{dateStart}
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '充值/提现' AND `Work_type` = '提现' AND `Deal_type` = '支出' AND Account_type = 1) d,
+		(SELECT IFNULL(SUM(`Deal_amount`),0) basicToOperation FROM WXFundflow WHERE Record_time &gt;= #{dateStart}
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '账户间转账' AND `Work_type` = '账户间转账' AND `Deal_type` = '支出' AND Account_type = 1) e,
+		(SELECT IFNULL(SUM(`Deal_amount`),0) operationToBasic FROM WXFundflow WHERE Record_time &gt;= #{dateStart}
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '账户间转账' AND `Work_type` = '账户间转账' AND `Deal_type` = '收入' AND Account_type = 1) f,
+		(SELECT IFNULL(SUM(`Deal_amount`),0) restsIncome FROM WXFundflow WHERE Record_time &gt;= #{dateStart}
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '充值/提现' AND `Deal_type` = '收入' AND Account_type = 1) g,
+		
+		(SELECT IFNULL(SUM(`Account_amount`),0) accountAmount FROM (SELECT `Account_amount` FROM WXFundflow WHERE Account_type = 1 
+		AND `Record_time` &lt; #{dateStart} ORDER BY `Record_time` DESC LIMIT 1) a) h,
+		
+		(SELECT IFNULL(SUM(`Deal_amount`),0) paymentAmountOperation FROM WXFundflow WHERE Record_time &gt;= #{dateStart} 
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '企业付款' AND `Work_type` = '企业付款到零钱' AND `Deal_type` = '支出' AND Account_type = 2) i,
+		(SELECT IFNULL(SUM(`Deal_amount`),0) basicToOperationOperation FROM WXFundflow WHERE Record_time &gt;= #{dateStart} 
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '账户间转账' AND `Work_type` = '账户间转账' AND `Deal_type` = '收入' AND Account_type = 2) j,
+		(SELECT IFNULL(SUM(`Deal_amount`),0) operationToBasicOperation FROM WXFundflow WHERE Record_time &gt;= #{dateStart} 
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '账户间转账' AND `Work_type` = '账户间转账' AND `Deal_type` = '支出' AND Account_type = 2) k,
+		(SELECT IFNULL(SUM(`Account_amount`),0) accountAmountOperation FROM (SELECT `Account_amount` FROM WXFundflow WHERE Account_type = 2 
+		AND `Record_time` &lt; #{dateStart} ORDER BY `Record_time` DESC LIMIT 1) a) l,
+		(SELECT IFNULL(SUM(`Deal_amount`),0) withdrawalCashOperation FROM WXFundflow WHERE Record_time &gt;= #{dateStart}
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '充值/提现' AND `Work_type` = '提现' AND `Deal_type` = '支出' AND Account_type = 2) m,
+		(SELECT IFNULL(SUM(`Deal_amount`),0) restsIncomeOperation FROM WXFundflow WHERE Record_time &gt;= #{dateStart}
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '充值/提现' AND `Work_type` = '扫码充值' AND `Deal_type` = '收入' AND Account_type = 2) n,
+		
+		(SELECT IFNULL(SUM(wx.`Deal_amount`),0) nowDayAmount FROM 
+		(SELECT Work_id,Deal_amount FROM WXFundflow WHERE Record_time &gt;= #{dateStart}  
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '交易' AND `Work_type` = '交易' AND `Deal_type` = '收入' AND Account_type = 1) wx INNER JOIN
+		(SELECT ID FROM `Order` WHERE CreateTime &gt;= #{dateStart} 
+		AND CreateTime &lt;= #{dateEnd} AND OrderDate = #{dateStart} ) o ON wx.Work_id = o.id ) o,
+		
+		(SELECT IFNULL(SUM(wx.`Deal_amount`),0) oldDayAmount FROM 
+		(SELECT Work_id,Deal_amount FROM WXFundflow WHERE Record_time &gt;= #{dateStart} 
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '交易' AND `Work_type` = '交易' AND `Deal_type` = '收入' AND Account_type = 1) wx INNER JOIN
+		(SELECT ID FROM `Order` WHERE CreateTime >= #{dateStart} 
+		AND CreateTime &lt;= #{dateEnd} AND OrderDate != #{dateStart} ) o ON wx.Work_id = o.id ) p,
+		
+		(SELECT IFNULL(SUM(wx.`Deal_amount`),0) nowDayOrderAmount FROM 
+		(SELECT Work_id,Deal_amount FROM WXFundflow WHERE `Work_name` = '交易' AND `Work_type` = '交易' AND `Deal_type` = '收入' AND Account_type = 1) wx INNER JOIN
+		(SELECT ID FROM `Order` WHERE CreateTime &lt; #{dateStart}  AND OrderDate = #{dateStart} ) o ON wx.Work_id = o.id ) q
+		
+		
+	</select>
+	
+	<select id="countWXFundflowOperation" resultType="com.xiaoyi.ssm.dto.WXFundflowDto">
+		SELECT * FROM 
+		(SELECT IFNULL(SUM(`Deal_amount`),0) paymentAmountOperation FROM WXFundflow WHERE Record_time &gt;= #{dateStart} 
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '企业付款' AND `Work_type` = '企业付款到零钱' AND `Deal_type` = '支出' AND Account_type = 2) i,
+		(SELECT IFNULL(SUM(`Deal_amount`),0) basicToOperationOperation FROM WXFundflow WHERE Record_time &gt;= #{dateStart} 
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '账户间转账' AND `Work_type` = '账户间转账' AND `Deal_type` = '收入' AND Account_type = 2) j,
+		(SELECT IFNULL(SUM(`Deal_amount`),0) operationToBasicOperation FROM WXFundflow WHERE Record_time &gt;= #{dateStart} 
+		AND Record_time &lt;= #{dateEnd} AND `Work_name` = '账户间转账' AND `Work_type` = '账户间转账' AND `Deal_type` = '支出' AND Account_type = 2) k,
+		(SELECT IFNULL(SUM(`Account_amount`),0) accountAmountOperation FROM (SELECT `Account_amount` FROM WXFundflow WHERE Account_type = 2 
+		AND `Record_time` &lt; #{dateStart} ORDER BY `Record_time` DESC LIMIT 1) a) l
+	</select>
+	
+	<select id="selectByAccountType" resultMap="BaseResultMap">
+		select * from WXFundflow WHERE Account_type = #{accountType} ORDER BY Record_time DESC
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from WXFundflow
+		where ID = #{id,jdbcType=CHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from WXFundflow
+		where ID = #{id,jdbcType=CHAR}
+	</delete>
+	<insert id="insert" parameterType="com.xiaoyi.ssm.model.WXFundflow">
+		insert into WXFundflow (ID, Create_time, Record_time,
+		WX_pay_orderid, WX_fundflow_id, Work_name,
+		Work_type, Deal_type, Deal_amount,
+		Account_amount, Apply_user, Remark,
+		Work_id, Account_type)
+		values (#{id,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{recordTime,jdbcType=TIMESTAMP},
+		#{wxPayOrderid,jdbcType=VARCHAR}, #{wxFundflowId,jdbcType=VARCHAR}, #{workName,jdbcType=VARCHAR},
+		#{workType,jdbcType=VARCHAR}, #{dealType,jdbcType=VARCHAR}, #{dealAmount,jdbcType=DECIMAL},
+		#{accountAmount,jdbcType=DECIMAL}, #{applyUser,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+		#{workId,jdbcType=VARCHAR}, #{accountType,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.xiaoyi.ssm.model.WXFundflow">
+		insert into WXFundflow
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="createTime != null">
+				Create_time,
+			</if>
+			<if test="recordTime != null">
+				Record_time,
+			</if>
+			<if test="wxPayOrderid != null">
+				WX_pay_orderid,
+			</if>
+			<if test="wxFundflowId != null">
+				WX_fundflow_id,
+			</if>
+			<if test="workName != null">
+				Work_name,
+			</if>
+			<if test="workType != null">
+				Work_type,
+			</if>
+			<if test="dealType != null">
+				Deal_type,
+			</if>
+			<if test="dealAmount != null">
+				Deal_amount,
+			</if>
+			<if test="accountAmount != null">
+				Account_amount,
+			</if>
+			<if test="applyUser != null">
+				Apply_user,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="workId != null">
+				Work_id,
+			</if>
+			<if test="accountType != null">
+				Account_type,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="recordTime != null">
+				#{recordTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="wxPayOrderid != null">
+				#{wxPayOrderid,jdbcType=VARCHAR},
+			</if>
+			<if test="wxFundflowId != null">
+				#{wxFundflowId,jdbcType=VARCHAR},
+			</if>
+			<if test="workName != null">
+				#{workName,jdbcType=VARCHAR},
+			</if>
+			<if test="workType != null">
+				#{workType,jdbcType=VARCHAR},
+			</if>
+			<if test="dealType != null">
+				#{dealType,jdbcType=VARCHAR},
+			</if>
+			<if test="dealAmount != null">
+				#{dealAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="accountAmount != null">
+				#{accountAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="applyUser != null">
+				#{applyUser,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="workId != null">
+				#{workId,jdbcType=VARCHAR},
+			</if>
+			<if test="accountType != null">
+				#{accountType,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.xiaoyi.ssm.model.WXFundflow">
+		update WXFundflow
+		<set>
+			<if test="createTime != null">
+				Create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="recordTime != null">
+				Record_time = #{recordTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="wxPayOrderid != null">
+				WX_pay_orderid = #{wxPayOrderid,jdbcType=VARCHAR},
+			</if>
+			<if test="wxFundflowId != null">
+				WX_fundflow_id = #{wxFundflowId,jdbcType=VARCHAR},
+			</if>
+			<if test="workName != null">
+				Work_name = #{workName,jdbcType=VARCHAR},
+			</if>
+			<if test="workType != null">
+				Work_type = #{workType,jdbcType=VARCHAR},
+			</if>
+			<if test="dealType != null">
+				Deal_type = #{dealType,jdbcType=VARCHAR},
+			</if>
+			<if test="dealAmount != null">
+				Deal_amount = #{dealAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="accountAmount != null">
+				Account_amount = #{accountAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="applyUser != null">
+				Apply_user = #{applyUser,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="workId != null">
+				Work_id = #{workId,jdbcType=VARCHAR},
+			</if>
+			<if test="accountType != null">
+				Account_type = #{accountType,jdbcType=INTEGER},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.xiaoyi.ssm.model.WXFundflow">
+		update WXFundflow
+		set Create_time = #{createTime,jdbcType=TIMESTAMP},
+		Record_time = #{recordTime,jdbcType=TIMESTAMP},
+		WX_pay_orderid = #{wxPayOrderid,jdbcType=VARCHAR},
+		WX_fundflow_id = #{wxFundflowId,jdbcType=VARCHAR},
+		Work_name = #{workName,jdbcType=VARCHAR},
+		Work_type = #{workType,jdbcType=VARCHAR},
+		Deal_type = #{dealType,jdbcType=VARCHAR},
+		Deal_amount = #{dealAmount,jdbcType=DECIMAL},
+		Account_amount = #{accountAmount,jdbcType=DECIMAL},
+		Apply_user = #{applyUser,jdbcType=VARCHAR},
+		Remark = #{remark,jdbcType=VARCHAR},
+		Work_id = #{workId,jdbcType=VARCHAR},
+		Account_type = #{accountType,jdbcType=INTEGER}
+		where ID = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

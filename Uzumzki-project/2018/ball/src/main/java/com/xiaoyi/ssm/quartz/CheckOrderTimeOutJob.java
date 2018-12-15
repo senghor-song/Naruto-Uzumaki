@@ -34,12 +34,12 @@ public class CheckOrderTimeOutJob {
     private static Logger logger = Logger.getLogger(CheckOrderTimeOutJob.class.getName());
 
 	/**
-	 * @Description: 定时任务检查是否有时间是半小时前的订单
+	 * @Description: 每分钟检查定时任务检查是否有时间是半小时前的订单
 	 * @author 宋高俊
 	 * @date 2018年9月20日 下午8:35:13
 	 */
 	@Scheduled(cron = "0 0/1 * * * ? ")
-	public void getCheckTimeOut() {
+	public void checkOrderTimeOutJob() {
 		OrderService orderService = SpringUtils.getBean("orderServiceImpl", OrderService.class);
 		OrderLogService orderLogService = SpringUtils.getBean("orderLogServiceImpl", OrderLogService.class);
 		VenueService venueService = SpringUtils.getBean("venueServiceImpl", VenueService.class);
@@ -66,31 +66,35 @@ public class CheckOrderTimeOutJob {
 
 				// 场馆确认超时，发给场馆
 				Member venueMember = memberService.selectByPhone(venue.getContactPhone());
-				String openId = venueMember.getOpenid();
-				if (!StringUtil.isBank(openId)) {
-					// 预定通知消息
-					JSONObject datajson = new JSONObject();
-					datajson.put("first", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(new Date()) + "\"}"));
-					datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + order.getOrderno() + "\"}"));
-					datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"网球场预定\"}"));
-					datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"超时确认\"}"));
-					datajson.put( "remark",
-							JSONObject.parseObject("{\"value\":\"球友" + member.getAppnickname() + "(手机" + member.getPhone() + ")申请预约球场" + area + "，日期"
-									+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + time + "用场，超过三十分钟未确认，自动取消。\"}"));
-					if (!StringUtil.isBank(venue.getTrainteam())) {
-						TrainCoach trainCoach = trainCoachService.selectByMemberTeamManager(venueMember.getId(), venue.getTrainteam());
-						if (trainCoach != null) {
-							// 有权限查看
-							logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/user/venueMenu/lock/lock?venueId="+venue.getId(), datajson));
+				if (venueMember != null && member != null) {
+					String openId = venueMember.getOpenid();
+					if (!StringUtil.isBank(openId)) {
+						// 预定通知消息
+						JSONObject datajson = new JSONObject();
+						datajson.put("first", JSONObject.parseObject("{\"value\":\"" + DateUtil.getFormat(new Date()) + "\"}"));
+						datajson.put("keyword1", JSONObject.parseObject("{\"value\":\"" + order.getOrderno() + "\"}"));
+						datajson.put("keyword2", JSONObject.parseObject("{\"value\":\"网球场预定\"}"));
+						datajson.put("keyword3", JSONObject.parseObject("{\"value\":\"超时确认\"}"));
+						datajson.put( "remark",
+								JSONObject.parseObject("{\"value\":\"球友" + member.getAppnickname() + "(手机" + member.getPhone() + ")申请预约球场" + area + "，日期"
+										+ DateUtil.getFormat(order.getOrderdate(), "yyyy-MM-dd") + "，时段" + time + "用场，超过三十分钟未确认，自动取消。\"}"));
+						if (!StringUtil.isBank(venue.getTrainteam())) {
+							TrainCoach trainCoach = trainCoachService.selectByMemberTeamManager(venueMember.getId(), venue.getTrainteam());
+							if (trainCoach != null) {
+								// 有权限查看
+								logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/user/venueMenu/lock/lock?venueId="+venue.getId() + "&title=" + venue.getName(), datajson));
+							}else {
+								logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
+							}
 						}else {
 							logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
 						}
-					}else {
-						logger.info(WXPayUtil.sendWXappTemplate(openId, WXConfig.wxTemplateId, "pages/temp/venueEnter/enter", datajson));
 					}
 				}
 				
 				order.setType(4);
+				order.setCanceltime(new Date());
+				order.setRefundtime(new Date());
 				flag += orderService.updateByPrimaryKeySelective(order);
 				
 				OrderLog orderLog = new OrderLog();

@@ -10,27 +10,22 @@
         <result column="MapFlag" jdbcType="INTEGER" property="mapflag"/>
         <result column="CityFlag" jdbcType="INTEGER" property="cityflag"/>
         <result column="VenueSum" jdbcType="INTEGER" property="venuesum"/>
+        
+        <result column="ball1" jdbcType="INTEGER" property="ball1"/>
+        <result column="ball2" jdbcType="INTEGER" property="ball2"/>
+        <result column="ball3" jdbcType="INTEGER" property="ball3"/>
+        <result column="ball4" jdbcType="INTEGER" property="ball4"/>
     </resultMap>
     <sql id="Base_Column_List">
     ID, CityNo, City, Initial, HotFlag, MapFlag, CityFlag, VenueSum
   </sql>
 
     <select id="selectByAll" parameterType="com.xiaoyi.ssm.model.City" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from City
-        <where>
-            <if test="cityno != null and cityno != ''">
-                AND CityNo = #{cityno,jdbcType=INTEGER}
-            </if>
-            <if test="city != null and city != ''">
-                AND City = #{city,jdbcType=VARCHAR}
-            </if>
-            <if test="initial != null">
-                AND Initial = #{initial,jdbcType=CHAR}
-            </if>
-        </where>
-        order by CityNo desc
+		SELECT c.*,IFNULL(ball1,0) ball1,IFNULL(ball2,0) ball2,IFNULL(ball3,0) ball3,IFNULL(ball4,0) ball4 FROM `City` c LEFT JOIN 
+		(SELECT `CityID`,COUNT(0) ball1 FROM Venue WHERE `Type` = 1 AND Reserve_show = 1 GROUP BY `CityID`) a ON c.`ID` = a.`CityID` LEFT JOIN 
+		(SELECT `CityID`,COUNT(0) ball2 FROM Venue WHERE `Type` = 2 AND Reserve_show = 1 GROUP BY `CityID`) b ON c.`ID` = b.`CityID` LEFT JOIN 
+		(SELECT `CityID`,COUNT(0) ball3 FROM Venue WHERE `Type` = 3 AND Reserve_show = 1 GROUP BY `CityID`) d ON c.`ID` = d.`CityID` LEFT JOIN 
+		(SELECT `CityID`,COUNT(0) ball4 FROM Venue WHERE `Type` = 4 AND Reserve_show = 1 GROUP BY `CityID`) e ON c.`ID` = e.`CityID` ORDER BY c.CityNo DESC
     </select>
 
     <select id="selectByInitial" resultMap="BaseResultMap">

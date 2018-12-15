@@ -1,10 +1,10 @@
 package com.xiaoyi.ssm.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.xiaoyi.ssm.model.Member;
 import com.xiaoyi.ssm.model.TrainTeamVenue;
 import com.xiaoyi.ssm.model.Venue;
 
@@ -137,12 +137,12 @@ public interface VenueMapper extends BaseMapper<Venue, String>{
 	List<Venue> selectByVenueSearch(@Param("cityid")String cityid, @Param("sumTemplate")Integer sumTemplate, @Param("trainAddFlag")Integer trainAddFlag, @Param("ballType")Integer ballType);
 
 	/**  
-	 * @Description: 查询订单已消费可以结算的订单
+	 * @Description: 根据时间和状态查询有过订单的场馆
 	 * @author 宋高俊  
 	 * @return 
 	 * @date 2018年11月15日14:23:09
 	 */ 
-	List<Venue> selectByDateOut(String date);
+	List<Venue> selectByDateOut(@Param("date")String date, @Param("type")Integer type);
 
 	/**  
 	 * @Description: 根据手机号查询是否有匹配的场馆
@@ -151,4 +151,42 @@ public interface VenueMapper extends BaseMapper<Venue, String>{
 	 * @date 2018年11月15日14:23:09
 	 */ 
 	List<Venue> selectByMatchingVenue(String phone);
+	
+	/**
+	 * @Description: 查询某时间之内的已确认待消费的订单
+	 * @author 宋高俊
+	 * @param dateStart
+	 * @param dateEnd
+	 * @return
+	 * @date 2018年11月20日 上午10:08:31
+	 */
+	List<Venue> selectByDateWithin(@Param("dateStart")Date dateStart, @Param("dateEnd")Date dateEnd);
+
+	/**
+	 * @Description: 将场馆解除入驻机构
+	 * @author 宋高俊
+	 * @param venueid
+	 * @return
+	 * @date 2018年11月22日 上午11:18:18
+	 */
+	int updateByTrainTeamNull(String venueid);
+
+	/**
+	 * @Description: 根据用户ID和日期查询场馆
+	 * @author 宋高俊
+	 * @param id
+	 * @param dateStr
+	 * @return
+	 * @date 2018年12月5日下午3:15:14
+	 */
+	List<Venue> selectByMemberAndOrderDate(@Param("memberId")String memberId, @Param("dateStr")String dateStr);
+
+	/**
+	 * @Description: 根据场馆编号查询场馆
+	 * @author 宋高俊
+	 * @param venueNo
+	 * @return
+	 * @date 2018年12月13日下午7:18:57
+	 */
+	Venue selectByVenueNo(String venueNo);
 }

@@ -19,7 +19,6 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -33,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import cn.hutool.http.HttpUtil;
+
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
@@ -41,26 +42,31 @@ import com.alipay.api.request.AlipayOpenAuthTokenAppRequest;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.alipay.api.response.AlipayOpenAuthTokenAppResponse;
 import com.github.pagehelper.PageHelper;
-import com.xiaoyi.ssm.dao.MemberHabitMapper;
 import com.xiaoyi.ssm.dao.OrderLogMapper;
 import com.xiaoyi.ssm.dto.ApiMessage;
 import com.xiaoyi.ssm.dto.PageBean;
 import com.xiaoyi.ssm.model.City;
 import com.xiaoyi.ssm.model.District;
 import com.xiaoyi.ssm.model.Member;
+import com.xiaoyi.ssm.model.MemberDay;
+import com.xiaoyi.ssm.model.MemberDayLog;
 import com.xiaoyi.ssm.model.NewsBanner;
 import com.xiaoyi.ssm.model.Order;
 import com.xiaoyi.ssm.model.OrderLog;
 import com.xiaoyi.ssm.model.TrainTeam;
 import com.xiaoyi.ssm.model.Venue;
+import com.xiaoyi.ssm.model.WXCompanyPayment;
 import com.xiaoyi.ssm.service.CityService;
 import com.xiaoyi.ssm.service.DistrictService;
+import com.xiaoyi.ssm.service.MemberDayLogService;
+import com.xiaoyi.ssm.service.MemberDayService;
 import com.xiaoyi.ssm.service.MemberService;
+import com.xiaoyi.ssm.service.MemberWXPaymentService;
 import com.xiaoyi.ssm.service.NewsBannerService;
 import com.xiaoyi.ssm.service.OrderService;
 import com.xiaoyi.ssm.service.TrainTeamService;
-import com.xiaoyi.ssm.service.VenueErrorService;
 import com.xiaoyi.ssm.service.VenueService;
+import com.xiaoyi.ssm.util.Arith;
 import com.xiaoyi.ssm.util.CheckUtil;
 import com.xiaoyi.ssm.util.DateUtil;
 import com.xiaoyi.ssm.util.Global;
@@ -75,6 +81,7 @@ import com.xiaoyi.ssm.util.Utils;
 import com.xiaoyi.ssm.wxPay.MsgXMLUtil;
 import com.xiaoyi.ssm.wxPay.ReplyTextMsg;
 import com.xiaoyi.ssm.wxPay.WXConfig;
+import com.xiaoyi.ssm.wxPay.WXPayUtil;
 import com.xiaoyi.ssm.wxPay.WechatMessageUtil;
 import com.xiaoyi.ssm.zfhPay.AlipayConfig;
 
@@ -92,8 +99,6 @@ public class ApiCommonController {
 	@Autowired
 	private MemberService memberService;
 	@Autowired
-	private MemberHabitMapper memberHabitMapper;
-	@Autowired
 	private CityService cityService;
 	@Autowired
 	private DistrictService districtService;
@@ -106,9 +111,13 @@ public class ApiCommonController {
 	@Autowired
 	private OrderLogMapper orderMapper;
 	@Autowired
-	private VenueErrorService venueErrorService;
-	@Autowired
 	private TrainTeamService trainTeamService;
+	@Autowired
+	private MemberDayService memberDayService;
+	@Autowired
+	private MemberWXPaymentService memberWXPaymentService;
+	@Autowired
+	private MemberDayLogService memberDayLogService;
 	
 	/**
 	 * @Description: 用于验证身份证号是否正确
@@ -337,25 +346,6 @@ public class ApiCommonController {
 		return new ApiMessage(200, "查询成功", listmap);
 	}
 	
-	/**  
-	 * @Description: 根据场馆ID获取手机号
-	 * @author 宋高俊  
-	 * @param id
-	 * @return 
-	 * @date 2018年9月26日 上午9:30:47 
-	 */ 
-	@RequestMapping(value = "/venue/getPhone")
-	@ResponseBody
-	public ApiMessage venueGetPhone(String id) {
-		Venue venue = venueService.selectByPrimaryKey(id);
-		if (venue != null) {
-			return new ApiMessage(200, "查询成功", venue.getContactPhone());
-		}else {
-			return new ApiMessage(400, "场馆不存在");
-		}
-	}
-	
-
 	/**
 	 * @Description: 获取日期数据
 	 * @author 宋高俊
@@ -439,10 +429,10 @@ public class ApiCommonController {
 	 */
 	@RequestMapping(value = "/getBanner")
 	@ResponseBody
-	public ApiMessage getBanner() {
+	public ApiMessage getBanner(String typeFlag) {
 		NewsBanner newsBanner = new NewsBanner();
-		newsBanner.setShowway("易订场");
-		List<NewsBanner> list = newsBannerService.selectByAll(null);
+		newsBanner.setShowway(typeFlag);
+		List<NewsBanner> list = newsBannerService.selectByAll(newsBanner);
 		List<Map<String, Object>> listmap = new ArrayList<>();
 		for (int i = 0; i < list.size(); i++) {
 			Map<String, Object> map = new HashMap<>();
@@ -522,7 +512,7 @@ public class ApiCommonController {
 //				}
 //				response.sendRedirect(state);
 //			}else {
-//				response.sendRedirect("https://ball.ekeae.com:8443/dist/login");
+//				response.sendRedirect("https://beta.ball.ekeae.com:8443/dist/login");
 //			}
 //		} catch (IOException e) {
 //			e.printStackTrace();
@@ -575,6 +565,7 @@ public class ApiCommonController {
 			resp.setCharacterEncoding("UTF-8");
 			this.replyMessage(sReqData, resp.getWriter());
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.info("处理消息失败");
 		}
 
@@ -601,15 +592,11 @@ public class ApiCommonController {
 		textMsg.setMsgType(WechatMessageUtil.MESSAGE_TEXT);
 
 		textMsg.setContent("请点击下方菜单进行操作");
-		if (MsgType.equals(WechatMessageUtil.MESSAGE_TEXT)) {
-			logger.info("判断消息类型是否为文本类型");
-//			MsgXMLUtil.content = "";
-//			String nodeString = MsgXMLUtil.readNodes(root);
-		}else if (MsgType.equals(WechatMessageUtil.MESSAGE_EVENT)) {
+		String openid = MsgXMLUtil.readNode(root, "FromUserName");
+		if (MsgType.equals(WechatMessageUtil.MESSAGE_EVENT)) {
 			logger.info("判断消息类型是否为事件推送消息");
 			if ("subscribe".equals(MsgXMLUtil.readNode(root, "Event"))) {
 				// 关注事件
-				String openid = MsgXMLUtil.readNode(root, "FromUserName");
 				logger.info(openid + "用户关注了公众号");
 
 				// 根据openid获取用户的unionid
@@ -679,7 +666,6 @@ public class ApiCommonController {
 				}
 			} else if ("unsubscribe".equals(MsgXMLUtil.readNode(root, "Event"))) {
 				// 取关事件
-				String openid = MsgXMLUtil.readNode(root, "FromUserName");
 				logger.info(openid + "用户取消关注公众号");
 				
 				Member member = memberService.selectByOpenid(openid);
@@ -689,10 +675,186 @@ public class ApiCommonController {
 			} else if ("CLICK".equals(MsgXMLUtil.readNode(root, "Event"))) {
 				logger.info("消息类型为公众号菜单点击事件：" + MsgXMLUtil.readNode(root, "EventKey"));
 				if ("online_service".equals(MsgXMLUtil.readNode(root, "EventKey"))) {
-					textMsg.setContent("有任何问题可在聊天框内发送，专属客服会为你解答！");
+					logger.info("点击接入客服事件处理");
+					StringBuffer content = new StringBuffer();
+					content.append("您好，请回复编号选择服务:\r\n\r\n");
+					content.append("1. 常见问题。\r\n\r\n");
+					content.append("2. 收到转账失败短信。\r\n\r\n");
+					content.append("3. 发现故障/没收到回款。\r\n\r\n");
+					content.append("4. 人工客服。");
+					textMsg.setContent(content.toString());
 				}
+			} else if ("kf_create_session".equals(MsgXMLUtil.readNode(root, "Event"))) {
+				logger.info("客服接入消息处理" + MsgXMLUtil.readNode(root, "KfAccount"));
+				
+				Map<String, Object> map = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, WXConfig.appid);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("touser", openid);
+				jsonObject.put("msgtype", "text");
+				JSONObject jsonText = new JSONObject();
+				jsonText.put("content", "您已接入人工服务。\r\n亲，很高兴为您服务，请问有什么可以帮您?");
+				jsonObject.put("text", jsonText);
+				HttpUtil.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token="+map.get("access_token"), jsonObject.toString());
+				
+			} else if ("kf_close_session".equals(MsgXMLUtil.readNode(root, "Event"))) {
+				logger.info("客服关闭会话消息处理" + MsgXMLUtil.readNode(root, "KfAccount"));
+				
+				Map<String, Object> map = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, WXConfig.appid);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("touser", openid);
+				jsonObject.put("msgtype", "text");
+				JSONObject jsonText = new JSONObject();
+				
+				jsonText.put("content", "【系统消息】本次会话已自动结束。如有需要可随时再与我们联系，谢谢!");
+				jsonObject.put("text", jsonText);
+				HttpUtil.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token="+map.get("access_token"), jsonObject.toString());
 			}
 		} else {
+			String content = MsgXMLUtil.readNode(root, "Content");
+			StringBuffer contentMsg = new StringBuffer();
+			if ("1".equals(content)) {
+				contentMsg.append("11. “在线订场”是否收费？\r\n\r\n");
+				contentMsg.append("12.  收费订场费用标准如何？\r\n\r\n");
+				contentMsg.append("13.   \"在线订场\"免费通道在哪里？\r\n\r\n");
+				contentMsg.append("14.  场馆如何入驻？\r\n\r\n");
+				contentMsg.append("15.  场馆收入有哪几种回款方式？何时回款？\r\n\r\n");
+				contentMsg.append("00.  返回主菜单");
+				textMsg.setContent(contentMsg.toString());
+			} else if ("2".equals(content)) {
+				contentMsg.append("21.  没收到回款？\r\n\r\n");
+				contentMsg.append("22.  没收到回款，但收到转账失败短信？\r\n\r\n");
+				contentMsg.append("00.  返回主菜单");
+				textMsg.setContent(contentMsg.toString());
+			} else if ("3".equals(content)) {
+				Map<String, Object> map = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, WXConfig.appid);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("touser", openid);
+				jsonObject.put("msgtype", "text");
+				JSONObject jsonText = new JSONObject();
+				jsonText.put("content", "正在接入客服中，请稍后...");
+				jsonObject.put("text", jsonText);
+				HttpUtil.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token="+map.get("access_token"), jsonObject.toString());
+				textMsg.setMsgType("transfer_customer_service");
+			} else if ("4".equals(content)) {
+				Map<String, Object> map = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, WXConfig.appid);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("touser", openid);
+				jsonObject.put("msgtype", "text");
+				JSONObject jsonText = new JSONObject();
+				jsonText.put("content", "正在接入客服中，请稍后...");
+				jsonObject.put("text", jsonText);
+				HttpUtil.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token="+map.get("access_token"), jsonObject.toString());
+				textMsg.setMsgType("transfer_customer_service");
+			} else if ("11".equals(content)) {
+				contentMsg.append("球友：免费； \r\n\r\n");
+				contentMsg.append("场馆：分免费订场和收费订场，免费订场可满足常规分时管理功能，收费订场则有临时退场扣费，有偿陪练等增值功能，2种方案供场馆经营者自行选择。\r\n\r\n");
+				contentMsg.append("00.  返回主菜单");
+				textMsg.setContent(contentMsg.toString());
+			} else if ("12".equals(content)) {
+				contentMsg.append("每名用户免平台费1000元额度，超过额度部分按回款金额的1%收取。\r\n\r\n");
+				contentMsg.append("00.  返回主菜单");
+				textMsg.setContent(contentMsg.toString());
+			} else if ("13".equals(content)) {
+				contentMsg.append("需先入驻，位置：培训机构-分时看板-分享（免平台费通道）。\r\n\r\n");
+				contentMsg.append("00.  返回主菜单");
+				textMsg.setContent(contentMsg.toString());
+			} else if ("14".equals(content)) {
+				Map<String, Object> map = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, WXConfig.appid);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("touser", openid);
+				jsonObject.put("msgtype", "text");
+				JSONObject jsonText = new JSONObject();
+				jsonText.put("content", "<a href=\"http://www.qq.com\" data-miniprogram-appid=\"wx0f3b253f4d82700e\" data-miniprogram-path=\"pages/temp/venueEnter/enter\">场馆入驻入口</a>\r\n\r\n00.  返回主菜单");
+				jsonObject.put("text", jsonText);
+				HttpUtil.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token="+map.get("access_token"), jsonObject.toString());
+				out.println("success");
+				out.close();
+			} else if ("15".equals(content)) {
+				contentMsg.append("目前只支持微信转账一种方式，即回款至场馆经营者微信红包。\r\n\r\n");
+				contentMsg.append("回款为T+1，即用场日的次日回款。例如：张三2月5号订了6号的场并支付，那么场馆7号收到回款。\r\n\r\n");
+				contentMsg.append("00.  返回主菜单");
+				textMsg.setContent(contentMsg.toString());
+			} else if ("00".equals(content)) {
+				contentMsg.append("您好，请回复编号选择服务:\r\n\r\n");
+				contentMsg.append("1. 常见问题。\r\n\r\n");
+				contentMsg.append("2. 收到转账失败短信。\r\n\r\n");
+				contentMsg.append("3. 发现故障/没收到回款。\r\n\r\n");
+				contentMsg.append("4. 人工客服。");
+				textMsg.setContent(contentMsg.toString());
+			} else if ("21".equals(content) || "22".equals(content)) {
+				Member member = memberService.selectByOpenid(openid);
+				if (member != null) {
+					MemberDay memberDay = memberDayService.selectByMember(member.getId(), DateUtil.getFormat(DateUtil.getPreTime(new Date(), 3, -1), "yyyy-MM-dd"));
+					if (memberDay != null) {
+						// 需要调用企业支付，支付订场金额
+						WXCompanyPayment wxCompanyPayment = WXPayUtil.wxCompanyPayment(memberDay.getId(), member.getOpenid(), memberDay.getRealityAmount(), "场馆收入");
+						if (wxCompanyPayment.getPayType() == 1) {
+							// 企业支付成功
+							memberDay.setTypeFlag(1);
+							// 预定通知消息
+							com.alibaba.fastjson.JSONObject datajson = new com.alibaba.fastjson.JSONObject();
+							datajson.put("first", com.alibaba.fastjson.JSONObject.parseObject("{\"value\":\"您有提现到账,请注意查收\"}"));
+							datajson.put("keyword1", com.alibaba.fastjson.JSONObject.parseObject("{\"value\":\"" +  String.format("%.2f", memberDay.getRealityAmount()) + "\"}"));
+							datajson.put("keyword2", com.alibaba.fastjson.JSONObject.parseObject("{\"value\":\"" +  DateUtil.getFormat(new Date()) + "\"}"));
+							datajson.put("keyword3", com.alibaba.fastjson.JSONObject.parseObject("{\"value\":\"" +  DateUtil.getFormat(new Date()) + "\"}"));
+							
+							// 支付成功发送给用户
+							datajson.put( "remark",
+									com.alibaba.fastjson.JSONObject.parseObject("{\"value\":\"点击查看钱包\"}"));
+							logger.info(WXPayUtil.sendWXappTemplate(member.getOpenid(), WXConfig.wxTemplateId2, "/pages/index/index", datajson));
+	
+							// 支付成功才修改使用免手续费额度
+							member.setWxpayment(Arith.sub(member.getWxpayment(), memberDay.getRealityAmount()));
+							memberService.updateByPrimaryKeySelective(member);
+							memberWXPaymentService.saveMemberWXPayment(member.getId(), "机构回款(订场)", -memberDay.getRealityAmount(), member.getWxpayment());
+						} else {
+							// 企业支付失败
+							memberDay.setTypeFlag(2);
+						}
+						memberDayService.updateByPrimaryKeySelective(memberDay);
+						
+						// 添加日志
+						MemberDayLog memberDayLog = new MemberDayLog();
+						memberDayLog.setId(Utils.getUUID());
+						memberDayLog.setCreateTime(new Date());
+						memberDayLog.setStaffId("00000000000000000000000000000000");
+						memberDayLog.setTypeFlag(1);
+						memberDayLog.setMemberDayId(memberDay.getId());
+						memberDayLogService.insertSelective(memberDayLog);
+						
+						if (memberDay.getTypeFlag() == 1) {
+							contentMsg.append("已重新发起回款，请注意查收");
+						} else {
+							contentMsg.append("发起回款失败，请联系客服处理");
+						}
+					}else {
+						contentMsg.append("您今天没有回款金额");
+					}
+
+				}
+				textMsg.setContent(contentMsg.toString());
+			}
+			
+//			 else if ("51".equals(content)) {
+//				Map<String, Object> map = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, WXConfig.appid);
+//				JSONObject jsonObject = new JSONObject();
+//				jsonObject.put("touser", openid);
+//				jsonObject.put("msgtype", "image");
+//				JSONObject jsonText = new JSONObject();
+//				jsonText.put("media_id", "oyKtl7QmspeC9c0KtuK9l3hHH3XTl6BdTERCJ8vpjww");
+//				jsonObject.put("image", jsonText);
+//				HttpUtil.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token="+map.get("access_token"), jsonObject.toString());
+//				textMsg.setMsgType("transfer_customer_service");
+//			} else if ("52".equals(content)) {
+//				Map<String, Object> map = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_ACCESS_TOKEN, WXConfig.appid);
+//				JSONObject jsonObject = new JSONObject();
+//				jsonObject.put("touser", openid);
+//				jsonObject.put("msgtype", "mpnews");
+//				JSONObject jsonText = new JSONObject();
+//				jsonText.put("media_id", "oyKtl7QmspeC9c0KtuK9l2h3V3MWOJyPHt-4QZg0Mv4");
+//				jsonObject.put("mpnews", jsonText);
+//				HttpUtil.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token="+map.get("access_token"), jsonObject.toString());
+//				textMsg.setMsgType("transfer_customer_service");
 			logger.info("消息类型为" + MsgType + ",默认处理");
 		}
 		try {
@@ -802,7 +964,7 @@ public class ApiCommonController {
 		logger.info("开始支付订单：" + orderId);
 		Order order = orderService.selectByPrimaryKey(orderId);
 		if (order != null) {
-			httpResponse.sendRedirect("https://ball.ekeae.com:8443/dist/home");
+			httpResponse.sendRedirect("https://beta.ball.ekeae.com:8443/dist/home");
 		}
 
 		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.ServiceUrl, AlipayConfig.app_id, AlipayConfig.private_key, "json",
@@ -1010,7 +1172,7 @@ public class ApiCommonController {
 //		managerService.updateByPrimaryKeySelective(manager);
 //		ZhimaCustomerCertificationCertifyRequest zhiamrequest = new ZhimaCustomerCertificationCertifyRequest();
 //		zhiamrequest.setBizContent("{\"biz_no\":\"" + response.getBizNo() + "\"}");
-//		zhiamrequest.setReturnUrl("https://ball.ekeae.com/WebBackAPI/api/common/zhimaCallBack");
+//		zhiamrequest.setReturnUrl("https://beta.ball.ekeae.com/api/common/zhimaCallBack");
 //		// ZhimaCustomerCertificationCertifyResponse response2 =
 //		// alipayClient.pageExecute(request2);
 //		String form = "";

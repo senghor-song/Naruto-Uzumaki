@@ -54,7 +54,7 @@ public interface TrainCoachMapper extends BaseMapper<TrainCoach, String>{
 	 * @return 
 	 * @date 2018年11月5日 下午4:52:39 
 	 */ 
-	List<TrainCoach> selectByVenue(String venueid);
+	List<TrainCoach> selectByVenue(@Param("venueid")String venueid, @Param("trainTeamId")String trainTeamId);
 
 	/**  
 	 * @Description: 查询默认陪练
@@ -66,7 +66,7 @@ public interface TrainCoachMapper extends BaseMapper<TrainCoach, String>{
 	TrainCoach selectByDefault(String cityId);
 
 	/**
-	 * @Description: 查询机构的店长
+	 * @Description: 查询机构的馆长
 	 * @author 宋高俊
 	 * @param trainTeamId
 	 * @return
@@ -81,4 +81,13 @@ public interface TrainCoachMapper extends BaseMapper<TrainCoach, String>{
 	 * @date 2018年10月8日 下午7:07:42 
 	 */ 
 	TrainCoach selectByMemberTeamManager(@Param("memberId")String memberId, @Param("teamId")String teamId);
+
+	/**
+	 * @Description: 根据ID查询教练
+	 * @author 宋高俊
+	 * @param coachid
+	 * @return
+	 * @date 2018年12月6日下午8:54:20
+	 */
+	TrainCoach selectByTrainCoachId(String coachid);
 }

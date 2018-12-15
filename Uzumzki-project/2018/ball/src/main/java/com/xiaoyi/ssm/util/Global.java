@@ -27,6 +27,8 @@ public class Global {
 
 	/** WEB端注册短信验证码获取代码 */
 	public final static String web_staff_register_SmsCode_ = "web_staff_register_SmsCode_";
+	/** WEB端解除入驻短信验证码获取代码 */
+	public final static String web_relieve_venue_SmsCode_ = "web_relieve_venue_SmsCode_";
 
 	/**  
 	 * @Description: 阿里云图片服务器
@@ -62,13 +64,18 @@ public class Global {
 	/** 阿里云SMS短信模板代码1---下单发送 */
 //	public final static String aliyunSMSTempleteCode1 = "SMS_150738395";
 	/** 阿里云SMS短信模板代码2---支付成功发送 */
-	public final static String aliyunSMSTempleteCode2 = "SMS_151176525";
+	public final static String aliyunSMSTempleteCode2 = "SMS_152110138";
 	/** 阿里云SMS短信模板代码3---超时发送 */
 //	public final static String aliyunSMSTempleteCode3 = "SMS_150738378";
 	/** 阿里云SMS短信模板代码4---场馆方：便捷确认完成 */
 //	public final static String aliyunSMSTempleteCode4 = "SMS_150743014";
 	/** 阿里云SMS短信模板代码5---用户方：便捷确认完成 */
 //	public final static String aliyunSMSTempleteCode5 = "SMS_150735517";
+	/** 
+	 * 阿里云SMS短信模板代码6---用户方：便捷确认完成
+	 * ${name}经营收入${day}转账失败。请微信关注学训易公众号-场馆合作，按照提示操作获取支付。
+	 **/
+	public final static String aliyunSMSTempleteCode6 = "SMS_152286078";
 
 
 	/** 阿里云语音通知被叫显号 */
@@ -123,6 +130,11 @@ public class Global {
 	/** 手机号需要确认的订单ID */
 	public final static String REDIS_ORDER = "REDIS_ORDER";
 	
+
+	/** 用户每天可退款次数 */
+	public final static String REDIS_DAY_REFUND_COUNT = "redis_day_refund_count";
+	/** 用户每天可获取场馆电话次数 */
+	public final static String REDIS_DAY_GETPHONE_COUNT = "redis_day_getphone_count";
 	
 	
 	/** 百度地图访问API的Key */

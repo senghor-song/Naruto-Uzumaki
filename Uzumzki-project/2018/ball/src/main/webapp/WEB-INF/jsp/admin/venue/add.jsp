@@ -3,8 +3,8 @@
 <style type="text/css">
 	.contextMenuDialog .listrow{border: none}
 </style>
-<script src="/WebBackAPI/admin/static/js/lc_switch.js" type="text/javascript"></script>
-<link rel="stylesheet" href="/WebBackAPI/admin/static/css/lc_switch.css">
+<script src="/admin/static/js/lc_switch.js" type="text/javascript"></script>
+<link rel="stylesheet" href="/admin/static/css/lc_switch.css">
 <div class="contextMenuDialog" id="item1">
     <div class="card-body">
         <div class="row">
@@ -92,12 +92,12 @@
                 <div class="col-lg-12">
                 	<img src="" id="headImage"
                      style="width: 200px;height: 200px; border:1px solid #eee;"
-                      onerror="javascript:this.src='/WebBackAPI/admin/static/image/error.png'">
+                      onerror="javascript:this.src='/admin/static/image/error.png'">
                 </div>
                 <div class="col-lg-12">
                     <input type="hidden" value="" name="image" id="image">
 		            <div class="publicbg-title">
-						<button class="layui-btn test" lay-data="{url: '/WebBackAPI/admin/common/uploadImage'}" name="file">上传图片</button>
+						<button class="layui-btn test" lay-data="{url: '/admin/common/uploadImage'}" name="file">上传图片</button>
 						<button class="layui-btn" id="getImage">生成图片</button>
 					</div>
                 </div>
@@ -120,7 +120,7 @@
 					});
 				},
 				done: function(res, index, upload) {
-					layer.close(index);
+				    layer.closeAll('loading'); //关闭loading
 					layer.msg("上传成功");
 					$("#image").val(res.data);
 					$("#headImage").attr("src", res.data);
@@ -150,7 +150,7 @@
 			var urlStr = "https://api.map.baidu.com/staticimage?center="+lng+","+lat+"&markers="+markerLng+","+markerLat+"&zoom="+zoom+"&width=450&height=450";
 			$.ajax({  
                 type : "POST",  //提交方式  
-                url : "/WebBackAPI/admin/common/getImageHttpUrl",//路径  
+                url : "/admin/common/getImageHttpUrl",//路径  
 				data : {
 					urlStr : urlStr,
 				},//数据，这里使用的是Json格式进行传输 
@@ -206,10 +206,6 @@
 				layer.msg("场地地址不能为空");
         		return;
 			}
-			if(owner == ''){
-				layer.msg("联系人不能为空");
-        		return;
-			}
 			if(contactPhone == ''){
 				layer.msg("联系电话不能为空");
         		return;
@@ -218,17 +214,9 @@
 				layer.msg("通知电话不能为空");
         		return;
 			}
-			if(informPhone.length != 11){
-				layer.msg("通知电话必须为11位");
-        		return;
-			}
-			if(informPhone.slice(0,1) != '1'){
-				layer.msg("通知电话必须为1开头");
-        		return;
-			}
            	$.ajax({  
                 type : "POST",  //提交方式  
-                url : "/WebBackAPI/admin/venue/insert/venue",//路径  
+                url : "/admin/venue/insert/venue",//路径  
 				data : {
 					name : venueName,
 					address : address,
@@ -270,7 +258,7 @@
 			var cityid = $('#cityid').val();
 			$.ajax({
 				type : "POST",
-				url : "/WebBackAPI/admin/city/district/list",
+				url : "/admin/city/district/list",
 				data : {
 					id : cityid
 				},

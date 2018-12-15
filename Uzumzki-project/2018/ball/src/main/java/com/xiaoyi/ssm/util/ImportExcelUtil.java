@@ -50,10 +50,13 @@ public class ImportExcelUtil {
 			sheet = work.getSheetAt(i);
 			if(sheet==null){continue;}
 			
-			//遍历当前sheet中的所有行
+			int getFirstRow = 2;
+			//遍历当前sheet中的所有行,1为从下标为1的数据集开始遍历数据
 			for (int j = sheet.getFirstRowNum(); j < sheet.getLastRowNum()+1; j++) {
 				row = sheet.getRow(j);
-				if(row==null||row.getFirstCellNum()==j){continue;}
+				if (row == null || getFirstRow > j) {
+					continue;
+				}
 				
 				//遍历所有的列
 				List<Object> li = new ArrayList<Object>();
@@ -100,7 +103,7 @@ public class ImportExcelUtil {
 		}
 		DecimalFormat df = new DecimalFormat("0");  //格式化number String字符
 		SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd");  //日期格式化
-		DecimalFormat df2 = new DecimalFormat("0.00");  //格式化数字
+//		DecimalFormat df2 = new DecimalFormat("0.00");  //格式化数字
 		
 		switch (cell.getCellType()) {
 		case XSSFCell.CELL_TYPE_STRING:
@@ -110,7 +113,8 @@ public class ImportExcelUtil {
 			if ("@".equals(cell.getCellStyle().getDataFormatString())) {
 				value = df.format(cell.getNumericCellValue());
 			} else if ("General".equals(cell.getCellStyle().getDataFormatString())) {
-				value = df2.format(cell.getNumericCellValue());
+//				value = df2.format(cell.getNumericCellValue());
+				value = cell.getNumericCellValue();
 			} else {
 				value = sdf.format(HSSFDateUtil.getJavaDate(cell.getNumericCellValue()));
 			}

@@ -8,10 +8,10 @@
     <title>注册</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="/WebBackAPI/admin/static/image/logo.png" type="image/x-icon"/>
-    <link rel="stylesheet" href="/WebBackAPI/admin/static/css/site.css" >
-	<link rel="stylesheet" href="/WebBackAPI/admin/static/plugins/bootstrap-validator/vendor/bootstrap/css/bootstrap.css" />
-	<link rel="stylesheet" href="/WebBackAPI/admin/static/plugins/bootstrap-validator/dist/css/bootstrapValidator.css" />
+	<link rel="icon" href="/admin/static/image/logo.png" type="image/x-icon"/>
+    <link rel="stylesheet" href="/admin/static/css/site.css" >
+	<link rel="stylesheet" href="/admin/static/plugins/bootstrap-validator/vendor/bootstrap/css/bootstrap.css" />
+	<link rel="stylesheet" href="/admin/static/plugins/bootstrap-validator/dist/css/bootstrapValidator.css" />
     <style>
     .main{
     	padding-top: 68px;
@@ -21,7 +21,7 @@
 
 <body>
       <div class="main">
-         	<img src="/WebBackAPI/admin/static/image/succeed.jpg" width="300">
+         	<img src="/admin/static/image/succeed.jpg" width="300">
       </div>
 </body>
 

@@ -22,6 +22,9 @@ public class Field implements Serializable {
     /** 场地名 */
     private String name;
 
+    /** 默认使用模板ID */
+    private String defaultTemplate;
+
     /**
      * Field
      */
@@ -105,5 +108,21 @@ public class Field implements Serializable {
      */
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    /**
+     * 默认使用模板ID
+     * @return Default_template 默认使用模板ID
+     */
+    public String getDefaultTemplate() {
+        return defaultTemplate;
+    }
+
+    /**
+     * 默认使用模板ID
+     * @param defaultTemplate 默认使用模板ID
+     */
+    public void setDefaultTemplate(String defaultTemplate) {
+        this.defaultTemplate = defaultTemplate == null ? null : defaultTemplate.trim();
     }
 }

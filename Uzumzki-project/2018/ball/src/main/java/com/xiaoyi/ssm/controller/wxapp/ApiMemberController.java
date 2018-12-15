@@ -14,8 +14,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -55,6 +53,8 @@ import com.xiaoyi.ssm.util.StringUtil;
 import com.xiaoyi.ssm.util.Utils;
 import com.xiaoyi.ssm.wxPay.AES;
 import com.xiaoyi.ssm.wxPay.WXConfig;
+
+import net.sf.json.JSONObject;
 
 /**
  * @Description: 微信小程序公共接口
@@ -199,7 +199,7 @@ public class ApiMemberController {
 	}
 
 	/**  
-	 * @Description: 查询我加入和参与的约球统计
+	 * @Description: 统计数量接口
 	 * @author 宋高俊  
 	 * @param request
 	 * @param pageBean
@@ -235,6 +235,8 @@ public class ApiMemberController {
 		}else {
 			map.put("coachFlag", 0);// 不是教练
 		}
+		map.put("coverimage", member.getCoverimage());// 封面背景图
+		
 		return new ApiMessage(200, "查询成功", map);
 	}
 	
@@ -351,6 +353,7 @@ public class ApiMemberController {
 		map.put("showhistory", member.getShowhistory()); //是否显示历史活动
 		map.put("wechatid", member.getWechatid()); //微信号
 		map.put("showwechatid", member.getShowwechatid()); //微信号-发起报名时允许查看
+		map.put("wxpayment", member.getWxpayment() < 0 ? 0 : member.getWxpayment()); // 免手续费额度
 		return new ApiMessage(200, "获取成功", map);
 	}
 	
@@ -573,11 +576,54 @@ public class ApiMemberController {
 		Member oldMember = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
 		
 		Member member = memberService.selectByPrimaryKey(oldMember.getId());
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("subscribeFlag", !StringUtil.isBank(member.getOpenid()));// 是否关注公众号 true 已关注 false未关注
 		map.put("phoneFlag", !StringUtil.isBank(member.getPhone()));// 是否绑定手机号 true 已绑定 false未绑定
 		map.put("appavatarurl", member.getAppavatarurl());// 头像
 		map.put("appnickname", member.getAppnickname());// 昵称
+		
+		Map<String, Object> dayCountMap = (Map<String, Object>) RedisUtil.getRedisOne(Global.REDIS_DAY_REFUND_COUNT, member.getId());
+		String date = DateUtil.getFormat(new Date(), "yyyy-MM-dd");
+		// 判断是否有过统计次数
+		if (dayCountMap != null && date.equals(dayCountMap.get("date").toString())) {
+			// 有统计过则加1
+			Integer count = (Integer) dayCountMap.get("count");
+			map.put("refundCount", count);
+		} else {
+			// 无统计过则初始化次数
+			dayCountMap = new HashMap<String, Object>();
+			dayCountMap.put("date", date);
+			dayCountMap.put("count", 1);
+			RedisUtil.addRedis(Global.REDIS_DAY_REFUND_COUNT, member.getId(), dayCountMap);
+			map.put("refundCount", 1);
+		}
 		return new ApiMessage(200, "获取成功", map);
+	}
+	
+	/**
+	 * @Description: 修改背景图
+	 * @author 宋高俊
+	 * @param request
+	 * @param coverimage
+	 * @return
+	 * @date 2018年11月26日 上午9:47:59
+	 */
+	@RequestMapping(value = "/updateMemberCoverimage")
+	@ResponseBody
+	public ApiMessage updateMemberCoverimage(HttpServletRequest request, String coverimage) {
+
+		String token = (String) request.getAttribute("token");
+		Member oldMember = (Member) RedisUtil.getRedisOne(Global.redis_member, token);
+		
+		Member member = memberService.selectByPrimaryKey(oldMember.getId());
+		member.setCoverimage(coverimage);//封面背景
+		try {
+			memberService.updateByPrimaryKeySelective(member);
+			RedisUtil.addRedis(Global.redis_member, token, member);
+			return new ApiMessage(200, "修改成功");
+		} catch (Exception e) {
+			return new ApiMessage(400, "修改失败");
+		}
 	}
 }
