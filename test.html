@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TY244067-破损丢失巴枪端新增漏水位置-v0.1.0-原型</title>
+<style>
+  /* 依据 coo-damage-loss/pages/damage-generate 现有样式还原 */
+  :root{
+    --primary:#6445d1;           /* DamageSelect confirm / dialog 主色 */
+    --primary-active:#e5daf8;    /* camera button active */
+    --field-bg:#eeeff4;          /* remark textarea 底色 */
+    --border:#dadada;
+    --text:#333;
+    --text-sub:#888;
+    --placeholder:#bbbbbb;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;}
+  body{background:#eee;display:flex;justify-content:center;padding:20px 8px 40px;}
+  .page-meta{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:99;background:#fff;border:1px solid #ddd;border-radius:4px;padding:6px 14px;font-size:11px;color:#666;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  .page-meta b{color:var(--primary);}
+  .phone{width:390px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.18);border:8px solid #1c1c24;position:relative;padding-bottom:96px;}
+  .status-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 16px 4px;font-size:12px;font-weight:600;}
+  .app-header{padding:0 16px 8px;background:#fff;}
+  .app-title{font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px;}
+  .app-title .back{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:var(--field-bg);color:var(--primary);font-size:15px;cursor:pointer;}
+  /* FormCodeInput */
+  .form-code{border-bottom:1px solid var(--border);padding:14px 0;display:flex;align-items:center;gap:10px;}
+  .form-code .code-label{font-size:14px;color:var(--text);white-space:nowrap;}
+  .form-code .code-value{flex:1;font-size:14px;color:var(--text);}
+  .form-code .code-value.placeholder{color:var(--placeholder);}
+  .form-code .scan-ico{width:28px;height:28px;border-radius:4px;background:var(--primary);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  /* DamageSelect 字段行 */
+  .level-field{display:flex;align-items:center;padding:16px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+  .level-field .f-label{font-size:16px;font-weight:600;margin-right:12px;white-space:nowrap;}
+  .level-field .f-label .req{color:#E5484D;font-weight:600;font-size:18px;line-height:1;vertical-align:middle;margin-left:2px;}
+  .level-field .f-value{flex:1;text-align:right;font-size:14px;color:var(--text);}
+  .level-field .f-value.placeholder{color:var(--placeholder);}
+  .level-field .f-suffix{color:var(--text-sub);margin-left:8px;font-size:13px;}
+  /* 新增：漏水位置字段行（复用 level-field 样式，位于破损程度下方） */
+  .leak-loc-field{display:none;align-items:center;padding:16px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+  .leak-loc-field.show{display:flex;}
+  .leak-loc-field .f-label{font-size:16px;font-weight:600;margin-right:12px;white-space:nowrap;}
+  .leak-loc-field .f-label .req{color:#E5484D;font-weight:600;font-size:18px;line-height:1;vertical-align:middle;margin-left:2px;}
+  .leak-loc-field .f-value{flex:1;text-align:right;font-size:14px;color:var(--text);}
+  .leak-loc-field .f-value.placeholder{color:var(--placeholder);}
+  .leak-loc-field .f-suffix{color:var(--text-sub);margin-left:8px;font-size:13px;}
+  .leak-loc-field .error-tip{font-size:11px;color:#E5484D;text-align:right;display:none;margin-left:8px;}
+  .leak-loc-field .error-tip.show{display:block;}
+  /* 漏水位置选择弹窗（无标题栏，选项居中，无单选框，点击即选中映射） */
+  .picker-mask{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90;display:none;}
+  .picker-mask.show{display:block;}
+  .picker-pop{position:fixed;left:50%;bottom:8px;transform:translateX(-50%);width:390px;background:#fff;border-radius:14px 14px 0 0;z-index:91;display:none;overflow:hidden;padding-top:10px;}
+  .picker-pop.show{display:block;}
+  .picker-pop .picker-opt{padding:16px 18px;font-size:18px;border-bottom:1px solid #eeeff4;cursor:pointer;text-align:center;color:var(--text);}
+  .picker-pop .picker-opt:active{background:var(--primary-active);}
+  .picker-pop .picker-opt.sel{color:var(--primary);font-weight:600;}
+  .picker-pop .picker-tip{font-size:11px;color:var(--text-sub);text-align:center;padding:10px 0;}
+  /* 备注 */
+  .remark-container{margin-top:16px;padding:16px;background:#fff;}
+  .remark-container .remark-title{font-size:20px;font-weight:600;padding-bottom:16px;position:relative;}
+  .remark-container .remark-title .req{color:#E5484D;font-weight:600;font-size:22px;line-height:1;vertical-align:middle;margin-left:2px;}
+  .remark-container textarea{width:100%;min-height:72px;background:var(--field-bg);border:none;border-radius:4px;padding:10px 12px;font-size:16px;color:var(--text);resize:none;outline:none;font-family:inherit;}
+  /* Camera 拍照区 */
+  .pic-container{margin-top:16px;margin-bottom:12px;background:#fff;padding:0;}
+  .pic-container .pic-title{display:flex;justify-content:space-between;align-items:center;margin:0 14px;font-size:14px;height:48px;line-height:48px;font-weight:600;}
+  .pic-container .pic-title .tip{font-size:11px;color:#ff7b35;background:#fefbe0;padding:2px 8px;border-radius:4px;font-weight:400;}
+  .camera-wrapper{padding:0 16px 16px;background:#fff;border-radius:4px;}
+  .camera-titile-wrapper{margin-bottom:12px;}
+  .camera-title{font-size:20px;font-weight:600;}
+  .camera-content-wrapper{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+  .camera-button{position:relative;width:100%;height:78px;border:none;outline:none;background:#eeeff4;border-radius:8px;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='%236445d1'%3E%3Cpath d='M9 3h6l2 3h4a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3z'/%3E%3Ccircle cx='12' cy='13' r='4' fill='%23fff'/%3E%3C/svg%3E");background-repeat:no-repeat;background-size:30px 30px;background-position:center 10px;cursor:pointer;}
+  .camera-button:active{background-color:var(--primary-active);}
+  .camera-button .module-name{position:absolute;bottom:8px;left:0;right:0;font-size:13px;color:var(--text);text-align:center;}
+  .photo-cell{position:relative;width:100%;height:78px;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+  .photo-cell img{width:100%;height:100%;object-fit:cover;}
+  .photo-cell .del{position:absolute;top:2px;right:2px;width:16px;height:16px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .photo-cell .idx{position:absolute;bottom:2px;left:2px;background:var(--primary);color:#fff;font-size:10px;padding:0 5px;border-radius:8px;}
+  /* 底部提交容器 bottom-container */
+  .bottom-part{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);width:390px;background:#fff;border-top:1px solid var(--border);padding:10px 16px 16px;display:flex;gap:12px;z-index:50;}
+  .bottom-part .btn{flex:1;height:44px;border-radius:8px;font-size:16px;font-weight:600;border:none;cursor:pointer;}
+  .bottom-part .btn-cancel{background:#fff;color:var(--text);border:1px solid var(--border);}
+  .bottom-part .btn-submit{background:var(--primary);color:#fff;}
+  .bottom-part .btn-submit:active{background:#4f33b3;}
+  .demo-ctl{position:fixed;right:12px;top:50%;transform:translateY(-50%);width:220px;background:#fff;border:1px solid #ddd;border-radius:8px;padding:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);font-size:12px;z-index:98;}
+  .demo-ctl h4{font-size:12px;color:var(--primary);margin-bottom:8px;font-weight:600;}
+  .demo-ctl .row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;color:#666;}
+  .demo-ctl .row span{font-size:11px;}
+  .demo-ctl select{height:26px;border:1px solid #ddd;border-radius:4px;font-size:11px;padding:0 4px;}
+  .demo-ctl .btn-mini{height:26px;padding:0 8px;background:#F0EDF9;color:var(--primary);border:none;border-radius:4px;font-size:11px;cursor:pointer;}
+  .footer-note{margin:12px 16px;background:#FFF7E6;border:1px solid #FFD591;border-radius:6px;padding:10px;font-size:11px;color:#8C5A00;}
+  .footer-note h5{font-size:11px;font-weight:600;margin-bottom:4px;}
+  @media (max-width:900px){.demo-ctl{display:none;}}
+</style>
+</head>
+<body>
+<div class="page-meta">系统提议 <b>244067</b> · 【破损丢失】巴枪端新增漏水位置 · PRD <b>v0.1.0</b> · 原型</div>
+
+<div class="phone">
+  <div class="status-bar"><span>09:41</span><span>巴枪</span><span>▮▮▮</span></div>
+  <div class="app-header">
+    <div class="app-title"><span class="back">←</span>破损丢失录入</div>
+  </div>
+
+  <div class="form-container">
+    <!-- FormCodeInput 运单号 -->
+    <div style="padding:0 16px;background:#fff;">
+      <div class="form-code">
+        <span class="code-label">运单号</span>
+        <span class="code-value">KY2409123456</span>
+        <span class="scan-ico">扫</span>
+      </div>
+      <!-- DamageSelect 破损程度（级联：类型/程度/原因） -->
+      <div class="level-field" onclick="openCascader()">
+        <span class="f-label"><span class="req">*</span>破损程度</span>
+        <span class="f-value" id="cascaderValue">打湿 / 严重打湿 / 车厢漏水</span>
+        <span class="f-suffix">›</span>
+      </div>
+      <!-- 漏水位置（新增，与破损程度同样式，破损原因=101 时展示） -->
+      <div class="leak-loc-field" id="leakLocField" onclick="openLocPicker()">
+        <span class="f-label">漏水位置 <span class="req">*</span></span>
+        <span class="f-value placeholder" id="locValue">请选择漏水位置</span>
+        <span class="error-tip" id="locError">必填</span>
+        <span class="f-suffix">›</span>
+      </div>
+    </div>
+
+    <!-- 漏水位置选择弹窗（无标题栏，选项居中，点击即选中映射） -->
+    <div class="picker-mask" id="locMask" onclick="closeLocPicker()"></div>
+    <div class="picker-pop" id="locPop">
+      <div class="picker-opt" data-v="top" onclick="pickLoc(this,'top')">车厢顶部</div>
+      <div class="picker-opt" data-v="wall" onclick="pickLoc(this,'wall')">车厢壁</div>
+      <div class="picker-opt" data-v="bottom" onclick="pickLoc(this,'bottom')">车厢底部</div>
+      <div class="picker-tip">点击选项直接选择，自动关闭</div>
+    </div>
+
+    <!-- 备注 -->
+    <div class="remark-container">
+      <p class="remark-title"><span class="req">*</span>备注</p>
+      <textarea placeholder="请输入需要特别说明点">车厢顶部有漏水痕迹</textarea>
+    </div>
+
+    <!-- Camera 破损拍照 -->
+    <div class="pic-container">
+      <div class="pic-title"><span>破损拍照</span><span class="tip">近景图 / 远景图</span></div>
+      <div class="camera-wrapper">
+        <div class="camera-content-wrapper">
+          <button class="camera-button" onclick="showToast('调用巴枪原生相机拍照')"><span class="module-name">破损丢失</span></button>
+          <div class="photo-cell"><img src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='78' height='78'%3E%3Crect width='78' height='78' fill='%23E9E4F5'/%3E%3Ctext x='39' y='42' font-size='11' fill='%236445d1' text-anchor='middle'%3E近景图%3C/text%3E%3C/svg%3E"><span class="del">×</span><span class="idx">1</span></div>
+          <div class="photo-cell"><img src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='78' height='78'%3E%3Crect width='78' height='78' fill='%23E9E4F5'/%3E%3Ctext x='39' y='42' font-size='11' fill='%236445d1' text-anchor='middle'%3E远景图%3C/text%3E%3C/svg%3E"><span class="del">×</span><span class="idx">2</span></div>
+          <div class="camera-button" onclick="addLeakPhoto()"><span class="module-name">＋</span></div>
+          <div class="camera-button" onclick="addLeakPhoto()"><span class="module-name">＋</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Camera 车厢漏水拍照（v-if damagedLoseCause === '101'） -->
+    <div class="pic-container" id="leakPhotoContainer">
+      <div class="pic-title"><span>车厢漏水拍照</span><span class="tip" id="leakPhotoTip">最少拍2张</span></div>
+      <div class="camera-wrapper">
+        <div class="camera-content-wrapper">
+          <div class="photo-cell"><img src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='78' height='78'%3E%3Crect width='78' height='78' fill='%23E9E4F5'/%3E%3Ctext x='39' y='42' font-size='11' fill='%236445d1' text-anchor='middle'%3E近景图%3C/text%3E%3C/svg%3E"><span class="del">×</span><span class="idx">1</span></div>
+          <div class="photo-cell"><img src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='78' height='78'%3E%3Crect width='78' height='78' fill='%23E9E4F5'/%3E%3Ctext x='39' y='42' font-size='11' fill='%236445d1' text-anchor='middle'%3E远景图%3C/text%3E%3C/svg%3E"><span class="del">×</span><span class="idx">2</span></div>
+          <button class="camera-button" onclick="showToast('调用巴枪原生相机拍照')"><span class="module-name">车厢漏水</span></button>
+          <button class="camera-button" onclick="showToast('调用巴枪原生相机拍照')"><span class="module-name">车厢漏水</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <h5>原型说明（按 coo-damage-loss/pages/damage-generate 现有实现还原）</h5>
+    ① 破损程度为 DamageSelect 级联选择（类型/程度/原因，底部弹窗，主色 #6445d1）；② 漏水位置为新增字段行，与破损程度同样式，破损原因=101 时展示，点击弹底部选择器；③ 漏水位置选择弹窗无标题栏、选项居中、无单选框，点击即选中映射并自动关闭；④ 漏水车牌号巴枪端不展示（仅 formModel 保存，原型已移除展示）；⑤ 车厢漏水拍照仅在 damagedLoseCause=101 时展示（v-if）。
+  </div>
+</div>
+
+<div class="demo-ctl">
+  <h4>演示控制（子需求1）</h4>
+  <div class="row"><span>破损原因</span>
+    <select id="ctlCause" onchange="setCause(this.value)">
+      <option value="101">101 车厢漏水</option>
+      <option value="102">102 货物漏液</option>
+      <option value="104">104 中尾门防水未做好</option>
+      <option value="760">760 温差厢汗打湿</option>
+    </select>
+  </div>
+  <div class="row"><span>漏水位置</span>
+    <select id="ctlLoc" onchange="setLoc(this.value)">
+      <option value="">未选择（必填）</option>
+      <option value="top">车厢顶部</option>
+      <option value="wall">车厢壁</option>
+      <option value="bottom">车厢底部</option>
+    </select>
+  </div>
+  <div class="row"><span>提交校验</span>
+    <button class="btn-mini" onclick="handleSubmit()">触发提交</button>
+  </div>
+</div>
+
+<div id="toast" style="position: fixed; top: 60px; left: 50%; transform: translateX(-50%); background: rgba(43, 43, 51, 0.92); color: rgb(255, 255, 255); font-size: 13px; padding: 9px 18px; border-radius: 6px; z-index: 999; display: none; white-space: nowrap;"></div>
+
+<script>
+  var locSelected = ''; // 漏水位置选中值
+  function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(function(){t.style.display='none'},2200);}
+  function openCascader(){
+    showToast('破损程度级联选择器（类型→程度→原因，底部弹窗）');
+  }
+  function addLeakPhoto(){showToast('调用巴枪原生相机拍照（车厢漏水拍照，最多9张）');}
+  // 漏水位置选择弹窗：点击选项即选中映射并关闭，无标题栏/确认/取消/单选框
+  function openLocPicker(){
+    document.getElementById('locMask').classList.add('show');
+    document.getElementById('locPop').classList.add('show');
+    var opts=document.querySelectorAll('.picker-pop .picker-opt');
+    for(var i=0;i<opts.length;i++){opts[i].classList.remove('sel');}
+    if(locSelected){
+      var cur=document.querySelector('.picker-pop .picker-opt[data-v="'+locSelected+'"]');
+      if(cur)cur.classList.add('sel');
+    }
+  }
+  function closeLocPicker(){
+    document.getElementById('locMask').classList.remove('show');
+    document.getElementById('locPop').classList.remove('show');
+  }
+  function pickLoc(el,v){
+    var opts=document.querySelectorAll('.picker-pop .picker-opt');
+    for(var i=0;i<opts.length;i++){opts[i].classList.remove('sel');}
+    el.classList.add('sel');
+    locSelected=v;
+    // 选中即映射到字段行并关闭弹窗
+    applyLocValue(v);
+    closeLocPicker();
+  }
+  function applyLocValue(v){
+    var map={top:'车厢顶部',wall:'车厢壁',bottom:'车厢底部'};
+    var val=document.getElementById('locValue');
+    val.textContent=map[v];
+    val.classList.remove('placeholder');
+    document.getElementById('locError').classList.remove('show');
+    document.getElementById('ctlLoc').value=v;
+  }
+  function setCause(v){
+    var field=document.getElementById('leakLocField');
+    var photo=document.getElementById('leakPhotoContainer');
+    if(v==='101'){
+      field.classList.add('show');photo.style.display='block';
+      document.getElementById('cascaderValue').textContent='打湿 / 严重打湿 / 车厢漏水';
+    }else{
+      field.classList.remove('show');photo.style.display='none';
+      document.getElementById('cascaderValue').textContent='打湿 / 严重打湿 / '+document.getElementById('ctlCause').selectedOptions[0].text;
+    }
+  }
+  function setLoc(v){
+    locSelected=v;
+    if(!v){
+      document.getElementById('locValue').textContent='请选择漏水位置';
+      document.getElementById('locValue').classList.add('placeholder');
+      return;
+    }
+    applyLocValue(v);
+  }
+  function handleSubmit(){
+    var cause=document.getElementById('ctlCause').value;
+    if(cause!=='101'){showToast('提交成功（非漏水场景，沿用现有流程）');return;}
+    if(!locSelected){
+      document.getElementById('locError').classList.add('show');
+      showToast('漏水位置必填');
+      return;
+    }
+    var map={top:'车厢顶部',wall:'车厢壁',bottom:'车厢底部'};
+    showToast('提交成功：漏水位置已保存（'+map[locSelected]+'）');
+  }
+  // 页面初始化：破损原因默认=101，漏水位置字段行与漏水拍照区展示
+  setCause(document.getElementById('ctlCause').value || '101');
+</script>
+</body>
+</html>
